@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -ex
+
+./script/prepare-env
+
+./node_modules/.bin/vite &
+./node_modules/.bin/tauri dev &
+
+wait
