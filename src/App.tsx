@@ -2,8 +2,27 @@ import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import './App.css'
 import typedInvoke from './tauri/typedInvoke'
+import { useQuery } from 'urql'
+
+const query = `
+query demoQuery {
+  list {
+    id
+    text
+  }
+}
+`
 
 function App() {
+  const [{ data, fetching, stale, error }] = useQuery({
+    query,
+  })
+  console.log({
+    data,
+    fetching,
+    stale,
+    error,
+  })
   const [greetMsg, setGreetMsg] = useState('')
   const [name, setName] = useState('')
 
@@ -19,6 +38,12 @@ function App() {
 
   return (
     <div className="container">
+      <ul>
+        {data?.list?.map((x) => {
+          return <li key={x.text}>{x.text}</li>
+        })}
+      </ul>
+
       <h1>Welcome to Tauri!</h1>
 
       <div className="row">
