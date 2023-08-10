@@ -2,8 +2,8 @@
   "build": {
     "beforeDevCommand": "",
     "beforeBuildCommand": "",
-    "devPath": "http://localhost:1420",
-    "distDir": "../dist",
+    "devPath": "http://localhost:3000",
+    "distDir": "../build",
     "withGlobalTauri": false
   },
   "package": {

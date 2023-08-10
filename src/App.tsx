@@ -1,16 +1,15 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import './App.css'
 import typedInvoke from './tauri/typedInvoke'
-import { useQuery } from 'urql'
+import { gql, useQuery } from 'urql'
+import { Button } from '@mui/joy'
 
-const query = `
-query demoQuery {
-  list {
-    id
-    text
+const query = gql`
+  query demoQuery {
+    list {
+      id
+      text
+    }
   }
-}
 `
 
 function App() {
@@ -53,9 +52,9 @@ function App() {
         <a href="https://tauri.app" target="_blank">
           <img src="/tauri.svg" className="logo tauri" alt="Tauri logo" />
         </a>
-        <a href="https://reactjs.org" target="_blank">
+        {/* <a href="https://reactjs.org" target="_blank">
           <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+        </a> */}
       </div>
 
       <p>Click on the Tauri, Vite, and React logos to learn more.</p>
@@ -72,7 +71,7 @@ function App() {
           onChange={(e) => setName(e.currentTarget.value)}
           placeholder="Enter a name..."
         />
-        <button type="submit">Greet</button>
+        <Button type="submit">Greet</Button>
       </form>
 
       <p>{greetMsg}</p>

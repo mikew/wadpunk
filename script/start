@@ -3,7 +3,11 @@ set -ex
 
 ./script/prepare-env
 
-./node_modules/.bin/vite &
-./node_modules/.bin/tauri dev &
+# ./node_modules/.bin/vite &
+# ./node_modules/.bin/tauri dev &
+
+npx concurrently \
+  './node_modules/.bin/react-scripts-vite start' \
+  './node_modules/.bin/tauri dev'
 
 wait

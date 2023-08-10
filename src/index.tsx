@@ -1,9 +1,9 @@
+import { CssVarsProvider, CssBaseline } from '@mui/joy'
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App'
 import { createClient, Provider as UrqlProvider } from 'urql'
 
-import './styles.css'
 import { invokeExchange } from './tauri/tauriPluginGraphqlUrqlExchange'
 
 const client = createClient({
@@ -14,8 +14,11 @@ const client = createClient({
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <UrqlProvider value={client}>
     <React.StrictMode>
-      <App />
+      <CssVarsProvider>
+        <CssBaseline>
+          <App />
+        </CssBaseline>
+      </CssVarsProvider>
     </React.StrictMode>
-    ,
   </UrqlProvider>,
 )
