@@ -1,4 +1,5 @@
 import fs from 'fs/promises'
+import path from 'path'
 import { CodegenConfig } from '@graphql-codegen/cli'
 import {
   GraphQLEnumType,
@@ -61,6 +62,7 @@ const asyncGraphqlPlugin: CodegenPlugin<AsyncGraphqlPluginOptions> = {
     const enumTypes: GraphQLEnumType[] = []
     const inputTypes: GraphQLInputObjectType[] = []
     const objectTypes: GraphQLObjectType[] = []
+    const dataSourceFields: [string, GraphQLField<any, any, any>][] = []
 
     // TODO Guess we can check if these are actually used in the schema?
     let content = ''
@@ -173,6 +175,7 @@ pub struct ${objectType.name} {
 impl ${objectType.name} {
   ${complexFields
     .map((x) => {
+      dataSourceFields.push([objectType.name, x])
       return graphqlFieldResolverToRustFn(x, objectType.name)
     })
     .join('\n\n')}
@@ -198,6 +201,7 @@ impl ${query.name} {
         return
       }
 
+      dataSourceFields.push([query.name, x])
       return graphqlFieldResolverToRustFn(x, query.name)
     })
     .join('\n\n')}
@@ -223,6 +227,7 @@ impl ${mutation.name} {
         return
       }
 
+      dataSourceFields.push([mutation.name, x])
       return graphqlFieldResolverToRustFn(x, mutation.name)
     })
     .join('\n\n')}
@@ -247,6 +252,32 @@ ${codegenContext.hasComplexObjects ? 'use async_graphql::SimpleObject;' : ''}
 ${codegenContext.hasComplexObjects ? dataSource : ''}
     ` + content
 
+    let dataSourceTodo = `
+use async_graphql::Result as GraphQLResult;
+
+pub struct DataSource;
+
+impl DataSource {
+`
+
+    for (const [baseName, field] of dataSourceFields) {
+      const rustArgs = field.args.map(
+        (x) => `${x.name}: ${graphqlTypeToRustType(x.type)}`,
+      )
+
+      dataSourceTodo += `
+pub async fn ${baseName}_${
+        field.name
+      }(&self, root: &${baseName}, ctx: &Context<'_>, ${rustArgs.join(
+        ', ',
+      )}) -> GraphQLResult<${graphqlTypeToRustType(field.type)}> {
+        todo!()
+}
+  `
+    }
+
+    dataSourceTodo += '\n}'
+
     const outputFile = _info?.outputFile
     if (outputFile) {
       const tempFile = `${outputFile}.temp`
@@ -254,6 +285,13 @@ ${codegenContext.hasComplexObjects ? dataSource : ''}
       spawnSync('rustfmt', [tempFile])
       content = await fs.readFile(tempFile, 'utf-8')
       await fs.unlink(tempFile)
+
+      const dataSourceImplPath = path.join(
+        path.dirname(outputFile),
+        'datasource_impl.rs',
+      )
+      await fs.writeFile(dataSourceImplPath, dataSourceTodo, 'utf-8')
+      spawnSync('rustfmt', [dataSourceImplPath])
     }
 
     return {
