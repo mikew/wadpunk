@@ -113,7 +113,10 @@ pub struct ${inputType.name} {
   ${Object.values(inputType.getFields())
     .map((x) => {
       // TODO Check if it's recursed and use `Box<T>`.
-      return `pub ${x.name}: ${graphqlTypeToRustType(x.type)},`
+      return `
+      #[graphql(name="${x.name}")]
+      pub ${x.name}: ${graphqlTypeToRustType(x.type)},
+      `
     })
     .join('\n\n')}
 }
@@ -151,7 +154,10 @@ pub struct ${objectType.name} {
   ${simpleFields
     .map((x) => {
       // TODO Check if it's recursed and use `Box<T>`.
-      return `pub ${x.name}: ${graphqlTypeToRustType(x.type)},`
+      return `
+      #[graphql(name="${x.name}")]
+      pub ${x.name}: ${graphqlTypeToRustType(x.type)},
+      `
     })
     .join('\n\n')}
 }
@@ -297,6 +303,7 @@ function graphqlFieldResolverToRustFn(
   const argNames = field.args.map((x) => x.name)
 
   return `
+#[graphql(name="${field.name}")]
 pub async fn ${field.name}(&self, ctx: &Context<'_>, ${rustArgs.join(
     ', ',
   )}) -> GraphQLResult<${graphqlTypeToRustType(field.type)}> {
