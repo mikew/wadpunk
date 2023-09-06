@@ -25,5 +25,6 @@ dist-ssr
 
 /build
 /src-tauri/src/graphql/generated.rs
+/src-tauri/src/graphql/datasource_impl.rs
 /src/graphql.d.ts
 /graphql-schema.json
