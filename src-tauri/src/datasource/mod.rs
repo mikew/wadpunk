@@ -14,8 +14,11 @@ impl DataSource {
     root: &Game,
     ctx: &Context<'_>,
   ) -> GraphQLResult<Vec<PlaySession>> {
-    println!("{}", root.id);
-    Ok(vec![])
+    Ok(vec![PlaySession {
+      started_at: "".to_string(),
+      ended_at: "".to_string(),
+      duration: 1234,
+    }])
   }
 
   pub async fn Query_getGames(&self, root: &Query, ctx: &Context<'_>) -> GraphQLResult<Vec<Game>> {
