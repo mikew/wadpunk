@@ -18,6 +18,7 @@
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@graphql-codegen/cli": "^5.0.0",
+    "@graphql-codegen/introspection": "^4.0.0",
     "@graphql-codegen/typescript": "^4.0.1",
     "@graphql-codegen/typescript-operations": "^4.0.1",
     "@mui/joy": "5.0.0-beta.1",
@@ -29,10 +30,10 @@
     "typescript": "^4.9.5"
   },
   "peerDependencies": {
+    "@graphql-codegen/plugin-helpers": "x",
     "@urql/core": "x",
     "graphql": "x",
     "vite": "x",
-    "wonka": "x",
-    "@graphql-codegen/plugin-helpers": "x"
+    "wonka": "x"
   }
 }

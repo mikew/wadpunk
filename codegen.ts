@@ -26,6 +26,9 @@ const config: CodegenConfig = {
     './src/graphql.d.ts': {
       plugins: ['typescript', 'typescript-operations'],
     },
+    'graphql-schema.json': {
+      plugins: ['introspection'],
+    },
   },
 
   pluginLoader: async (name) => {
