@@ -1,4 +1,6 @@
 pub struct DataSource;
+use std::vec;
+
 use async_graphql::Context;
 use async_graphql::Result as GraphQLResult;
 
@@ -12,10 +14,18 @@ impl DataSource {
     root: &Game,
     ctx: &Context<'_>,
   ) -> GraphQLResult<Vec<PlaySession>> {
-    todo!()
+    println!("{}", root.id);
+    Ok(vec![])
   }
 
   pub async fn Query_getGames(&self, root: &Query, ctx: &Context<'_>) -> GraphQLResult<Vec<Game>> {
-    todo!()
+    Ok(vec![Game {
+      id: "1234".to_string(),
+      name: "1234".to_string(),
+      description: "1234".to_string(),
+      notes: "1234".to_string(),
+      rating: 3,
+      tags: vec![],
+    }])
   }
 }

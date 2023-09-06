@@ -5,9 +5,13 @@ import { Button } from '@mui/joy'
 
 const query = gql`
   query demoQuery {
-    list {
+    getGames {
       id
-      text
+      name
+
+      play_sessions {
+        duration
+      }
     }
   }
 `
