@@ -41,29 +41,29 @@ const config: CodegenConfig = {
 }
 
 export default config
+
 interface AsyncGraphqlPluginOptions {
   dataSource?: string
 }
 
 const asyncGraphqlPlugin: CodegenPlugin<AsyncGraphqlPluginOptions> = {
   plugin: async (schema, _documents, config, _info) => {
+    const codegenContext = {
+      hasComplexObjects: false,
+      hasEnums: false,
+      hasInputObjects: false,
+      hasSimpleObjects: false,
+    }
+
+    const dataSource = config.dataSource || 'use crate::datasource::DataSource;'
+
     const typeMap = schema.getTypeMap()
     const enumTypes: GraphQLEnumType[] = []
     const inputTypes: GraphQLInputObjectType[] = []
     const objectTypes: GraphQLObjectType[] = []
 
     // TODO Guess we can check if these are actually used in the schema?
-    let content = `
-use async_graphql::ComplexObject;
-use async_graphql::Context;
-use async_graphql::Enum;
-use async_graphql::InputObject;
-use async_graphql::Object;
-use async_graphql::Result as GraphQLResult;
-use async_graphql::SimpleObject;
-
-use crate::datasource::DataSource;
-    `
+    let content = ''
 
     for (const typeName in typeMap) {
       if (
@@ -88,6 +88,9 @@ use crate::datasource::DataSource;
         objectTypes.push(type)
       }
     }
+
+    codegenContext.hasEnums = enumTypes.length > 0
+    codegenContext.hasInputObjects = inputTypes.length > 0
 
     for (const enumType of enumTypes) {
       content += `
@@ -141,8 +144,12 @@ pub struct ${inputType.name} {
           reducedFieldType instanceof GraphQLScalarType ||
           reducedFieldType instanceof GraphQLEnumType
         ) {
+          codegenContext.hasSimpleObjects = true
+
           simpleFields.push(objectField)
         } else {
+          codegenContext.hasComplexObjects = true
+
           complexFields.push(objectField)
         }
       }
@@ -175,6 +182,8 @@ impl ${objectType.name} {
 
     const query = schema.getQueryType()
     if (query) {
+      codegenContext.hasComplexObjects = true
+
       content += `
 pub struct ${query.name};
 
@@ -198,6 +207,8 @@ impl ${query.name} {
 
     const mutation = schema.getMutationType()
     if (mutation) {
+      codegenContext.hasComplexObjects = true
+
       content += `
 pub struct ${mutation.name};
 
@@ -218,6 +229,23 @@ impl ${mutation.name} {
 }
       `
     }
+
+    content =
+      `
+${codegenContext.hasComplexObjects ? 'use async_graphql::ComplexObject;' : ''}
+${codegenContext.hasComplexObjects ? 'use async_graphql::Context;' : ''}
+${codegenContext.hasEnums ? 'use async_graphql::Enum;' : ''}
+${codegenContext.hasInputObjects ? 'use async_graphql::InputObject;' : ''}
+${codegenContext.hasSimpleObjects ? 'use async_graphql::Object;' : ''}
+${
+  codegenContext.hasComplexObjects
+    ? 'use async_graphql::Result as GraphQLResult;'
+    : ''
+}
+${codegenContext.hasComplexObjects ? 'use async_graphql::SimpleObject;' : ''}
+
+${codegenContext.hasComplexObjects ? dataSource : ''}
+    ` + content
 
     const outputFile = _info?.outputFile
     if (outputFile) {
