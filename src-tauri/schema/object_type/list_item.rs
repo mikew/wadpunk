@@ -1,1 +1,0 @@
-use async_graphql :: * ; # [derive (Debug)] pub struct ListItem ; # [Object] impl ListItem { pub async fn id (& self , ctx : & Context < '_ > ,) -> ID { todo ! () } pub async fn text (& self , ctx : & Context < '_ > ,) -> String { todo ! () } }
