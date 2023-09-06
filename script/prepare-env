@@ -2,3 +2,5 @@
 set -ex
 
 pnpm install
+
+./node_modules/.bin/graphql-codegen

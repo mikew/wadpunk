@@ -3,6 +3,6 @@ set -ex
 
 ./script/prepare-env
 
-npx concurrently \
+npx --yes concurrently \
   './node_modules/.bin/react-scripts-vite start' \
   './node_modules/.bin/tauri dev'
