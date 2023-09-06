@@ -1,0 +1,22 @@
+type Game {
+  id: ID!
+  name: String!
+  rating: Int!
+  description: String!
+  notes: String!
+  tags: [String!]!
+
+  play_sessions: [PlaySession!]!
+
+  foo(id: ID!): [Int!]!
+}
+
+type PlaySession {
+  started_at: String!
+  ended_at: String!
+  duration: Int!
+}
+
+type Query {
+  getGames: [Game!]!
+}

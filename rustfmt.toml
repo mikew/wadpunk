@@ -3,3 +3,4 @@ imports_granularity = "Item"
 group_imports = "StdExternalCrate"
 use_try_shorthand = true
 tab_spaces = 2
+edition = "2021"
