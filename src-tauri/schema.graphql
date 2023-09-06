@@ -7,8 +7,6 @@ type Game {
   tags: [String!]!
 
   play_sessions: [PlaySession!]!
-
-  foo(id: ID!): [Int!]!
 }
 
 type PlaySession {
