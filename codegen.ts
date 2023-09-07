@@ -262,13 +262,13 @@ impl DataSource {
 
     for (const [baseName, field] of dataSourceFields) {
       const rustArgs = field.args.map(
-        (x) => `${x.name}: ${graphqlTypeToRustType(x.type)}`,
+        (x) => `_${x.name}: ${graphqlTypeToRustType(x.type)}`,
       )
 
       dataSourceTodo += `
 pub async fn ${baseName}_${
         field.name
-      }(&self, root: &${baseName}, ctx: &Context<'_>, ${rustArgs.join(
+      }(&self, _root: &${baseName}, _ctx: &Context<'_>, ${rustArgs.join(
         ', ',
       )}) -> GraphQLResult<${graphqlTypeToRustType(field.type)}> {
         todo!()
