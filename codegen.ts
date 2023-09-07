@@ -96,7 +96,7 @@ const asyncGraphqlPlugin: CodegenPlugin<AsyncGraphqlPluginOptions> = {
 
     for (const enumType of enumTypes) {
       content += `
-#[derive(Enum, Copy, Clone, Eq, PartialEq)]
+#[derive(Enum, Copy, Clone, Eq, PartialEq, Debug)]
 pub enum ${enumType.name} {
   ${enumType
     .getValues()
