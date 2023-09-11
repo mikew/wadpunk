@@ -364,7 +364,10 @@ function graphqlFieldResolverToRustFn(
   baseName: string,
 ) {
   const rustArgs = field.args.map(
-    (x) => `${x.name}: ${graphqlTypeToRustType(x.type)}`,
+    (x) =>
+      `#[graphql(name="${x.name}")] ${x.name}: ${graphqlTypeToRustType(
+        x.type,
+      )}`,
   )
   const argNames = field.args.map((x) => x.name)
 
