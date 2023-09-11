@@ -15,6 +15,18 @@ type PlaySession {
   duration: Int!
 }
 
+type AppSettings {
+  dataDirectory: String!
+}
+
 type Query {
   getGames: [Game!]!
+  getAppSettings: AppSettings!
+}
+
+type Mutation {
+  startGame(iwad: String, files: [String!]): Boolean!
+
+  openGamesFolder(game_id: ID): Boolean!
+  openSourcePortsFolder(game_id: ID): Boolean!
 }
