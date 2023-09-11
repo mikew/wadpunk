@@ -15,6 +15,7 @@ dist-ssr
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
+!.vscode/settings.json
 .idea
 .DS_Store
 *.suo
@@ -22,3 +23,9 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+/build
+/src-tauri/src/graphql/generated.rs
+/src-tauri/src/graphql/datasource_impl.rs
+/src/graphql.d.ts
+/graphql-schema.json

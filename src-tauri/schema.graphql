@@ -1,0 +1,32 @@
+type Game {
+  id: ID!
+  name: String!
+  rating: Int!
+  description: String!
+  notes: String!
+  tags: [String!]!
+
+  play_sessions: [PlaySession!]!
+}
+
+type PlaySession {
+  started_at: String!
+  ended_at: String!
+  duration: Int!
+}
+
+type AppSettings {
+  dataDirectory: String!
+}
+
+type Query {
+  getGames: [Game!]!
+  getAppSettings: AppSettings!
+}
+
+type Mutation {
+  startGame(iwad: String, files: [String!]): Boolean!
+
+  openGamesFolder(game_id: ID): Boolean!
+  openSourcePortsFolder(game_id: ID): Boolean!
+}

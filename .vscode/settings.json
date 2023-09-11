@@ -1,0 +1,4 @@
+{
+  "cSpell.words": ["codegen", "gzdoom", "rustfmt", "tauri"],
+  "typescript.tsdk": "node_modules/typescript/lib"
+}
