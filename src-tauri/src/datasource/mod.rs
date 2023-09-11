@@ -1,6 +1,7 @@
 pub struct DataSource;
 use std::fs;
 use std::fs::create_dir_all;
+use std::process::Command;
 use std::vec;
 
 use async_graphql::Context;
@@ -92,6 +93,20 @@ impl DataSource {
     })
   }
 
+  pub async fn Query_getGameFiles(
+    &self,
+    _root: &Query,
+    _ctx: &Context<'_>,
+    _game_id: String,
+  ) -> GraphQLResult<Vec<String>> {
+    // let mut files
+    let files = read_dir(Self::get_games_directory().join(_game_id), true);
+
+    println!("{:?}", files);
+
+    Ok(vec![])
+  }
+
   pub async fn Query_getGames(
     &self,
     _root: &Query,
@@ -131,8 +146,21 @@ impl DataSource {
     _ctx: &Context<'_>,
     _files: Option<Vec<String>>,
     _iwad: Option<String>,
+    _source_port: String,
   ) -> GraphQLResult<bool> {
-    todo!()
+    let mut command =
+      Command::new("/Users/mike/Downloads/gzdoom-4-10-0-macOS/GZDoom.app/Contents/MacOS/gzdoom");
+
+    command.args(["-iwad", "/Users/mike/Downloads/DOOM2.WAD"]);
+    // .args([
+    //   "-file",
+    //   "/Users/mike/Documents/GZDoom Launcher/Games/GoldenSouls2_1.4/GoldenSouls2_1.4.pk3",
+    // ]);
+
+    let output = command.status().unwrap();
+    println!("{:?}", output);
+
+    Ok(true)
   }
 
   pub async fn Mutation_openGamesFolder(
