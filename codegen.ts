@@ -18,7 +18,7 @@ import { CodegenPlugin } from '@graphql-codegen/plugin-helpers'
 import { spawnSync } from 'child_process'
 
 const config: CodegenConfig = {
-  schema: './src-tauri/schema.graphql',
+  schema: './schema.graphql',
 
   generates: {
     './src-tauri/src/graphql/generated.rs': {
