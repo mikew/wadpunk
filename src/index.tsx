@@ -7,7 +7,7 @@ import { createClient, Provider as UrqlProvider } from 'urql'
 import { invokeExchange } from './tauri/tauriPluginGraphqlUrqlExchange'
 
 const client = createClient({
-  url: 'graphql', // this value is important, don't touch
+  url: 'graphql',
   exchanges: [invokeExchange],
 })
 
