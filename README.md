@@ -1,7 +1,24 @@
-# Tauri + React + Typescript
+# gzdoom-launcher
 
-This template should help get you started developing with Tauri, React and Typescript in Vite.
+A wad organizer / GZDoom launcher inspired by [Doom Launcher](https://github.com/nstlaurent/DoomLauncher)
 
-## Recommended IDE Setup
+## Development
 
-- [VS Code](https://code.visualstudio.com/) + [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) + [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
+The UI lives in `src/`, while the backend lives in `./src-tauri/src`.
+
+### Getting Started
+
+```sh
+./script/start
+```
+
+### GraphQL
+
+Communication between the UI and backend is done via GraphQL.
+
+To add new types, queries, or mutations, edit `schema.graphql` and run
+`./script/prepare-env`.
+
+After adding new Queries / Mutations, or "complex" fields, you might need to
+implement the method in `./src-tauri/src/datasource/mod.rs`. You can find a
+reference implementation in `./src-tauri/src/graphql/datasource_impl.rs`
