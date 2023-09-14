@@ -56,7 +56,7 @@ const asyncGraphqlPlugin: CodegenPlugin<AsyncGraphqlPluginOptions> = {
       hasSimpleObjects: false,
     }
 
-    const dataSource = config.dataSource || 'use crate::datasource::DataSource;'
+    const dataSource = config.dataSource || 'use super::datasource::DataSource;'
 
     const typeMap = schema.getTypeMap()
     const enumTypes: GraphQLEnumType[] = []
