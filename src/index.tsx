@@ -1,4 +1,4 @@
-import { CssVarsProvider, CssBaseline } from '@mui/joy'
+import { CssVarsProvider, CssBaseline, extendTheme } from '@mui/joy'
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App'
@@ -20,11 +20,21 @@ const client = new ApolloClient({
   // link: tauriGraphqlHttpLink,
 })
 
+const theme = extendTheme({
+  components: {
+    JoyIconButton: {
+      defaultProps: {
+        variant: 'outlined',
+      },
+    },
+  },
+})
+
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   // <UrqlProvider value={client}>
   <ApolloProvider client={client}>
     <React.StrictMode>
-      <CssVarsProvider>
+      <CssVarsProvider theme={theme} defaultMode="dark">
         <CssBaseline>
           <App />
         </CssBaseline>
