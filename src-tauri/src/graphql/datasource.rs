@@ -150,6 +150,18 @@ impl DataSource {
     _game_id: String,
     _notes: String,
   ) -> GraphQLResult<Game> {
-    todo!()
+    let db = _ctx.data::<AppHandle>().unwrap().state::<DataBase>();
+
+    if let Some(mut game) = db.find_game_by_id(_game_id) {
+      game.notes = _notes;
+
+      return Ok(game);
+    }
+
+    Err(Error {
+      message: "nope".to_string(),
+      source: None,
+      extensions: None,
+    })
   }
 }

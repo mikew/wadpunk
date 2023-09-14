@@ -31,4 +31,6 @@ type Mutation {
 
   openGamesFolder(game_id: ID): Boolean!
   openSourcePortsFolder(game_id: ID): Boolean!
+
+  updateNotes(game_id: ID!, notes: String!): Game!
 }

@@ -1,6 +1,25 @@
-import { Button, List, ListItem, ListItemContent } from '@mui/joy'
 import { gql, useLazyQuery, useMutation, useQuery } from '@apollo/client'
+import {
+  Box,
+  Button,
+  FormControl,
+  FormHelperText,
+  FormLabel,
+  IconButton,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemContent,
+  Modal,
+  ModalClose,
+  ModalDialog,
+  Textarea,
+  Typography,
+} from '@mui/joy'
+import { forwardRef, useMemo, useState } from 'react'
 import { Game, Mutation, Query } from './graphql'
+import PlayArrow from '@mui/icons-material/PlayArrow'
+import FolderOpen from '@mui/icons-material/FolderOpen'
 
 const INITIAL_QUERY = gql`
   query initialQuery {
@@ -41,6 +60,15 @@ const GET_GAME_FILES = gql`
   }
 `
 
+const UPDATE_NOTES = gql`
+  mutation updateNotes($game_id: ID!, $notes: String!) {
+    updateNotes(game_id: $game_id, notes: $notes) {
+      id
+      notes
+    }
+  }
+`
+
 function App() {
   const { data } = useQuery<Query>(INITIAL_QUERY)
 
@@ -49,6 +77,11 @@ function App() {
   const [getGameFilesMutation] = useLazyQuery<Query>(GET_GAME_FILES, {
     fetchPolicy: 'network-only',
   })
+  const [selectedId, setSelectedId] = useState<Game['id']>()
+  const selectedGame = useMemo(() => {
+    return data?.getGames.find((x) => x.id === selectedId)
+  }, [data?.getGames, selectedId])
+
   async function startGame(game: Game) {
     try {
       const getGameFilesResponse = await getGameFilesMutation({
@@ -76,12 +109,6 @@ function App() {
     }
   }
 
-  console.log({
-    data,
-    fetching,
-    stale,
-    error,
-  })
   async function openGamesFolder(game_id?: string) {
     try {
       const response = await openGamesFolderMutation({
@@ -131,9 +158,13 @@ function App() {
             >
               <ListItemButton
                 onClick={() => {
+                  setSelectedId(x.id)
                 }}
               >
-                <ListItemContent>{x.name}</ListItemContent>
+                <ListItemContent>
+                  {x.name}
+                  {x.notes}
+                </ListItemContent>
               </ListItemButton>
             </ListItem>
           )
@@ -148,8 +179,54 @@ function App() {
       >
         Open Games Folder
       </Button>
+
+      <Modal open={!!selectedGame} onClose={() => setSelectedId(undefined)}>
+        {selectedGame ? <GameDialog game={selectedGame} /> : <></>}
+      </Modal>
     </>
   )
 }
+
+const GameDialog = forwardRef<HTMLDivElement, { game: Game }>((props, ref) => {
+  const [updateNotes] = useMutation<Mutation>(UPDATE_NOTES)
+
+  return (
+    <ModalDialog
+      aria-labelledby="size-modal-title"
+      aria-describedby="size-modal-description"
+      size="sm"
+      ref={ref}
+    >
+      <ModalClose />
+
+      <Typography id="size-modal-title" level="h2">
+        {props.game.name}
+      </Typography>
+
+      <Typography id="size-modal-description">
+        {props.game.description}
+      </Typography>
+
+      <FormControl>
+        <FormLabel>Notes</FormLabel>
+        <Textarea minRows={2} value={props.game.notes} />
+        <FormHelperText>This is a helper text.</FormHelperText>
+      </FormControl>
+
+      <Button
+        onClick={() => {
+          updateNotes({
+            variables: {
+              game_id: props.game.id,
+              notes: 'updated from UI',
+            },
+          })
+        }}
+      >
+        UPDATE_NOTES
+      </Button>
+    </ModalDialog>
+  )
+})
 
 export default App

@@ -1,6 +1,6 @@
-use std::fs;
 use std::fs::create_dir_all;
 use std::vec;
+use std::{fs, sync::Mutex};
 
 use serde::{Deserialize, Serialize};
 use tauri::api::{
@@ -39,8 +39,9 @@ impl DirectoryManager {
   }
 }
 
+#[derive(Debug, Default)]
 pub struct DataBase {
-  pub games: Vec<Game>,
+  pub games: Mutex<Vec<Game>>,
 }
 
 impl DataBase {
@@ -71,6 +72,16 @@ impl DataBase {
     }
 
     games
+  }
+
+  pub fn find_game_by_id(&self, id: String) -> Option<Game> {
+    self
+      .games
+      .lock()
+      .unwrap()
+      .iter()
+      .find(|x| x.id == id)
+      .cloned()
   }
 }
 
