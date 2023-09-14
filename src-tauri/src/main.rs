@@ -2,7 +2,7 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use database::{DataBase, DirectoryManager};
+use database::DataBase;
 use graphql::datasource::DataSource;
 
 mod database;
@@ -10,8 +10,6 @@ mod graphql;
 mod tauri_commands;
 
 fn main() {
-  DirectoryManager::init_games();
-
   let schema = async_graphql::Schema::build(
     graphql::generated::Query,
     graphql::generated::Mutation,

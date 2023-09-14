@@ -164,6 +164,16 @@ impl DataSource {
       extensions: None,
     })
   }
+
+  pub async fn Mutation_initializeApp(
+    &self,
     _root: &Mutation,
     ctx: &Context<'_>,
+  ) -> GraphQLResult<bool> {
+    DirectoryManager::init_games();
+    let db = ctx.data::<AppHandle>().unwrap().state::<DataBase>();
+    db.initialize_games_cache();
+
+    Ok(true)
+  }
 }

@@ -27,6 +27,8 @@ type Query {
 }
 
 type Mutation {
+  initializeApp: Boolean!
+
   startGame(iwad: String, files: [String!], source_port: String!): Boolean!
 
   openGamesFolder(game_id: ID): Boolean!

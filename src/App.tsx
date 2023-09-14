@@ -2,6 +2,7 @@ import { gql, useLazyQuery, useMutation, useQuery } from '@apollo/client'
 import {
   Box,
   Button,
+  CircularProgress,
   FormControl,
   FormHelperText,
   FormLabel,
@@ -16,7 +17,7 @@ import {
   Textarea,
   Typography,
 } from '@mui/joy'
-import { forwardRef, useMemo, useState } from 'react'
+import { forwardRef, useEffect, useMemo, useState } from 'react'
 import { Game, Mutation, Query } from './graphql'
 import PlayArrow from '@mui/icons-material/PlayArrow'
 import FolderOpen from '@mui/icons-material/FolderOpen'
@@ -69,7 +70,37 @@ const UPDATE_NOTES = gql`
   }
 `
 
+const INITIALIZE_APP = gql`
+  mutation initializeApp {
+    initializeApp
+  }
+`
+
 function App() {
+  // TODO Can this be done with suspense? Might have to use a query to get easy
+  // suspense ...
+  const [isLoaded, setIsLoaded] = useState(false)
+  const [initializeApp] = useMutation<Mutation>(INITIALIZE_APP)
+
+  useEffect(() => {
+    async function run() {
+      await initializeApp()
+      setIsLoaded(true)
+    }
+
+    run()
+  }, [initializeApp])
+
+  return isLoaded ? (
+    <GameList />
+  ) : (
+    <>
+      <CircularProgress />
+    </>
+  )
+}
+
+const GameList: React.FC = () => {
   const { data } = useQuery<Query>(INITIAL_QUERY)
 
   const [openGamesFolderMutation] = useMutation<Mutation>(OPEN_GAMES_FOLDER)
