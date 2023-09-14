@@ -3,6 +3,7 @@ use std::process::Command;
 use std::vec;
 
 use async_graphql::Context;
+use async_graphql::Error;
 use async_graphql::Result as GraphQLResult;
 use tauri::api::dir::read_dir;
 use tauri::api::dir::DiskEntry;
@@ -82,12 +83,11 @@ impl DataSource {
     Ok(files)
   }
 
-  pub async fn Query_getGames(
-    &self,
-    _root: &Query,
-    _ctx: &Context<'_>,
-  ) -> GraphQLResult<Vec<Game>> {
-    Ok(DataBase::find_all_games())
+  pub async fn Query_getGames(&self, _root: &Query, ctx: &Context<'_>) -> GraphQLResult<Vec<Game>> {
+    let db = ctx.data::<AppHandle>().unwrap().state::<DataBase>();
+    let game_cache = db.games_cache.lock().unwrap();
+
+    Ok(game_cache.values().cloned().collect())
   }
 
   pub async fn Mutation_startGame(
@@ -152,16 +152,18 @@ impl DataSource {
   ) -> GraphQLResult<Game> {
     let db = _ctx.data::<AppHandle>().unwrap().state::<DataBase>();
 
-    if let Some(mut game) = db.find_game_by_id(_game_id) {
-      game.notes = _notes;
+    if let Some(mut game) = db.find_game_by_id(game_id) {
+      game.notes = notes;
 
       return Ok(game);
     }
 
     Err(Error {
-      message: "nope".to_string(),
+      message: "game not found".to_string(),
       source: None,
       extensions: None,
     })
   }
+    _root: &Mutation,
+    ctx: &Context<'_>,
 }

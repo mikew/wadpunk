@@ -41,7 +41,7 @@ impl DirectoryManager {
 
 #[derive(Debug, Default)]
 pub struct DataBase {
-  pub games: Mutex<Vec<Game>>,
+  pub games_cache: Mutex<HashMap<String, Game>>,
 }
 
 impl DataBase {
@@ -74,14 +74,18 @@ impl DataBase {
     games
   }
 
+  pub fn initialize_games_cache(&self) {
+    for game in Self::find_all_games() {
+      self
+        .games_cache
+        .lock()
+        .unwrap()
+        .insert(game.name.clone(), game);
+    }
+  }
+
   pub fn find_game_by_id(&self, id: String) -> Option<Game> {
-    self
-      .games
-      .lock()
-      .unwrap()
-      .iter()
-      .find(|x| x.id == id)
-      .cloned()
+    self.games_cache.lock().unwrap().get(&id).cloned()
   }
 }
 

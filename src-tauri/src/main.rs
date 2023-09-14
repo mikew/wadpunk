@@ -22,7 +22,7 @@ fn main() {
 
   tauri::Builder::default()
     .manage(DataBase {
-      games: Default::default(),
+      games_cache: Default::default(),
     })
     .plugin(tauri_plugin_graphql::init(schema))
     .run(tauri::generate_context!())
