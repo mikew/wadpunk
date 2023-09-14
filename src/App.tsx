@@ -1,6 +1,6 @@
-import { gql, useMutation, useQuery } from 'urql'
 import { Button, List, ListItem, ListItemContent } from '@mui/joy'
-import { Mutation, Query } from './graphql'
+import { gql, useLazyQuery, useMutation, useQuery } from '@apollo/client'
+import { Game, Mutation, Query } from './graphql'
 
 const INITIAL_QUERY = gql`
   query initialQuery {
@@ -42,16 +42,39 @@ const GET_GAME_FILES = gql`
 `
 
 function App() {
-  const [{ data, fetching, stale, error }] = useQuery<Query>({
-    query: INITIAL_QUERY,
-  })
+  const { data } = useQuery<Query>(INITIAL_QUERY)
 
-  const [, openGamesFolder] = useMutation<Mutation>(OPEN_GAMES_FOLDER)
-  const [, startGame] = useMutation<Mutation>(START_GAME)
-  const [, getGameFiles] = useQuery<Query>({
-    query: GET_GAME_FILES,
-    pause: true,
+  const [openGamesFolderMutation] = useMutation<Mutation>(OPEN_GAMES_FOLDER)
+  const [startGameMutation] = useMutation<Mutation>(START_GAME)
+  const [getGameFilesMutation] = useLazyQuery<Query>(GET_GAME_FILES, {
+    fetchPolicy: 'network-only',
   })
+  async function startGame(game: Game) {
+    try {
+      const getGameFilesResponse = await getGameFilesMutation({
+        variables: {
+          game_id: game.name,
+        },
+      })
+
+      const startGameResponse = await startGameMutation({
+        variables: {
+          source_port:
+            '/Users/mike/Downloads/gzdoom-4-10-0-macOS/GZDoom.app/Contents/MacOS/gzdoom',
+          iwad: '/Users/mike/Downloads/DOOM2.WAD',
+          files: [
+            '/Users/mike/Documents/GZDoom Launcher/Games/GoldenSouls2_1.4/GoldenSouls2_1.4.pk3',
+          ],
+        },
+      })
+
+      if (!startGameResponse.data?.startGame) {
+        throw new Error('startGame returned false')
+      }
+    } catch (err) {
+      console.error(err)
+    }
+  }
 
   console.log({
     data,
@@ -59,76 +82,69 @@ function App() {
     stale,
     error,
   })
+  async function openGamesFolder(game_id?: string) {
+    try {
+      const response = await openGamesFolderMutation({
+        variables: {
+          game_id,
+        },
+      })
+
+      if (!response.data?.openGamesFolder) {
+        throw new Error('openGamesFolder returned false')
+      }
+    } catch (err) {
+      console.error(err)
+    }
+  }
 
   return (
     <>
       <List>
         {data?.getGames?.map((x) => {
           return (
-            <ListItem key={x.id}>
-              <ListItemContent>
-                {x.name}
+            <ListItem
+              key={x.id}
+              endAction={
+                <Box sx={{ display: 'flex', gap: 1 }}>
+                  <IconButton
+                    onClick={() => {
+                      startGame(x)
+                    }}
+                    size="sm"
+                    color="neutral"
+                  >
+                    <PlayArrow />
+                  </IconButton>
 
-                <Button
-                  onClick={async () => {
-                    try {
-                      const getGameFilesResponse = await getGameFiles({
-                        id: x.name,
-                      })
-
-                      console.log(getGameFilesResponse.data)
-                      // const startGameResponse = await startGame({
-                      //   source_port: 'lol',
-                      // })
-
-                      // if (!startGameResponse.data?.startGame) {
-                      //   throw new Error('startGame returned false')
-                      // }
-                    } catch (err) {
-                      console.error(err)
-                    }
-                  }}
-                  size="sm"
-                  variant="soft"
-                  color="neutral"
-                >
-                  Play
-                </Button>
-
-                <Button
-                  onClick={async () => {
-                    try {
-                      const response = await openGamesFolder({
-                        game_id: x.name,
-                      })
-
-                      if (!response.data?.openGamesFolder) {
-                        throw new Error('openGamesFolder returned false')
-                      }
-                    } catch (err) {
-                      console.error(err)
-                    }
-                  }}
-                  size="sm"
-                  variant="soft"
-                  color="neutral"
-                >
-                  Open Games Folder
-                </Button>
-              </ListItemContent>
+                  <IconButton
+                    onClick={() => {
+                      openGamesFolder(x.id)
+                    }}
+                    size="sm"
+                    color="neutral"
+                  >
+                    <FolderOpen />
+                  </IconButton>
+                </Box>
+              }
+            >
+              <ListItemButton
+                onClick={() => {
+                }}
+              >
+                <ListItemContent>{x.name}</ListItemContent>
+              </ListItemButton>
             </ListItem>
           )
         })}
       </List>
 
       <Button
-        onClick={async () => {
-          try {
-            const response = await openGamesFolder()
-          } catch (err) {
-            console.error(err)
-          }
+        onClick={() => {
+          openGamesFolder()
         }}
+        startDecorator={<FolderOpen />}
       >
         Open Games Folder
       </Button>
