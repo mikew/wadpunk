@@ -94,7 +94,7 @@ impl DataSource {
     &self,
     _root: &Mutation,
     _ctx: &Context<'_>,
-    _files: Option<Vec<String>>,
+    files: Option<Vec<String>>,
     iwad: Option<String>,
     source_port: String,
   ) -> GraphQLResult<bool> {
@@ -104,7 +104,7 @@ impl DataSource {
       command.args(["-iwad", &valid_iwad]);
     }
 
-    if let Some(valid_files) = _files {
+    if let Some(valid_files) = files {
       for valid_file in valid_files {
         command.args(["-file", &valid_file]);
       }
@@ -146,11 +146,11 @@ impl DataSource {
   pub async fn Mutation_updateNotes(
     &self,
     _root: &Mutation,
-    _ctx: &Context<'_>,
-    _game_id: String,
-    _notes: String,
+    ctx: &Context<'_>,
+    game_id: String,
+    notes: String,
   ) -> GraphQLResult<Game> {
-    let db = _ctx.data::<AppHandle>().unwrap().state::<DataBase>();
+    let db = ctx.data::<AppHandle>().unwrap().state::<DataBase>();
 
     if let Some(mut game) = db.find_game_by_id(game_id) {
       game.notes = notes;
