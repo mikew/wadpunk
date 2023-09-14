@@ -22,11 +22,17 @@ type AppSettings {
 type Query {
   getGames: [Game!]!
   getAppSettings: AppSettings!
+
+  getGameFiles(game_id: ID!): [String!]!
 }
 
 type Mutation {
-  startGame(iwad: String, files: [String!]): Boolean!
+  initializeApp: Boolean!
+
+  startGame(iwad: String, files: [String!], source_port: String!): Boolean!
 
   openGamesFolder(game_id: ID): Boolean!
   openSourcePortsFolder(game_id: ID): Boolean!
+
+  updateNotes(game_id: ID!, notes: String!): Game!
 }

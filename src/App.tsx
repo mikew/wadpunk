@@ -1,9 +1,29 @@
-import { gql, useMutation, useQuery } from 'urql'
-import { Button, List, ListItem, ListItemContent } from '@mui/joy'
-import { Mutation, Query } from './graphql'
+import { gql, useLazyQuery, useMutation, useQuery } from '@apollo/client'
+import {
+  Box,
+  Button,
+  CircularProgress,
+  FormControl,
+  FormHelperText,
+  FormLabel,
+  IconButton,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemContent,
+  Modal,
+  ModalClose,
+  ModalDialog,
+  Textarea,
+  Typography,
+} from '@mui/joy'
+import { forwardRef, useEffect, useMemo, useState } from 'react'
+import { Game, Mutation, Query } from './graphql'
+import PlayArrow from '@mui/icons-material/PlayArrow'
+import FolderOpen from '@mui/icons-material/FolderOpen'
 
-const query = gql`
-  query demoQuery {
+const INITIAL_QUERY = gql`
+  query initialQuery {
     getGames {
       id
       name
@@ -29,66 +49,215 @@ const OPEN_GAMES_FOLDER = gql`
   }
 `
 
+const START_GAME = gql`
+  mutation startGame($iwad: String, $files: [String!], $source_port: String!) {
+    startGame(iwad: $iwad, files: $files, source_port: $source_port)
+  }
+`
+
+const GET_GAME_FILES = gql`
+  query getGameFiles($game_id: ID!) {
+    getGameFiles(game_id: $game_id)
+  }
+`
+
+const UPDATE_NOTES = gql`
+  mutation updateNotes($game_id: ID!, $notes: String!) {
+    updateNotes(game_id: $game_id, notes: $notes) {
+      id
+      notes
+    }
+  }
+`
+
+const INITIALIZE_APP = gql`
+  mutation initializeApp {
+    initializeApp
+  }
+`
+
 function App() {
-  const [{ data, fetching, stale, error }] = useQuery<Query>({
-    query,
-  })
+  // TODO Can this be done with suspense? Might have to use a query to get easy
+  // suspense ...
+  const [isLoaded, setIsLoaded] = useState(false)
+  const [initializeApp] = useMutation<Mutation>(INITIALIZE_APP)
 
-  const [_, openGamesFolder] = useMutation<Mutation>(OPEN_GAMES_FOLDER)
+  useEffect(() => {
+    async function run() {
+      await initializeApp()
+      setIsLoaded(true)
+    }
 
-  console.log({
-    data,
-    fetching,
-    stale,
-    error,
+    run()
+  }, [initializeApp])
+
+  return isLoaded ? (
+    <GameList />
+  ) : (
+    <>
+      <CircularProgress />
+    </>
+  )
+}
+
+const GameList: React.FC = () => {
+  const { data } = useQuery<Query>(INITIAL_QUERY)
+
+  const [openGamesFolderMutation] = useMutation<Mutation>(OPEN_GAMES_FOLDER)
+  const [startGameMutation] = useMutation<Mutation>(START_GAME)
+  const [getGameFilesMutation] = useLazyQuery<Query>(GET_GAME_FILES, {
+    fetchPolicy: 'network-only',
   })
+  const [selectedId, setSelectedId] = useState<Game['id']>()
+  const selectedGame = useMemo(() => {
+    return data?.getGames.find((x) => x.id === selectedId)
+  }, [data?.getGames, selectedId])
+
+  async function startGame(game: Game) {
+    try {
+      const getGameFilesResponse = await getGameFilesMutation({
+        variables: {
+          game_id: game.name,
+        },
+      })
+
+      const startGameResponse = await startGameMutation({
+        variables: {
+          source_port:
+            '/Users/mike/Downloads/gzdoom-4-10-0-macOS/GZDoom.app/Contents/MacOS/gzdoom',
+          iwad: '/Users/mike/Downloads/DOOM2.WAD',
+          files: [
+            '/Users/mike/Documents/GZDoom Launcher/Games/GoldenSouls2_1.4/GoldenSouls2_1.4.pk3',
+          ],
+        },
+      })
+
+      if (!startGameResponse.data?.startGame) {
+        throw new Error('startGame returned false')
+      }
+    } catch (err) {
+      console.error(err)
+    }
+  }
+
+  async function openGamesFolder(game_id?: string) {
+    try {
+      const response = await openGamesFolderMutation({
+        variables: {
+          game_id,
+        },
+      })
+
+      if (!response.data?.openGamesFolder) {
+        throw new Error('openGamesFolder returned false')
+      }
+    } catch (err) {
+      console.error(err)
+    }
+  }
 
   return (
     <>
       <List>
         {data?.getGames?.map((x) => {
           return (
-            <ListItem key={x.id}>
-              <ListItemContent>
-                {x.name}
+            <ListItem
+              key={x.id}
+              endAction={
+                <Box sx={{ display: 'flex', gap: 1 }}>
+                  <IconButton
+                    onClick={() => {
+                      startGame(x)
+                    }}
+                    size="sm"
+                    color="neutral"
+                  >
+                    <PlayArrow />
+                  </IconButton>
 
-                <Button
-                  onClick={async () => {
-                    try {
-                      const response = await openGamesFolder({
-                        game_id: x.name,
-                      })
-                      console.log(response)
-                    } catch (err) {
-                      console.error(err)
-                    }
-                  }}
-                  size="sm"
-                  variant="soft"
-                  color="neutral"
-                >
-                  Open Games Folder
-                </Button>
-              </ListItemContent>
+                  <IconButton
+                    onClick={() => {
+                      openGamesFolder(x.id)
+                    }}
+                    size="sm"
+                    color="neutral"
+                  >
+                    <FolderOpen />
+                  </IconButton>
+                </Box>
+              }
+            >
+              <ListItemButton
+                onClick={() => {
+                  setSelectedId(x.id)
+                }}
+              >
+                <ListItemContent>
+                  {x.name}
+                  {x.notes}
+                </ListItemContent>
+              </ListItemButton>
             </ListItem>
           )
         })}
       </List>
 
       <Button
-        onClick={async () => {
-          try {
-            const response = await openGamesFolder()
-            console.log(response)
-          } catch (err) {
-            console.error(err)
-          }
+        onClick={() => {
+          openGamesFolder()
         }}
+        startDecorator={<FolderOpen />}
       >
         Open Games Folder
       </Button>
+
+      <Modal open={!!selectedGame} onClose={() => setSelectedId(undefined)}>
+        {selectedGame ? <GameDialog game={selectedGame} /> : <></>}
+      </Modal>
     </>
   )
 }
+
+const GameDialog = forwardRef<HTMLDivElement, { game: Game }>((props, ref) => {
+  const [updateNotes] = useMutation<Mutation>(UPDATE_NOTES)
+
+  return (
+    <ModalDialog
+      aria-labelledby="size-modal-title"
+      aria-describedby="size-modal-description"
+      size="sm"
+      ref={ref}
+    >
+      <ModalClose />
+
+      <Typography id="size-modal-title" level="h2">
+        {props.game.name}
+      </Typography>
+
+      <Typography id="size-modal-description">
+        {props.game.description}
+      </Typography>
+
+      <FormControl>
+        <FormLabel>Notes</FormLabel>
+        <Textarea minRows={2} value={props.game.notes} />
+        <FormHelperText>This is a helper text.</FormHelperText>
+      </FormControl>
+
+      <Button
+        onClick={() => {
+          updateNotes({
+            variables: {
+              game_id: props.game.id,
+              notes: 'updated from UI',
+            },
+          })
+        }}
+      >
+        UPDATE_NOTES
+      </Button>
+    </ModalDialog>
+  )
+})
 
 export default App

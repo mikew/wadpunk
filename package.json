@@ -9,6 +9,7 @@
     "tauri": "tauri"
   },
   "dependencies": {
+    "@apollo/client": "^3.8.3",
     "@tauri-apps/api": "^1.4.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -21,6 +22,7 @@
     "@graphql-codegen/introspection": "^4.0.0",
     "@graphql-codegen/typescript": "^4.0.1",
     "@graphql-codegen/typescript-operations": "^4.0.1",
+    "@mui/icons-material": "^5.14.8",
     "@mui/joy": "5.0.0-beta.1",
     "@promoboxx/react-scripts-vite": "^0.1.28",
     "@tauri-apps/cli": "^1.4.0",

@@ -2,15 +2,14 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use crate::datasource::DataSource;
+use database::DataBase;
+use graphql::datasource::DataSource;
 
-mod datasource;
+mod database;
 mod graphql;
 mod tauri_commands;
 
 fn main() {
-  DataSource::init_games();
-
   let schema = async_graphql::Schema::build(
     graphql::generated::Query,
     graphql::generated::Mutation,
@@ -20,6 +19,9 @@ fn main() {
   .finish();
 
   tauri::Builder::default()
+    .manage(DataBase {
+      games_cache: Default::default(),
+    })
     .plugin(tauri_plugin_graphql::init(schema))
     .run(tauri::generate_context!())
     .expect("error while running tauri application");
