@@ -3,7 +3,7 @@ set -ex
 
 ./script/prepare-env
 
-npx --yes concurrently \
-  'npx --yes nodemon --watch ./schema.graphql --exec ./node_modules/.bin/graphql-codegen' \
+./node_modules/.bin/concurrently \
+  './node_modules/.bin/nodemon --exec ./node_modules/.bin/graphql-codegen "./src/**/*.graphql"' \
   './node_modules/.bin/react-scripts-vite start' \
   './node_modules/.bin/tauri dev'

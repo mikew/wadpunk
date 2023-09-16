@@ -12,14 +12,15 @@
     "@apollo/client": "^3.8.3",
     "@tauri-apps/api": "^1.4.0",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "urql": "^4.0.4"
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@graphql-codegen/cli": "^5.0.0",
+    "@graphql-codegen/import-types-preset": "^2.2.6",
     "@graphql-codegen/introspection": "^4.0.0",
+    "@graphql-codegen/typed-document-node": "^5.0.1",
     "@graphql-codegen/typescript": "^4.0.1",
     "@graphql-codegen/typescript-operations": "^4.0.1",
     "@mui/icons-material": "^5.14.8",
@@ -29,13 +30,14 @@
     "@types/node": "^18.7.10",
     "@types/react": "^18.0.15",
     "@types/react-dom": "^18.0.6",
+    "concurrently": "^8.2.1",
+    "nodemon": "^3.0.1",
     "typescript": "^4.9.5"
   },
   "peerDependencies": {
     "@graphql-codegen/plugin-helpers": "x",
-    "@urql/core": "x",
+    "@graphql-typed-document-node/core": "x",
     "graphql": "x",
-    "vite": "x",
-    "wonka": "x"
+    "vite": "x"
   }
 }
