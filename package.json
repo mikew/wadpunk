@@ -12,8 +12,7 @@
     "@apollo/client": "^3.8.3",
     "@tauri-apps/api": "^1.4.0",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "urql": "^4.0.4"
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
     "@emotion/react": "^11.11.1",
@@ -38,9 +37,7 @@
   "peerDependencies": {
     "@graphql-codegen/plugin-helpers": "x",
     "@graphql-typed-document-node/core": "x",
-    "@urql/core": "x",
     "graphql": "x",
-    "vite": "x",
-    "wonka": "x"
+    "vite": "x"
   }
 }
