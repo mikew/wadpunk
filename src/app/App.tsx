@@ -1,8 +1,8 @@
 import { useMutation } from '@apollo/client'
 import { CircularProgress } from '@mui/joy'
+import GameList from '@src/games/GameList'
+import { InitializeAppDocument } from '@src/graphql/operations'
 import { useEffect, useState } from 'react'
-import { InitializeAppDocument } from './graphql/operations'
-import GameList from './games/GameList'
 
 function App() {
   // TODO Can this be done with suspense? Might have to use a query to get easy
