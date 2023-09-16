@@ -1,4 +1,4 @@
-import { ApolloLink, FetchResult, fromPromise } from '@apollo/client'
+import { ApolloLink, fromPromise } from '@apollo/client'
 import { invoke } from '@tauri-apps/api/tauri'
 import { GraphQLError, print } from 'graphql'
 
@@ -17,6 +17,8 @@ const tauriGraphqlApolloLink = new ApolloLink((operation) => {
         }
       })
       .catch((err) => {
+        console.error(err)
+
         return {
           errors: [new GraphQLError(String(err))],
           context: operation.getContext(),
