@@ -1,0 +1,33 @@
+query getGameListQuery {
+  getGames {
+    id
+    name
+    description
+    notes
+    tags
+    rating
+
+    play_sessions {
+      duration
+    }
+  }
+}
+
+query getGameFiles($game_id: ID!) {
+  getGameFiles(game_id: $game_id)
+}
+
+mutation openGamesFolder($game_id: ID) {
+  openGamesFolder(game_id: $game_id)
+}
+
+mutation startGame($iwad: String, $files: [String!], $source_port: String!) {
+  startGame(iwad: $iwad, files: $files, source_port: $source_port)
+}
+
+mutation updateNotes($game_id: ID!, $notes: String!) {
+  updateNotes(game_id: $game_id, notes: $notes) {
+    id
+    notes
+  }
+}

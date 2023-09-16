@@ -19,16 +19,41 @@ import { spawnSync } from 'child_process'
 
 const config: CodegenConfig = {
   schema: './schema.graphql',
+  documents: './src/**/*.graphql',
 
   generates: {
+    // Generate rust sever code.
     './src-tauri/src/graphql/generated.rs': {
       plugins: ['async-graphql'],
     },
-    './src/graphql.d.ts': {
-      plugins: ['typescript', 'typescript-operations'],
-    },
+
+    // For linting / intellisense.
     'graphql-schema.json': {
       plugins: ['introspection'],
+    },
+
+    // Pure TypeScript types.
+    './src/graphql/types.d.ts': {
+      plugins: ['typescript'],
+      config: {
+        useTypeImports: true,
+        enumsAsTypes: true,
+      },
+    },
+
+    // Pre-parsed Documents, variables, and return types for client-side
+    // operations.
+    './src/graphql/operations.ts': {
+      plugins: ['typescript-operations', 'typed-document-node'],
+      config: {
+        useTypeImports: true,
+        enumsAsTypes: true,
+      },
+
+      preset: 'import-types',
+      presetConfig: {
+        typesPath: '@src/graphql/types',
+      },
     },
   },
 

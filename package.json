@@ -19,7 +19,9 @@
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@graphql-codegen/cli": "^5.0.0",
+    "@graphql-codegen/import-types-preset": "^2.2.6",
     "@graphql-codegen/introspection": "^4.0.0",
+    "@graphql-codegen/typed-document-node": "^5.0.1",
     "@graphql-codegen/typescript": "^4.0.1",
     "@graphql-codegen/typescript-operations": "^4.0.1",
     "@mui/icons-material": "^5.14.8",
@@ -33,6 +35,7 @@
   },
   "peerDependencies": {
     "@graphql-codegen/plugin-helpers": "x",
+    "@graphql-typed-document-node/core": "x",
     "@urql/core": "x",
     "graphql": "x",
     "vite": "x",
