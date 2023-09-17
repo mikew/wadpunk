@@ -3,4 +3,5 @@ set -ex
 
 pnpm install
 
-./node_modules/.bin/graphql-codegen
+GRAPHQL_CODEGEN_MODE=server ./node_modules/.bin/graphql-codegen
+GRAPHQL_CODEGEN_MODE=client ./node_modules/.bin/graphql-codegen

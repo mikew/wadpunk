@@ -13,21 +13,48 @@ query getGameListQuery {
   }
 }
 
-query getGameFiles($game_id: ID!) {
-  getGameFiles(game_id: $game_id)
+query getGameFiles($game_ids: [ID!]!) {
+  getGameFiles(game_ids: $game_ids) {
+    absolute
+    relative
+  }
 }
 
 mutation openGamesFolder($game_id: ID) {
   openGamesFolder(game_id: $game_id)
 }
 
-mutation startGame($iwad: String, $files: [String!], $source_port: String!) {
-  startGame(iwad: $iwad, files: $files, source_port: $source_port)
+mutation startGame(
+  $game_id: ID!
+  $iwad: String
+  $files: [String!]
+  $source_port: String!
+) {
+  startGame(
+    game_id: $game_id
+    iwad: $iwad
+    files: $files
+    source_port: $source_port
+  )
 }
 
 mutation updateNotes($game_id: ID!, $notes: String!) {
   updateNotes(game_id: $game_id, notes: $notes) {
     id
     notes
+  }
+}
+
+mutation setRating($game_id: ID!, $rating: Int!) {
+  updateRating(game_id: $game_id, rating: $rating) {
+    id
+    rating
+  }
+}
+
+mutation setTags($game_id: ID!, $tags: [String!]!) {
+  updateTags(game_id: $game_id, tags: $tags) {
+    id
+    tags
   }
 }

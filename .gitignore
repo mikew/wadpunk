@@ -30,3 +30,4 @@ dist-ssr
 /src/graphql/types.d.ts
 /src/graphql/operations.ts
 /graphql-schema.json
+*.rs.temp

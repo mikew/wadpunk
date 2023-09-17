@@ -1,30 +1,38 @@
-import { useMutation } from '@apollo/client'
+import { FetchResult, useMutation } from '@apollo/client'
 import { CircularProgress } from '@mui/joy'
+import { PropsWithChildren, Suspense, useEffect, useState } from 'react'
+
 import GameList from '@src/games/GameList'
-import { InitializeAppDocument } from '@src/graphql/operations'
-import { useEffect, useState } from 'react'
+import {
+  InitializeAppDocument,
+  InitializeAppMutation,
+} from '@src/graphql/operations'
+import {
+  SuspenseWrappedPromise,
+  wrapPromiseForSuspense,
+} from '@src/lib/wrapPromiseForSuspense'
 
 function App() {
-  // TODO Can this be done with suspense? Might have to use a query to get easy
-  // suspense ...
-  const [isLoaded, setIsLoaded] = useState(false)
+  return (
+    <Suspense fallback={<CircularProgress />}>
+      <Initializer>
+        <GameList />
+      </Initializer>
+    </Suspense>
+  )
+}
+
+function Initializer(props: PropsWithChildren<{}>) {
   const [initializeApp] = useMutation(InitializeAppDocument)
+  const [wrappedPromise, setWrappedPromise] =
+    useState<SuspenseWrappedPromise<FetchResult<InitializeAppMutation>>>()
 
   useEffect(() => {
-    async function run() {
-      await initializeApp()
-      setIsLoaded(true)
-    }
-
-    run()
+    setWrappedPromise(wrapPromiseForSuspense(initializeApp()))
   }, [initializeApp])
 
-  return isLoaded ? (
-    <GameList />
-  ) : (
-    <>
-      <CircularProgress />
-    </>
+  return (
+    <>{wrappedPromise?.read()?.status === 'success' ? props.children : null}</>
   )
 }
 

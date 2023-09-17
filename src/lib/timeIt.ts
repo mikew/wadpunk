@@ -4,7 +4,7 @@ function timeIt(name: string) {
   function stop() {
     const endTime = performance.now()
 
-    console.log(`${name} took ${endTime - time}ms`)
+    console.info(`${name} took ${endTime - time}ms`)
   }
 
   return stop

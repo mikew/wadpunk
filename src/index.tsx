@@ -1,8 +1,9 @@
+import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client'
 import { CssVarsProvider, CssBaseline, extendTheme } from '@mui/joy'
 import React from 'react'
 import ReactDOM from 'react-dom/client'
+
 import App from './app/App'
-import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client'
 import tauriGraphqlApolloLink from './tauri/tauriGraphqlApolloLink'
 // import tauriGraphqlHttpLink from './tauri/tauriGraphqlHttpLink'
 

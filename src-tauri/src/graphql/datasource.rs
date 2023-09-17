@@ -1,12 +1,11 @@
 use std::fs;
+use std::path::Path;
 use std::process::Command;
 use std::vec;
 
 use async_graphql::Context;
 use async_graphql::Error;
 use async_graphql::Result as GraphQLResult;
-use tauri::api::dir::read_dir;
-use tauri::api::dir::DiskEntry;
 use tauri::api::shell::open;
 use tauri::AppHandle;
 use tauri::Manager;
@@ -17,6 +16,7 @@ use crate::database::PlaySessionJson;
 
 use super::generated::AppSettings;
 use super::generated::Game;
+use super::generated::GameFileEntry;
 use super::generated::Mutation;
 use super::generated::PlaySession;
 use super::generated::Query;
@@ -37,10 +37,9 @@ impl DataSource {
     let json_contents = fs::read_to_string(meta_path).unwrap_or("{}".to_string());
     let play_session_meta = serde_json::from_str::<PlaySessionJson>(&json_contents).unwrap();
 
-    if play_session_meta.sessions.is_some() {
-      let sessions = play_session_meta.sessions.unwrap();
+    if let Some(play_sessions) = play_session_meta.sessions {
       // TODO Implement ...
-      println!("{:?} {:?}", root.name, sessions);
+      println!("{:?} {:?}", root.name, play_sessions);
     }
 
     Ok(play_sessions)
@@ -60,27 +59,27 @@ impl DataSource {
     &self,
     _root: &Query,
     _ctx: &Context<'_>,
-    _game_id: String,
-  ) -> GraphQLResult<Vec<String>> {
-    let mut files: Vec<String> = vec![];
-    let files_in_game_folder =
-      read_dir(DirectoryManager::get_games_directory().join(_game_id), true).unwrap();
+    game_ids: Vec<String>,
+  ) -> GraphQLResult<Vec<GameFileEntry>> {
+    let mut game_file_entries: Vec<GameFileEntry> = vec![];
 
-    fn recurse_disk_entry(dir: DiskEntry, files: &mut Vec<String>) {
-      if let Some(children) = dir.children {
-        for d in children {
-          recurse_disk_entry(d, files);
-        }
-      } else {
-        files.push(dir.path.to_str().unwrap().to_string());
+    for game_id in game_ids {
+      let game_files = DataBase::find_all_game_files(game_id);
+
+      for game_file in game_files {
+        game_file_entries.push(GameFileEntry {
+          absolute: game_file.clone(),
+          relative: Path::new(&game_file)
+            .strip_prefix(DirectoryManager::get_games_directory())
+            .unwrap()
+            .to_str()
+            .unwrap()
+            .to_string(),
+        })
       }
     }
 
-    for file_disk_entry in files_in_game_folder {
-      recurse_disk_entry(file_disk_entry, &mut files);
-    }
-
-    Ok(files)
+    Ok(game_file_entries)
   }
 
   pub async fn Query_getGames(&self, _root: &Query, ctx: &Context<'_>) -> GraphQLResult<Vec<Game>> {
@@ -95,6 +94,7 @@ impl DataSource {
     _root: &Mutation,
     _ctx: &Context<'_>,
     files: Option<Vec<String>>,
+    game_id: String,
     iwad: Option<String>,
     source_port: String,
   ) -> GraphQLResult<bool> {
@@ -109,6 +109,15 @@ impl DataSource {
         command.args(["-file", &valid_file]);
       }
     }
+
+    command.args([
+      "-savedir",
+      DirectoryManager::get_meta_directory()
+        .join(DataBase::normalize_name_from_id(game_id))
+        .join("saves")
+        .to_str()
+        .unwrap(),
+    ]);
 
     let exit_status = command.status().unwrap();
 
@@ -125,8 +134,8 @@ impl DataSource {
 
     let mut path_to_open = DirectoryManager::get_games_directory();
 
-    if game_id.is_some() {
-      path_to_open.push(game_id.unwrap());
+    if let Some(game_id) = game_id {
+      path_to_open.push(game_id);
     }
 
     open(&app.shell_scope(), path_to_open.to_str().unwrap(), None).unwrap();
@@ -152,14 +161,64 @@ impl DataSource {
   ) -> GraphQLResult<Game> {
     let db = ctx.data::<AppHandle>().unwrap().state::<DataBase>();
 
-    if let Some(mut game) = db.find_game_by_id(game_id) {
+    if let Some(mut game) = db.find_game_by_id(game_id.clone(), true) {
       game.notes = notes;
+
+      DataBase::save_game(game.clone());
 
       return Ok(game);
     }
 
     Err(Error {
-      message: "game not found".to_string(),
+      message: format!("game {} not found", game_id),
+      source: None,
+      extensions: None,
+    })
+  }
+
+  pub async fn Mutation_updateRating(
+    &self,
+    _root: &Mutation,
+    ctx: &Context<'_>,
+    game_id: String,
+    rating: i32,
+  ) -> GraphQLResult<Game> {
+    let db = ctx.data::<AppHandle>().unwrap().state::<DataBase>();
+
+    if let Some(mut game) = db.find_game_by_id(game_id.clone(), true) {
+      game.rating = rating;
+
+      DataBase::save_game(game.clone());
+
+      return Ok(game);
+    }
+
+    Err(Error {
+      message: format!("game {} not found", game_id),
+      source: None,
+      extensions: None,
+    })
+  }
+
+  pub async fn Mutation_updateTags(
+    &self,
+    _root: &Mutation,
+    ctx: &Context<'_>,
+    game_id: String,
+    tags: Vec<String>,
+  ) -> GraphQLResult<Game> {
+    let db = ctx.data::<AppHandle>().unwrap().state::<DataBase>();
+
+    if let Some(mut game) = db.find_game_by_id(game_id.clone(), true) {
+      game.tags = tags;
+
+      DataBase::save_game(game.clone());
+
+      return Ok(game);
+    }
+
+    Err(Error {
+      message: format!("game {} not found", game_id),
       source: None,
       extensions: None,
     })

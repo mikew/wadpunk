@@ -19,20 +19,32 @@ type AppSettings {
   dataDirectory: String!
 }
 
+type GameFileEntry {
+  relative: String!
+  absolute: String!
+}
+
 type Query {
   getGames: [Game!]!
   getAppSettings: AppSettings!
 
-  getGameFiles(game_id: ID!): [String!]!
+  getGameFiles(game_ids: [ID!]!): [GameFileEntry!]!
 }
 
 type Mutation {
   initializeApp: Boolean!
 
-  startGame(iwad: String, files: [String!], source_port: String!): Boolean!
+  startGame(
+    game_id: ID!
+    iwad: String
+    files: [String!]
+    source_port: String!
+  ): Boolean!
 
   openGamesFolder(game_id: ID): Boolean!
   openSourcePortsFolder(game_id: ID): Boolean!
 
   updateNotes(game_id: ID!, notes: String!): Game!
+  updateRating(game_id: ID!, rating: Int!): Game!
+  updateTags(game_id: ID!, tags: [String!]!): Game!
 }
