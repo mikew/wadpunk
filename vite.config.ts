@@ -1,8 +1,13 @@
 import { defineConfig } from 'vite'
 import { viteConfig, pluginOptions } from '@promoboxx/react-scripts-vite'
 
-pluginOptions.checker = false
 pluginOptions.pwa = false
+pluginOptions.checker = {
+  ...pluginOptions.checker,
+  overlay: {
+    initialIsOpen: false,
+  },
+}
 
 export default defineConfig(async (env) => {
   const config = await viteConfig(env)
