@@ -4,6 +4,7 @@ use std::vec;
 use std::{fs, sync::Mutex};
 
 use serde::{Deserialize, Serialize};
+use tauri::api::dir::DiskEntry;
 use tauri::api::{
   dir::read_dir,
   path::{document_dir, home_dir},
@@ -51,28 +52,39 @@ impl DataBase {
     let paths = read_dir(DirectoryManager::get_games_directory(), false).unwrap();
 
     for game_disk_entry in paths {
-      if game_disk_entry.children.is_some() {
-        let name = game_disk_entry.name.unwrap();
+      let name = game_disk_entry.name.unwrap();
 
-        let json_meta_path = DirectoryManager::get_meta_directory()
-          .join(name.clone())
-          .join("meta.json");
-
-        let json_contents = fs::read_to_string(json_meta_path).unwrap_or("{}".to_string());
-        let game_meta: GameMetaJson = serde_json::from_str::<GameMetaJson>(&json_contents).unwrap();
-
-        games.push(Game {
-          id: name.clone(),
-          description: "".to_string(),
-          name: name.clone(),
-          notes: game_meta.notes.unwrap_or_default(),
-          rating: game_meta.rating.unwrap_or_default(),
-          tags: game_meta.tags.unwrap_or_default(),
-        })
+      if name.clone().starts_with(".") {
+        continue;
       }
+
+      let game_meta = Self::load_game_meta(name.clone());
+
+      games.push(Game {
+        id: if game_disk_entry.children.is_some() {
+          format!("{}/", name.clone())
+        } else {
+          name.clone()
+        },
+        description: game_meta.description.unwrap_or_default(),
+        name: name.clone(),
+        notes: game_meta.notes.unwrap_or_default(),
+        rating: game_meta.rating.unwrap_or_default(),
+        tags: game_meta.tags.unwrap_or_default(),
+      })
     }
 
     games
+  }
+
+  pub fn load_game_meta(game_id: String) -> GameMetaJson {
+    let json_meta_path = DirectoryManager::get_meta_directory()
+      .join(game_id)
+      .join("meta.json");
+
+    let json_contents = fs::read_to_string(json_meta_path).unwrap_or("{}".to_string());
+
+    serde_json::from_str::<GameMetaJson>(&json_contents).unwrap()
   }
 
   pub fn initialize_games_cache(&self) {
@@ -81,7 +93,7 @@ impl DataBase {
         .games_cache
         .lock()
         .unwrap()
-        .insert(game.name.clone(), game);
+        .insert(game.id.clone(), game);
     }
   }
 
@@ -93,6 +105,7 @@ impl DataBase {
 #[derive(Serialize, Deserialize, Debug)]
 pub struct GameMetaJson {
   pub rating: Option<i32>,
+  pub description: Option<String>,
   pub notes: Option<String>,
   pub tags: Option<Vec<String>>,
 }
@@ -106,4 +119,14 @@ pub struct PlaySessionJson {
 pub struct PlaySessionEntry {
   pub started_at: Option<String>,
   pub ended_at: Option<String>,
+}
+
+fn recurse_disk_entry(dir: DiskEntry, files: &mut Vec<String>) {
+  if let Some(children) = dir.children {
+    for d in children {
+      recurse_disk_entry(d, files);
+    }
+  } else {
+    files.push(dir.path.to_str().unwrap().to_string());
+  }
 }
