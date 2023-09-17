@@ -1,5 +1,7 @@
 import { FetchResult, useMutation } from '@apollo/client'
 import { CircularProgress } from '@mui/joy'
+import { PropsWithChildren, Suspense, useEffect, useState } from 'react'
+
 import GameList from '@src/games/GameList'
 import {
   InitializeAppDocument,
@@ -9,7 +11,6 @@ import {
   SuspenseWrappedPromise,
   wrapPromiseForSuspense,
 } from '@src/lib/wrapPromiseForSuspense'
-import { PropsWithChildren, Suspense, useEffect, useState } from 'react'
 
 function App() {
   return (

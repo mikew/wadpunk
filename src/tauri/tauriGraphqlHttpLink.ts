@@ -8,7 +8,6 @@ const tauriGraphqlHttpLink = createHttpLink({
       JSON.parse(String(init?.body)),
     )
 
-    console.log(init?.signal)
     init?.signal?.throwIfAborted()
 
     return new Response(responseStr, {

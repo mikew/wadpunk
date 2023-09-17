@@ -11,6 +11,8 @@ import {
   ListItemContent,
   Modal,
 } from '@mui/joy'
+import { useMemo, useState } from 'react'
+
 import {
   GetGameFilesDocument,
   GetGameListQueryDocument,
@@ -18,7 +20,7 @@ import {
   OpenGamesFolderDocument,
   StartGameDocument,
 } from '@src/graphql/operations'
-import { useMemo, useState } from 'react'
+
 import GameDialog from './GameDialog'
 
 type ArrayItemType<T> = T extends Array<infer A> ? A : never
