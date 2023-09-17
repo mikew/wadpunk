@@ -12,7 +12,14 @@ const TextareaField: React.FC<TextareaFieldProps> = ({
   meta,
   ...rest
 }) => {
-  return <Textarea {...input} {...rest} error={meta.touched && meta.error} />
+  return (
+    <Textarea
+      {...input}
+      {...rest}
+      error={meta.touched && meta.error}
+      disabled={meta.submitting}
+    />
+  )
 }
 
 export default TextareaField
