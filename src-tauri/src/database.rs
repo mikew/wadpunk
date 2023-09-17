@@ -87,6 +87,29 @@ impl DataBase {
     serde_json::from_str::<GameMetaJson>(&json_contents).unwrap()
   }
 
+  pub fn find_all_game_files(game_id: String) -> Vec<String> {
+    let mut files: Vec<String> = vec![];
+
+    if game_id.ends_with("/") {
+      let files_in_game_folder =
+        read_dir(DirectoryManager::get_games_directory().join(game_id), true).unwrap();
+
+      for file_disk_entry in files_in_game_folder {
+        recurse_disk_entry(file_disk_entry, &mut files);
+      }
+    } else {
+      files.push(
+        DirectoryManager::get_games_directory()
+          .join(game_id)
+          .to_str()
+          .unwrap()
+          .to_string(),
+      );
+    }
+
+    files
+  }
+
   pub fn initialize_games_cache(&self) {
     for game in Self::find_all_games() {
       self

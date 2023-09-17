@@ -42,7 +42,7 @@ const GameList: React.FC = () => {
     try {
       const getGameFilesResponse = await getGameFilesMutation({
         variables: {
-          game_id: game.name,
+          game_ids: [game.id],
         },
       })
 

@@ -23,7 +23,7 @@ type Query {
   getGames: [Game!]!
   getAppSettings: AppSettings!
 
-  getGameFiles(game_id: ID!): [String!]!
+  getGameFiles(game_ids: [ID!]!): [String!]!
 }
 
 type Mutation {

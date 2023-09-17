@@ -60,24 +60,13 @@ impl DataSource {
     &self,
     _root: &Query,
     _ctx: &Context<'_>,
-    _game_id: String,
+    game_ids: Vec<String>,
   ) -> GraphQLResult<Vec<String>> {
     let mut files: Vec<String> = vec![];
-    let files_in_game_folder =
-      read_dir(DirectoryManager::get_games_directory().join(_game_id), true).unwrap();
 
-    fn recurse_disk_entry(dir: DiskEntry, files: &mut Vec<String>) {
-      if let Some(children) = dir.children {
-        for d in children {
-          recurse_disk_entry(d, files);
-        }
-      } else {
-        files.push(dir.path.to_str().unwrap().to_string());
-      }
-    }
-
-    for file_disk_entry in files_in_game_folder {
-      recurse_disk_entry(file_disk_entry, &mut files);
+    for game_id in game_ids {
+      let mut game_files = DataBase::find_all_game_files(game_id);
+      files.append(&mut game_files)
     }
 
     Ok(files)
