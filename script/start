@@ -4,6 +4,7 @@ set -ex
 ./script/prepare-env
 
 ./node_modules/.bin/concurrently \
-  './node_modules/.bin/nodemon --exec ./node_modules/.bin/graphql-codegen "./src/**/*.graphql"' \
+  'GRAPHQL_CODEGEN_MODE=server ./node_modules/.bin/nodemon --watch ./schema.graphql --exec ./node_modules/.bin/graphql-codegen' \
+  'GRAPHQL_CODEGEN_MODE=client ./node_modules/.bin/nodemon --watch ./src --ext graphql --exec ./node_modules/.bin/graphql-codegen' \
   './node_modules/.bin/react-scripts-vite start' \
   './node_modules/.bin/tauri dev'

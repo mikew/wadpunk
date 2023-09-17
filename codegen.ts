@@ -1,6 +1,9 @@
+import { spawnSync } from 'child_process'
 import fs from 'fs/promises'
 import path from 'path'
+
 import { CodegenConfig } from '@graphql-codegen/cli'
+import { CodegenPlugin } from '@graphql-codegen/plugin-helpers'
 import {
   GraphQLEnumType,
   GraphQLField,
@@ -14,47 +17,66 @@ import {
   GraphQLScalarType,
   GraphQLUnionType,
 } from 'graphql'
-import { CodegenPlugin } from '@graphql-codegen/plugin-helpers'
-import { spawnSync } from 'child_process'
+
+// This is split up for a couple of reasons.
+// - Since the client operations also live here, and they can fail, you can end
+//   up with a situation where helpful files aren't generated when a client
+//   operation is invalid due to a server change you are in the middle of
+//   making.
+// - Since the operations also live here, if we didn't split them up then the
+//   rust stuff would constantly be generated, and updating any rust file means
+//   tauri restarts your app. The result is the app losing all hot loading state
+//   when you're just working on the client operations.
+const GRAPHQL_CODEGEN_MODE: 'client' | 'server' =
+  process.env.GRAPHQL_CODEGEN_MODE || 'server'
 
 const config: CodegenConfig = {
   schema: './schema.graphql',
-  documents: './src/**/*.graphql',
+  documents:
+    GRAPHQL_CODEGEN_MODE === 'client' ? './src/**/*.graphql' : undefined,
 
   generates: {
-    // Generate rust sever code.
-    './src-tauri/src/graphql/generated.rs': {
-      plugins: ['async-graphql'],
-    },
+    ...(GRAPHQL_CODEGEN_MODE === 'server'
+      ? {
+          // Generate rust sever code.
+          './src-tauri/src/graphql/generated.rs': {
+            plugins: ['async-graphql'],
+          },
 
-    // For linting / intellisense.
-    'graphql-schema.json': {
-      plugins: ['introspection'],
-    },
+          // For linting / intellisense.
+          'graphql-schema.json': {
+            plugins: ['introspection'],
+          },
+        }
+      : {}),
 
-    // Pure TypeScript types.
-    './src/graphql/types.d.ts': {
-      plugins: ['typescript'],
-      config: {
-        useTypeImports: true,
-        enumsAsTypes: true,
-      },
-    },
+    ...(GRAPHQL_CODEGEN_MODE === 'client'
+      ? {
+          // Pure TypeScript types.
+          './src/graphql/types.d.ts': {
+            plugins: ['typescript'],
+            config: {
+              useTypeImports: true,
+              enumsAsTypes: true,
+            },
+          },
 
-    // Pre-parsed Documents, variables, and return types for client-side
-    // operations.
-    './src/graphql/operations.ts': {
-      plugins: ['typescript-operations', 'typed-document-node'],
-      config: {
-        useTypeImports: true,
-        enumsAsTypes: true,
-      },
+          // Pre-parsed Documents, variables, and return types for client-side
+          // operations.
+          './src/graphql/operations.ts': {
+            plugins: ['typescript-operations', 'typed-document-node'],
+            config: {
+              useTypeImports: true,
+              enumsAsTypes: true,
+            },
 
-      preset: 'import-types',
-      presetConfig: {
-        typesPath: '@src/graphql/types',
-      },
-    },
+            preset: 'import-types',
+            presetConfig: {
+              typesPath: '@src/graphql/types',
+            },
+          },
+        }
+      : {}),
   },
 
   pluginLoader: async (name) => {
@@ -260,8 +282,7 @@ impl ${mutation.name} {
       `
     }
 
-    content =
-      `
+    content = `
 ${codegenContext.hasComplexObjects ? 'use async_graphql::ComplexObject;' : ''}
 ${codegenContext.hasComplexObjects ? 'use async_graphql::Context;' : ''}
 ${codegenContext.hasEnums ? 'use async_graphql::Enum;' : ''}
@@ -275,7 +296,7 @@ ${
 ${codegenContext.hasComplexObjects ? 'use async_graphql::SimpleObject;' : ''}
 
 ${codegenContext.hasComplexObjects ? dataSource : ''}
-    ` + content
+    ${content}`
 
     let dataSourceTodo = `
 use async_graphql::Result as GraphQLResult;
