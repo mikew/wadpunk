@@ -2,11 +2,9 @@ import { useMutation, useQuery } from '@apollo/client'
 import {
   Button,
   FormControl,
-  FormHelperText,
+  // FormHelperText,
   FormLabel,
   ModalClose,
-  ModalDialog,
-  Textarea,
   Typography,
   DialogTitle,
   DialogActions,
@@ -18,15 +16,23 @@ import {
   Checkbox,
 } from '@mui/joy'
 import { forwardRef, useMemo } from 'react'
+import { Form } from 'react-final-form'
 
 import {
   GetGameFilesDocument,
   UpdateNotesDocument,
 } from '@src/graphql/operations'
+import IdentityField from '@src/lib/IdentityField'
+import ModalDialogFinalForm from '@src/lib/ModalDialogFinalForm'
+import TextareaField from '@src/lib/TextareaField'
 
 import { type GameListGame } from './GameList'
 
-const GameDialog = forwardRef<HTMLDivElement, { game: GameListGame }>(
+interface GameDialogFormValues {
+  notes: string
+}
+
+const GameDialog = forwardRef<HTMLFormElement, { game: GameListGame }>(
   (props, ref) => {
     const iwad = 'Doom 2/'
     // const iwad = undefined
@@ -49,63 +55,77 @@ const GameDialog = forwardRef<HTMLDivElement, { game: GameListGame }>(
     })
 
     return (
-      <ModalDialog ref={ref}>
-        <DialogTitle>
-          {props.game.name}
-          <ModalClose />
-        </DialogTitle>
+      <Form<GameDialogFormValues>
+        initialValues={{
+          notes: props.game.notes || '',
+        }}
+        onSubmit={async (values) => {
+          await updateNotes({
+            variables: {
+              game_id: props.game.id,
+              notes: values.notes,
+            },
+          })
+        }}
+      >
+        {() => {
+          return (
+            <ModalDialogFinalForm ref={ref}>
+              <DialogTitle>
+                {props.game.name}
+                <ModalClose />
+              </DialogTitle>
 
-        <DialogContent>
-          <Typography id="size-modal-description">
-            {props.game.description}
-          </Typography>
+              <DialogContent>
+                <Typography id="size-modal-description">
+                  {props.game.description}
+                </Typography>
 
-          <FormLabel>Files</FormLabel>
-          <List size="sm" variant="outlined">
-            {gameFiles?.getGameFiles.map((x) => {
-              return (
-                <ListItem key={x}>
-                  <ListItemDecorator>
-                    <Checkbox
-                      size="sm"
-                      checked={
-                        x.toLowerCase().endsWith('.wad') ||
-                        x.toLowerCase().endsWith('pk3') ||
-                        x.toLowerCase().endsWith('.iwad')
-                      }
-                    />
-                  </ListItemDecorator>
-                  <ListItemContent>{x}</ListItemContent>
-                </ListItem>
-              )
-            })}
-          </List>
+                <FormLabel>Files</FormLabel>
+                <List size="sm" variant="outlined">
+                  {gameFiles?.getGameFiles.map((x) => {
+                    return (
+                      <ListItem key={x}>
+                        <ListItemDecorator>
+                          <Checkbox
+                            size="sm"
+                            checked={
+                              x.toLowerCase().endsWith('.wad') ||
+                              x.toLowerCase().endsWith('pk3') ||
+                              x.toLowerCase().endsWith('.iwad')
+                            }
+                          />
+                        </ListItemDecorator>
+                        <ListItemContent>{x}</ListItemContent>
+                      </ListItem>
+                    )
+                  })}
+                </List>
 
-          <FormControl>
-            <FormLabel>Notes</FormLabel>
-            <Textarea minRows={2} value={props.game.notes} />
-            {/* <FormHelperText>This is a helper text.</FormHelperText> */}
-          </FormControl>
-        </DialogContent>
+                <FormControl>
+                  <FormLabel>Notes</FormLabel>
+                  <IdentityField
+                    name="notes"
+                    component={TextareaField}
+                    minRows={2}
+                    maxRows={8}
+                  />
+                </FormControl>
+              </DialogContent>
 
-        <DialogActions>
-          <Button>Play</Button>
+              <DialogActions>
+                <Button type="reset">Reset</Button>
 
-          <Button
-            onClick={() => {
-              updateNotes({
-                variables: {
-                  game_id: props.game.id,
-                  notes: 'updated from UI',
-                },
-              })
-            }}
-            color="neutral"
-          >
-            Save
-          </Button>
-        </DialogActions>
-      </ModalDialog>
+                <Button>Play</Button>
+
+                <Button type="submit" color="neutral">
+                  Save
+                </Button>
+              </DialogActions>
+            </ModalDialogFinalForm>
+          )
+        }}
+      </Form>
     )
   },
 )
