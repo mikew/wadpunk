@@ -1,5 +1,4 @@
 use std::collections::HashMap;
-use std::fs::create_dir_all;
 use std::vec;
 use std::{fs, sync::Mutex};
 
@@ -35,9 +34,9 @@ impl DirectoryManager {
   }
 
   pub fn init_games() {
-    create_dir_all(DirectoryManager::get_games_directory()).unwrap();
-    create_dir_all(DirectoryManager::get_source_ports_directory()).unwrap();
-    create_dir_all(DirectoryManager::get_meta_directory()).unwrap();
+    fs::create_dir_all(DirectoryManager::get_games_directory()).unwrap();
+    fs::create_dir_all(DirectoryManager::get_source_ports_directory()).unwrap();
+    fs::create_dir_all(DirectoryManager::get_meta_directory()).unwrap();
   }
 }
 
