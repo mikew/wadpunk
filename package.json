@@ -2,19 +2,8 @@
   "name": "gzdoom-launcher",
   "private": true,
   "version": "0.0.0",
-  "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview",
-    "tauri": "tauri"
-  },
-  "dependencies": {
-    "@apollo/client": "^3.8.3",
-    "@tauri-apps/api": "^1.4.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
-  },
   "devDependencies": {
+    "@apollo/client": "^3.8.3",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@graphql-codegen/cli": "^5.0.0",
@@ -27,6 +16,7 @@
     "@mui/joy": "5.0.0-beta.6",
     "@promoboxx/eslint-config": "^3.0.0",
     "@promoboxx/react-scripts-vite": "^0.1.28",
+    "@tauri-apps/api": "^1.4.0",
     "@tauri-apps/cli": "^1.4.0",
     "@types/node": "^18.7.10",
     "@types/react": "^18.2.21",
@@ -34,6 +24,8 @@
     "concurrently": "^8.2.1",
     "eslint": "^8.49.0",
     "nodemon": "^3.0.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "typescript": "^5.2.2"
   },
   "peerDependencies": {

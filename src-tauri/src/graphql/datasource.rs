@@ -141,7 +141,7 @@ impl DataSource {
     if let Some(mut game) = db.find_game_by_id(game_id.clone(), true) {
       game.notes = notes;
 
-      DataBase::save_game_meta(game.clone());
+      DataBase::save_game(game.clone());
 
       return Ok(game);
     }

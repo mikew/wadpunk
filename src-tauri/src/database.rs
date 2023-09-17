@@ -144,7 +144,7 @@ impl DataBase {
     }
   }
 
-  pub fn save_game_meta(game: Game) {
+  pub fn save_game(game: Game) {
     let json_meta_dir = DirectoryManager::get_meta_directory().join(game.name);
     let json_meta_path = json_meta_dir.join("meta.json");
 
