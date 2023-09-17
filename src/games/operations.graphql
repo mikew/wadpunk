@@ -31,3 +31,10 @@ mutation updateNotes($game_id: ID!, $notes: String!) {
     notes
   }
 }
+
+mutation setRating($game_id: ID!, $rating: Int!) {
+  updateRating(game_id: $game_id, rating: $rating) {
+    id
+    rating
+  }
+}

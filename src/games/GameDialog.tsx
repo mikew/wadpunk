@@ -1,4 +1,5 @@
 import { useMutation, useQuery } from '@apollo/client'
+import { Star, StarBorder } from '@mui/icons-material'
 import {
   Button,
   FormControl,
@@ -14,14 +15,17 @@ import {
   ListItemContent,
   ListItemDecorator,
   Checkbox,
+  Stack,
 } from '@mui/joy'
 import { forwardRef, useMemo } from 'react'
 import { Form } from 'react-final-form'
 
 import {
   GetGameFilesDocument,
+  SetRatingDocument,
   UpdateNotesDocument,
 } from '@src/graphql/operations'
+import { Game } from '@src/graphql/types'
 import IdentityField from '@src/lib/IdentityField'
 import ModalDialogFinalForm from '@src/lib/ModalDialogFinalForm'
 import TextareaField from '@src/lib/TextareaField'
@@ -29,7 +33,8 @@ import TextareaField from '@src/lib/TextareaField'
 import { type GameListGame } from './GameList'
 
 interface GameDialogFormValues {
-  notes: string
+  notes: Game['notes']
+  rating: Game['rating']
 }
 
 const GameDialog = forwardRef<HTMLFormElement, { game: GameListGame }>(
@@ -48,6 +53,7 @@ const GameDialog = forwardRef<HTMLFormElement, { game: GameListGame }>(
     }, [iwad, props.game.id])
 
     const [updateNotes] = useMutation(UpdateNotesDocument)
+    const [setRating] = useMutation(SetRatingDocument)
     const { data: gameFiles } = useQuery(GetGameFilesDocument, {
       variables: {
         game_ids,
@@ -58,6 +64,7 @@ const GameDialog = forwardRef<HTMLFormElement, { game: GameListGame }>(
       <Form<GameDialogFormValues>
         initialValues={{
           notes: props.game.notes || '',
+          rating: props.game.rating || 0,
         }}
         onSubmit={async (values) => {
           await updateNotes({
@@ -101,6 +108,35 @@ const GameDialog = forwardRef<HTMLFormElement, { game: GameListGame }>(
                     )
                   })}
                 </List>
+
+                <FormControl>
+                  <FormLabel>Rating</FormLabel>
+                  <IdentityField
+                    name="rating"
+                    render={({ input, meta, ...rest }) => {
+                      return (
+                        <Stack direction="row">
+                          {[1, 2, 3, 4, 5].map((x) => {
+                            const handleClick = () => {
+                              setRating({
+                                variables: {
+                                  game_id: props.game.id,
+                                  rating: x,
+                                },
+                              })
+                            }
+
+                            return input.value >= x ? (
+                              <Star onClick={handleClick} />
+                            ) : (
+                              <StarBorder onClick={handleClick} />
+                            )
+                          })}
+                        </Stack>
+                      )
+                    }}
+                  />
+                </FormControl>
 
                 <FormControl>
                   <FormLabel>Notes</FormLabel>
