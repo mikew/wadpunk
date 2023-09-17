@@ -138,14 +138,16 @@ impl DataSource {
   ) -> GraphQLResult<Game> {
     let db = ctx.data::<AppHandle>().unwrap().state::<DataBase>();
 
-    if let Some(mut game) = db.find_game_by_id(game_id) {
+    if let Some(mut game) = db.find_game_by_id(game_id.clone(), true) {
       game.notes = notes;
+
+      DataBase::save_game_meta(game.clone());
 
       return Ok(game);
     }
 
     Err(Error {
-      message: "game not found".to_string(),
+      message: format!("game {} not found", game_id),
       source: None,
       extensions: None,
     })

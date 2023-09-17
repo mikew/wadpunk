@@ -57,23 +57,38 @@ impl DataBase {
         continue;
       }
 
-      let game_meta = Self::load_game_meta(name.clone());
+      let game_id = if game_disk_entry.children.is_some() {
+        format!("{}/", name)
+      } else {
+        name.clone()
+      };
 
-      games.push(Game {
-        id: if game_disk_entry.children.is_some() {
-          format!("{}/", name.clone())
-        } else {
-          name.clone()
-        },
-        description: game_meta.description.unwrap_or_default(),
-        name: name.clone(),
-        notes: game_meta.notes.unwrap_or_default(),
-        rating: game_meta.rating.unwrap_or_default(),
-        tags: game_meta.tags.unwrap_or_default(),
-      })
+      games.push(Self::load_game_with_meta(game_id))
     }
 
     games
+  }
+
+  pub fn normalize_name_from_id(id: String) -> String {
+    if let Some(is_dir) = id.strip_suffix("/") {
+      is_dir.to_string()
+    } else {
+      id.clone()
+    }
+  }
+
+  pub fn load_game_with_meta(id: String) -> Game {
+    let name_normalized = Self::normalize_name_from_id(id.clone());
+    let game_meta = Self::load_game_meta(id.clone());
+
+    return Game {
+      id: id.clone(),
+      description: game_meta.description.unwrap_or_default(),
+      name: name_normalized,
+      notes: game_meta.notes.unwrap_or_default(),
+      rating: game_meta.rating.unwrap_or_default(),
+      tags: game_meta.tags.unwrap_or_default(),
+    };
   }
 
   pub fn load_game_meta(game_id: String) -> GameMetaJson {
@@ -119,8 +134,31 @@ impl DataBase {
     }
   }
 
-  pub fn find_game_by_id(&self, id: String) -> Option<Game> {
-    self.games_cache.lock().unwrap().get(&id).cloned()
+  pub fn find_game_by_id(&self, id: String, force: bool) -> Option<Game> {
+    if force {
+      let game = Self::load_game_with_meta(id.clone());
+      self.games_cache.lock().unwrap().insert(id, game.clone());
+      return Some(game);
+    } else {
+      self.games_cache.lock().unwrap().get(&id).cloned()
+    }
+  }
+
+  pub fn save_game_meta(game: Game) {
+    let json_meta_dir = DirectoryManager::get_meta_directory().join(game.name);
+    let json_meta_path = json_meta_dir.join("meta.json");
+
+    let game_meta_json = GameMetaJson {
+      notes: Some(game.notes),
+      description: Some(game.description),
+      rating: Some(game.rating),
+      tags: Some(game.tags),
+    };
+
+    let json_str = serde_json::to_string(&game_meta_json).unwrap();
+
+    fs::create_dir_all(json_meta_dir).unwrap();
+    fs::write(json_meta_path, json_str).unwrap();
   }
 }
 
