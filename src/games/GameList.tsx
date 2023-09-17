@@ -1,25 +1,27 @@
-import { useLazyQuery, useMutation, useQuery } from '@apollo/client'
+import { useMutation, useQuery } from '@apollo/client'
 import FolderOpen from '@mui/icons-material/FolderOpen'
 import PlayArrow from '@mui/icons-material/PlayArrow'
 import {
-  Box,
   Button,
+  Chip,
   IconButton,
   List,
   ListItem,
   ListItemButton,
   ListItemContent,
   Modal,
+  Stack,
 } from '@mui/joy'
 import { useMemo, useState } from 'react'
 
 import {
-  GetGameFilesDocument,
   GetGameListQueryDocument,
   GetGameListQueryQuery,
   OpenGamesFolderDocument,
+  SetRatingDocument,
   StartGameDocument,
 } from '@src/graphql/operations'
+import StarRating from '@src/lib/StarRating'
 
 import GameDialog from './GameDialog'
 
@@ -32,22 +34,14 @@ const GameList: React.FC = () => {
 
   const [openGamesFolderMutation] = useMutation(OpenGamesFolderDocument)
   const [startGameMutation] = useMutation(StartGameDocument)
-  const [getGameFilesMutation] = useLazyQuery(GetGameFilesDocument, {
-    fetchPolicy: 'network-only',
-  })
+  const [setRating] = useMutation(SetRatingDocument)
   const [selectedId, setSelectedId] = useState<GameListGame['id']>()
   const selectedGame = useMemo(() => {
     return data?.getGames.find((x) => x.id === selectedId)
   }, [data?.getGames, selectedId])
 
-  async function startGame(game: GameListGame) {
+  async function startGame(_game: GameListGame) {
     try {
-      const getGameFilesResponse = await getGameFilesMutation({
-        variables: {
-          game_ids: [game.id],
-        },
-      })
-
       const startGameResponse = await startGameMutation({
         variables: {
           source_port:
@@ -91,7 +85,19 @@ const GameList: React.FC = () => {
             <ListItem
               key={x.id}
               endAction={
-                <Box sx={{ display: 'flex', gap: 1 }}>
+                <Stack direction="row" spacing={1}>
+                  <StarRating
+                    value={x.rating}
+                    onChange={(value) => {
+                      setRating({
+                        variables: {
+                          game_id: x.id,
+                          rating: value,
+                        },
+                      })
+                    }}
+                  />
+
                   <IconButton
                     onClick={() => {
                       startGame(x)
@@ -111,7 +117,7 @@ const GameList: React.FC = () => {
                   >
                     <FolderOpen />
                   </IconButton>
-                </Box>
+                </Stack>
               }
             >
               <ListItemButton
@@ -122,6 +128,16 @@ const GameList: React.FC = () => {
                 <ListItemContent>
                   {x.name}
                   {x.notes}
+
+                  <Stack direction="row" spacing={1}>
+                    {x.tags.map((tag) => {
+                      return (
+                        <Chip variant="outlined" key={tag}>
+                          {tag}
+                        </Chip>
+                      )
+                    })}
+                  </Stack>
                 </ListItemContent>
               </ListItemButton>
             </ListItem>

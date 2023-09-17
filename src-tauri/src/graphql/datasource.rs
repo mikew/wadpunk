@@ -199,6 +199,31 @@ impl DataSource {
       extensions: None,
     })
   }
+
+  pub async fn Mutation_updateTags(
+    &self,
+    _root: &Mutation,
+    ctx: &Context<'_>,
+    game_id: String,
+    tags: Vec<String>,
+  ) -> GraphQLResult<Game> {
+    let db = ctx.data::<AppHandle>().unwrap().state::<DataBase>();
+
+    if let Some(mut game) = db.find_game_by_id(game_id.clone(), true) {
+      game.tags = tags;
+
+      DataBase::save_game(game.clone());
+
+      return Ok(game);
+    }
+
+    Err(Error {
+      message: format!("game {} not found", game_id),
+      source: None,
+      extensions: None,
+    })
+  }
+
   pub async fn Mutation_initializeApp(
     &self,
     _root: &Mutation,
