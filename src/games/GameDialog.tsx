@@ -32,9 +32,17 @@ import TextareaField from '@src/lib/TextareaField'
 
 import { type GameListGame } from './GameList'
 
+interface FileEntry {
+  isIwad: boolean
+  absolute: string
+  relative: string
+  selected: boolean
+}
+
 interface GameDialogFormValues {
   notes: Game['notes']
   rating: Game['rating']
+  files: FileEntry[]
 }
 
 const GameDialog = forwardRef<HTMLFormElement, { game: GameListGame }>(
@@ -42,29 +50,61 @@ const GameDialog = forwardRef<HTMLFormElement, { game: GameListGame }>(
     const iwad = 'Doom 2/'
     // const iwad = undefined
 
-    const game_ids = useMemo(() => {
-      const ids = [props.game.id]
-
-      if (iwad) {
-        ids.unshift(iwad)
-      }
-
-      return ids
-    }, [iwad, props.game.id])
-
     const [updateNotes] = useMutation(UpdateNotesDocument)
     const [setRating] = useMutation(SetRatingDocument)
     const { data: gameFiles } = useQuery(GetGameFilesDocument, {
       variables: {
-        game_ids,
+        game_ids: [props.game.id],
       },
     })
+    const { data: iwadFiles } = useQuery(GetGameFilesDocument, {
+      variables: iwad
+        ? {
+            game_ids: [iwad],
+          }
+        : (skipToken as unknown as any),
+    })
+
+    const allFiles = useMemo(() => {
+      const allFiles: FileEntry[] = [
+        ...(iwadFiles?.getGameFiles.map((x) => {
+          const wut: FileEntry = {
+            isIwad: true,
+            absolute: x.absolute,
+            relative: x.relative,
+            selected:
+              x.absolute.toLowerCase().endsWith('.wad') ||
+              x.absolute.toLowerCase().endsWith('pk3') ||
+              x.absolute.toLowerCase().endsWith('.iwad'),
+          }
+
+          return wut
+        }) || []),
+        ...(gameFiles?.getGameFiles.map((x) => {
+          const wut: FileEntry = {
+            isIwad: false,
+            absolute: x.absolute,
+            relative: x.relative,
+            selected:
+              x.absolute.toLowerCase().endsWith('.wad') ||
+              x.absolute.toLowerCase().endsWith('pk3') ||
+              x.absolute.toLowerCase().endsWith('.iwad'),
+          }
+
+          return wut
+        }) || []),
+      ]
+
+      return allFiles
+    }, [gameFiles?.getGameFiles, iwadFiles?.getGameFiles])
+    const [startGameMutation] = useMutation(StartGameDocument)
 
     return (
       <Form<GameDialogFormValues>
         initialValues={{
           notes: props.game.notes || '',
           rating: props.game.rating || 0,
+          files: allFiles,
         }}
         onSubmit={async (values) => {
           await updateNotes({
@@ -89,25 +129,47 @@ const GameDialog = forwardRef<HTMLFormElement, { game: GameListGame }>(
                 </Typography>
 
                 <FormLabel>Files</FormLabel>
-                <List size="sm" variant="outlined">
-                  {gameFiles?.getGameFiles.map((x) => {
+                <IdentityField<FileEntry[]>
+                  name="files"
+                  render={({ input, meta, ...rest }) => {
                     return (
-                      <ListItem key={x}>
-                        <ListItemDecorator>
-                          <Checkbox
-                            size="sm"
-                            checked={
-                              x.toLowerCase().endsWith('.wad') ||
-                              x.toLowerCase().endsWith('pk3') ||
-                              x.toLowerCase().endsWith('.iwad')
-                            }
-                          />
-                        </ListItemDecorator>
-                        <ListItemContent>{x}</ListItemContent>
-                      </ListItem>
+                      <List size="sm" variant="outlined">
+                        {input.value.map((x, i) => {
+                          return (
+                            <ListItem key={x.absolute}>
+                              <ListItemDecorator>
+                                <Checkbox
+                                  size="sm"
+                                  checked={x.selected}
+                                  onChange={(event) => {
+                                    if (meta.submitting) {
+                                      return
+                                    }
+
+                                    // TODO This would be pretty easy with
+                                    // Formik's `setIn` ...
+                                    const newValue = [...input.value]
+                                    newValue[i] = {
+                                      ...newValue[i],
+                                      selected: event.target.checked,
+                                    }
+
+                                    input.onChange({
+                                      target: {
+                                        value: newValue,
+                                      },
+                                    })
+                                  }}
+                                />
+                              </ListItemDecorator>
+                              <ListItemContent>{x.relative}</ListItemContent>
+                            </ListItem>
+                          )
+                        })}
+                      </List>
                     )
-                  })}
-                </List>
+                  }}
+                />
 
                 <FormControl>
                   <FormLabel>Rating</FormLabel>

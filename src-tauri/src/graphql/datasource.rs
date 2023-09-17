@@ -1,4 +1,5 @@
 use std::fs;
+use std::path::Path;
 use std::process::Command;
 use std::vec;
 
@@ -15,6 +16,7 @@ use crate::database::PlaySessionJson;
 
 use super::generated::AppSettings;
 use super::generated::Game;
+use super::generated::GameFileEntry;
 use super::generated::Mutation;
 use super::generated::PlaySession;
 use super::generated::Query;
@@ -58,15 +60,26 @@ impl DataSource {
     _root: &Query,
     _ctx: &Context<'_>,
     game_ids: Vec<String>,
-  ) -> GraphQLResult<Vec<String>> {
-    let mut files: Vec<String> = vec![];
+  ) -> GraphQLResult<Vec<GameFileEntry>> {
+    let mut game_file_entries: Vec<GameFileEntry> = vec![];
 
     for game_id in game_ids {
-      let mut game_files = DataBase::find_all_game_files(game_id);
-      files.append(&mut game_files)
+      let game_files = DataBase::find_all_game_files(game_id);
+
+      for game_file in game_files {
+        game_file_entries.push(GameFileEntry {
+          absolute: game_file.clone(),
+          relative: Path::new(&game_file)
+            .strip_prefix(DirectoryManager::get_games_directory())
+            .unwrap()
+            .to_str()
+            .unwrap()
+            .to_string(),
+        })
+      }
     }
 
-    Ok(files)
+    Ok(game_file_entries)
   }
 
   pub async fn Query_getGames(&self, _root: &Query, ctx: &Context<'_>) -> GraphQLResult<Vec<Game>> {
