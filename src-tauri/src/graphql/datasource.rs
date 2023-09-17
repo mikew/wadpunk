@@ -94,6 +94,7 @@ impl DataSource {
     _root: &Mutation,
     _ctx: &Context<'_>,
     files: Option<Vec<String>>,
+    game_id: String,
     iwad: Option<String>,
     source_port: String,
   ) -> GraphQLResult<bool> {
@@ -108,6 +109,15 @@ impl DataSource {
         command.args(["-file", &valid_file]);
       }
     }
+
+    command.args([
+      "-savedir",
+      DirectoryManager::get_meta_directory()
+        .join(DataBase::normalize_name_from_id(game_id))
+        .join("saves")
+        .to_str()
+        .unwrap(),
+    ]);
 
     let exit_status = command.status().unwrap();
 
