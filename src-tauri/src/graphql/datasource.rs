@@ -5,8 +5,6 @@ use std::vec;
 use async_graphql::Context;
 use async_graphql::Error;
 use async_graphql::Result as GraphQLResult;
-use tauri::api::dir::read_dir;
-use tauri::api::dir::DiskEntry;
 use tauri::api::shell::open;
 use tauri::AppHandle;
 use tauri::Manager;
@@ -37,10 +35,9 @@ impl DataSource {
     let json_contents = fs::read_to_string(meta_path).unwrap_or("{}".to_string());
     let play_session_meta = serde_json::from_str::<PlaySessionJson>(&json_contents).unwrap();
 
-    if play_session_meta.sessions.is_some() {
-      let sessions = play_session_meta.sessions.unwrap();
+    if let Some(play_sessions) = play_session_meta.sessions {
       // TODO Implement ...
-      println!("{:?} {:?}", root.name, sessions);
+      println!("{:?} {:?}", root.name, play_sessions);
     }
 
     Ok(play_sessions)
@@ -114,8 +111,8 @@ impl DataSource {
 
     let mut path_to_open = DirectoryManager::get_games_directory();
 
-    if game_id.is_some() {
-      path_to_open.push(game_id.unwrap());
+    if let Some(game_id) = game_id {
+      path_to_open.push(game_id);
     }
 
     open(&app.shell_scope(), path_to_open.to_str().unwrap(), None).unwrap();
