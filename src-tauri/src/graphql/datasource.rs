@@ -17,6 +17,7 @@ use crate::database::PlaySessionJson;
 use super::generated::AppSettings;
 use super::generated::Game;
 use super::generated::GameFileEntry;
+use super::generated::GameInput;
 use super::generated::Mutation;
 use super::generated::PlaySession;
 use super::generated::Query;
@@ -219,6 +220,45 @@ impl DataSource {
 
     Err(Error {
       message: format!("game {} not found", game_id),
+      source: None,
+      extensions: None,
+    })
+  }
+
+  pub async fn Mutation_updateGame(
+    &self,
+    _root: &Mutation,
+    ctx: &Context<'_>,
+    game: GameInput,
+  ) -> GraphQLResult<Game> {
+    let db = ctx.data::<AppHandle>().unwrap().state::<DataBase>();
+
+    if let Some(mut game_record) = db.find_game_by_id(game.id.clone(), true) {
+      game_record.iwad_id = game.iwad_id;
+
+      if let Some(notes) = game.notes {
+        game_record.notes = notes;
+      }
+
+      if let Some(description) = game.description {
+        game_record.description = description;
+      }
+
+      if let Some(rating) = game.rating {
+        game_record.rating = rating;
+      }
+
+      if let Some(tags) = game.tags {
+        game_record.tags = tags;
+      }
+
+      DataBase::save_game(game_record.clone());
+
+      return Ok(game_record);
+    }
+
+    Err(Error {
+      message: format!("game {} not found", game.id),
       source: None,
       extensions: None,
     })

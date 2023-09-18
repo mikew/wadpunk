@@ -38,6 +38,18 @@ mutation startGame(
   )
 }
 
+mutation updateGame($game: GameInput!) {
+  updateGame(game: $game) {
+    id
+    description
+    notes
+    iwad_id
+    notes
+    rating
+    tags
+  }
+}
+
 mutation updateNotes($game_id: ID!, $notes: String!) {
   updateNotes(game_id: $game_id, notes: $notes) {
     id
