@@ -32,6 +32,15 @@ type Query {
   getGameFiles(game_ids: [ID!]!): [GameFileEntry!]!
 }
 
+input GameInput {
+  id: ID!
+  rating: Int
+  description: String
+  notes: String
+  tags: [String!]
+  iwad_id: String
+}
+
 type Mutation {
   initializeApp: Boolean!
 
@@ -41,6 +50,8 @@ type Mutation {
     files: [String!]
     source_port: String!
   ): Boolean!
+
+  updateGame(game: GameInput!): Game!
 
   openGamesFolder(game_id: ID): Boolean!
   openSourcePortsFolder(game_id: ID): Boolean!
