@@ -47,11 +47,7 @@ const config: CodegenConfig = {
           'graphql-schema.json': {
             plugins: ['introspection'],
           },
-        }
-      : {}),
 
-    ...(GRAPHQL_CODEGEN_MODE === 'client'
-      ? {
           // Pure TypeScript types.
           './src/graphql/types.d.ts': {
             plugins: ['typescript'],
@@ -60,7 +56,11 @@ const config: CodegenConfig = {
               enumsAsTypes: true,
             },
           },
+        }
+      : {}),
 
+    ...(GRAPHQL_CODEGEN_MODE === 'client'
+      ? {
           // Pre-parsed Documents, variables, and return types for client-side
           // operations.
           './src/graphql/operations.ts': {
