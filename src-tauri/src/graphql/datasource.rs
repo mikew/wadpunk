@@ -84,10 +84,7 @@ impl DataSource {
   }
 
   pub async fn Query_getGames(&self, _root: &Query, ctx: &Context<'_>) -> GraphQLResult<Vec<Game>> {
-    let db = ctx.data::<AppHandle>().unwrap().state::<DataBase>();
-    let game_cache = db.games_cache.lock().unwrap();
-
-    Ok(game_cache.values().cloned().collect())
+    Ok(DataBase::find_all_games())
   }
 
   pub async fn Mutation_startGame(
@@ -162,7 +159,7 @@ impl DataSource {
   ) -> GraphQLResult<Game> {
     let db = ctx.data::<AppHandle>().unwrap().state::<DataBase>();
 
-    if let Some(mut game) = db.find_game_by_id(game_id.clone(), true) {
+    if let Some(mut game) = db.find_game_by_id(game_id.clone()) {
       game.notes = notes;
 
       DataBase::save_game(game.clone());
@@ -186,7 +183,7 @@ impl DataSource {
   ) -> GraphQLResult<Game> {
     let db = ctx.data::<AppHandle>().unwrap().state::<DataBase>();
 
-    if let Some(mut game) = db.find_game_by_id(game_id.clone(), true) {
+    if let Some(mut game) = db.find_game_by_id(game_id.clone()) {
       game.rating = rating;
 
       DataBase::save_game(game.clone());
@@ -210,7 +207,7 @@ impl DataSource {
   ) -> GraphQLResult<Game> {
     let db = ctx.data::<AppHandle>().unwrap().state::<DataBase>();
 
-    if let Some(mut game) = db.find_game_by_id(game_id.clone(), true) {
+    if let Some(mut game) = db.find_game_by_id(game_id.clone()) {
       game.tags = tags;
 
       DataBase::save_game(game.clone());
@@ -233,7 +230,7 @@ impl DataSource {
   ) -> GraphQLResult<Game> {
     let db = ctx.data::<AppHandle>().unwrap().state::<DataBase>();
 
-    if let Some(mut game_record) = db.find_game_by_id(game.id.clone(), true) {
+    if let Some(mut game_record) = db.find_game_by_id(game.id.clone()) {
       game_record.iwad_id = game.iwad_id;
 
       if let Some(notes) = game.notes {
