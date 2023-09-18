@@ -1,5 +1,5 @@
-import { defineConfig } from 'vite'
 import { viteConfig, pluginOptions } from '@promoboxx/react-scripts-vite'
+import { defineConfig } from 'vite'
 
 pluginOptions.pwa = false
 pluginOptions.checker = {
@@ -18,6 +18,13 @@ export default defineConfig(async (env) => {
     server: {
       ...config.server,
       open: false,
+    },
+    resolve: {
+      alias: {
+        ...config.resolve?.alias,
+        '@mui/icons-material': '@mui/icons-material/esm',
+        '@mui/joy': '@mui/joy/modern',
+      },
     },
     build: {
       ...config.build,

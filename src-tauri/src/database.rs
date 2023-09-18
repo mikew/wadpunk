@@ -1,6 +1,5 @@
-use std::collections::HashMap;
+use std::fs;
 use std::vec;
-use std::{fs, sync::Mutex};
 
 use serde::{Deserialize, Serialize};
 use tauri::api::dir::DiskEntry;
@@ -41,9 +40,7 @@ impl DirectoryManager {
 }
 
 #[derive(Debug, Default)]
-pub struct DataBase {
-  pub games_cache: Mutex<HashMap<String, Game>>,
-}
+pub struct DataBase;
 
 impl DataBase {
   pub fn find_all_games() -> Vec<Game> {
@@ -88,6 +85,7 @@ impl DataBase {
       notes: game_meta.notes.unwrap_or_default(),
       rating: game_meta.rating.unwrap_or_default(),
       tags: game_meta.tags.unwrap_or_default(),
+      iwad_id: game_meta.iwad_id,
     };
   }
 
@@ -124,24 +122,11 @@ impl DataBase {
     files
   }
 
-  pub fn initialize_games_cache(&self) {
-    for game in Self::find_all_games() {
-      self
-        .games_cache
-        .lock()
-        .unwrap()
-        .insert(game.id.clone(), game);
-    }
-  }
+  pub fn initialize_games_cache(&self) {}
 
-  pub fn find_game_by_id(&self, id: String, force: bool) -> Option<Game> {
-    if force {
-      let game = Self::load_game_with_meta(id.clone());
-      self.games_cache.lock().unwrap().insert(id, game.clone());
-      return Some(game);
-    } else {
-      self.games_cache.lock().unwrap().get(&id).cloned()
-    }
+  pub fn find_game_by_id(&self, id: String) -> Option<Game> {
+    let game = Self::load_game_with_meta(id.clone());
+    return Some(game);
   }
 
   pub fn save_game(game: Game) {
@@ -153,6 +138,7 @@ impl DataBase {
       description: Some(game.description),
       rating: Some(game.rating),
       tags: Some(game.tags),
+      iwad_id: game.iwad_id,
     };
 
     let json_str = serde_json::to_string(&game_meta_json).unwrap();
@@ -168,6 +154,7 @@ pub struct GameMetaJson {
   pub description: Option<String>,
   pub notes: Option<String>,
   pub tags: Option<Vec<String>>,
+  pub iwad_id: Option<String>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]

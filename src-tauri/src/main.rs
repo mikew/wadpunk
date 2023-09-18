@@ -19,9 +19,7 @@ fn main() {
   .finish();
 
   tauri::Builder::default()
-    .manage(DataBase {
-      games_cache: Default::default(),
-    })
+    .manage(DataBase)
     .plugin(tauri_plugin_graphql::init(schema))
     .run(tauri::generate_context!())
     .expect("error while running tauri application");

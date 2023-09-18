@@ -6,6 +6,7 @@ query getGameListQuery {
     notes
     tags
     rating
+    iwad_id
 
     play_sessions {
       duration
@@ -36,6 +37,18 @@ mutation startGame(
     files: $files
     source_port: $source_port
   )
+}
+
+mutation updateGame($game: GameInput!) {
+  updateGame(game: $game) {
+    id
+    description
+    notes
+    iwad_id
+    notes
+    rating
+    tags
+  }
 }
 
 mutation updateNotes($game_id: ID!, $notes: String!) {
