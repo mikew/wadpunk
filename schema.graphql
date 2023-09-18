@@ -5,6 +5,7 @@ type Game {
   description: String!
   notes: String!
   tags: [String!]!
+  iwad_id: String
 
   play_sessions: [PlaySession!]!
 }
