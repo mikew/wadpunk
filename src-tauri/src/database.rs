@@ -88,6 +88,7 @@ impl DataBase {
       notes: game_meta.notes.unwrap_or_default(),
       rating: game_meta.rating.unwrap_or_default(),
       tags: game_meta.tags.unwrap_or_default(),
+      iwad_id: game_meta.iwad_id,
     };
   }
 
@@ -153,6 +154,7 @@ impl DataBase {
       description: Some(game.description),
       rating: Some(game.rating),
       tags: Some(game.tags),
+      iwad_id: game.iwad_id,
     };
 
     let json_str = serde_json::to_string(&game_meta_json).unwrap();
@@ -168,6 +170,7 @@ pub struct GameMetaJson {
   pub description: Option<String>,
   pub notes: Option<String>,
   pub tags: Option<Vec<String>>,
+  pub iwad_id: Option<String>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
