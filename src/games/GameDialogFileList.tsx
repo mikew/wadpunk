@@ -11,9 +11,9 @@ import { useEffect } from 'react'
 import { useField } from 'react-final-form'
 
 import { GetGameFilesDocument } from '@src/graphql/operations'
-import IdentityField from '@src/lib/IdentityField'
 
-import { FileEntry, GameDialogFormValues } from './GameDialog'
+import { GameDialogFormValues } from './GameDialog'
+import { FileEntry, useGameFileListContext } from './GameFileListContext'
 import isIwad from './isIwad'
 
 // TODO:
@@ -23,13 +23,8 @@ import isIwad from './isIwad'
 // - We can't do the queries in the main component, because that would
 //   reinitialize the form and lose any state the user has.
 const GameDialogFileList: React.FC = (props) => {
-  const {
-    input: { onChange: filesOnChange },
-  } = useField<GameDialogFormValues['files']>('files')
+  const { setFiles, files, setEnabled } = useGameFileListContext()
   const gameId = useField<GameDialogFormValues['id']>('id')
-  // Only pulling this out because rules-of-hooks wants `files.input` instead of
-  // `files.input.onChange`, which causes infinite loops.
-  // Thank you, rules-of-hooks.
   const {
     input: { value: iwadIdValue },
   } = useField<GameDialogFormValues['iwadId']>('iwadId', {
@@ -99,53 +94,30 @@ const GameDialogFileList: React.FC = (props) => {
       }) || []),
     ]
 
-    filesOnChange({ target: { value: allFiles } })
-  }, [filesOnChange, gameFiles?.getGameFiles, iwadFiles?.getGameFiles])
+    setFiles(allFiles)
+  }, [gameFiles?.getGameFiles, iwadFiles?.getGameFiles, setFiles])
 
   return (
     <>
       <FormLabel>Files</FormLabel>
-      <IdentityField<FileEntry[]>
-        name="files"
-        render={({ input, meta, ...rest }) => {
+      <List size="sm" variant="outlined">
+        {files.map((x, i) => {
           return (
-            <List size="sm" variant="outlined">
-              {input.value.map((x, i) => {
-                return (
-                  <ListItem key={x.absolute}>
-                    <ListItemDecorator>
-                      <Checkbox
-                        size="sm"
-                        checked={x.selected}
-                        onChange={(event) => {
-                          if (meta.submitting) {
-                            return
-                          }
-
-                          // TODO This would be pretty easy with
-                          // Formik's `setIn` ...
-                          const newValue = [...input.value]
-                          newValue[i] = {
-                            ...newValue[i],
-                            selected: event.target.checked,
-                          }
-
-                          input.onChange({
-                            target: {
-                              value: newValue,
-                            },
-                          })
-                        }}
-                      />
-                    </ListItemDecorator>
-                    <ListItemContent>{x.relative}</ListItemContent>
-                  </ListItem>
-                )
-              })}
-            </List>
+            <ListItem key={x.absolute}>
+              <ListItemDecorator>
+                <Checkbox
+                  size="sm"
+                  checked={x.selected}
+                  onChange={(event) => {
+                    setEnabled(x.relative, event.target.checked)
+                  }}
+                />
+              </ListItemDecorator>
+              <ListItemContent>{x.relative}</ListItemContent>
+            </ListItem>
           )
-        }}
-      />
+        })}
+      </List>
     </>
   )
 }
