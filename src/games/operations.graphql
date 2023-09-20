@@ -14,6 +14,34 @@ query getGameListQuery {
   }
 }
 
+query getGameDialogFields($game_id: ID!) {
+  getGame(id: $game_id) {
+    id
+    name
+
+    rating
+    description
+    notes
+    tags
+
+    source_port
+    iwad_id
+    extra_mod_ids
+
+    enabled_files {
+      is_enabled
+      relative
+    }
+  }
+
+  # Used in the iwad / mods fields.
+  getGames {
+    id
+    name
+    tags
+  }
+}
+
 query getGameFiles($game_ids: [ID!]!) {
   getGameFiles(game_ids: $game_ids) {
     absolute
@@ -42,12 +70,20 @@ mutation startGame(
 mutation updateGame($game: GameInput!) {
   updateGame(game: $game) {
     id
+
+    rating
     description
     notes
-    iwad_id
-    notes
-    rating
     tags
+
+    source_port
+    iwad_id
+    extra_mod_ids
+
+    enabled_files {
+      is_enabled
+      relative
+    }
   }
 }
 

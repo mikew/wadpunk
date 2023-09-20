@@ -80,12 +80,16 @@ impl DataBase {
 
     return Game {
       id: id.clone(),
-      description: game_meta.description.unwrap_or_default(),
       name: name_normalized,
-      notes: game_meta.notes.unwrap_or_default(),
+
       rating: game_meta.rating.unwrap_or_default(),
+      description: game_meta.description.unwrap_or_default(),
+      notes: game_meta.notes.unwrap_or_default(),
       tags: game_meta.tags.unwrap_or_default(),
+
+      source_port: game_meta.source_port,
       iwad_id: game_meta.iwad_id,
+      extra_mod_ids: game_meta.extra_mod_ids,
     };
   }
 
@@ -134,11 +138,15 @@ impl DataBase {
     let json_meta_path = json_meta_dir.join("meta.json");
 
     let game_meta_json = GameMetaJson {
-      notes: Some(game.notes),
-      description: Some(game.description),
       rating: Some(game.rating),
+      description: Some(game.description),
+      notes: Some(game.notes),
       tags: Some(game.tags),
+
+      source_port: game.source_port,
       iwad_id: game.iwad_id,
+      extra_mod_ids: game.extra_mod_ids,
+      enabled_files: Some(vec![]),
     };
 
     let json_str = serde_json::to_string(&game_meta_json).unwrap();
@@ -148,16 +156,26 @@ impl DataBase {
   }
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Default)]
 pub struct GameMetaJson {
   pub rating: Option<i32>,
   pub description: Option<String>,
   pub notes: Option<String>,
   pub tags: Option<Vec<String>>,
+
   pub iwad_id: Option<String>,
+  pub source_port: Option<String>,
+  pub extra_mod_ids: Option<Vec<String>>,
+  pub enabled_files: Option<Vec<GameEnabledFileJson>>,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Default)]
+pub struct GameEnabledFileJson {
+  pub is_enabled: bool,
+  pub relative: String,
+}
+
+#[derive(Serialize, Deserialize, Debug, Default)]
 pub struct PlaySessionJson {
   pub sessions: Option<PlaySessionEntry>,
 }

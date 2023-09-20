@@ -1,4 +1,4 @@
-import { skipToken, useQuery } from '@apollo/client'
+import { skipToken, useSuspenseQuery } from '@apollo/client'
 import {
   Checkbox,
   FormLabel,
@@ -48,19 +48,16 @@ const GameDialogFileList: React.FC = (props) => {
     ),
   )
 
-  const { data: gameFiles } = useQuery(GetGameFilesDocument, {
+  const { data: gameFiles } = useSuspenseQuery(GetGameFilesDocument, {
     variables: {
-      game_ids:
-        allGameIds.length === 0 ? (skipToken as unknown as any) : allGameIds,
+      game_ids: allGameIds,
     },
   })
 
-  const { data: iwadFiles } = useQuery(GetGameFilesDocument, {
-    variables: iwadId
-      ? {
-          game_ids: [iwadId],
-        }
-      : (skipToken as unknown as any),
+  const { data: iwadFiles } = useSuspenseQuery(GetGameFilesDocument, {
+    variables: {
+      game_ids: iwadId ? [iwadId] : [],
+    },
   })
 
   useEffect(() => {

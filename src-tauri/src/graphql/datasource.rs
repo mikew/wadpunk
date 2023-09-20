@@ -16,6 +16,7 @@ use crate::database::PlaySessionJson;
 
 use super::generated::AppSettings;
 use super::generated::Game;
+use super::generated::GameEnabledFile;
 use super::generated::GameFileEntry;
 use super::generated::GameInput;
 use super::generated::Mutation;
@@ -46,6 +47,36 @@ impl DataSource {
     Ok(play_sessions)
   }
 
+  pub async fn Game_enabled_files(
+    &self,
+    _root: &Game,
+    _ctx: &Context<'_>,
+  ) -> GraphQLResult<Option<Vec<GameEnabledFile>>> {
+    let meta = DataBase::load_game_meta(_root.id.clone());
+    let enabled_files = meta.enabled_files;
+
+    let v: Option<Vec<GameEnabledFile>> = Some(
+      enabled_files
+        .into_iter()
+        .flatten()
+        .map(|x| GameEnabledFile {
+          relative: x.relative,
+          is_enabled: x.is_enabled,
+        })
+        .collect(),
+    );
+
+    Ok(v)
+  }
+
+  pub async fn Query_getGame(
+    &self,
+    _root: &Query,
+    _ctx: &Context<'_>,
+    id: String,
+  ) -> GraphQLResult<Game> {
+    Ok(DataBase::load_game_with_meta(id))
+  }
   pub async fn Query_getAppSettings(
     &self,
     _root: &Query,
@@ -83,7 +114,11 @@ impl DataSource {
     Ok(game_file_entries)
   }
 
-  pub async fn Query_getGames(&self, _root: &Query, ctx: &Context<'_>) -> GraphQLResult<Vec<Game>> {
+  pub async fn Query_getGames(
+    &self,
+    _root: &Query,
+    _ctx: &Context<'_>,
+  ) -> GraphQLResult<Vec<Game>> {
     Ok(DataBase::find_all_games())
   }
 
@@ -231,23 +266,25 @@ impl DataSource {
     let db = ctx.data::<AppHandle>().unwrap().state::<DataBase>();
 
     if let Some(mut game_record) = db.find_game_by_id(game.id.clone()) {
-      game_record.iwad_id = game.iwad_id;
-
-      if let Some(notes) = game.notes {
-        game_record.notes = notes;
+      if let Some(rating) = game.rating {
+        game_record.rating = rating;
       }
 
       if let Some(description) = game.description {
         game_record.description = description;
       }
 
-      if let Some(rating) = game.rating {
-        game_record.rating = rating;
+      if let Some(notes) = game.notes {
+        game_record.notes = notes;
       }
 
       if let Some(tags) = game.tags {
         game_record.tags = tags;
       }
+
+      game_record.source_port = game.source_port;
+      game_record.iwad_id = game.iwad_id;
+      game_record.extra_mod_ids = game.extra_mod_ids;
 
       DataBase::save_game(game_record.clone());
 
