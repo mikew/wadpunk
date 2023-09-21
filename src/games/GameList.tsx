@@ -8,11 +8,9 @@ import {
   List,
   ListItem,
   ListItemButton,
-  ListItemContent,
-  Modal,
+  ListItemText,
   Stack,
-  Typography,
-} from '@mui/joy'
+} from '@mui/material'
 import { useMemo, useState } from 'react'
 
 import {
@@ -80,71 +78,73 @@ const GameList: React.FC = () => {
 
   return (
     <>
-      <List>
+      <List disablePadding dense>
         {data.getGames.map((x) => {
           return (
-            <ListItem
-              key={x.id}
-              endAction={
-                <Stack direction="row" spacing={1}>
-                  <StarRating
-                    value={x.rating}
-                    onChange={(value) => {
-                      setRating({
-                        variables: {
-                          game_id: x.id,
-                          rating: value,
-                        },
-                      })
-                    }}
-                  />
-
-                  <IconButton
-                    onClick={() => {
-                      startGame(x)
-                    }}
-                    size="sm"
-                    color="neutral"
-                  >
-                    <PlayArrow />
-                  </IconButton>
-
-                  <IconButton
-                    onClick={() => {
-                      openGamesFolder(x.id)
-                    }}
-                    size="sm"
-                    color="neutral"
-                  >
-                    <FolderOpen />
-                  </IconButton>
-                </Stack>
-              }
-            >
+            <ListItem key={x.id} disableGutters disablePadding divider>
               <ListItemButton
                 onClick={() => {
                   setSelectedId(x.id)
                 }}
               >
-                <ListItemContent>
-                  <Typography>{x.name}</Typography>
-                  <Typography level="body-sm">{x.notes}</Typography>
-                  <Typography level="body-sm">
-                    {x.play_sessions.reduce((memo, x) => memo + x.duration, 0)}s
-                    played
-                  </Typography>
-
-                  <Stack direction="row" spacing={1}>
-                    {x.tags.map((tag) => {
-                      return (
-                        <Chip variant="outlined" key={tag}>
-                          {tag}
-                        </Chip>
-                      )
-                    })}
-                  </Stack>
-                </ListItemContent>
+                <ListItemText
+                  primary={x.name}
+                  secondary={
+                    <>
+                      {x.play_sessions.reduce(
+                        (memo, x) => memo + x.duration,
+                        0,
+                      )}
+                      s played /{x.notes}
+                    </>
+                  }
+                />
               </ListItemButton>
+
+              <Stack direction="row" spacing={1} alignItems="center">
+                <Stack direction="row" spacing={1}>
+                  {x.tags.map((tag) => {
+                    return (
+                      <Chip
+                        variant="outlined"
+                        size="small"
+                        key={tag}
+                        label={tag}
+                      />
+                    )
+                  })}
+                </Stack>
+
+                <StarRating
+                  value={x.rating}
+                  onChange={(value) => {
+                    setRating({
+                      variables: {
+                        game_id: x.id,
+                        rating: value,
+                      },
+                    })
+                  }}
+                />
+
+                <IconButton
+                  onClick={() => {
+                    startGame(x)
+                  }}
+                  size="small"
+                >
+                  <PlayArrow />
+                </IconButton>
+
+                <IconButton
+                  onClick={() => {
+                    openGamesFolder(x.id)
+                  }}
+                  size="small"
+                >
+                  <FolderOpen />
+                </IconButton>
+              </Stack>
             </ListItem>
           )
         })}
@@ -154,14 +154,17 @@ const GameList: React.FC = () => {
         onClick={() => {
           openGamesFolder()
         }}
-        startDecorator={<FolderOpen />}
+        startIcon={<FolderOpen />}
       >
         Open Games Folder
       </Button>
 
-      <Modal open={!!selectedGame} onClose={() => setSelectedId(undefined)}>
-        {selectedGame ? <GameDialog game={selectedGame} /> : <></>}
-      </Modal>
+      {selectedGame ? (
+        <GameDialog
+          game={selectedGame}
+          onClose={() => setSelectedId(undefined)}
+        />
+      ) : undefined}
     </>
   )
 }

@@ -1,5 +1,5 @@
 import { FetchResult, useMutation } from '@apollo/client'
-import { CircularProgress } from '@mui/joy'
+import { CircularProgress } from '@mui/material'
 import { PropsWithChildren, Suspense, useEffect, useState } from 'react'
 
 import GameList from '@src/games/GameList'

@@ -4,9 +4,9 @@ import {
   FormLabel,
   List,
   ListItem,
-  ListItemContent,
-  ListItemDecorator,
-} from '@mui/joy'
+  ListItemIcon,
+  ListItemText,
+} from '@mui/material'
 import { useEffect } from 'react'
 import { useField } from 'react-final-form'
 
@@ -97,20 +97,20 @@ const GameDialogFileList: React.FC = (props) => {
   return (
     <>
       <FormLabel>Files</FormLabel>
-      <List size="sm" variant="outlined">
+      <List dense disablePadding>
         {files.map((x, i) => {
           return (
-            <ListItem key={x.absolute}>
-              <ListItemDecorator>
+            <ListItem key={x.absolute} disableGutters>
+              <ListItemIcon>
                 <Checkbox
-                  size="sm"
+                  size="small"
                   checked={x.selected}
                   onChange={(event) => {
                     setEnabled(x.relative, event.target.checked)
                   }}
                 />
-              </ListItemDecorator>
-              <ListItemContent>{x.relative}</ListItemContent>
+              </ListItemIcon>
+              <ListItemText primary={x.relative} />
             </ListItem>
           )
         })}

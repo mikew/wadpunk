@@ -4,18 +4,19 @@ import {
   FormControl,
   // FormHelperText,
   FormLabel,
-  ModalClose,
   Typography,
   DialogTitle,
   DialogActions,
   DialogContent,
   Autocomplete,
   Select,
-  Option,
+  MenuItem,
   Grid,
-  ModalDialog,
+  Dialog,
   CircularProgress,
-} from '@mui/joy'
+  TextField,
+  InputLabel,
+} from '@mui/material'
 import { Suspense, useMemo } from 'react'
 import { Form, useForm, useFormState } from 'react-final-form'
 
@@ -50,23 +51,26 @@ export interface GameDialogFormValues {
   extraGameIds: (string | GameListGame)[]
 }
 
-const GameDialog: React.FC<{ game: GameListGame }> = (props) => {
+interface GameDialogProps {
+  game: GameListGame
+  onClose: (reason: string) => void
+}
+
+const GameDialog: React.FC<GameDialogProps> = (props) => {
   return (
     <Suspense
       fallback={
-        <ModalDialog>
+        <Dialog open>
           <CircularProgress />
-        </ModalDialog>
+        </Dialog>
       }
     >
-      <GameDialogInner game={props.game} />
+      <GameDialogInner game={props.game} onClose={props.onClose} />
     </Suspense>
   )
 }
 
-const GameDialogInner: React.FC<{
-  game: GameListGame
-}> = (props) => {
+const GameDialogInner: React.FC<GameDialogProps> = (props) => {
   const allTags = useAllTags(true)
   const {
     data: { getGame: fullGame, getGames: games },
@@ -135,7 +139,12 @@ const GameDialogInner: React.FC<{
 
         return (
           <GameFileListProvider>
-            <ModalDialogFinalForm minWidth={800}>
+            <ModalDialogFinalForm
+              open
+              onClose={props.onClose}
+              maxWidth="lg"
+              fullWidth
+            >
               <DialogTitle>
                 <div>
                   {fullGame.name}
@@ -158,38 +167,36 @@ const GameDialogInner: React.FC<{
                     }}
                   />
                 </div>
-
-                <ModalClose />
               </DialogTitle>
 
               <DialogContent>
-                <Grid spacing={2} container>
-                  <Grid xs={12} sm={6}>
+                <Grid container spacing={2}>
+                  <Grid item xs={12} sm={6}>
                     <Typography>{fullGame.description}</Typography>
 
-                    <FormControl>
-                      <FormLabel>Tags</FormLabel>
-                      <IdentityField
-                        name="tags"
-                        render={({ input, meta, ...rest }) => {
-                          return (
-                            <Autocomplete
-                              {...input}
-                              disabled={meta.submitting}
-                              freeSolo
-                              onChange={(_event, value) => {
-                                input.onChange({ target: { value } })
-                              }}
-                              options={allTags}
-                              multiple
-                            />
-                          )
-                        }}
-                      />
-                    </FormControl>
+                    <IdentityField
+                      name="tags"
+                      render={({ input, meta, ...rest }) => {
+                        return (
+                          <Autocomplete<string, true, undefined, true>
+                            {...input}
+                            renderInput={(props) => (
+                              <TextField {...props} label="Tags" />
+                            )}
+                            disabled={meta.submitting}
+                            freeSolo
+                            onChange={(_event, value) => {
+                              input.onChange({ target: { value } })
+                            }}
+                            options={allTags}
+                            multiple
+                          />
+                        )
+                      }}
+                    />
 
                     <FormControl disabled={isGameIwad}>
-                      <FormLabel>IWAD</FormLabel>
+                      <InputLabel>IWAD</InputLabel>
                       <IdentityField
                         name="iwadId"
                         render={({ input, meta, ...rest }) => {
@@ -200,13 +207,13 @@ const GameDialogInner: React.FC<{
                                 input.onChange({ target: { value } })
                               }}
                             >
-                              <Option value="">None</Option>
+                              <MenuItem value="">None</MenuItem>
 
                               {iwads.map((x) => {
                                 return (
-                                  <Option key={x.id} value={x.id}>
+                                  <MenuItem key={x.id} value={x.id}>
                                     {x.name}
-                                  </Option>
+                                  </MenuItem>
                                 )
                               })}
                             </Select>
@@ -216,68 +223,36 @@ const GameDialogInner: React.FC<{
                     </FormControl>
 
                     <FormControl>
-                      <FormLabel>Mods</FormLabel>
+                      <InputLabel>Mods</InputLabel>
                       <IdentityField
                         name="extraGameIds"
                         render={({ input, meta, ...rest }) => {
                           return (
-                            // Using autocomplete because there is no `multiple`
-                            // on Select.
-                            <Autocomplete<
-                              GetGameDialogFieldsQuery['getGames'][0],
-                              true
-                            >
-                              {...input}
-                              disabled={meta.submitting}
-                              onChange={(_event, value) => {
-                                input.onChange({
-                                  target: {
-                                    value: value.map((x) => x.id ?? x),
-                                  },
-                                })
-                              }}
-                              options={others}
-                              getOptionLabel={(x) => {
-                                return x.name ?? x
-                              }}
-                              isOptionEqualToValue={(option, value) => {
-                                return option.id === value
-                              }}
-                              multiple
-                            />
+                            <Select {...input} multiple>
+                              {others.map((x) => {
+                                return (
+                                  <MenuItem key={x.id} value={x.id}>
+                                    {x.name}
+                                  </MenuItem>
+                                )
+                              })}
+                            </Select>
                           )
-                          // return (
-                          //   <Select
-                          //     value={isGameIwad ? values.id : input.value}
-                          //     onChange={(_event, value) => {
-                          //       input.onChange({ target: { value: [value] } })
-                          //     }}
-                          //   >
-                          //     {others.map((x) => {
-                          //       return (
-                          //         <Option key={x.id} value={x.id}>
-                          //           {x.name}
-                          //         </Option>
-                          //       )
-                          //     })}
-                          //   </Select>
-                          // )
                         }}
                       />
                     </FormControl>
 
-                    <FormControl>
-                      <FormLabel>Notes</FormLabel>
-                      <IdentityField
-                        name="notes"
-                        component={TextareaField}
-                        minRows={2}
-                        maxRows={8}
-                      />
-                    </FormControl>
+                    <IdentityField
+                      name="notes"
+                      component={TextareaField}
+                      label="Notes"
+                      multiline
+                      minRows={2}
+                      maxRows={8}
+                    />
                   </Grid>
 
-                  <Grid xs>
+                  <Grid item xs={12} sm={6}>
                     <Suspense fallback={<CircularProgress />}>
                       <GameDialogFileList />
                     </Suspense>
@@ -350,7 +325,7 @@ const Lol = (props) => {
         Play
       </Button>
 
-      <Button type="submit" color="neutral" disabled={formState.submitting}>
+      <Button type="submit" disabled={formState.submitting}>
         Save
       </Button>
     </>
