@@ -103,6 +103,31 @@ impl DataBase {
     serde_json::from_str::<DbGameMeta>(&json_contents).unwrap()
   }
 
+  pub fn load_game_play_sessions(game_id: String) -> DbPlaySession {
+    let meta_path = DirectoryManager::get_meta_directory()
+      .join(game_id)
+      .join("playSessions.json");
+    let json_contents = fs::read_to_string(meta_path).unwrap_or("{}".to_string());
+
+    serde_json::from_str::<DbPlaySession>(&json_contents).unwrap()
+  }
+
+  pub fn record_game_play_session(game_id: String, play_session: DbPlaySessionEntry) {
+    let file_path = DirectoryManager::get_meta_directory()
+      .join(game_id.clone())
+      .join("playSessions.json");
+
+    let mut play_sessions = Self::load_game_play_sessions(game_id);
+    let mut play_sessions_sessions = play_sessions.sessions.clone().unwrap_or_default();
+    play_sessions_sessions.push(play_session.clone());
+    play_sessions.sessions = Some(play_sessions_sessions);
+
+    let json_str = serde_json::to_string(&play_sessions).unwrap();
+
+    fs::create_dir_all(file_path.parent().unwrap()).unwrap();
+    fs::write(file_path, json_str).unwrap();
+  }
+
   pub fn find_all_game_files(game_id: String) -> Vec<String> {
     let mut files: Vec<String> = vec![];
 
@@ -134,8 +159,9 @@ impl DataBase {
   }
 
   pub fn save_game(game: Game) {
-    let json_meta_dir = DirectoryManager::get_meta_directory().join(game.name);
-    let json_meta_path = json_meta_dir.join("meta.json");
+    let json_meta_path = DirectoryManager::get_meta_directory()
+      .join(game.name)
+      .join("meta.json");
 
     let game_meta_json = DbGameMeta {
       rating: Some(game.rating),
@@ -175,9 +201,9 @@ pub struct DbGameEnabledFile {
   pub relative: String,
 }
 
-  pub sessions: Option<PlaySessionEntry>,
 #[derive(Serialize, Deserialize, Debug, Default, Clone)]
 pub struct DbPlaySession {
+  pub sessions: Option<Vec<DbPlaySessionEntry>>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Default, Clone)]

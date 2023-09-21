@@ -6,6 +6,8 @@ use std::vec;
 use async_graphql::Context;
 use async_graphql::Error;
 use async_graphql::Result as GraphQLResult;
+use chrono::DateTime;
+use chrono::Utc;
 use tauri::api::shell::open;
 use tauri::AppHandle;
 use tauri::Manager;
@@ -32,7 +34,7 @@ impl DataSource {
     root: &Game,
     _ctx: &Context<'_>,
   ) -> GraphQLResult<Vec<PlaySession>> {
-    let play_sessions: Vec<PlaySession> = vec![];
+    let mut gql_play_sessions: Vec<PlaySession> = vec![];
 
     let meta_path = DirectoryManager::get_meta_directory()
       .join(&root.name)
@@ -41,11 +43,26 @@ impl DataSource {
     let play_session_meta = serde_json::from_str::<DbPlaySession>(&json_contents).unwrap();
 
     if let Some(play_sessions) = play_session_meta.sessions {
-      // TODO Implement ...
-      println!("{:?} {:?}", root.name, play_sessions);
+      for play_session in play_sessions {
+        if let Some(started_at) = play_session.started_at {
+          if let Some(ended_at) = play_session.ended_at {
+            let duration: i32 = (DateTime::parse_from_rfc3339(&ended_at).unwrap()
+              - DateTime::parse_from_rfc3339(&started_at).unwrap())
+            .num_seconds()
+            .try_into()
+            .unwrap();
+
+            gql_play_sessions.push(PlaySession {
+              duration,
+              ended_at,
+              started_at,
+            })
+          }
+        }
+      }
     }
 
-    Ok(play_sessions)
+    Ok(gql_play_sessions)
   }
 
   pub async fn Game_enabled_files(
@@ -133,6 +150,10 @@ impl DataSource {
     source_port: String,
   ) -> GraphQLResult<bool> {
     let mut command = Command::new(source_port);
+    let mut play_session = DbPlaySessionEntry {
+      started_at: Some(Utc::now().to_rfc3339()),
+      ended_at: None,
+    };
 
     if let Some(valid_iwad) = iwad {
       command.args(["-iwad", &valid_iwad]);
@@ -147,13 +168,17 @@ impl DataSource {
     command.args([
       "-savedir",
       DirectoryManager::get_meta_directory()
-        .join(DataBase::normalize_name_from_id(game_id))
+        .join(DataBase::normalize_name_from_id(game_id.clone()))
         .join("saves")
         .to_str()
         .unwrap(),
     ]);
 
     let exit_status = command.status().unwrap();
+
+    play_session.ended_at = Some(Utc::now().to_rfc3339());
+
+    DataBase::record_game_play_session(game_id.clone(), play_session);
 
     Ok(exit_status.success())
   }
