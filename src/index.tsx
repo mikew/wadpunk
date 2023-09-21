@@ -137,7 +137,13 @@ const theme = createTheme({
   },
 })
 
-ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
+const rootElement = document.getElementById('root')
+
+if (!rootElement) {
+  throw new Error('Could not find root element')
+}
+
+ReactDOM.createRoot(rootElement).render(
   <ApolloProvider client={client}>
     <React.StrictMode>
       <ThemeProvider theme={theme}>
