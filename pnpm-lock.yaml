@@ -61,6 +61,9 @@ devDependencies:
   '@promoboxx/react-scripts-vite':
     specifier: ^0.1.28
     version: 0.1.28(@types/node@18.7.10)(rollup@2.79.1)(typescript@5.2.2)(workbox-build@7.0.0)(workbox-window@7.0.0)
+  '@promoboxx/use-filter':
+    specifier: ^1.11.2
+    version: 1.11.2
   '@tauri-apps/api':
     specifier: ^1.4.0
     version: 1.4.0
@@ -3997,6 +4000,12 @@ packages:
       - webdriverio
       - workbox-build
       - workbox-window
+    dev: true
+
+  /@promoboxx/use-filter@1.11.2:
+    resolution: {integrity: sha512-BXYvw/KU1t8B64/rmZROUc2VdJTtrlDQVVPkgb3rDywXaafjMlamTX0NnG9VzOaVA7+lrczQBOJ+pd+w2e8Hgw==}
+    dependencies:
+      qs: 6.11.2
     dev: true
 
   /@repeaterjs/repeater@3.0.4:
@@ -8295,6 +8304,13 @@ packages:
   /pvutils@1.1.3:
     resolution: {integrity: sha512-pMpnA0qRdFp32b1sJl1wOJNxZLQ2cbQx+k6tjNtZ8CpvVhNqEPRgivZ2WOUev2YMajecdH7ctUPDvEe87nariQ==}
     engines: {node: '>=6.0.0'}
+    dev: true
+
+  /qs@6.11.2:
+    resolution: {integrity: sha512-tDNIz22aBzCDxLtVH++VnTfzxlfeK5CbqohpSqpJgj1Wg/cQbStNAz3NuqCs5vV+pjBsK4x4pN9HlVh7rcYRiA==}
+    engines: {node: '>=0.6'}
+    dependencies:
+      side-channel: 1.0.4
     dev: true
 
   /querystringify@2.2.0:
