@@ -38,10 +38,8 @@ const GameList: React.FC = () => {
   const [setRating] = useMutation(SetRatingDocument)
   const [selectedId, setSelectedId] = useState<GameListGame['id']>()
   const selectedGame = useMemo(() => {
-    return data?.getGames.find((x) => x.id === selectedId)
-  }, [data?.getGames, selectedId])
-
-  console.log(data)
+    return data.getGames.find((x) => x.id === selectedId)
+  }, [data.getGames, selectedId])
 
   async function startGame(_game: GameListGame) {
     try {

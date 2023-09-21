@@ -62,7 +62,7 @@ const GameDialogFileList: React.FC = (props) => {
 
   useEffect(() => {
     const allFiles: FileEntry[] = [
-      ...(iwadFiles?.getGameFiles.map((x) => {
+      ...(iwadFiles.getGameFiles.map((x) => {
         const entry: FileEntry = {
           isIwad: true,
           absolute: x.absolute,
@@ -76,7 +76,7 @@ const GameDialogFileList: React.FC = (props) => {
         return entry
       }) || []),
 
-      ...(gameFiles?.getGameFiles.map((x) => {
+      ...(gameFiles.getGameFiles.map((x) => {
         const entry: FileEntry = {
           isIwad: false,
           absolute: x.absolute,
@@ -92,7 +92,7 @@ const GameDialogFileList: React.FC = (props) => {
     ]
 
     setFiles(allFiles)
-  }, [gameFiles?.getGameFiles, iwadFiles?.getGameFiles, setFiles])
+  }, [gameFiles.getGameFiles, iwadFiles.getGameFiles, setFiles])
 
   return (
     <>
