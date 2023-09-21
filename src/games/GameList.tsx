@@ -2,15 +2,20 @@ import { useMutation, useSuspenseQuery } from '@apollo/client'
 import FolderOpen from '@mui/icons-material/FolderOpen'
 import PlayArrow from '@mui/icons-material/PlayArrow'
 import {
+  AppBar,
+  Box,
   Button,
   Chip,
   IconButton,
+  Input,
   List,
   ListItem,
   ListItemButton,
   ListItemText,
   Stack,
+  Toolbar,
 } from '@mui/material'
+import useSimpleFilter from '@promoboxx/use-filter/dist/useSimpleFilter'
 import { useMemo, useState } from 'react'
 
 import {
@@ -38,6 +43,16 @@ const GameList: React.FC = () => {
   const selectedGame = useMemo(() => {
     return data.getGames.find((x) => x.id === selectedId)
   }, [data.getGames, selectedId])
+
+  const { debouncedFilterInfo, filterInfo, updateFilter, resetFilter } =
+    useSimpleFilter('GameList', {
+      defaultFilterInfo: {
+        filter: {
+          name: '',
+          rating: 0,
+        },
+      },
+    })
 
   async function startGame(_game: GameListGame) {
     try {
@@ -76,13 +91,85 @@ const GameList: React.FC = () => {
     }
   }
 
+  const filtered = useMemo(() => {
+    return data.getGames.filter((x) => {
+      if (
+        !debouncedFilterInfo.filter.name &&
+        !debouncedFilterInfo.filter.rating
+      ) {
+        return true
+      }
+
+      let shouldInclude = false
+
+      if (
+        debouncedFilterInfo.filter.name &&
+        x.name
+          .toLowerCase()
+          .includes(debouncedFilterInfo.filter.name.toLowerCase())
+      ) {
+        shouldInclude = true
+      }
+
+      if (
+        debouncedFilterInfo.filter.rating &&
+        x.rating <= debouncedFilterInfo.filter.rating
+      ) {
+        shouldInclude = true
+      }
+
+      return shouldInclude
+    })
+  }, [
+    data.getGames,
+    debouncedFilterInfo.filter.name,
+    debouncedFilterInfo.filter.rating,
+  ])
+
   return (
     <>
+      <AppBar position="sticky">
+        <Toolbar>
+          <Stack direction="row" spacing={1}>
+            <Input
+              size="small"
+              margin="none"
+              value={filterInfo.filter.name}
+              placeholder="Filter ..."
+              onChange={(event) => {
+                updateFilter({ name: event.target.value })
+              }}
+            />
+
+            <StarRating
+              value={debouncedFilterInfo.filter.rating}
+              onChange={(value) => {
+                updateFilter({ rating: value }, true)
+              }}
+            />
+
+            <Button onClick={() => resetFilter(true)}>Reset</Button>
+          </Stack>
+
+          <Box flexGrow="1" />
+
+          <Button
+            onClick={() => {
+              openGamesFolder()
+            }}
+            startIcon={<FolderOpen />}
+          >
+            Open Games Folder
+          </Button>
+        </Toolbar>
+      </AppBar>
+
       <List disablePadding dense>
-        {data.getGames.map((x) => {
+        {filtered.map((x) => {
           return (
             <ListItem key={x.id} disableGutters disablePadding divider>
               <ListItemButton
+                disableRipple
                 onClick={() => {
                   setSelectedId(x.id)
                 }}
@@ -149,15 +236,6 @@ const GameList: React.FC = () => {
           )
         })}
       </List>
-
-      <Button
-        onClick={() => {
-          openGamesFolder()
-        }}
-        startIcon={<FolderOpen />}
-      >
-        Open Games Folder
-      </Button>
 
       {selectedGame ? (
         <GameDialog

@@ -5,6 +5,8 @@ import {
   createTheme,
   listItemClasses,
 } from '@mui/material'
+import { setFilterStore } from '@promoboxx/use-filter/dist/store'
+import localStorageStore from '@promoboxx/use-filter/dist/store/localStorageStore'
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 
@@ -17,6 +19,8 @@ const client = new ApolloClient({
   link: tauriGraphqlApolloLink,
   // link: tauriGraphqlHttpLink,
 })
+
+setFilterStore(localStorageStore)
 
 const ROUNDED_BORDER_RADIUS = 9999
 
@@ -63,6 +67,11 @@ const theme = createTheme({
         root: {
           cursor: 'pointer',
         },
+      },
+    },
+    MuiTooltip: {
+      defaultProps: {
+        arrow: true,
       },
     },
 
