@@ -1,4 +1,4 @@
-import { skipToken, useSuspenseQuery } from '@apollo/client'
+import { useSuspenseQuery } from '@apollo/client'
 import {
   Checkbox,
   FormLabel,

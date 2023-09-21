@@ -2,8 +2,6 @@ import { useMutation, useSuspenseQuery } from '@apollo/client'
 import {
   Button,
   FormControl,
-  // FormHelperText,
-  FormLabel,
   Typography,
   DialogTitle,
   DialogActions,
@@ -16,6 +14,7 @@ import {
   CircularProgress,
   TextField,
   InputLabel,
+  Box,
 } from '@mui/material'
 import { Suspense, useMemo } from 'react'
 import { Form, useForm, useFormState } from 'react-final-form'
@@ -61,7 +60,11 @@ const GameDialog: React.FC<GameDialogProps> = (props) => {
     <Suspense
       fallback={
         <Dialog open>
-          <CircularProgress />
+          <DialogContent>
+            <Box padding={4} justifyContent="center">
+              <CircularProgress />
+            </Box>
+          </DialogContent>
         </Dialog>
       }
     >
@@ -134,7 +137,7 @@ const GameDialogInner: React.FC<GameDialogProps> = (props) => {
         })
       }}
     >
-      {({ values }) => {
+      {({ values, submitting }) => {
         const isGameIwad = isIwad(values.tags)
 
         return (
@@ -180,6 +183,7 @@ const GameDialogInner: React.FC<GameDialogProps> = (props) => {
                         return (
                           <Autocomplete<string, true, undefined, true>
                             {...input}
+                            openOnFocus
                             renderInput={(props) => (
                               <TextField {...props} label="Tags" />
                             )}
@@ -195,17 +199,15 @@ const GameDialogInner: React.FC<GameDialogProps> = (props) => {
                       }}
                     />
 
-                    <FormControl disabled={isGameIwad}>
+                    <FormControl disabled={isGameIwad || submitting}>
                       <InputLabel>IWAD</InputLabel>
                       <IdentityField
                         name="iwadId"
                         render={({ input, meta, ...rest }) => {
                           return (
                             <Select
+                              {...input}
                               value={isGameIwad ? values.id : input.value}
-                              onChange={(_event, value) => {
-                                input.onChange({ target: { value } })
-                              }}
                             >
                               <MenuItem value="">None</MenuItem>
 
@@ -228,7 +230,7 @@ const GameDialogInner: React.FC<GameDialogProps> = (props) => {
                         name="extraGameIds"
                         render={({ input, meta, ...rest }) => {
                           return (
-                            <Select {...input} multiple>
+                            <Select {...input} multiple disabled={submitting}>
                               {others.map((x) => {
                                 return (
                                   <MenuItem key={x.id} value={x.id}>
@@ -245,6 +247,7 @@ const GameDialogInner: React.FC<GameDialogProps> = (props) => {
                     <IdentityField
                       name="notes"
                       component={TextareaField}
+                      disabled={submitting}
                       label="Notes"
                       multiline
                       minRows={2}
