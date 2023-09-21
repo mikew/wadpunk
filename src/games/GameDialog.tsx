@@ -184,6 +184,7 @@ const GameDialogInner: React.FC<GameDialogProps> = (props) => {
                           <Autocomplete<string, true, undefined, true>
                             {...input}
                             openOnFocus
+                            ChipProps={{ size: 'small' }}
                             renderInput={(props) => (
                               <TextField {...props} label="Tags" />
                             )}

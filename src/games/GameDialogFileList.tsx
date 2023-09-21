@@ -4,7 +4,6 @@ import {
   FormLabel,
   List,
   ListItem,
-  ListItemIcon,
   ListItemText,
 } from '@mui/material'
 import { useEffect } from 'react'
@@ -92,6 +91,9 @@ const GameDialogFileList: React.FC = (props) => {
     ]
 
     setFiles(allFiles)
+
+    // Trigger a resize so the iwad / mods dropdowns reposition themselves.
+    window.dispatchEvent(new Event('resize'))
   }, [gameFiles.getGameFiles, iwadFiles.getGameFiles, setFiles])
 
   return (
@@ -100,17 +102,20 @@ const GameDialogFileList: React.FC = (props) => {
       <List dense disablePadding>
         {files.map((x, i) => {
           return (
-            <ListItem key={x.absolute} disableGutters>
-              <ListItemIcon>
-                <Checkbox
-                  size="small"
-                  checked={x.selected}
-                  onChange={(event) => {
-                    setEnabled(x.relative, event.target.checked)
-                  }}
-                />
-              </ListItemIcon>
-              <ListItemText primary={x.relative} />
+            <ListItem key={x.absolute} disableGutters disablePadding>
+              <Checkbox
+                size="small"
+                checked={x.selected}
+                onChange={(event) => {
+                  setEnabled(x.relative, event.target.checked)
+                }}
+              />
+              <ListItemText
+                primary={x.relative}
+                primaryTypographyProps={{
+                  color: x.selected ? undefined : 'text.secondary',
+                }}
+              />
             </ListItem>
           )
         })}

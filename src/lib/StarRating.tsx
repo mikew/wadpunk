@@ -12,20 +12,28 @@ const StarRating: React.FC<{
     <Tooltip
       enterDelay={500}
       title={
-        <>
-          <Button
-            size="small"
-            fullWidth
-            onClick={() => {
-              props.onChange(0)
-            }}
-          >
-            Clear
-          </Button>
-        </>
+        props.value === 0 ? null : (
+          <>
+            <Button
+              size="small"
+              fullWidth
+              onClick={() => {
+                props.onChange(0)
+              }}
+            >
+              Clear
+            </Button>
+          </>
+        )
       }
     >
-      <Stack direction="row" alignItems="center">
+      <Stack
+        direction="row"
+        alignItems="center"
+        onMouseOut={() => {
+          setHoverIndex(undefined)
+        }}
+      >
         {[1, 2, 3, 4, 5].map((x) => {
           const handleClick = () => {
             props.onChange(x)
@@ -38,11 +46,8 @@ const StarRating: React.FC<{
             sx: {
               opacity: hoverIndex != null && hoverIndex >= x ? 0.4 : undefined,
             },
-            onMouseEnter: () => {
+            onMouseOver: () => {
               setHoverIndex(x)
-            },
-            onMouseLeave: () => {
-              setHoverIndex(undefined)
             },
             component: 'svg',
           }

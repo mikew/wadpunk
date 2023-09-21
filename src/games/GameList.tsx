@@ -1,4 +1,5 @@
 import { useMutation, useSuspenseQuery } from '@apollo/client'
+import { Search } from '@mui/icons-material'
 import FolderOpen from '@mui/icons-material/FolderOpen'
 import PlayArrow from '@mui/icons-material/PlayArrow'
 import {
@@ -8,6 +9,7 @@ import {
   Chip,
   IconButton,
   Input,
+  InputAdornment,
   List,
   ListItem,
   ListItemButton,
@@ -93,29 +95,22 @@ const GameList: React.FC = () => {
 
   const filtered = useMemo(() => {
     return data.getGames.filter((x) => {
-      if (
-        !debouncedFilterInfo.filter.name &&
-        !debouncedFilterInfo.filter.rating
-      ) {
-        return true
-      }
-
-      let shouldInclude = false
+      let shouldInclude = true
 
       if (
         debouncedFilterInfo.filter.name &&
-        x.name
+        !x.name
           .toLowerCase()
           .includes(debouncedFilterInfo.filter.name.toLowerCase())
       ) {
-        shouldInclude = true
+        shouldInclude &&= false
       }
 
       if (
         debouncedFilterInfo.filter.rating &&
-        x.rating <= debouncedFilterInfo.filter.rating
+        x.rating >= debouncedFilterInfo.filter.rating
       ) {
-        shouldInclude = true
+        shouldInclude &&= false
       }
 
       return shouldInclude
@@ -139,6 +134,11 @@ const GameList: React.FC = () => {
               onChange={(event) => {
                 updateFilter({ name: event.target.value })
               }}
+              startAdornment={
+                <InputAdornment position="start">
+                  <Search />
+                </InputAdornment>
+              }
             />
 
             <StarRating
@@ -166,6 +166,18 @@ const GameList: React.FC = () => {
 
       <List disablePadding dense>
         {filtered.map((x) => {
+          let playTime = x.play_sessions.reduce(
+            (memo, x) => memo + x.duration,
+            0,
+          )
+
+          let playtimeMessage =
+            playTime === 0
+              ? 'Never played'
+              : `${new Date(playTime * 1000)
+                  .toISOString()
+                  .substring(11, 19)} played`
+
           return (
             <ListItem key={x.id} disableGutters disablePadding divider>
               <ListItemButton
@@ -178,11 +190,7 @@ const GameList: React.FC = () => {
                   primary={x.name}
                   secondary={
                     <>
-                      {x.play_sessions.reduce(
-                        (memo, x) => memo + x.duration,
-                        0,
-                      )}
-                      s played /{x.notes}
+                      {playtimeMessage} / {x.notes}
                     </>
                   }
                 />
