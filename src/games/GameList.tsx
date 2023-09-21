@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from '@apollo/client'
+import { useMutation, useSuspenseQuery } from '@apollo/client'
 import FolderOpen from '@mui/icons-material/FolderOpen'
 import PlayArrow from '@mui/icons-material/PlayArrow'
 import {
@@ -11,6 +11,7 @@ import {
   ListItemContent,
   Modal,
   Stack,
+  Typography,
 } from '@mui/joy'
 import { useMemo, useState } from 'react'
 
@@ -30,7 +31,7 @@ type ArrayItemType<T> = T extends Array<infer A> ? A : never
 export type GameListGame = ArrayItemType<GetGameListQueryQuery['getGames']>
 
 const GameList: React.FC = () => {
-  const { data } = useQuery(GetGameListQueryDocument)
+  const { data } = useSuspenseQuery(GetGameListQueryDocument)
 
   const [openGamesFolderMutation] = useMutation(OpenGamesFolderDocument)
   const [startGameMutation] = useMutation(StartGameDocument)
@@ -39,6 +40,8 @@ const GameList: React.FC = () => {
   const selectedGame = useMemo(() => {
     return data?.getGames.find((x) => x.id === selectedId)
   }, [data?.getGames, selectedId])
+
+  console.log(data)
 
   async function startGame(_game: GameListGame) {
     try {
@@ -80,7 +83,7 @@ const GameList: React.FC = () => {
   return (
     <>
       <List>
-        {data?.getGames?.map((x) => {
+        {data.getGames.map((x) => {
           return (
             <ListItem
               key={x.id}
@@ -126,8 +129,12 @@ const GameList: React.FC = () => {
                 }}
               >
                 <ListItemContent>
-                  {x.name}
-                  {x.notes}
+                  <Typography>{x.name}</Typography>
+                  <Typography level="body-sm">{x.notes}</Typography>
+                  <Typography level="body-sm">
+                    {x.play_sessions.reduce((memo, x) => memo + x.duration, 0)}s
+                    played
+                  </Typography>
 
                   <Stack direction="row" spacing={1}>
                     {x.tags.map((tag) => {
