@@ -17,11 +17,12 @@ import {
   CircularProgress,
 } from '@mui/joy'
 import { Suspense, useMemo } from 'react'
-import { Form, useFormState } from 'react-final-form'
+import { Form, useForm, useFormState } from 'react-final-form'
 
 import {
   GetGameDialogFieldsDocument,
   GetGameDialogFieldsQuery,
+  GetGameListQueryDocument,
   StartGameDocument,
   UpdateGameDocument,
 } from '@src/graphql/operations'
@@ -296,9 +297,12 @@ const GameDialogInner: React.FC<{
 }
 
 const Lol = (props) => {
-  const [startGameMutation] = useMutation(StartGameDocument)
+  const [startGameMutation] = useMutation(StartGameDocument, {
+    refetchQueries: [{ query: GetGameListQueryDocument }],
+  })
   const { files: allFiles } = useGameFileListContext()
   const formState = useFormState()
+  const form = useForm()
 
   return (
     <>
@@ -307,6 +311,8 @@ const Lol = (props) => {
       <Button
         onClick={async () => {
           try {
+            await form.submit()
+
             const files: string[] = []
             let iwad: string | undefined = undefined
 
