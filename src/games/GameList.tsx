@@ -1,7 +1,6 @@
 import { useMutation, useSuspenseQuery } from '@apollo/client'
 import { Search } from '@mui/icons-material'
 import FolderOpen from '@mui/icons-material/FolderOpen'
-import PlayArrow from '@mui/icons-material/PlayArrow'
 import {
   AppBar,
   Box,
@@ -14,6 +13,8 @@ import {
   ListItem,
   ListItemButton,
   ListItemText,
+  MenuItem,
+  Select,
   Stack,
   Toolbar,
 } from '@mui/material'
@@ -25,10 +26,10 @@ import {
   GetGameListQueryQuery,
   OpenGamesFolderDocument,
   SetRatingDocument,
-  StartGameDocument,
 } from '@src/graphql/operations'
 import StarRating from '@src/lib/StarRating'
 
+import calculateGamePlayTime from './calculateGamePlayTime'
 import GameDialog from './GameDialog'
 
 type ArrayItemType<T> = T extends Array<infer A> ? A : never
@@ -39,43 +40,27 @@ const GameList: React.FC = () => {
   const { data } = useSuspenseQuery(GetGameListQueryDocument)
 
   const [openGamesFolderMutation] = useMutation(OpenGamesFolderDocument)
-  const [startGameMutation] = useMutation(StartGameDocument)
   const [setRating] = useMutation(SetRatingDocument)
   const [selectedId, setSelectedId] = useState<GameListGame['id']>()
   const selectedGame = useMemo(() => {
     return data.getGames.find((x) => x.id === selectedId)
   }, [data.getGames, selectedId])
 
-  const { debouncedFilterInfo, filterInfo, updateFilter, resetFilter } =
-    useSimpleFilter('GameList', {
-      defaultFilterInfo: {
-        filter: {
-          name: '',
-          rating: 0,
-        },
+  const {
+    debouncedFilterInfo,
+    filterInfo,
+    updateFilter,
+    resetFilter,
+    setSort,
+  } = useSimpleFilter('GameList', {
+    defaultFilterInfo: {
+      filter: {
+        name: '',
+        rating: 0,
       },
-    })
-
-  async function startGame(_game: GameListGame) {
-    try {
-      const startGameResponse = await startGameMutation({
-        variables: {
-          source_port:
-            '/Users/mike/Downloads/gzdoom-4-10-0-macOS/GZDoom.app/Contents/MacOS/gzdoom',
-          iwad: '/Users/mike/Downloads/DOOM2.WAD',
-          files: [
-            '/Users/mike/Documents/GZDoom Launcher/Games/GoldenSouls2_1.4/GoldenSouls2_1.4.pk3',
-          ],
-        },
-      })
-
-      if (!startGameResponse.data?.startGame) {
-        throw new Error('startGame returned false')
-      }
-    } catch (err) {
-      console.error(err)
-    }
-  }
+      sort: 'name:asc',
+    },
+  })
 
   async function openGamesFolder(game_id?: string) {
     try {
@@ -94,7 +79,7 @@ const GameList: React.FC = () => {
   }
 
   const filtered = useMemo(() => {
-    return data.getGames.filter((x) => {
+    const filtered = data.getGames.filter((x) => {
       let shouldInclude = true
 
       if (
@@ -108,17 +93,57 @@ const GameList: React.FC = () => {
 
       if (
         debouncedFilterInfo.filter.rating &&
-        x.rating >= debouncedFilterInfo.filter.rating
+        x.rating !== debouncedFilterInfo.filter.rating
       ) {
         shouldInclude &&= false
       }
 
       return shouldInclude
     })
+
+    const [sortKey = 'name', sortDirection = 'asc'] =
+      debouncedFilterInfo.sort?.split(':') || []
+
+    filtered.sort((a, b) => {
+      if (sortKey === 'name') {
+        return a.name.localeCompare(b.name)
+      }
+
+      if (sortKey === 'rating') {
+        return a.rating - b.rating
+      }
+
+      if (sortKey === 'lastPlayed') {
+        const lastPlayedA = new Date(
+          a.play_sessions[a.play_sessions.length - 1]?.ended_at || 0,
+        )
+        const lastPlayedB = new Date(
+          b.play_sessions[b.play_sessions.length - 1]?.ended_at || 0,
+        )
+
+        return lastPlayedA.valueOf() - lastPlayedB.valueOf()
+      }
+
+      if (sortKey === 'playTime') {
+        return (
+          calculateGamePlayTime(a.play_sessions) -
+          calculateGamePlayTime(b.play_sessions)
+        )
+      }
+
+      return 0
+    })
+
+    if (sortDirection === 'desc') {
+      filtered.reverse()
+    }
+
+    return filtered
   }, [
     data.getGames,
     debouncedFilterInfo.filter.name,
     debouncedFilterInfo.filter.rating,
+    debouncedFilterInfo.sort,
   ])
 
   return (
@@ -148,6 +173,22 @@ const GameList: React.FC = () => {
               }}
             />
 
+            <Select
+              variant="standard"
+              size="small"
+              margin="none"
+              placeholder="Sort By ..."
+              value={debouncedFilterInfo.sort}
+              onChange={(event) => {
+                setSort(event.target.value, true)
+              }}
+            >
+              <MenuItem value="name:asc">Name</MenuItem>
+              <MenuItem value="rating:desc">Rating</MenuItem>
+              <MenuItem value="playTime:desc">Play Time</MenuItem>
+              <MenuItem value="lastPlayed:desc">Last Played</MenuItem>
+            </Select>
+
             <Button onClick={() => resetFilter(true)}>Reset</Button>
           </Stack>
 
@@ -166,10 +207,7 @@ const GameList: React.FC = () => {
 
       <List disablePadding dense>
         {filtered.map((x) => {
-          let playTime = x.play_sessions.reduce(
-            (memo, x) => memo + x.duration,
-            0,
-          )
+          let playTime = calculateGamePlayTime(x.play_sessions)
 
           let playtimeMessage =
             playTime === 0
@@ -222,14 +260,14 @@ const GameList: React.FC = () => {
                   }}
                 />
 
-                <IconButton
+                {/* <IconButton
                   onClick={() => {
                     startGame(x)
                   }}
                   size="small"
                 >
                   <PlayArrow />
-                </IconButton>
+                </IconButton> */}
 
                 <IconButton
                   onClick={() => {
