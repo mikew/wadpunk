@@ -93,14 +93,14 @@ impl DataBase {
     };
   }
 
-  pub fn load_game_meta(game_id: String) -> GameMetaJson {
+  pub fn load_game_meta(game_id: String) -> DbGameMeta {
     let json_meta_path = DirectoryManager::get_meta_directory()
       .join(game_id)
       .join("meta.json");
 
     let json_contents = fs::read_to_string(json_meta_path).unwrap_or("{}".to_string());
 
-    serde_json::from_str::<GameMetaJson>(&json_contents).unwrap()
+    serde_json::from_str::<DbGameMeta>(&json_contents).unwrap()
   }
 
   pub fn find_all_game_files(game_id: String) -> Vec<String> {
@@ -137,7 +137,7 @@ impl DataBase {
     let json_meta_dir = DirectoryManager::get_meta_directory().join(game.name);
     let json_meta_path = json_meta_dir.join("meta.json");
 
-    let game_meta_json = GameMetaJson {
+    let game_meta_json = DbGameMeta {
       rating: Some(game.rating),
       description: Some(game.description),
       notes: Some(game.notes),
@@ -151,13 +151,13 @@ impl DataBase {
 
     let json_str = serde_json::to_string(&game_meta_json).unwrap();
 
-    fs::create_dir_all(json_meta_dir).unwrap();
+    fs::create_dir_all(json_meta_path.parent().unwrap()).unwrap();
     fs::write(json_meta_path, json_str).unwrap();
   }
 }
 
-#[derive(Serialize, Deserialize, Debug, Default)]
-pub struct GameMetaJson {
+#[derive(Serialize, Deserialize, Debug, Default, Clone)]
+pub struct DbGameMeta {
   pub rating: Option<i32>,
   pub description: Option<String>,
   pub notes: Option<String>,
@@ -166,22 +166,22 @@ pub struct GameMetaJson {
   pub iwad_id: Option<String>,
   pub source_port: Option<String>,
   pub extra_mod_ids: Option<Vec<String>>,
-  pub enabled_files: Option<Vec<GameEnabledFileJson>>,
+  pub enabled_files: Option<Vec<DbGameEnabledFile>>,
 }
 
-#[derive(Serialize, Deserialize, Debug, Default)]
-pub struct GameEnabledFileJson {
+#[derive(Serialize, Deserialize, Debug, Default, Clone)]
+pub struct DbGameEnabledFile {
   pub is_enabled: bool,
   pub relative: String,
 }
 
-#[derive(Serialize, Deserialize, Debug, Default)]
-pub struct PlaySessionJson {
   pub sessions: Option<PlaySessionEntry>,
+#[derive(Serialize, Deserialize, Debug, Default, Clone)]
+pub struct DbPlaySession {
 }
 
-#[derive(Serialize, Deserialize, Debug, Default)]
-pub struct PlaySessionEntry {
+#[derive(Serialize, Deserialize, Debug, Default, Clone)]
+pub struct DbPlaySessionEntry {
   pub started_at: Option<String>,
   pub ended_at: Option<String>,
 }

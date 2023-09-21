@@ -11,8 +11,9 @@ use tauri::AppHandle;
 use tauri::Manager;
 
 use crate::database::DataBase;
+use crate::database::DbPlaySession;
+use crate::database::DbPlaySessionEntry;
 use crate::database::DirectoryManager;
-use crate::database::PlaySessionJson;
 
 use super::generated::AppSettings;
 use super::generated::Game;
@@ -37,7 +38,7 @@ impl DataSource {
       .join(&root.name)
       .join("playSessions.json");
     let json_contents = fs::read_to_string(meta_path).unwrap_or("{}".to_string());
-    let play_session_meta = serde_json::from_str::<PlaySessionJson>(&json_contents).unwrap();
+    let play_session_meta = serde_json::from_str::<DbPlaySession>(&json_contents).unwrap();
 
     if let Some(play_sessions) = play_session_meta.sessions {
       // TODO Implement ...
