@@ -8,7 +8,6 @@ use async_graphql::Error;
 use async_graphql::Result as GraphQLResult;
 use chrono::DateTime;
 use chrono::Utc;
-use tauri::api::shell::open;
 use tauri::AppHandle;
 use tauri::Manager;
 
@@ -16,6 +15,7 @@ use crate::database::DataBase;
 use crate::database::DbPlaySession;
 use crate::database::DbPlaySessionEntry;
 use crate::database::DirectoryManager;
+use crate::tauri_helpers::reveal_in_finder::reveal_file_or_folder;
 
 use super::generated::AppSettings;
 use super::generated::Game;
@@ -186,18 +186,16 @@ impl DataSource {
   pub async fn Mutation_openGamesFolder(
     &self,
     _root: &Mutation,
-    ctx: &Context<'_>,
+    _ctx: &Context<'_>,
     game_id: Option<String>,
   ) -> GraphQLResult<bool> {
-    let app = ctx.data::<AppHandle>().unwrap();
-
     let mut path_to_open = DirectoryManager::get_games_directory();
 
     if let Some(game_id) = game_id {
       path_to_open.push(game_id);
     }
 
-    open(&app.shell_scope(), path_to_open.to_str().unwrap(), None).unwrap();
+    reveal_file_or_folder(path_to_open.to_str().unwrap().to_string());
 
     Ok(true)
   }

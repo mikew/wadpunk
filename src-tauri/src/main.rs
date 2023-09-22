@@ -8,6 +8,7 @@ use graphql::datasource::DataSource;
 mod database;
 mod graphql;
 mod tauri_commands;
+mod tauri_helpers;
 
 fn main() {
   let schema = async_graphql::Schema::build(
