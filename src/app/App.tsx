@@ -1,5 +1,5 @@
 import { FetchResult, useMutation } from '@apollo/client'
-import { CircularProgress } from '@mui/joy'
+import { Box, CircularProgress } from '@mui/material'
 import { PropsWithChildren, Suspense, useEffect, useState } from 'react'
 
 import GameList from '@src/games/GameList'
@@ -14,7 +14,13 @@ import {
 
 function App() {
   return (
-    <Suspense fallback={<CircularProgress />}>
+    <Suspense
+      fallback={
+        <Box padding={4} justifyContent="center">
+          <CircularProgress />
+        </Box>
+      }
+    >
       <Initializer>
         <GameList />
       </Initializer>

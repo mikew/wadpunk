@@ -1,8 +1,8 @@
-import { Textarea, TextareaProps } from '@mui/joy'
+import { TextField, TextFieldProps } from '@mui/material'
 import { FieldRenderProps } from 'react-final-form'
 
 type TextareaFieldProps = Omit<
-  TextareaProps,
+  TextFieldProps,
   'onChange' | 'onBlur' | 'onFocus' | 'value'
 > &
   FieldRenderProps<any>
@@ -13,7 +13,7 @@ const TextareaField: React.FC<TextareaFieldProps> = ({
   ...rest
 }) => {
   return (
-    <Textarea
+    <TextField
       {...input}
       {...rest}
       error={meta.touched && meta.error}

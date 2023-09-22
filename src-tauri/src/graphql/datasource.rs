@@ -6,16 +6,20 @@ use std::vec;
 use async_graphql::Context;
 use async_graphql::Error;
 use async_graphql::Result as GraphQLResult;
-use tauri::api::shell::open;
+use chrono::DateTime;
+use chrono::Utc;
 use tauri::AppHandle;
 use tauri::Manager;
 
 use crate::database::DataBase;
+use crate::database::DbPlaySession;
+use crate::database::DbPlaySessionEntry;
 use crate::database::DirectoryManager;
-use crate::database::PlaySessionJson;
+use crate::tauri_helpers::reveal_in_finder::reveal_file_or_folder;
 
 use super::generated::AppSettings;
 use super::generated::Game;
+use super::generated::GameEnabledFile;
 use super::generated::GameFileEntry;
 use super::generated::GameInput;
 use super::generated::Mutation;
@@ -30,22 +34,67 @@ impl DataSource {
     root: &Game,
     _ctx: &Context<'_>,
   ) -> GraphQLResult<Vec<PlaySession>> {
-    let play_sessions: Vec<PlaySession> = vec![];
+    let mut gql_play_sessions: Vec<PlaySession> = vec![];
 
     let meta_path = DirectoryManager::get_meta_directory()
       .join(&root.name)
       .join("playSessions.json");
     let json_contents = fs::read_to_string(meta_path).unwrap_or("{}".to_string());
-    let play_session_meta = serde_json::from_str::<PlaySessionJson>(&json_contents).unwrap();
+    let play_session_meta = serde_json::from_str::<DbPlaySession>(&json_contents).unwrap();
 
     if let Some(play_sessions) = play_session_meta.sessions {
-      // TODO Implement ...
-      println!("{:?} {:?}", root.name, play_sessions);
+      for play_session in play_sessions {
+        if let Some(started_at) = play_session.started_at {
+          if let Some(ended_at) = play_session.ended_at {
+            let duration: i32 = (DateTime::parse_from_rfc3339(&ended_at).unwrap()
+              - DateTime::parse_from_rfc3339(&started_at).unwrap())
+            .num_seconds()
+            .try_into()
+            .unwrap();
+
+            gql_play_sessions.push(PlaySession {
+              duration,
+              ended_at,
+              started_at,
+            })
+          }
+        }
+      }
     }
 
-    Ok(play_sessions)
+    Ok(gql_play_sessions)
   }
 
+  pub async fn Game_enabled_files(
+    &self,
+    _root: &Game,
+    _ctx: &Context<'_>,
+  ) -> GraphQLResult<Option<Vec<GameEnabledFile>>> {
+    let meta = DataBase::load_game_meta(_root.id.clone());
+    let enabled_files = meta.enabled_files;
+
+    let v: Option<Vec<GameEnabledFile>> = Some(
+      enabled_files
+        .into_iter()
+        .flatten()
+        .map(|x| GameEnabledFile {
+          relative: x.relative,
+          is_enabled: x.is_enabled,
+        })
+        .collect(),
+    );
+
+    Ok(v)
+  }
+
+  pub async fn Query_getGame(
+    &self,
+    _root: &Query,
+    _ctx: &Context<'_>,
+    id: String,
+  ) -> GraphQLResult<Game> {
+    Ok(DataBase::load_game_with_meta(id))
+  }
   pub async fn Query_getAppSettings(
     &self,
     _root: &Query,
@@ -83,7 +132,11 @@ impl DataSource {
     Ok(game_file_entries)
   }
 
-  pub async fn Query_getGames(&self, _root: &Query, ctx: &Context<'_>) -> GraphQLResult<Vec<Game>> {
+  pub async fn Query_getGames(
+    &self,
+    _root: &Query,
+    _ctx: &Context<'_>,
+  ) -> GraphQLResult<Vec<Game>> {
     Ok(DataBase::find_all_games())
   }
 
@@ -97,6 +150,10 @@ impl DataSource {
     source_port: String,
   ) -> GraphQLResult<bool> {
     let mut command = Command::new(source_port);
+    let mut play_session = DbPlaySessionEntry {
+      started_at: Some(Utc::now().to_rfc3339()),
+      ended_at: None,
+    };
 
     if let Some(valid_iwad) = iwad {
       command.args(["-iwad", &valid_iwad]);
@@ -111,7 +168,7 @@ impl DataSource {
     command.args([
       "-savedir",
       DirectoryManager::get_meta_directory()
-        .join(DataBase::normalize_name_from_id(game_id))
+        .join(DataBase::normalize_name_from_id(game_id.clone()))
         .join("saves")
         .to_str()
         .unwrap(),
@@ -119,24 +176,26 @@ impl DataSource {
 
     let exit_status = command.status().unwrap();
 
+    play_session.ended_at = Some(Utc::now().to_rfc3339());
+
+    DataBase::record_game_play_session(game_id.clone(), play_session);
+
     Ok(exit_status.success())
   }
 
   pub async fn Mutation_openGamesFolder(
     &self,
     _root: &Mutation,
-    ctx: &Context<'_>,
+    _ctx: &Context<'_>,
     game_id: Option<String>,
   ) -> GraphQLResult<bool> {
-    let app = ctx.data::<AppHandle>().unwrap();
-
     let mut path_to_open = DirectoryManager::get_games_directory();
 
     if let Some(game_id) = game_id {
       path_to_open.push(game_id);
     }
 
-    open(&app.shell_scope(), path_to_open.to_str().unwrap(), None).unwrap();
+    reveal_file_or_folder(path_to_open.to_str().unwrap().to_string());
 
     Ok(true)
   }
@@ -231,23 +290,25 @@ impl DataSource {
     let db = ctx.data::<AppHandle>().unwrap().state::<DataBase>();
 
     if let Some(mut game_record) = db.find_game_by_id(game.id.clone()) {
-      game_record.iwad_id = game.iwad_id;
-
-      if let Some(notes) = game.notes {
-        game_record.notes = notes;
+      if let Some(rating) = game.rating {
+        game_record.rating = rating;
       }
 
       if let Some(description) = game.description {
         game_record.description = description;
       }
 
-      if let Some(rating) = game.rating {
-        game_record.rating = rating;
+      if let Some(notes) = game.notes {
+        game_record.notes = notes;
       }
 
       if let Some(tags) = game.tags {
         game_record.tags = tags;
       }
+
+      game_record.source_port = game.source_port;
+      game_record.iwad_id = game.iwad_id;
+      game_record.extra_mod_ids = game.extra_mod_ids;
 
       DataBase::save_game(game_record.clone());
 

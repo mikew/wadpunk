@@ -1,19 +1,16 @@
-import { ModalDialog, ModalDialogProps } from '@mui/joy'
+import { Dialog, DialogProps } from '@mui/material'
 import { forwardRef } from 'react'
 import { useForm } from 'react-final-form'
 
 interface ModalDialogFinalFormProps
-  extends Omit<
-    ModalDialogProps<'form'>,
-    'component' | 'onSubmit' | 'onReset'
-  > {}
+  extends Omit<DialogProps, 'component' | 'onSubmit' | 'onReset'> {}
 
 const ModalDialogFinalForm: React.FC<ModalDialogFinalFormProps> = forwardRef(
   (props, ref) => {
     const api = useForm()
 
     return (
-      <ModalDialog
+      <Dialog
         {...props}
         component="form"
         onSubmit={(event) => {

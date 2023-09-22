@@ -80,23 +80,52 @@ impl DataBase {
 
     return Game {
       id: id.clone(),
-      description: game_meta.description.unwrap_or_default(),
       name: name_normalized,
-      notes: game_meta.notes.unwrap_or_default(),
+
       rating: game_meta.rating.unwrap_or_default(),
+      description: game_meta.description.unwrap_or_default(),
+      notes: game_meta.notes.unwrap_or_default(),
       tags: game_meta.tags.unwrap_or_default(),
+
+      source_port: game_meta.source_port,
       iwad_id: game_meta.iwad_id,
+      extra_mod_ids: game_meta.extra_mod_ids,
     };
   }
 
-  pub fn load_game_meta(game_id: String) -> GameMetaJson {
+  pub fn load_game_meta(game_id: String) -> DbGameMeta {
     let json_meta_path = DirectoryManager::get_meta_directory()
       .join(game_id)
       .join("meta.json");
 
     let json_contents = fs::read_to_string(json_meta_path).unwrap_or("{}".to_string());
 
-    serde_json::from_str::<GameMetaJson>(&json_contents).unwrap()
+    serde_json::from_str::<DbGameMeta>(&json_contents).unwrap()
+  }
+
+  pub fn load_game_play_sessions(game_id: String) -> DbPlaySession {
+    let meta_path = DirectoryManager::get_meta_directory()
+      .join(game_id)
+      .join("playSessions.json");
+    let json_contents = fs::read_to_string(meta_path).unwrap_or("{}".to_string());
+
+    serde_json::from_str::<DbPlaySession>(&json_contents).unwrap()
+  }
+
+  pub fn record_game_play_session(game_id: String, play_session: DbPlaySessionEntry) {
+    let file_path = DirectoryManager::get_meta_directory()
+      .join(game_id.clone())
+      .join("playSessions.json");
+
+    let mut play_sessions = Self::load_game_play_sessions(game_id);
+    let mut play_sessions_sessions = play_sessions.sessions.clone().unwrap_or_default();
+    play_sessions_sessions.push(play_session.clone());
+    play_sessions.sessions = Some(play_sessions_sessions);
+
+    let json_str = serde_json::to_string(&play_sessions).unwrap();
+
+    fs::create_dir_all(file_path.parent().unwrap()).unwrap();
+    fs::write(file_path, json_str).unwrap();
   }
 
   pub fn find_all_game_files(game_id: String) -> Vec<String> {
@@ -130,40 +159,55 @@ impl DataBase {
   }
 
   pub fn save_game(game: Game) {
-    let json_meta_dir = DirectoryManager::get_meta_directory().join(game.name);
-    let json_meta_path = json_meta_dir.join("meta.json");
+    let json_meta_path = DirectoryManager::get_meta_directory()
+      .join(game.name)
+      .join("meta.json");
 
-    let game_meta_json = GameMetaJson {
-      notes: Some(game.notes),
-      description: Some(game.description),
+    let game_meta_json = DbGameMeta {
       rating: Some(game.rating),
+      description: Some(game.description),
+      notes: Some(game.notes),
       tags: Some(game.tags),
+
+      source_port: game.source_port,
       iwad_id: game.iwad_id,
+      extra_mod_ids: game.extra_mod_ids,
+      enabled_files: Some(vec![]),
     };
 
     let json_str = serde_json::to_string(&game_meta_json).unwrap();
 
-    fs::create_dir_all(json_meta_dir).unwrap();
+    fs::create_dir_all(json_meta_path.parent().unwrap()).unwrap();
     fs::write(json_meta_path, json_str).unwrap();
   }
 }
 
-#[derive(Serialize, Deserialize, Debug)]
-pub struct GameMetaJson {
+#[derive(Serialize, Deserialize, Debug, Default, Clone)]
+pub struct DbGameMeta {
   pub rating: Option<i32>,
   pub description: Option<String>,
   pub notes: Option<String>,
   pub tags: Option<Vec<String>>,
+
   pub iwad_id: Option<String>,
+  pub source_port: Option<String>,
+  pub extra_mod_ids: Option<Vec<String>>,
+  pub enabled_files: Option<Vec<DbGameEnabledFile>>,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
-pub struct PlaySessionJson {
-  pub sessions: Option<PlaySessionEntry>,
+#[derive(Serialize, Deserialize, Debug, Default, Clone)]
+pub struct DbGameEnabledFile {
+  pub is_enabled: bool,
+  pub relative: String,
 }
 
-#[derive(Serialize, Deserialize, Debug, Default)]
-pub struct PlaySessionEntry {
+#[derive(Serialize, Deserialize, Debug, Default, Clone)]
+pub struct DbPlaySession {
+  pub sessions: Option<Vec<DbPlaySessionEntry>>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Default, Clone)]
+pub struct DbPlaySessionEntry {
   pub started_at: Option<String>,
   pub ended_at: Option<String>,
 }

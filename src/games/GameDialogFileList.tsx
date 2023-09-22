@@ -1,12 +1,11 @@
-import { skipToken, useQuery } from '@apollo/client'
+import { useSuspenseQuery } from '@apollo/client'
 import {
   Checkbox,
   FormLabel,
   List,
   ListItem,
-  ListItemContent,
-  ListItemDecorator,
-} from '@mui/joy'
+  ListItemText,
+} from '@mui/material'
 import { useEffect } from 'react'
 import { useField } from 'react-final-form'
 
@@ -48,24 +47,23 @@ const GameDialogFileList: React.FC = (props) => {
     ),
   )
 
-  const { data: gameFiles } = useQuery(GetGameFilesDocument, {
+  const { data: gameFiles } = useSuspenseQuery(GetGameFilesDocument, {
     variables: {
-      game_ids:
-        allGameIds.length === 0 ? (skipToken as unknown as any) : allGameIds,
+      game_ids: allGameIds,
     },
+    fetchPolicy: 'network-only',
   })
 
-  const { data: iwadFiles } = useQuery(GetGameFilesDocument, {
-    variables: iwadId
-      ? {
-          game_ids: [iwadId],
-        }
-      : (skipToken as unknown as any),
+  const { data: iwadFiles } = useSuspenseQuery(GetGameFilesDocument, {
+    variables: {
+      game_ids: iwadId ? [iwadId] : [],
+    },
+    fetchPolicy: 'network-only',
   })
 
   useEffect(() => {
     const allFiles: FileEntry[] = [
-      ...(iwadFiles?.getGameFiles.map((x) => {
+      ...(iwadFiles.getGameFiles.map((x) => {
         const entry: FileEntry = {
           isIwad: true,
           absolute: x.absolute,
@@ -79,7 +77,7 @@ const GameDialogFileList: React.FC = (props) => {
         return entry
       }) || []),
 
-      ...(gameFiles?.getGameFiles.map((x) => {
+      ...(gameFiles.getGameFiles.map((x) => {
         const entry: FileEntry = {
           isIwad: false,
           absolute: x.absolute,
@@ -95,25 +93,31 @@ const GameDialogFileList: React.FC = (props) => {
     ]
 
     setFiles(allFiles)
-  }, [gameFiles?.getGameFiles, iwadFiles?.getGameFiles, setFiles])
+
+    // Trigger a resize so the iwad / mods dropdowns reposition themselves.
+    window.dispatchEvent(new Event('resize'))
+  }, [gameFiles.getGameFiles, iwadFiles.getGameFiles, setFiles])
 
   return (
     <>
       <FormLabel>Files</FormLabel>
-      <List size="sm" variant="outlined">
+      <List dense disablePadding>
         {files.map((x, i) => {
           return (
-            <ListItem key={x.absolute}>
-              <ListItemDecorator>
-                <Checkbox
-                  size="sm"
-                  checked={x.selected}
-                  onChange={(event) => {
-                    setEnabled(x.relative, event.target.checked)
-                  }}
-                />
-              </ListItemDecorator>
-              <ListItemContent>{x.relative}</ListItemContent>
+            <ListItem key={x.absolute} disableGutters disablePadding>
+              <Checkbox
+                size="small"
+                checked={x.selected}
+                onChange={(event) => {
+                  setEnabled(x.relative, event.target.checked)
+                }}
+              />
+              <ListItemText
+                primary={x.relative}
+                primaryTypographyProps={{
+                  color: x.selected ? undefined : 'text.secondary',
+                }}
+              />
             </ListItem>
           )
         })}

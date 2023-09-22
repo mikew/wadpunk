@@ -143,7 +143,7 @@ const asyncGraphqlPlugin: CodegenPlugin<AsyncGraphqlPluginOptions> = {
 
     for (const enumType of enumTypes) {
       content += `
-#[derive(Enum, Copy, Clone, Eq, PartialEq, Debug)]
+#[derive(Enum, Copy, Clone, Eq, PartialEq, Debug, Serialize, Deserialize)]
 pub enum ${enumType.name} {
   ${enumType
     .getValues()
@@ -160,7 +160,7 @@ pub enum ${enumType.name} {
 
     for (const inputType of inputTypes) {
       content += `
-#[derive(InputObject)]
+#[derive(InputObject, Debug, Clone, Serialize, Deserialize)]
 pub struct ${inputType.name} {
   ${Object.values(inputType.getFields())
     .map((x) => {
@@ -204,7 +204,7 @@ pub struct ${inputType.name} {
       }
 
       content += `
-#[derive(SimpleObject, Debug, Clone)]
+#[derive(SimpleObject, Debug, Clone, Serialize, Deserialize)]
 #[graphql(complex)]
 pub struct ${objectType.name} {
   ${simpleFields
@@ -288,6 +288,13 @@ ${codegenContext.hasComplexObjects ? 'use async_graphql::Context;' : ''}
 ${codegenContext.hasEnums ? 'use async_graphql::Enum;' : ''}
 ${codegenContext.hasInputObjects ? 'use async_graphql::InputObject;' : ''}
 ${codegenContext.hasSimpleObjects ? 'use async_graphql::Object;' : ''}
+${
+  codegenContext.hasSimpleObjects ||
+  codegenContext.hasInputObjects ||
+  codegenContext.hasEnums
+    ? 'use serde::{Deserialize, Serialize};'
+    : ''
+}
 ${
   codegenContext.hasComplexObjects
     ? 'use async_graphql::Result as GraphQLResult;'

@@ -1,13 +1,23 @@
 type Game {
   id: ID!
   name: String!
+
   rating: Int!
   description: String!
   notes: String!
   tags: [String!]!
+
+  source_port: String
   iwad_id: String
+  extra_mod_ids: [String!]
+  enabled_files: [GameEnabledFile!]
 
   play_sessions: [PlaySession!]!
+}
+
+type GameEnabledFile {
+  relative: String!
+  is_enabled: Boolean!
 }
 
 type PlaySession {
@@ -25,20 +35,43 @@ type GameFileEntry {
   absolute: String!
 }
 
+type SourcePort {
+  id: ID!
+  path: String!
+}
+
 type Query {
   getGames: [Game!]!
-  getAppSettings: AppSettings!
-
+  getGame(id: ID!): Game!
   getGameFiles(game_ids: [ID!]!): [GameFileEntry!]!
+
+  # getSourcePorts: [SourcePort!]!
+
+  getAppSettings: AppSettings!
+}
+
+input GameEnabledFileInput {
+  relative: String!
+  is_enabled: Boolean!
 }
 
 input GameInput {
   id: ID!
+
   rating: Int
   description: String
   notes: String
   tags: [String!]
+
+  source_port: String
   iwad_id: String
+  extra_mod_ids: [String!]
+  enabled_files: [GameEnabledFileInput!]
+}
+
+input SourcePortInput {
+  id: ID!
+  path: String!
 }
 
 type Mutation {
@@ -59,4 +92,6 @@ type Mutation {
   updateNotes(game_id: ID!, notes: String!): Game!
   updateRating(game_id: ID!, rating: Int!): Game!
   updateTags(game_id: ID!, tags: [String!]!): Game!
+
+  # createOrUpdateSourcePort(source_port: SourcePortInput!): SourcePort!
 }

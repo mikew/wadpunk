@@ -22,6 +22,7 @@ export default defineConfig(async (env) => {
     resolve: {
       alias: {
         ...config.resolve?.alias,
+        '@mui/material': '@mui/material/modern',
         '@mui/icons-material': '@mui/icons-material/esm',
         '@mui/joy': '@mui/joy/modern',
       },
