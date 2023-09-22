@@ -1,4 +1,9 @@
 {
+  "package": {
+    "productName": "gzdoom-launcher",
+    "version": "0.0.0"
+  },
+
   "build": {
     "beforeDevCommand": "",
     "beforeBuildCommand": "",
@@ -6,21 +11,19 @@
     "distDir": "../build",
     "withGlobalTauri": false
   },
-  "package": {
-    "productName": "gzdoom-launcher",
-    "version": "0.0.0"
-  },
+
   "tauri": {
     "allowlist": {
-      "all": false,
       "shell": {
         "all": false,
         "open": ".*"
+      },
+      "dialog": {
+        "open": true
       }
     },
+
     "bundle": {
-      "active": true,
-      "targets": "all",
       "identifier": "com.mikewhy.gzdoom-launcher",
       "icon": [
         "icons/32x32.png",
@@ -30,14 +33,17 @@
         "icons/icon.ico"
       ]
     },
+
     "security": {
       "csp": null
     },
+
     "windows": [
       {
         "fullscreen": false,
         "resizable": true,
         "title": "gzdoom-launcher",
+        "theme": "Dark",
         "width": 800,
         "height": 600
       }
