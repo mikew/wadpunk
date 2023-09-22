@@ -16,6 +16,7 @@ import {
   MenuItem,
   Select,
   Stack,
+  TextField,
   Toolbar,
 } from '@mui/material'
 import useSimpleFilter from '@promoboxx/use-filter/dist/useSimpleFilter'
@@ -37,7 +38,7 @@ type ArrayItemType<T> = T extends Array<infer A> ? A : never
 export type GameListGame = ArrayItemType<GetGameListQueryQuery['getGames']>
 
 const GameList: React.FC = () => {
-  const { data } = useSuspenseQuery(GetGameListQueryDocument)
+  const { data, refetch } = useSuspenseQuery(GetGameListQueryDocument)
 
   const [openGamesFolderMutation] = useMutation(OpenGamesFolderDocument)
   const [setRating] = useMutation(SetRatingDocument)
@@ -194,14 +195,24 @@ const GameList: React.FC = () => {
 
           <Box flexGrow="1" />
 
-          <Button
-            onClick={() => {
-              openGamesFolder()
-            }}
-            startIcon={<FolderOpen />}
-          >
-            Open Games Folder
-          </Button>
+          <Stack direction="row" spacing={1}>
+            <Button
+              onClick={() => {
+                openGamesFolder()
+              }}
+              startIcon={<FolderOpen />}
+            >
+              Open Games Folder
+            </Button>
+
+            <Button
+              onClick={() => {
+                refetch()
+              }}
+            >
+              Reload
+            </Button>
+          </Stack>
         </Toolbar>
       </AppBar>
 
