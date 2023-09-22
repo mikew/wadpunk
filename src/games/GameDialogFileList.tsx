@@ -51,12 +51,14 @@ const GameDialogFileList: React.FC = (props) => {
     variables: {
       game_ids: allGameIds,
     },
+    fetchPolicy: 'network-only',
   })
 
   const { data: iwadFiles } = useSuspenseQuery(GetGameFilesDocument, {
     variables: {
       game_ids: iwadId ? [iwadId] : [],
     },
+    fetchPolicy: 'network-only',
   })
 
   useEffect(() => {
