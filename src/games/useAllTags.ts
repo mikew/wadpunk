@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/client'
+import { useQuery, useSuspenseQuery } from '@apollo/client'
 import { useMemo } from 'react'
 
 import { GetGameListQueryDocument } from '@src/graphql/operations'
@@ -6,8 +6,12 @@ import { Game } from '@src/graphql/types'
 
 const defaultTags = ['iwad', 'tc', 'mod']
 
-function useAllTags() {
-  const { data } = useQuery(GetGameListQueryDocument)
+function useAllTags(suspense = false) {
+  const { data } = suspense
+    ? // eslint-disable-next-line react-hooks/rules-of-hooks
+      useSuspenseQuery(GetGameListQueryDocument)
+    : // eslint-disable-next-line react-hooks/rules-of-hooks
+      useQuery(GetGameListQueryDocument)
 
   const tags = useMemo(() => {
     const tags: Game['tags'] = []
