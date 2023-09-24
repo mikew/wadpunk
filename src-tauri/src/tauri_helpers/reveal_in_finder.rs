@@ -1,10 +1,6 @@
 #[cfg(target_os = "linux")]
-use fork::{daemon, Fork};
-#[cfg(target_os = "linux")]
 use std::path::PathBuf;
-#[cfg(target_os = "linux")]
-use std::{fs::metadata, path::PathBuf};
-use std::{fs::metadata, process::Command}; // dep: fork = "0.1"
+use std::{fs::metadata, process::Command};
 
 // https://github.com/tauri-apps/tauri/issues/4062#issuecomment-1338048169
 pub fn reveal_file(path: String) {
@@ -19,8 +15,10 @@ pub fn reveal_file(path: String) {
 
   #[cfg(target_os = "linux")]
   {
+    // You cannot use dbus-send to "reveal" a file whose path contains a
+    // comma.
+    // https://gitlab.freedesktop.org/dbus/dbus/-/issues/76
     if path.contains(",") {
-      // see https://gitlab.freedesktop.org/dbus/dbus/-/issues/76
       let new_path = match metadata(&path).unwrap().is_dir() {
         true => path,
         false => {
@@ -31,20 +29,18 @@ pub fn reveal_file(path: String) {
       };
       Command::new("xdg-open").arg(&new_path).spawn().unwrap();
     } else {
-      // if let Ok(Fork::Child) = daemon(false, false) {
       Command::new("dbus-send")
         .args([
-          "--session",
+          // This --print-reply seems ... vital? Without it nothing happens.
+          "--print-reply",
           "--dest=org.freedesktop.FileManager1",
-          "--type=method_call",
           "/org/freedesktop/FileManager1",
           "org.freedesktop.FileManager1.ShowItems",
-          format!("array:string:\"file://{path}\"").as_str(),
-          "string:\"\"",
+          format!("array:string:{path}").as_str(),
+          "string:"
         ])
         .spawn()
         .unwrap();
-      // }
     }
   }
 
