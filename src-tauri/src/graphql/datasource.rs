@@ -8,13 +8,10 @@ use async_graphql::Error;
 use async_graphql::Result as GraphQLResult;
 use chrono::DateTime;
 use chrono::Utc;
-use tauri::AppHandle;
-use tauri::Manager;
 
-use crate::database::DataBase;
+use crate::database;
 use crate::database::DbPlaySession;
 use crate::database::DbPlaySessionEntry;
-use crate::database::DirectoryManager;
 use crate::tauri_helpers::reveal_in_finder::reveal_file_or_folder;
 
 use super::generated::AppSettings;
@@ -36,7 +33,7 @@ impl DataSource {
   ) -> GraphQLResult<Vec<PlaySession>> {
     let mut gql_play_sessions: Vec<PlaySession> = vec![];
 
-    let meta_path = DirectoryManager::get_meta_directory()
+    let meta_path = database::get_meta_directory()
       .join(&root.name)
       .join("playSessions.json");
     let json_contents = fs::read_to_string(meta_path).unwrap_or("{}".to_string());
@@ -70,7 +67,7 @@ impl DataSource {
     _root: &Game,
     _ctx: &Context<'_>,
   ) -> GraphQLResult<Option<Vec<GameEnabledFile>>> {
-    let meta = DataBase::load_game_meta(_root.id.clone());
+    let meta = database::load_game_meta(_root.id.clone());
     let enabled_files = meta.enabled_files;
 
     let v: Option<Vec<GameEnabledFile>> = Some(
@@ -93,15 +90,16 @@ impl DataSource {
     _ctx: &Context<'_>,
     id: String,
   ) -> GraphQLResult<Game> {
-    Ok(DataBase::load_game_with_meta(id))
+    Ok(database::load_game_with_meta(id))
   }
+
   pub async fn Query_getAppSettings(
     &self,
     _root: &Query,
     _ctx: &Context<'_>,
   ) -> GraphQLResult<AppSettings> {
     Ok(AppSettings {
-      dataDirectory: String::from(DirectoryManager::get_data_directory().to_str().unwrap()),
+      dataDirectory: String::from(database::get_data_directory().to_str().unwrap()),
     })
   }
 
@@ -114,13 +112,13 @@ impl DataSource {
     let mut game_file_entries: Vec<GameFileEntry> = vec![];
 
     for game_id in game_ids {
-      let game_files = DataBase::find_all_game_files(game_id);
+      let game_files = database::find_all_game_files(game_id);
 
       for game_file in game_files {
         game_file_entries.push(GameFileEntry {
           absolute: game_file.clone(),
           relative: Path::new(&game_file)
-            .strip_prefix(DirectoryManager::get_games_directory())
+            .strip_prefix(database::get_games_directory())
             .unwrap()
             .to_str()
             .unwrap()
@@ -137,7 +135,7 @@ impl DataSource {
     _root: &Query,
     _ctx: &Context<'_>,
   ) -> GraphQLResult<Vec<Game>> {
-    Ok(DataBase::find_all_games())
+    Ok(database::find_all_games())
   }
 
   pub async fn Mutation_startGame(
@@ -167,8 +165,8 @@ impl DataSource {
 
     command.args([
       "-savedir",
-      DirectoryManager::get_meta_directory()
-        .join(DataBase::normalize_name_from_id(game_id.clone()))
+      database::get_meta_directory()
+        .join(database::normalize_name_from_id(game_id.clone()))
         .join("saves")
         .to_str()
         .unwrap(),
@@ -178,7 +176,7 @@ impl DataSource {
 
     play_session.ended_at = Some(Utc::now().to_rfc3339());
 
-    DataBase::record_game_play_session(game_id.clone(), play_session);
+    database::record_game_play_session(game_id.clone(), play_session);
 
     Ok(exit_status.success())
   }
@@ -189,7 +187,7 @@ impl DataSource {
     _ctx: &Context<'_>,
     game_id: Option<String>,
   ) -> GraphQLResult<bool> {
-    let mut path_to_open = DirectoryManager::get_games_directory();
+    let mut path_to_open = database::get_games_directory();
 
     if let Some(game_id) = game_id {
       path_to_open.push(game_id);
@@ -212,16 +210,14 @@ impl DataSource {
   pub async fn Mutation_updateNotes(
     &self,
     _root: &Mutation,
-    ctx: &Context<'_>,
+    _ctx: &Context<'_>,
     game_id: String,
     notes: String,
   ) -> GraphQLResult<Game> {
-    let db = ctx.data::<AppHandle>().unwrap().state::<DataBase>();
-
-    if let Some(mut game) = db.find_game_by_id(game_id.clone()) {
+    if let Some(mut game) = database::find_game_by_id(game_id.clone()) {
       game.notes = notes;
 
-      DataBase::save_game(game.clone());
+      database::save_game(game.clone());
 
       return Ok(game);
     }
@@ -236,16 +232,14 @@ impl DataSource {
   pub async fn Mutation_updateRating(
     &self,
     _root: &Mutation,
-    ctx: &Context<'_>,
+    _ctx: &Context<'_>,
     game_id: String,
     rating: i32,
   ) -> GraphQLResult<Game> {
-    let db = ctx.data::<AppHandle>().unwrap().state::<DataBase>();
-
-    if let Some(mut game) = db.find_game_by_id(game_id.clone()) {
+    if let Some(mut game) = database::find_game_by_id(game_id.clone()) {
       game.rating = rating;
 
-      DataBase::save_game(game.clone());
+      database::save_game(game.clone());
 
       return Ok(game);
     }
@@ -260,16 +254,14 @@ impl DataSource {
   pub async fn Mutation_updateTags(
     &self,
     _root: &Mutation,
-    ctx: &Context<'_>,
+    _ctx: &Context<'_>,
     game_id: String,
     tags: Vec<String>,
   ) -> GraphQLResult<Game> {
-    let db = ctx.data::<AppHandle>().unwrap().state::<DataBase>();
-
-    if let Some(mut game) = db.find_game_by_id(game_id.clone()) {
+    if let Some(mut game) = database::find_game_by_id(game_id.clone()) {
       game.tags = tags;
 
-      DataBase::save_game(game.clone());
+      database::save_game(game.clone());
 
       return Ok(game);
     }
@@ -284,12 +276,10 @@ impl DataSource {
   pub async fn Mutation_updateGame(
     &self,
     _root: &Mutation,
-    ctx: &Context<'_>,
+    _ctx: &Context<'_>,
     game: GameInput,
   ) -> GraphQLResult<Game> {
-    let db = ctx.data::<AppHandle>().unwrap().state::<DataBase>();
-
-    if let Some(mut game_record) = db.find_game_by_id(game.id.clone()) {
+    if let Some(mut game_record) = database::find_game_by_id(game.id.clone()) {
       if let Some(rating) = game.rating {
         game_record.rating = rating;
       }
@@ -310,7 +300,7 @@ impl DataSource {
       game_record.iwad_id = game.iwad_id;
       game_record.extra_mod_ids = game.extra_mod_ids;
 
-      DataBase::save_game(game_record.clone());
+      database::save_game(game_record.clone());
 
       return Ok(game_record);
     }
@@ -325,11 +315,9 @@ impl DataSource {
   pub async fn Mutation_initializeApp(
     &self,
     _root: &Mutation,
-    ctx: &Context<'_>,
+    _ctx: &Context<'_>,
   ) -> GraphQLResult<bool> {
-    DirectoryManager::init_games();
-    let db = ctx.data::<AppHandle>().unwrap().state::<DataBase>();
-    db.initialize_games_cache();
+    database::init_games();
 
     Ok(true)
   }
