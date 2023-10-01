@@ -24,6 +24,7 @@ jobs:
           node-version: 18
 
       - uses: pnpm/action-setup@v2
+        with: latest
 
       - uses: dtolnay/rust-toolchain@stable
 
