@@ -14,7 +14,7 @@
     "@graphql-codegen/typescript-operations": "^4.0.1",
     "@mui/icons-material": "^5.14.11",
     "@promoboxx/eslint-config": "^3.0.1",
-    "@promoboxx/react-scripts-vite": "^0.1.28",
+    "@promoboxx/react-scripts-vite": "^0.1.29",
     "@promoboxx/use-filter": "^1.11.2",
     "@tauri-apps/api": "^1.4.0",
     "@tauri-apps/cli": "^1.4.0",
