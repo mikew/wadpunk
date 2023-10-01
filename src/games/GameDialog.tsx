@@ -265,7 +265,7 @@ const GameDialogInner: React.FC<GameDialogProps> = (props) => {
               </DialogContent>
 
               <DialogActions>
-                <Lol game={fullGame} />
+                <GameDialogActions game={fullGame} />
               </DialogActions>
             </ModalDialogFinalForm>
           </GameFileListProvider>
@@ -275,7 +275,9 @@ const GameDialogInner: React.FC<GameDialogProps> = (props) => {
   )
 }
 
-const Lol = (props) => {
+const GameDialogActions: React.FC<{
+  game: GetGameDialogFieldsQuery['getGame']
+}> = (props) => {
   const [startGameMutation] = useMutation(StartGameDocument, {
     refetchQueries: [{ query: GetGameListQueryDocument }],
   })
