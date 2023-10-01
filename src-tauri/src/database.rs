@@ -10,176 +10,158 @@ use tauri::api::{
 
 use crate::graphql::generated::Game;
 
-pub struct DirectoryManager;
+pub fn get_data_directory() -> std::path::PathBuf {
+  let fallback_documents_directory = home_dir().unwrap().join("Documents");
+  let documents_directory = document_dir().unwrap_or(fallback_documents_directory);
 
-impl DirectoryManager {
-  pub fn get_data_directory() -> std::path::PathBuf {
-    let fallback_documents_directory = home_dir().unwrap().join("Documents");
-    let documents_directory = document_dir().unwrap_or(fallback_documents_directory);
+  documents_directory.join("GZDoom Launcher")
+}
 
-    documents_directory.join("GZDoom Launcher")
+pub fn get_games_directory() -> std::path::PathBuf {
+  get_data_directory().join("Games")
+}
+
+pub fn get_source_ports_directory() -> std::path::PathBuf {
+  get_data_directory().join("SourcePorts")
+}
+
+pub fn get_meta_directory() -> std::path::PathBuf {
+  get_data_directory().join("Meta")
+}
+
+pub fn init_games() {
+  fs::create_dir_all(get_games_directory()).unwrap();
+  fs::create_dir_all(get_source_ports_directory()).unwrap();
+  fs::create_dir_all(get_meta_directory()).unwrap();
+}
+
+pub fn find_all_games() -> Vec<Game> {
+  let mut games: Vec<Game> = vec![];
+  let paths = read_dir(get_games_directory(), false).unwrap();
+
+  for game_disk_entry in paths {
+    let name = game_disk_entry.name.unwrap();
+
+    if name.clone().starts_with(".") {
+      continue;
+    }
+
+    let game_id = if game_disk_entry.children.is_some() {
+      format!("{}/", name)
+    } else {
+      name.clone()
+    };
+
+    games.push(load_game_with_meta(game_id))
   }
 
-  pub fn get_games_directory() -> std::path::PathBuf {
-    Self::get_data_directory().join("Games")
-  }
+  games
+}
 
-  pub fn get_source_ports_directory() -> std::path::PathBuf {
-    Self::get_data_directory().join("SourcePorts")
-  }
-
-  pub fn get_meta_directory() -> std::path::PathBuf {
-    Self::get_data_directory().join("Meta")
-  }
-
-  pub fn init_games() {
-    fs::create_dir_all(DirectoryManager::get_games_directory()).unwrap();
-    fs::create_dir_all(DirectoryManager::get_source_ports_directory()).unwrap();
-    fs::create_dir_all(DirectoryManager::get_meta_directory()).unwrap();
+pub fn normalize_name_from_id(id: String) -> String {
+  if let Some(is_dir) = id.strip_suffix("/") {
+    is_dir.to_string()
+  } else {
+    id.clone()
   }
 }
 
-#[derive(Debug, Default)]
-pub struct DataBase;
+pub fn load_game_with_meta(id: String) -> Game {
+  let name_normalized = normalize_name_from_id(id.clone());
+  let game_meta = load_game_meta(id.clone());
 
-impl DataBase {
-  pub fn find_all_games() -> Vec<Game> {
-    let mut games: Vec<Game> = vec![];
-    let paths = read_dir(DirectoryManager::get_games_directory(), false).unwrap();
+  return Game {
+    id: id.clone(),
+    name: name_normalized,
 
-    for game_disk_entry in paths {
-      let name = game_disk_entry.name.unwrap();
+    rating: game_meta.rating.unwrap_or_default(),
+    description: game_meta.description.unwrap_or_default(),
+    notes: game_meta.notes.unwrap_or_default(),
+    tags: game_meta.tags.unwrap_or_default(),
 
-      if name.clone().starts_with(".") {
-        continue;
-      }
+    source_port: game_meta.source_port,
+    iwad_id: game_meta.iwad_id,
+    extra_mod_ids: game_meta.extra_mod_ids,
+  };
+}
 
-      let game_id = if game_disk_entry.children.is_some() {
-        format!("{}/", name)
-      } else {
-        name.clone()
-      };
+pub fn load_game_meta(game_id: String) -> DbGameMeta {
+  let json_meta_path = get_meta_directory().join(game_id).join("meta.json");
 
-      games.push(Self::load_game_with_meta(game_id))
+  let json_contents = fs::read_to_string(json_meta_path).unwrap_or("{}".to_string());
+
+  serde_json::from_str::<DbGameMeta>(&json_contents).unwrap()
+}
+
+pub fn load_game_play_sessions(game_id: String) -> DbPlaySession {
+  let meta_path = get_meta_directory().join(game_id).join("playSessions.json");
+  let json_contents = fs::read_to_string(meta_path).unwrap_or("{}".to_string());
+
+  serde_json::from_str::<DbPlaySession>(&json_contents).unwrap()
+}
+
+pub fn record_game_play_session(game_id: String, play_session: DbPlaySessionEntry) {
+  let file_path = get_meta_directory()
+    .join(game_id.clone())
+    .join("playSessions.json");
+
+  let mut play_sessions = load_game_play_sessions(game_id);
+  let mut play_sessions_sessions = play_sessions.sessions.clone().unwrap_or_default();
+  play_sessions_sessions.push(play_session.clone());
+  play_sessions.sessions = Some(play_sessions_sessions);
+
+  let json_str = serde_json::to_string(&play_sessions).unwrap();
+
+  fs::create_dir_all(file_path.parent().unwrap()).unwrap();
+  fs::write(file_path, json_str).unwrap();
+}
+
+pub fn find_all_game_files(game_id: String) -> Vec<String> {
+  let mut files: Vec<String> = vec![];
+
+  if game_id.ends_with("/") {
+    let files_in_game_folder = read_dir(get_games_directory().join(game_id), true).unwrap();
+
+    for file_disk_entry in files_in_game_folder {
+      recurse_disk_entry(file_disk_entry, &mut files);
     }
-
-    games
+  } else {
+    files.push(
+      get_games_directory()
+        .join(game_id)
+        .to_str()
+        .unwrap()
+        .to_string(),
+    );
   }
 
-  pub fn normalize_name_from_id(id: String) -> String {
-    if let Some(is_dir) = id.strip_suffix("/") {
-      is_dir.to_string()
-    } else {
-      id.clone()
-    }
-  }
+  files
+}
 
-  pub fn load_game_with_meta(id: String) -> Game {
-    let name_normalized = Self::normalize_name_from_id(id.clone());
-    let game_meta = Self::load_game_meta(id.clone());
+pub fn find_game_by_id(id: String) -> Option<Game> {
+  let game = load_game_with_meta(id.clone());
+  return Some(game);
+}
 
-    return Game {
-      id: id.clone(),
-      name: name_normalized,
+pub fn save_game(game: Game) {
+  let json_meta_path = get_meta_directory().join(game.name).join("meta.json");
 
-      rating: game_meta.rating.unwrap_or_default(),
-      description: game_meta.description.unwrap_or_default(),
-      notes: game_meta.notes.unwrap_or_default(),
-      tags: game_meta.tags.unwrap_or_default(),
+  let game_meta_json = DbGameMeta {
+    rating: Some(game.rating),
+    description: Some(game.description),
+    notes: Some(game.notes),
+    tags: Some(game.tags),
 
-      source_port: game_meta.source_port,
-      iwad_id: game_meta.iwad_id,
-      extra_mod_ids: game_meta.extra_mod_ids,
-    };
-  }
+    source_port: game.source_port,
+    iwad_id: game.iwad_id,
+    extra_mod_ids: game.extra_mod_ids,
+    enabled_files: Some(vec![]),
+  };
 
-  pub fn load_game_meta(game_id: String) -> DbGameMeta {
-    let json_meta_path = DirectoryManager::get_meta_directory()
-      .join(game_id)
-      .join("meta.json");
+  let json_str = serde_json::to_string(&game_meta_json).unwrap();
 
-    let json_contents = fs::read_to_string(json_meta_path).unwrap_or("{}".to_string());
-
-    serde_json::from_str::<DbGameMeta>(&json_contents).unwrap()
-  }
-
-  pub fn load_game_play_sessions(game_id: String) -> DbPlaySession {
-    let meta_path = DirectoryManager::get_meta_directory()
-      .join(game_id)
-      .join("playSessions.json");
-    let json_contents = fs::read_to_string(meta_path).unwrap_or("{}".to_string());
-
-    serde_json::from_str::<DbPlaySession>(&json_contents).unwrap()
-  }
-
-  pub fn record_game_play_session(game_id: String, play_session: DbPlaySessionEntry) {
-    let file_path = DirectoryManager::get_meta_directory()
-      .join(game_id.clone())
-      .join("playSessions.json");
-
-    let mut play_sessions = Self::load_game_play_sessions(game_id);
-    let mut play_sessions_sessions = play_sessions.sessions.clone().unwrap_or_default();
-    play_sessions_sessions.push(play_session.clone());
-    play_sessions.sessions = Some(play_sessions_sessions);
-
-    let json_str = serde_json::to_string(&play_sessions).unwrap();
-
-    fs::create_dir_all(file_path.parent().unwrap()).unwrap();
-    fs::write(file_path, json_str).unwrap();
-  }
-
-  pub fn find_all_game_files(game_id: String) -> Vec<String> {
-    let mut files: Vec<String> = vec![];
-
-    if game_id.ends_with("/") {
-      let files_in_game_folder =
-        read_dir(DirectoryManager::get_games_directory().join(game_id), true).unwrap();
-
-      for file_disk_entry in files_in_game_folder {
-        recurse_disk_entry(file_disk_entry, &mut files);
-      }
-    } else {
-      files.push(
-        DirectoryManager::get_games_directory()
-          .join(game_id)
-          .to_str()
-          .unwrap()
-          .to_string(),
-      );
-    }
-
-    files
-  }
-
-  pub fn initialize_games_cache(&self) {}
-
-  pub fn find_game_by_id(&self, id: String) -> Option<Game> {
-    let game = Self::load_game_with_meta(id.clone());
-    return Some(game);
-  }
-
-  pub fn save_game(game: Game) {
-    let json_meta_path = DirectoryManager::get_meta_directory()
-      .join(game.name)
-      .join("meta.json");
-
-    let game_meta_json = DbGameMeta {
-      rating: Some(game.rating),
-      description: Some(game.description),
-      notes: Some(game.notes),
-      tags: Some(game.tags),
-
-      source_port: game.source_port,
-      iwad_id: game.iwad_id,
-      extra_mod_ids: game.extra_mod_ids,
-      enabled_files: Some(vec![]),
-    };
-
-    let json_str = serde_json::to_string(&game_meta_json).unwrap();
-
-    fs::create_dir_all(json_meta_path.parent().unwrap()).unwrap();
-    fs::write(json_meta_path, json_str).unwrap();
-  }
+  fs::create_dir_all(json_meta_path.parent().unwrap()).unwrap();
+  fs::write(json_meta_path, json_str).unwrap();
 }
 
 #[derive(Serialize, Deserialize, Debug, Default, Clone)]
