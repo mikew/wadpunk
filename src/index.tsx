@@ -2,8 +2,8 @@ import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client'
 import { CssBaseline, ThemeProvider } from '@mui/material'
 import { setFilterStore } from '@promoboxx/use-filter/dist/store'
 import localStorageStore from '@promoboxx/use-filter/dist/store/localStorageStore'
-import React from 'react'
-import ReactDOM from 'react-dom/client'
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
 
 import App from './app/App'
 import theme from './app/theme'
@@ -24,14 +24,14 @@ if (!rootElement) {
   throw new Error('Could not find root element')
 }
 
-ReactDOM.createRoot(rootElement).render(
+createRoot(rootElement).render(
   <ApolloProvider client={client}>
-    <React.StrictMode>
+    <StrictMode>
       <ThemeProvider theme={theme}>
         <CssBaseline>
           <App />
         </CssBaseline>
       </ThemeProvider>
-    </React.StrictMode>
+    </StrictMode>
   </ApolloProvider>,
 )
