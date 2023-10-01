@@ -4,7 +4,9 @@ function timeIt(name: string) {
   function stop() {
     const endTime = performance.now()
 
-    console.info(`${name} took ${endTime - time}ms`)
+    if (process.env.NODE_ENV === 'development') {
+      console.info(`${name} took ${endTime - time}ms`)
+    }
   }
 
   return stop
