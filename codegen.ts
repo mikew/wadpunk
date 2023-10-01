@@ -245,7 +245,7 @@ impl ${query.name} {
         x.type instanceof GraphQLUnionType ||
         x.type instanceof GraphQLInterfaceType
       ) {
-        return
+        return ''
       }
 
       dataSourceFields.push([query.name, x])
@@ -271,7 +271,7 @@ impl ${mutation.name} {
         x.type instanceof GraphQLUnionType ||
         x.type instanceof GraphQLInterfaceType
       ) {
-        return
+        return ''
       }
 
       dataSourceFields.push([mutation.name, x])
