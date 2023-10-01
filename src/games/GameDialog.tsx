@@ -19,6 +19,9 @@ import {
 import { Suspense, useMemo } from 'react'
 import { Form, useForm, useFormState } from 'react-final-form'
 
+import IdentityField from '@src/final-form/IdentityField'
+import ModalDialogFinalForm from '@src/final-form/ModalDialogFinalForm'
+import TextareaField from '@src/final-form/TextareaField'
 import {
   GetGameDialogFieldsDocument,
   GetGameDialogFieldsQuery,
@@ -27,10 +30,7 @@ import {
   UpdateGameDocument,
 } from '@src/graphql/operations'
 import { Game } from '@src/graphql/types'
-import IdentityField from '@src/lib/IdentityField'
-import ModalDialogFinalForm from '@src/lib/ModalDialogFinalForm'
 import StarRating from '@src/lib/StarRating'
-import TextareaField from '@src/lib/TextareaField'
 
 import GameDialogFileList from './GameDialogFileList'
 import {
