@@ -46,5 +46,5 @@ jobs:
           name: gzdoom-launcher-${{ matrix.platform }}
           path: |
             src-tauri/target/release/bundle/nsis
-            src-tauri/target/release/bundle/macos
+            src-tauri/target/release/bundle/dmg
             src-tauri/target/release/bundle/appimage/*.AppImage

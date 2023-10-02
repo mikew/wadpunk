@@ -2,7 +2,7 @@
   "tauri": {
     "bundle": {
       "active": true,
-      "targets": ["app"]
+      "targets": ["dmg"]
     }
   }
 }
