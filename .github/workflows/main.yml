@@ -45,4 +45,6 @@ jobs:
         with:
           name: release-${{ matrix.platform }}
           path: |
-            src-tauri/target/release/bundle
+            src-tauri/target/release/bundle/nsis
+            src-tauri/target/release/bundle/macos
+            src-tauri/target/release/bundle/appimage/*.AppImage
