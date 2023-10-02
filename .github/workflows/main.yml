@@ -43,7 +43,7 @@ jobs:
 
       - uses: actions/upload-artifact@v3
         with:
-          name: release-${{ matrix.platform }}
+          name: gzdoom-launcher-${{ matrix.platform }}
           path: |
             src-tauri/target/release/bundle/nsis
             src-tauri/target/release/bundle/macos
