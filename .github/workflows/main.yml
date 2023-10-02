@@ -1,0 +1,50 @@
+name: 'publish'
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        platform:
+          - macos-latest
+          - ubuntu-20.04
+          - windows-latest
+
+    runs-on: ${{ matrix.platform }}
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: pnpm/action-setup@v2
+        with:
+          version: latest
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: pnpm
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - if: matrix.platform == 'ubuntu-20.04'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.0-dev libappindicator3-dev librsvg2-dev patchelf
+
+      - run: ./script/prepare-env
+        shell: bash
+
+      - run: ./script/build
+        shell: bash
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: gzdoom-launcher-${{ matrix.platform }}
+          path: |
+            src-tauri/target/release/bundle/nsis
+            src-tauri/target/release/bundle/dmg/*.dmg
+            src-tauri/target/release/bundle/appimage/*.AppImage
