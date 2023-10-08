@@ -1,0 +1,145 @@
+import { Close } from '@mui/icons-material'
+import {
+  Button,
+  ButtonProps,
+  Dialog,
+  DialogProps,
+  IconButton,
+  IconButtonProps,
+} from '@mui/material'
+import {
+  ConsumerProps,
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
+
+type DelayedOnCloseDialogCloseReason =
+  | 'backdropClick'
+  | 'escapeKeyDown'
+  | 'button'
+
+interface DelayedOnCloseDialogTriggerCloseContextType {
+  (reason: DelayedOnCloseDialogCloseReason): void
+}
+
+const DelayedOnCloseDialogTriggerCloseContext =
+  createContext<DelayedOnCloseDialogTriggerCloseContextType | null>(null)
+
+export function useDelayedOnCloseDialogTriggerClose() {
+  const context = useContext(DelayedOnCloseDialogTriggerCloseContext)
+
+  if (!context) {
+    throw new Error()
+  }
+
+  return context
+}
+
+export const DelayedOnCloseDialogTriggerCloseContextConsumer: React.FC<
+  ConsumerProps<DelayedOnCloseDialogTriggerCloseContextType>
+> = (props) => {
+  const context = useContext(DelayedOnCloseDialogTriggerCloseContext)
+
+  if (!context) {
+    throw new Error()
+  }
+
+  return props.children(context)
+}
+
+interface DelayedOnCloseDialogProps extends Omit<DialogProps, 'onClose'> {
+  onClose?: (event: {}, reason: DelayedOnCloseDialogCloseReason) => void
+  shouldClose?: (
+    reason: DelayedOnCloseDialogCloseReason,
+  ) => boolean | void | undefined | null
+}
+
+/** Dialog that calls onClose after the transitions has completed. */
+const DelayedOnCloseDialog: React.FC<DelayedOnCloseDialogProps> = (props) => {
+  const [isOpen, setIsOpen] = useState(props.open)
+
+  useEffect(() => {
+    setIsOpen(props.open)
+  }, [props.open])
+
+  const onCloseReasonRef =
+    useRef<DelayedOnCloseDialogCloseReason>('backdropClick')
+
+  const shouldCloseRef = useRef<DelayedOnCloseDialogProps['shouldClose']>(
+    props.shouldClose,
+  )
+  useEffect(() => {
+    shouldCloseRef.current = props.shouldClose
+  })
+
+  // Only using `useCallback` because this is the context value and there's no
+  // need to cause re-renders.
+  const triggerClose = useCallback(
+    (reason: DelayedOnCloseDialogCloseReason) => {
+      if (shouldCloseRef.current && !shouldCloseRef.current(reason)) {
+        return
+      }
+
+      setIsOpen(false)
+    },
+    [],
+  )
+
+  return (
+    <DelayedOnCloseDialogTriggerCloseContext.Provider value={triggerClose}>
+      <Dialog
+        {...props}
+        TransitionProps={{
+          ...props.TransitionProps,
+          onExited: () => {
+            props.onClose?.({}, onCloseReasonRef.current)
+          },
+        }}
+        open={isOpen}
+        onClose={(_event, reason) => {
+          onCloseReasonRef.current = reason
+
+          triggerClose(reason)
+        }}
+      />
+    </DelayedOnCloseDialogTriggerCloseContext.Provider>
+  )
+}
+
+export const DelayedOnCloseDialogCloseIcon: React.FC<
+  Omit<IconButtonProps, 'onClick' | 'children'>
+> = (props) => {
+  const triggerClose = useDelayedOnCloseDialogTriggerClose()
+
+  return (
+    <IconButton
+      {...props}
+      onClick={() => {
+        triggerClose('button')
+      }}
+    >
+      <Close />
+    </IconButton>
+  )
+}
+
+export const DelayedOnCloseDialogCloseButton: React.FC<
+  Omit<ButtonProps, 'onClick'>
+> = (props) => {
+  const triggerClose = useDelayedOnCloseDialogTriggerClose()
+
+  return (
+    <Button
+      {...props}
+      onClick={() => {
+        triggerClose('button')
+      }}
+    />
+  )
+}
+
+export default DelayedOnCloseDialog
