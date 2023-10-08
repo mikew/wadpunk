@@ -6,7 +6,7 @@ settings:
 
 patchedDependencies:
   final-form@4.20.10:
-    hash: vonsizzacq526asupykmesxlam
+    hash: x5t5ukwuxan6vfyrojxc6qgho4
     path: patches/final-form@4.20.10.patch
 
 dependencies:
@@ -89,7 +89,7 @@ devDependencies:
     version: 8.51.0
   final-form:
     specifier: ^4.20.10
-    version: 4.20.10(patch_hash=vonsizzacq526asupykmesxlam)
+    version: 4.20.10(patch_hash=x5t5ukwuxan6vfyrojxc6qgho4)
   nodemon:
     specifier: ^3.0.1
     version: 3.0.1
@@ -6481,7 +6481,7 @@ packages:
       to-regex-range: 5.0.1
     dev: true
 
-  /final-form@4.20.10(patch_hash=vonsizzacq526asupykmesxlam):
+  /final-form@4.20.10(patch_hash=x5t5ukwuxan6vfyrojxc6qgho4):
     resolution: {integrity: sha512-TL48Pi1oNHeMOHrKv1bCJUrWZDcD3DIG6AGYVNOnyZPr7Bd/pStN0pL+lfzF5BNoj/FclaoiaLenk4XUIFVYng==}
     engines: {node: '>=8'}
     dependencies:
@@ -8188,7 +8188,7 @@ packages:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
     dependencies:
       '@babel/runtime': 7.22.15
-      final-form: 4.20.10(patch_hash=vonsizzacq526asupykmesxlam)
+      final-form: 4.20.10(patch_hash=x5t5ukwuxan6vfyrojxc6qgho4)
       react: 18.2.0
     dev: true
 

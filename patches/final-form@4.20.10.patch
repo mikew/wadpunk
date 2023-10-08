@@ -1,8 +1,8 @@
 diff --git a/dist/final-form.cjs.js b/dist/final-form.cjs.js
-index 65fd607c183d7cd07e0d480477dc4355c2aa1884..5c95756e454b3257d97e2e90cdff33fb4752650b 100644
+index 65fd607c183d7cd07e0d480477dc4355c2aa1884..0461c7cde0467cbabdd7b093d8016cf38eeab783 100644
 --- a/dist/final-form.cjs.js
 +++ b/dist/final-form.cjs.js
-@@ -1,8 +1,19 @@
+@@ -1,8 +1,20 @@
  'use strict';
  
 -var _extends = require('@babel/runtime/helpers/extends');
@@ -25,10 +25,10 @@ index 65fd607c183d7cd07e0d480477dc4355c2aa1884..5c95756e454b3257d97e2e90cdff33fb
  
  var charCodeOfDot = ".".charCodeAt(0);
 diff --git a/dist/final-form.es.js b/dist/final-form.es.js
-index e31d7f32c686fede8d70925fbd486679adc42b38..39976022d87026f725d5b371a8fb1c843bb76892 100644
+index e31d7f32c686fede8d70925fbd486679adc42b38..71b0f185e66ad9d56acb5bd26be097b5c558e7d3 100644
 --- a/dist/final-form.es.js
 +++ b/dist/final-form.es.js
-@@ -1,6 +1,17 @@
+@@ -1,6 +1,18 @@
 -import _extends from '@babel/runtime/helpers/esm/extends';
  import _objectWithoutPropertiesLoose from '@babel/runtime/helpers/esm/objectWithoutPropertiesLoose';
  
