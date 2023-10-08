@@ -36,5 +36,10 @@
     "@mui/material": "x",
     "graphql": "x",
     "vite": "x"
+  },
+  "pnpm": {
+    "patchedDependencies": {
+      "final-form@4.20.10": "patches/final-form@4.20.10.patch"
+    }
   }
 }
