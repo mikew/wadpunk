@@ -1,19 +1,16 @@
 import { useMutation, useSuspenseQuery } from '@apollo/client'
 import {
   Button,
-  FormControl,
   Typography,
   DialogTitle,
   DialogActions,
   DialogContent,
   Autocomplete,
-  Select,
   MenuItem,
   Grid,
   Dialog,
   CircularProgress,
   TextField,
-  InputLabel,
   Box,
   Stack,
 } from '@mui/material'
@@ -154,7 +151,7 @@ const GameDialogInner: React.FC<{
         })
       }}
     >
-      {({ values, submitting }) => {
+      {({ values }) => {
         const isGameIwad = isIwad(values.tags)
 
         return (
@@ -221,58 +218,60 @@ const GameDialogInner: React.FC<{
                     }}
                   />
 
-                  <IdentityField
+                  {/*
+                  This field is a little tricky:
+
+                  If the game is tagged with `iwad`, it gets disabled and the
+                  value is forced to the current game id.
+
+                  That latter part means we can't easily use `component={...}`
+                  */}
+                  <IdentityField<GameDialogFormValues['iwadId']>
                     name="iwadId"
                     render={({ input, meta, ...rest }) => {
                       return (
-                        <FormControl
-                          disabled={isGameIwad || submitting}
+                        <TextField
+                          label="IWAD"
+                          select
+                          disabled={isGameIwad || meta.submitting}
                           error={meta.touched && meta.error}
+                          value={isGameIwad ? values.id : input.value}
                         >
-                          <InputLabel>IWAD</InputLabel>
-                          <Select
-                            {...input}
-                            value={isGameIwad ? values.id : input.value}
-                          >
-                            <MenuItem value="">None</MenuItem>
+                          <MenuItem value="">None</MenuItem>
 
-                            {iwads.map((x) => {
-                              return (
-                                <MenuItem key={x.id} value={x.id}>
-                                  {x.name}
-                                </MenuItem>
-                              )
-                            })}
-                          </Select>
-                        </FormControl>
+                          {iwads.map((x) => {
+                            return (
+                              <MenuItem key={x.id} value={x.id}>
+                                {x.name}
+                              </MenuItem>
+                            )
+                          })}
+                        </TextField>
                       )
                     }}
                   />
 
                   <IdentityField
                     name="extraGameIds"
-                    render={({ input, meta, ...rest }) => {
-                      return (
-                        <FormControl>
-                          <InputLabel>Mods</InputLabel>
-                          <Select {...input} multiple disabled={submitting}>
-                            {others.map((x) => {
-                              return (
-                                <MenuItem key={x.id} value={x.id}>
-                                  {x.name}
-                                </MenuItem>
-                              )
-                            })}
-                          </Select>
-                        </FormControl>
-                      )
+                    component={TextareaField}
+                    select
+                    SelectProps={{
+                      multiple: true,
                     }}
-                  />
+                    label="Mods"
+                  >
+                    {others.map((x) => {
+                      return (
+                        <MenuItem key={x.id} value={x.id}>
+                          {x.name}
+                        </MenuItem>
+                      )
+                    })}
+                  </IdentityField>
 
                   <IdentityField
                     name="notes"
                     component={TextareaField}
-                    disabled={submitting}
                     label="Notes"
                     multiline
                     minRows={2}
@@ -305,15 +304,17 @@ const GameDialogActions: React.FC<{
     refetchQueries: [{ query: GetGameListQueryDocument }],
   })
   const { files: allFiles } = useGameFileListContext()
-  const formState = useFormState()
+  const formState = useFormState({
+    subscription: { submitting: true, hasValidationErrors: true },
+  })
   const form = useForm()
+  const triggerClose = useDelayedOnCloseDialogTriggerClose()
 
   return (
     <>
       <FinalFormResetButton color="warning">Reset</FinalFormResetButton>
 
       <FinalFormSubmitButton
-        disabled={formState.submitting}
         onDidSave={() => {
           triggerClose('button')
         }}
@@ -359,7 +360,7 @@ const GameDialogActions: React.FC<{
             console.error(err)
           }
         }}
-        disabled={formState.submitting}
+        disabled={formState.submitting || formState.hasValidationErrors}
       >
         Play
       </Button>
