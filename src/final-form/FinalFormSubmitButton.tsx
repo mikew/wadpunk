@@ -8,13 +8,21 @@ interface FinalFormSubmitButtonProps extends Omit<ButtonProps, 'onClick'> {
 const FinalFormSubmitButton: React.FC<FinalFormSubmitButtonProps> = (props) => {
   const api = useForm()
   const formState = useFormState({
-    subscription: { submitting: true, hasValidationErrors: true },
+    subscription: {
+      submitting: true,
+      hasValidationErrors: true,
+      pristine: true,
+    },
   })
 
   return (
     <Button
       {...props}
-      disabled={formState.submitting || formState.hasValidationErrors}
+      disabled={
+        formState.submitting ||
+        formState.hasValidationErrors ||
+        formState.pristine
+      }
       onClick={async () => {
         try {
           await api.submit()

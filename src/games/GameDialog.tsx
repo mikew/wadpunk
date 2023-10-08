@@ -231,6 +231,7 @@ const GameDialogInner: React.FC<{
                     render={({ input, meta, ...rest }) => {
                       return (
                         <TextField
+                          {...input}
                           label="IWAD"
                           select
                           disabled={isGameIwad || meta.submitting}
