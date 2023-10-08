@@ -317,7 +317,7 @@ const GameDialogActions: React.FC<{
 
       <FinalFormSubmitButton
         onDidSave={() => {
-          triggerClose('button')
+          triggerClose('closeClick')
         }}
       >
         Save

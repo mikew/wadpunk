@@ -5,7 +5,10 @@ interface FinalFormSubmitButtonProps extends Omit<ButtonProps, 'onClick'> {
   onDidSave?: () => void
 }
 
-const FinalFormSubmitButton: React.FC<FinalFormSubmitButtonProps> = (props) => {
+const FinalFormSubmitButton: React.FC<FinalFormSubmitButtonProps> = ({
+  onDidSave,
+  ...props
+}) => {
   const api = useForm()
   const formState = useFormState({
     subscription: {
@@ -26,7 +29,7 @@ const FinalFormSubmitButton: React.FC<FinalFormSubmitButtonProps> = (props) => {
       onClick={async () => {
         try {
           await api.submit()
-          props.onDidSave?.()
+          onDidSave?.()
         } catch (err) {
           console.error(err)
         }

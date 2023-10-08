@@ -17,10 +17,12 @@ import {
   useState,
 } from 'react'
 
+import useLatest from './useLatest'
+
 type DelayedOnCloseDialogCloseReason =
   | 'backdropClick'
   | 'escapeKeyDown'
-  | 'button'
+  | 'closeClick'
 
 interface DelayedOnCloseDialogTriggerCloseContextType {
   (reason: DelayedOnCloseDialogCloseReason): void
@@ -69,12 +71,7 @@ const DelayedOnCloseDialog: React.FC<DelayedOnCloseDialogProps> = (props) => {
   const onCloseReasonRef =
     useRef<DelayedOnCloseDialogCloseReason>('backdropClick')
 
-  const shouldCloseRef = useRef<DelayedOnCloseDialogProps['shouldClose']>(
-    props.shouldClose,
-  )
-  useEffect(() => {
-    shouldCloseRef.current = props.shouldClose
-  })
+  const shouldCloseRef = useLatest(props.shouldClose)
 
   // Only using `useCallback` because this is the context value and there's no
   // need to cause re-renders.
@@ -86,7 +83,7 @@ const DelayedOnCloseDialog: React.FC<DelayedOnCloseDialogProps> = (props) => {
 
       setIsOpen(false)
     },
-    [],
+    [shouldCloseRef],
   )
 
   return (
@@ -119,7 +116,7 @@ export const DelayedOnCloseDialogCloseIcon: React.FC<
     <IconButton
       {...props}
       onClick={() => {
-        triggerClose('button')
+        triggerClose('closeClick')
       }}
     >
       <Close />
@@ -136,7 +133,7 @@ export const DelayedOnCloseDialogCloseButton: React.FC<
     <Button
       {...props}
       onClick={() => {
-        triggerClose('button')
+        triggerClose('closeClick')
       }}
     />
   )
