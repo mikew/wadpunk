@@ -9,6 +9,7 @@ use tauri::api::{
 };
 
 use crate::graphql::generated::Game;
+use crate::graphql::generated::SourcePort;
 
 pub fn get_data_directory() -> std::path::PathBuf {
   let fallback_documents_directory = home_dir().unwrap().join("Documents");
@@ -164,6 +165,51 @@ pub fn save_game(game: Game) {
   fs::write(json_meta_path, json_str).unwrap();
 }
 
+pub fn find_all_source_ports() -> Vec<SourcePort> {
+  let mut source_ports: Vec<SourcePort> = vec![];
+  let paths = read_dir(get_games_directory(), false).unwrap();
+
+  for source_port_disk_entry in paths {
+    let name = source_port_disk_entry.name.unwrap();
+
+    if name.clone().starts_with(".") {
+      continue;
+    }
+
+    if !name.clone().ends_with(".json") {
+      continue;
+    }
+
+    let source_port_id = name.strip_suffix(".json").unwrap().to_string();
+    source_ports.push(find_source_port_by_id(source_port_id))
+  }
+
+  source_ports
+}
+
+pub fn find_source_port_by_id(source_port_id: String) -> SourcePort {
+  let json_path = get_meta_directory().join(format!("{}.json", source_port_id));
+  let json_contents = fs::read_to_string(json_path).unwrap_or("{}".to_string());
+  let db_source_port = serde_json::from_str::<DbSourcePort>(&json_contents).unwrap();
+
+  SourcePort {
+    id: db_source_port.id.unwrap(),
+    command: db_source_port.command.unwrap(),
+    is_default: false,
+  }
+}
+
+pub fn save_source_port(source_port: SourcePort) {
+  let json_path = get_source_ports_directory().join(format!("{}.json", source_port.id));
+  let db_source_port = DbSourcePort {
+    id: Some(source_port.id),
+    command: Some(source_port.command),
+  };
+  let json_str = serde_json::to_string(&db_source_port).unwrap();
+
+  fs::write(json_path, json_str).unwrap();
+}
+
 #[derive(Serialize, Deserialize, Debug, Default, Clone)]
 pub struct DbGameMeta {
   pub rating: Option<i32>,
@@ -192,6 +238,12 @@ pub struct DbPlaySession {
 pub struct DbPlaySessionEntry {
   pub started_at: Option<String>,
   pub ended_at: Option<String>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Default, Clone)]
+pub struct DbSourcePort {
+  pub id: Option<String>,
+  pub command: Option<Vec<String>>,
 }
 
 fn recurse_disk_entry(dir: DiskEntry, files: &mut Vec<String>) {

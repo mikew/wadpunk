@@ -15,6 +15,7 @@ use crate::database::DbPlaySessionEntry;
 use crate::tauri_helpers::reveal_in_finder::reveal_file_or_folder;
 
 use super::generated::AppSettings;
+use super::generated::CreateSourcePortInput;
 use super::generated::Game;
 use super::generated::GameEnabledFile;
 use super::generated::GameFileEntry;
@@ -22,6 +23,8 @@ use super::generated::GameInput;
 use super::generated::Mutation;
 use super::generated::PlaySession;
 use super::generated::Query;
+use super::generated::SourcePort;
+use super::generated::UpdateSourcePortInput;
 
 pub struct DataSource;
 
@@ -136,6 +139,14 @@ impl DataSource {
     _ctx: &Context<'_>,
   ) -> GraphQLResult<Vec<Game>> {
     Ok(database::find_all_games())
+  }
+
+  pub async fn Query_getSourcePorts(
+    &self,
+    _root: &Query,
+    _ctx: &Context<'_>,
+  ) -> GraphQLResult<Vec<SourcePort>> {
+    Ok(database::find_all_source_ports())
   }
 
   pub async fn Mutation_startGame(
@@ -321,4 +332,37 @@ impl DataSource {
 
     Ok(true)
   }
+
+  pub async fn Mutation_createSourcePort(
+    &self,
+    _root: &Mutation,
+    _ctx: &Context<'_>,
+    source_port: CreateSourcePortInput,
+  ) -> GraphQLResult<SourcePort> {
+    let source_port_record = SourcePort {
+      id: source_port.id,
+      command: source_port.command,
+      is_default: false,
+    };
+
+    database::save_source_port(source_port_record.clone());
+
+    Ok(source_port_record)
+  }
+
+  pub async fn Mutation_updateSourcePort(
+    &self,
+    _root: &Mutation,
+    _ctx: &Context<'_>,
+    source_port: UpdateSourcePortInput,
+  ) -> GraphQLResult<SourcePort> {
+    let mut source_port_record = database::find_source_port_by_id(source_port.id);
+
+    source_port_record.command = source_port.command;
+
+    database::save_source_port(source_port_record.clone());
+
+    Ok(source_port_record)
+  }
+}
 }
