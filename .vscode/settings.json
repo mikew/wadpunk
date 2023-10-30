@@ -1,4 +1,12 @@
 {
-  "cSpell.words": ["chrono", "codegen", "gzdoom", "iwad", "rustfmt", "tauri"],
+  "cSpell.words": [
+    "chrono",
+    "codegen",
+    "gzdoom",
+    "iwad",
+    "iwads",
+    "rustfmt",
+    "tauri"
+  ],
   "typescript.tsdk": "node_modules/typescript/lib"
 }

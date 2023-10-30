@@ -17,7 +17,7 @@ const TextareaField: React.FC<TextareaFieldProps> = ({
       {...input}
       {...rest}
       error={meta.touched && meta.error}
-      disabled={meta.submitting}
+      disabled={rest.disabled || meta.submitting}
     />
   )
 }

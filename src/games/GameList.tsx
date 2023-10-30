@@ -16,7 +16,6 @@ import {
   MenuItem,
   Select,
   Stack,
-  TextField,
   Toolbar,
 } from '@mui/material'
 import useSimpleFilter from '@promoboxx/use-filter/dist/useSimpleFilter'
@@ -43,9 +42,6 @@ const GameList: React.FC = () => {
   const [openGamesFolderMutation] = useMutation(OpenGamesFolderDocument)
   const [setRating] = useMutation(SetRatingDocument)
   const [selectedId, setSelectedId] = useState<GameListGame['id']>()
-  const selectedGame = useMemo(() => {
-    return data.getGames.find((x) => x.id === selectedId)
-  }, [data.getGames, selectedId])
 
   const {
     debouncedFilterInfo,
@@ -294,9 +290,10 @@ const GameList: React.FC = () => {
         })}
       </List>
 
-      {selectedGame ? (
+      {selectedId ? (
         <GameDialog
-          game={selectedGame}
+          open={!!selectedId}
+          gameId={selectedId}
           onClose={() => setSelectedId(undefined)}
         />
       ) : undefined}
