@@ -70,7 +70,7 @@ impl DataSource {
     _root: &Game,
     _ctx: &Context<'_>,
   ) -> GraphQLResult<Option<Vec<GameEnabledFile>>> {
-    let meta = database::load_game_meta(_root.id.clone());
+    let meta = database::load_game_meta(&_root.id);
     let enabled_files = meta.enabled_files;
 
     let v: Option<Vec<GameEnabledFile>> = Some(
@@ -93,7 +93,7 @@ impl DataSource {
     _ctx: &Context<'_>,
     id: String,
   ) -> GraphQLResult<Game> {
-    Ok(database::load_game_with_meta(id))
+    Ok(database::load_game_with_meta(&id))
   }
 
   pub async fn Query_getAppSettings(
@@ -115,7 +115,7 @@ impl DataSource {
     let mut game_file_entries: Vec<GameFileEntry> = vec![];
 
     for game_id in game_ids {
-      let game_files = database::find_all_game_files(game_id);
+      let game_files = database::find_all_game_files(&game_id);
 
       for game_file in game_files {
         game_file_entries.push(GameFileEntry {
@@ -177,7 +177,7 @@ impl DataSource {
     command.args([
       "-savedir",
       database::get_meta_directory()
-        .join(database::normalize_name_from_id(game_id.clone()))
+        .join(database::normalize_name_from_id(&game_id))
         .join("saves")
         .to_str()
         .unwrap(),
@@ -187,7 +187,7 @@ impl DataSource {
 
     play_session.ended_at = Some(Utc::now().to_rfc3339());
 
-    database::record_game_play_session(game_id.clone(), play_session);
+    database::record_game_play_session(&game_id, play_session);
 
     Ok(exit_status.success())
   }
@@ -204,7 +204,7 @@ impl DataSource {
       path_to_open.push(game_id);
     }
 
-    reveal_file_or_folder(path_to_open.to_str().unwrap().to_string());
+    reveal_file_or_folder(path_to_open.to_str().unwrap());
 
     Ok(true)
   }
@@ -225,7 +225,7 @@ impl DataSource {
     game_id: String,
     notes: String,
   ) -> GraphQLResult<Game> {
-    if let Some(mut game) = database::find_game_by_id(game_id.clone()) {
+    if let Some(mut game) = database::find_game_by_id(&game_id) {
       game.notes = notes;
 
       database::save_game(game.clone());
@@ -247,7 +247,7 @@ impl DataSource {
     game_id: String,
     rating: i32,
   ) -> GraphQLResult<Game> {
-    if let Some(mut game) = database::find_game_by_id(game_id.clone()) {
+    if let Some(mut game) = database::find_game_by_id(&game_id) {
       game.rating = rating;
 
       database::save_game(game.clone());
@@ -269,7 +269,7 @@ impl DataSource {
     game_id: String,
     tags: Vec<String>,
   ) -> GraphQLResult<Game> {
-    if let Some(mut game) = database::find_game_by_id(game_id.clone()) {
+    if let Some(mut game) = database::find_game_by_id(&game_id) {
       game.tags = tags;
 
       database::save_game(game.clone());
@@ -290,7 +290,7 @@ impl DataSource {
     _ctx: &Context<'_>,
     game: GameInput,
   ) -> GraphQLResult<Game> {
-    if let Some(mut game_record) = database::find_game_by_id(game.id.clone()) {
+    if let Some(mut game_record) = database::find_game_by_id(&game.id) {
       if let Some(rating) = game.rating {
         game_record.rating = rating;
       }

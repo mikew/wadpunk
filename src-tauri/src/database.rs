@@ -41,39 +41,40 @@ pub fn find_all_games() -> Vec<Game> {
   let paths = read_dir(get_games_directory(), false).unwrap();
 
   for game_disk_entry in paths {
-    let name = game_disk_entry.name.unwrap();
+    let name_string = game_disk_entry.name.unwrap();
+    let name = name_string.as_str();
 
-    if name.clone().starts_with(".") {
+    if name.starts_with(".") {
       continue;
     }
 
     let game_id = if game_disk_entry.children.is_some() {
       format!("{}/", name)
     } else {
-      name.clone()
+      name.to_string()
     };
 
-    games.push(load_game_with_meta(game_id))
+    games.push(load_game_with_meta(&game_id))
   }
 
   games
 }
 
-pub fn normalize_name_from_id(id: String) -> String {
+pub fn normalize_name_from_id(id: &str) -> &str {
   if let Some(is_dir) = id.strip_suffix("/") {
-    is_dir.to_string()
+    is_dir
   } else {
-    id.clone()
+    &id
   }
 }
 
-pub fn load_game_with_meta(id: String) -> Game {
-  let name_normalized = normalize_name_from_id(id.clone());
-  let game_meta = load_game_meta(id.clone());
+pub fn load_game_with_meta(id: &str) -> Game {
+  let name_normalized = normalize_name_from_id(id);
+  let game_meta = load_game_meta(id);
 
   return Game {
-    id: id.clone(),
-    name: name_normalized,
+    id: id.to_string(),
+    name: name_normalized.to_string(),
 
     rating: game_meta.rating.unwrap_or_default(),
     description: game_meta.description.unwrap_or_default(),
@@ -86,7 +87,7 @@ pub fn load_game_with_meta(id: String) -> Game {
   };
 }
 
-pub fn load_game_meta(game_id: String) -> DbGameMeta {
+pub fn load_game_meta(game_id: &str) -> DbGameMeta {
   let json_meta_path = get_meta_directory().join(game_id).join("meta.json");
 
   let json_contents = fs::read_to_string(json_meta_path).unwrap_or("{}".to_string());
@@ -94,17 +95,15 @@ pub fn load_game_meta(game_id: String) -> DbGameMeta {
   serde_json::from_str::<DbGameMeta>(&json_contents).unwrap()
 }
 
-pub fn load_game_play_sessions(game_id: String) -> DbPlaySession {
+pub fn load_game_play_sessions(game_id: &str) -> DbPlaySession {
   let meta_path = get_meta_directory().join(game_id).join("playSessions.json");
   let json_contents = fs::read_to_string(meta_path).unwrap_or("{}".to_string());
 
   serde_json::from_str::<DbPlaySession>(&json_contents).unwrap()
 }
 
-pub fn record_game_play_session(game_id: String, play_session: DbPlaySessionEntry) {
-  let file_path = get_meta_directory()
-    .join(game_id.clone())
-    .join("playSessions.json");
+pub fn record_game_play_session(game_id: &str, play_session: DbPlaySessionEntry) {
+  let file_path = get_meta_directory().join(game_id).join("playSessions.json");
 
   let mut play_sessions = load_game_play_sessions(game_id);
   let mut play_sessions_sessions = play_sessions.sessions.clone().unwrap_or_default();
@@ -117,7 +116,7 @@ pub fn record_game_play_session(game_id: String, play_session: DbPlaySessionEntr
   fs::write(file_path, json_str).unwrap();
 }
 
-pub fn find_all_game_files(game_id: String) -> Vec<String> {
+pub fn find_all_game_files(game_id: &str) -> Vec<String> {
   let mut files: Vec<String> = vec![];
 
   if game_id.ends_with("/") {
@@ -139,13 +138,13 @@ pub fn find_all_game_files(game_id: String) -> Vec<String> {
   files
 }
 
-pub fn find_game_by_id(id: String) -> Option<Game> {
-  let game = load_game_with_meta(id.clone());
+pub fn find_game_by_id(id: &str) -> Option<Game> {
+  let game = load_game_with_meta(id);
   return Some(game);
 }
 
 pub fn save_game(game: Game) {
-  let json_meta_path = get_meta_directory().join(game.name).join("meta.json");
+  let json_meta_path = get_meta_directory().join(&game.name).join("meta.json");
 
   let game_meta_json = DbGameMeta {
     rating: Some(game.rating),
@@ -170,13 +169,14 @@ pub fn find_all_source_ports() -> Vec<SourcePort> {
   let paths = read_dir(get_games_directory(), false).unwrap();
 
   for source_port_disk_entry in paths {
-    let name = source_port_disk_entry.name.unwrap();
+    let name_string = source_port_disk_entry.name.unwrap();
+    let name = name_string.as_str();
 
-    if name.clone().starts_with(".") {
+    if name.starts_with(".") {
       continue;
     }
 
-    if !name.clone().ends_with(".json") {
+    if !name.ends_with(".json") {
       continue;
     }
 
