@@ -37,7 +37,7 @@ pub fn reveal_file(path: &str) {
           "/org/freedesktop/FileManager1",
           "org.freedesktop.FileManager1.ShowItems",
           format!("array:string:{path}").as_str(),
-          "string:"
+          "string:",
         ])
         .spawn()
         .unwrap();
