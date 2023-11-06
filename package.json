@@ -23,11 +23,9 @@
     "@types/react-dom": "^18.2.14",
     "concurrently": "^8.2.2",
     "eslint": "^8.51.0",
-    "final-form": "^4.20.10",
     "nodemon": "^3.0.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-final-form": "^6.5.9",
     "react-hook-form": "^7.48.2",
     "react-redux": "^8.1.3",
     "redux": "^4.2.1",
@@ -40,10 +38,5 @@
     "@mui/material": "x",
     "graphql": "x",
     "vite": "x"
-  },
-  "pnpm": {
-    "patchedDependencies": {
-      "final-form@4.20.10": "patches/final-form@4.20.10.patch"
-    }
   }
 }
