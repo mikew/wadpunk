@@ -4,10 +4,12 @@ import { setFilterStore } from '@promoboxx/use-filter/dist/store'
 import localStorageStore from '@promoboxx/use-filter/dist/store/localStorageStore'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
+import { Provider } from 'react-redux'
 
 import App from './app/App'
 import theme from './app/theme'
 import graphqlClient from './graphql/graphqlClient'
+import createRootStore from './redux/createRootStore'
 
 setFilterStore(localStorageStore)
 
@@ -18,13 +20,15 @@ if (!rootElement) {
 }
 
 createRoot(rootElement).render(
-  <ApolloProvider client={graphqlClient}>
-    <StrictMode>
-      <ThemeProvider theme={theme}>
-        <CssBaseline>
-          <App />
-        </CssBaseline>
-      </ThemeProvider>
-    </StrictMode>
-  </ApolloProvider>,
+  <Provider store={createRootStore()}>
+    <ApolloProvider client={graphqlClient}>
+      <StrictMode>
+        <ThemeProvider theme={theme}>
+          <CssBaseline>
+            <App />
+          </CssBaseline>
+        </ThemeProvider>
+      </StrictMode>
+    </ApolloProvider>
+  </Provider>,
 )
