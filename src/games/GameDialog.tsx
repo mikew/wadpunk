@@ -15,12 +15,13 @@ import {
   Stack,
 } from '@mui/material'
 import { Suspense, useMemo } from 'react'
-import { Form, useForm, useFormState } from 'react-final-form'
+import {
+  Controller,
+  FormProvider,
+  useForm,
+  useFormState,
+} from 'react-hook-form'
 
-import FinalFormResetButton from '@src/final-form/FinalFormResetButton'
-import FinalFormSubmitButton from '@src/final-form/FinalFormSubmitButton'
-import IdentityField from '@src/final-form/IdentityField'
-import TextareaField from '@src/final-form/TextareaField'
 import {
   GetGameDialogFieldsDocument,
   GetGameDialogFieldsQuery,
@@ -34,6 +35,7 @@ import DelayedOnCloseDialog, {
   useDelayedOnCloseDialogTriggerClose,
 } from '@src/lib/DelayedOnCloseDialog'
 import StarRating from '@src/lib/StarRating'
+import ReactHookFormTextField from '@src/react-hook-form/ReactHookFormTextField'
 
 import GameDialogFileList from './GameDialogFileList'
 import {
@@ -117,217 +119,247 @@ const GameDialogInner: React.FC<{
     }
   }, [games, props.gameId])
 
+  const formApi = useForm<GameDialogFormValues>({
+    defaultValues: {
+      id: props.gameId,
+      rating: fullGame.rating,
+      // description: '',
+      notes: fullGame.notes,
+      tags: fullGame.tags,
+
+      // sourcePortId: '',
+      iwadId: fullGame.iwad_id || '',
+      extraGameIds: fullGame.extra_mod_ids || [],
+    },
+  })
+
+  const tags = formApi.watch('tags')
+  const isGameIwad = isIwad(tags)
+
   return (
-    <Form<GameDialogFormValues>
-      initialValues={{
-        id: props.gameId,
-        rating: fullGame.rating,
-        // description: '',
-        notes: fullGame.notes,
-        tags: fullGame.tags,
+    <FormProvider {...formApi}>
+      <GameFileListProvider>
+        <DialogTitle>
+          <Stack
+            direction="row"
+            alignItems="flex-start"
+            justifyContent="space-between"
+            spacing="space-between"
+          >
+            <div>
+              {fullGame.name}
 
-        // sourcePortId: '',
-        iwadId: fullGame.iwad_id || '',
-        extraGameIds: fullGame.extra_mod_ids || [],
-      }}
-      onSubmit={async (values) => {
-        await updateGame({
-          variables: {
-            game: {
-              id: props.gameId,
-              rating: values.rating,
-              // description: values.description,
-              notes: values.notes,
-              tags: values.tags,
+              <Controller
+                name="rating"
+                render={(renderProps) => {
+                  return (
+                    <StarRating
+                      value={renderProps.field.value}
+                      onChange={(value) => {
+                        if (renderProps.formState.isSubmitting) {
+                          return
+                        }
 
-              // source_port: values.source_port_id,
-              iwad_id: values.iwadId ? values.iwadId : null,
-              extra_mod_ids: values.extraGameIds.map((x) =>
-                typeof x === 'string' ? x : x.id,
-              ),
-              // enabled_files: values.enabledFiles,
-            },
-          },
-        })
-      }}
-    >
-      {({ values }) => {
-        const isGameIwad = isIwad(values.tags)
+                        renderProps.field.onChange(value)
+                      }}
+                    />
+                  )
+                }}
+              />
+            </div>
+            <div>
+              <DelayedOnCloseDialogCloseIcon />
+            </div>
+          </Stack>
+        </DialogTitle>
 
-        return (
-          <GameFileListProvider>
-            <DialogTitle>
-              <Stack
-                direction="row"
-                alignItems="flex-start"
-                justifyContent="space-between"
-                spacing="space-between"
-              >
-                <div>
-                  {fullGame.name}
+        <DialogContent>
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={6}>
+              <Typography>{fullGame.description}</Typography>
 
-                  <IdentityField
-                    name="rating"
-                    render={({ input, meta, ...rest }) => {
-                      return (
-                        <StarRating
-                          value={input.value}
-                          onChange={(value) => {
-                            if (meta.submitting) {
-                              return
-                            }
+              <Controller
+                name="tags"
+                render={({
+                  field: { ref, onChange, ...field },
+                  fieldState,
+                  formState,
+                }) => {
+                  const isDisabled = formState.isSubmitting
+                  const errorMessage = fieldState.error?.message
 
-                            input.onChange({ target: { value } })
-                          }}
+                  return (
+                    <Autocomplete<string, true, undefined, true>
+                      {...field}
+                      openOnFocus
+                      ChipProps={{ size: 'small' }}
+                      renderInput={(props) => (
+                        <TextField
+                          {...props}
+                          label="Tags"
+                          inputRef={ref}
+                          error={fieldState.invalid}
+                          helperText={errorMessage}
                         />
-                      )
-                    }}
-                  />
-                </div>
-                <div>
-                  <DelayedOnCloseDialogCloseIcon />
-                </div>
-              </Stack>
-            </DialogTitle>
+                      )}
+                      disabled={isDisabled}
+                      freeSolo
+                      onChange={(_event, value) => {
+                        onChange(value)
+                      }}
+                      options={allTags}
+                      multiple
+                    />
+                  )
+                }}
+              />
 
-            <DialogContent>
-              <Grid container spacing={2}>
-                <Grid item xs={12} sm={6}>
-                  <Typography>{fullGame.description}</Typography>
-
-                  <IdentityField
-                    name="tags"
-                    render={({ input, meta, ...rest }) => {
-                      return (
-                        <Autocomplete<string, true, undefined, true>
-                          {...input}
-                          openOnFocus
-                          ChipProps={{ size: 'small' }}
-                          renderInput={(props) => (
-                            <TextField {...props} label="Tags" />
-                          )}
-                          disabled={meta.submitting}
-                          freeSolo
-                          onChange={(_event, value) => {
-                            input.onChange({ target: { value } })
-                          }}
-                          options={allTags}
-                          multiple
-                        />
-                      )
-                    }}
-                  />
-
-                  {/*
+              {/*
                   This field is a little tricky:
 
                   If the game is tagged with `iwad`, it gets disabled and the
                   value is forced to the current game id.
 
-                  That latter part means we can't easily use `component={...}`
+                  That latter part means we can't easily use `ReactHookFormTextField`
                   */}
-                  <IdentityField<GameDialogFormValues['iwadId']>
-                    name="iwadId"
-                    render={({ input, meta, ...rest }) => {
-                      return (
-                        <TextField
-                          {...input}
-                          label="IWAD"
-                          select
-                          disabled={isGameIwad || meta.submitting}
-                          error={meta.touched && meta.error}
-                          value={isGameIwad ? values.id : input.value}
-                        >
-                          <MenuItem value="">None</MenuItem>
+              <Controller<GameDialogFormValues, 'iwadId'>
+                name="iwadId"
+                render={({
+                  field: { ref, ...field },
+                  fieldState,
+                  formState,
+                }) => {
+                  const isDisabled = isGameIwad || formState.isSubmitting
+                  const errorMessage = fieldState.error?.message
 
-                          {iwads.map((x) => {
-                            return (
-                              <MenuItem key={x.id} value={x.id}>
-                                {x.name}
-                              </MenuItem>
-                            )
-                          })}
-                        </TextField>
-                      )
-                    }}
-                  />
+                  return (
+                    <TextField
+                      {...field}
+                      label="IWAD"
+                      select
+                      disabled={isDisabled}
+                      error={fieldState.invalid}
+                      value={isGameIwad ? fullGame.id : field.value}
+                      helperText={errorMessage}
+                    >
+                      <MenuItem value="">None</MenuItem>
 
-                  <IdentityField
-                    name="extraGameIds"
-                    component={TextareaField}
-                    select
-                    SelectProps={{
-                      multiple: true,
-                    }}
-                    label="Mods"
-                  >
-                    {others.map((x) => {
-                      return (
-                        <MenuItem key={x.id} value={x.id}>
-                          {x.name}
-                        </MenuItem>
-                      )
-                    })}
-                  </IdentityField>
+                      {iwads.map((x) => {
+                        return (
+                          <MenuItem key={x.id} value={x.id}>
+                            {x.name}
+                          </MenuItem>
+                        )
+                      })}
+                    </TextField>
+                  )
+                }}
+              />
 
-                  <IdentityField
-                    name="notes"
-                    component={TextareaField}
-                    label="Notes"
-                    multiline
-                    minRows={2}
-                    maxRows={8}
-                  />
-                </Grid>
+              <ReactHookFormTextField
+                name="extraGameIds"
+                select
+                SelectProps={{
+                  multiple: true,
+                }}
+                label="Mods"
+              >
+                {others.map((x) => {
+                  return (
+                    <MenuItem key={x.id} value={x.id}>
+                      {x.name}
+                    </MenuItem>
+                  )
+                })}
+              </ReactHookFormTextField>
 
-                <Grid item xs={12} sm={6}>
-                  <Suspense fallback={<CircularProgress />}>
-                    <GameDialogFileList />
-                  </Suspense>
-                </Grid>
-              </Grid>
-            </DialogContent>
+              <ReactHookFormTextField
+                name="notes"
+                label="Notes"
+                multiline
+                minRows={2}
+                maxRows={8}
+              />
+            </Grid>
 
-            <DialogActions>
-              <GameDialogActions game={fullGame} />
-            </DialogActions>
-          </GameFileListProvider>
-        )
-      }}
-    </Form>
+            <Grid item xs={12} sm={6}>
+              <Suspense fallback={<CircularProgress />}>
+                <GameDialogFileList />
+              </Suspense>
+            </Grid>
+          </Grid>
+        </DialogContent>
+
+        <DialogActions>
+          <GameDialogActions
+            game={fullGame}
+            submitForm={formApi.handleSubmit(async (values) => {
+              await updateGame({
+                variables: {
+                  game: {
+                    id: props.gameId,
+                    rating: values.rating,
+                    // description: values.description,
+                    notes: values.notes,
+                    tags: values.tags,
+
+                    // source_port: values.source_port_id,
+                    iwad_id: values.iwadId ? values.iwadId : null,
+                    extra_mod_ids: values.extraGameIds.map((x) =>
+                      typeof x === 'string' ? x : x.id,
+                    ),
+                    // enabled_files: values.enabledFiles,
+                  },
+                },
+              })
+            })}
+            resetForm={() => {
+              formApi.reset()
+            }}
+          />
+        </DialogActions>
+      </GameFileListProvider>
+    </FormProvider>
   )
 }
 
 const GameDialogActions: React.FC<{
   game: GetGameDialogFieldsQuery['getGame']
+  resetForm: () => void
+  submitForm: (event: React.BaseSyntheticEvent) => Promise<void>
 }> = (props) => {
   const [startGameMutation] = useMutation(StartGameDocument, {
     refetchQueries: [{ query: GetGameListQueryDocument }],
   })
   const { files: allFiles } = useGameFileListContext()
-  const formState = useFormState({
-    subscription: { submitting: true, hasValidationErrors: true },
-  })
-  const form = useForm()
   const triggerClose = useDelayedOnCloseDialogTriggerClose()
+  const formState = useFormState()
 
   return (
     <>
-      <FinalFormResetButton color="warning">Reset</FinalFormResetButton>
+      <Button
+        color="warning"
+        onClick={() => {
+          props.resetForm()
+        }}
+      >
+        Reset
+      </Button>
 
-      <FinalFormSubmitButton
-        onDidSave={() => {
+      <Button
+        onClick={async (event) => {
+          await props.submitForm(event)
           triggerClose('closeClick')
         }}
       >
         Save
-      </FinalFormSubmitButton>
+      </Button>
 
       <Button
         variant="contained"
-        onClick={async () => {
+        onClick={async (event) => {
           try {
-            await form.submit()
+            await props.submitForm(event)
 
             const files: string[] = []
             let iwad: string | undefined = undefined
@@ -361,7 +393,7 @@ const GameDialogActions: React.FC<{
             console.error(err)
           }
         }}
-        disabled={formState.submitting || formState.hasValidationErrors}
+        disabled={formState.isSubmitting || !formState.isValid}
       >
         Play
       </Button>
