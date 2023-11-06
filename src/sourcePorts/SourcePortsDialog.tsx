@@ -1,5 +1,6 @@
 import { useMutation, useSuspenseQuery } from '@apollo/client'
 import {
+  Button,
   DialogActions,
   DialogContent,
   DialogTitle,
@@ -7,11 +8,8 @@ import {
   ListItemText,
   Typography,
 } from '@mui/material'
-import { Form } from 'react-final-form'
+import { FormProvider, useForm } from 'react-hook-form'
 
-import FinalFormSubmitButton from '@src/final-form/FinalFormSubmitButton'
-import IdentityField from '@src/final-form/IdentityField'
-import TextareaField from '@src/final-form/TextareaField'
 import {
   CreateSourcePortDocument,
   GetAllSourcePortsDocument,
@@ -19,6 +17,7 @@ import {
 import DelayedOnCloseDialog, {
   DelayedOnCloseDialogCloseButton,
 } from '@src/lib/DelayedOnCloseDialog'
+import ReactHookFormTextField from '@src/react-hook-form/ReactHookFormTextField'
 import { useRootDispatch, useRootSelector } from '@src/redux/helpers'
 
 import actions from './actions'
@@ -28,12 +27,17 @@ interface AddSourcePortFormValues {
   command: string
 }
 
-const SourcePortsDialog: React.FC = (props) => {
+const SourcePortsDialog: React.FC = () => {
   const { data, refetch } = useSuspenseQuery(GetAllSourcePortsDocument)
   const isOpen = useRootSelector((state) => state.sourcePorts.isDialogOpen)
   const dispatch = useRootDispatch()
   const [createSourcePort] = useMutation(CreateSourcePortDocument)
-  console.log(data)
+  const formApi = useForm<AddSourcePortFormValues>({
+    defaultValues: {
+      id: '',
+      command: '',
+    },
+  })
 
   return (
     <DelayedOnCloseDialog
@@ -53,45 +57,31 @@ const SourcePortsDialog: React.FC = (props) => {
         })}
 
         <Typography>Add New</Typography>
-        <Form<AddSourcePortFormValues>
-          initialValues={{}}
-          onSubmit={async (values, api) => {
-            await createSourcePort({
-              variables: {
-                source_port: {
-                  id: values.id,
-                  // TODO This is a hack because I don't want to deal with the
-                  // array-ness of the command in the UI yet.
-                  command: values.command ? [values.command] : [],
+        <FormProvider {...formApi}>
+          <ReactHookFormTextField name="id" label="Name" />
+          <ReactHookFormTextField name="command" label="Command" size="small" />
+
+          <Button
+            fullWidth
+            onClick={formApi.handleSubmit(async (values) => {
+              await createSourcePort({
+                variables: {
+                  source_port: {
+                    id: values.id,
+                    // TODO This is a hack because I don't want to deal with the
+                    // array-ness of the command in the UI yet.
+                    command: values.command ? [values.command] : [],
+                  },
                 },
-              },
-            })
+              })
 
-            refetch()
-            api.reset()
-          }}
-        >
-          {({ values }) => {
-            return (
-              <>
-                <IdentityField
-                  name="id"
-                  component={TextareaField}
-                  label="Name"
-                />
-
-                <IdentityField
-                  name="command"
-                  component={TextareaField}
-                  label="command"
-                  size="small"
-                />
-
-                <FinalFormSubmitButton fullWidth>Create</FinalFormSubmitButton>
-              </>
-            )
-          }}
-        </Form>
+              refetch()
+              formApi.reset()
+            })}
+          >
+            Create
+          </Button>
+        </FormProvider>
       </DialogContent>
       <DialogActions>
         <DelayedOnCloseDialogCloseButton>Close</DelayedOnCloseDialogCloseButton>
