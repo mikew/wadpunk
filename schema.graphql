@@ -46,7 +46,7 @@ type Query {
   getGame(id: ID!): Game!
   getGameFiles(game_ids: [ID!]!): [GameFileEntry!]!
 
-  # getSourcePorts: [SourcePort!]!
+  getSourcePorts: [SourcePort!]!
 
   getAppSettings: AppSettings!
 }
