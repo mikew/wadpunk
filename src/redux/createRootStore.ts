@@ -1,10 +1,10 @@
 import {
-  Middleware,
+  type Middleware,
   createStore,
-  PreloadedState,
+  type PreloadedState,
   compose,
   applyMiddleware,
-  AnyAction,
+  type AnyAction,
 } from 'redux'
 import { asyncMiddleware, sideEffectMiddleware } from 'redux-easy-mode'
 
@@ -27,7 +27,7 @@ const composeEnhancers =
 
 function createRootStore(initialState?: PreloadedState<RootState>) {
   // Specify the types here to remove any issues the PreloadedState might cause.
-  const store = createStore<RootState, AnyAction, {}, {}>(
+  const store = createStore<RootState, AnyAction, unknown, unknown>(
     rootReducer,
     initialState,
     composeEnhancers(applyMiddleware(...middleware)),

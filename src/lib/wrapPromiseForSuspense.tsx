@@ -7,7 +7,7 @@ export interface SuspenseWrappedPromise<T> {
 export function wrapPromiseForSuspense<T>(promise: Promise<T>) {
   let status: 'pending' | 'success' | 'error' = 'pending'
   let result: T
-  let err: any
+  let err: unknown
 
   const suspender = promise.then(
     (value) => {

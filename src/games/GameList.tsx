@@ -23,7 +23,7 @@ import { useMemo, useState } from 'react'
 
 import {
   GetGameListQueryDocument,
-  GetGameListQueryQuery,
+  type GetGameListQueryQuery,
   OpenGamesFolderDocument,
   SetRatingDocument,
 } from '@src/graphql/operations'

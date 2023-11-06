@@ -1,4 +1,4 @@
-import { InvokeArgs, invoke } from '@tauri-apps/api/tauri'
+import { type InvokeArgs, invoke } from '@tauri-apps/api/tauri'
 
 interface CustomTauriCommands {
   greet: {

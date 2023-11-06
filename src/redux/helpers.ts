@@ -1,5 +1,5 @@
 import { shallowEqual, useDispatch, useSelector } from 'react-redux'
-import { AnyAction, Dispatch } from 'redux'
+import { type AnyAction, type Dispatch } from 'redux'
 
 import type rootReducer from './rootReducer'
 

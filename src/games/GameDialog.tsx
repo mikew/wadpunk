@@ -24,12 +24,13 @@ import {
 
 import {
   GetGameDialogFieldsDocument,
-  GetGameDialogFieldsQuery,
+  type GetGameDialogFieldsQuery,
   GetGameListQueryDocument,
+  StartGameBetterDocument,
   StartGameDocument,
   UpdateGameDocument,
 } from '@src/graphql/operations'
-import { Game } from '@src/graphql/types'
+import { type Game } from '@src/graphql/types'
 import DelayedOnCloseDialog, {
   DelayedOnCloseDialogCloseIcon,
   useDelayedOnCloseDialogTriggerClose,
@@ -51,14 +52,14 @@ export interface GameDialogFormValues {
   notes: Game['notes']
   rating: Game['rating']
   tags: Game['tags']
-  iwadId: Game['iwad_id']
+  iwadId: NonNullable<Game['iwad_id']>
   extraGameIds: (string | GameListGame)[]
 }
 
 interface GameDialogProps {
   gameId: Game['id']
   open: boolean
-  onClose: (event: {}, reason: string) => void
+  onClose: (event: unknown, reason: string) => void
 }
 
 const GameDialog: React.FC<GameDialogProps> = (props) => {
