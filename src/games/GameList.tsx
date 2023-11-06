@@ -28,6 +28,8 @@ import {
   SetRatingDocument,
 } from '@src/graphql/operations'
 import StarRating from '@src/lib/StarRating'
+import { useRootDispatch } from '@src/redux/helpers'
+import actions from '@src/sourcePorts/actions'
 
 import calculateGamePlayTime from './calculateGamePlayTime'
 import GameDialog from './GameDialog'
@@ -38,6 +40,7 @@ export type GameListGame = ArrayItemType<GetGameListQueryQuery['getGames']>
 
 const GameList: React.FC = () => {
   const { data, refetch } = useSuspenseQuery(GetGameListQueryDocument)
+  const dispatch = useRootDispatch()
 
   const [openGamesFolderMutation] = useMutation(OpenGamesFolderDocument)
   const [setRating] = useMutation(SetRatingDocument)
@@ -199,6 +202,14 @@ const GameList: React.FC = () => {
               startIcon={<FolderOpen />}
             >
               Open Games Folder
+            </Button>
+
+            <Button
+              onClick={() => {
+                dispatch(actions.toggleDialog())
+              }}
+            >
+              Source Ports
             </Button>
 
             <Button

@@ -1,0 +1,15 @@
+query getAllSourcePorts {
+  getSourcePorts {
+    id
+    command
+    is_default
+  }
+}
+
+mutation createSourcePort($source_port: CreateSourcePortInput!) {
+  createSourcePort(source_port: $source_port) {
+    id
+    command
+    is_default
+  }
+}
