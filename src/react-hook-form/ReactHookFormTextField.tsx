@@ -32,10 +32,9 @@ const ReactHookFormTextField: React.FC<ReactHookFormTextFieldProps> = (
       disabled={props.disabled}
       rules={props.rules}
       shouldUnregister={props.shouldUnregister}
-      render={(renderProps) => {
-        const isDisabled = props.disabled || renderProps.formState.isSubmitting
-        const errorMessage = renderProps.fieldState.error?.message
-        const hasError = Boolean(renderProps.fieldState.error)
+      render={({ field: { ref, ...field }, fieldState, formState }) => {
+        const isDisabled = props.disabled || formState.isSubmitting
+        const errorMessage = fieldState.error?.message
         const helperText = errorMessage || props.helperText
         // const helperText = errorMessage
         //   ? props.shouldTranslateErrorMessage !== false
@@ -46,11 +45,12 @@ const ReactHookFormTextField: React.FC<ReactHookFormTextFieldProps> = (
         return (
           <TextField
             {...textFieldProps}
-            {...renderProps.field}
+            {...field}
             disabled={isDisabled}
-            error={hasError}
+            error={fieldState.invalid}
             helperText={helperText}
-            value={renderProps.field.value ?? null}
+            value={field.value ?? null}
+            inputRef={ref}
           />
         )
       }}
