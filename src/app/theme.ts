@@ -96,6 +96,9 @@ const theme = createTheme({
     },
 
     MuiButton: {
+      defaultProps: {
+        variant: 'outlined',
+      },
       styleOverrides: {
         root: {
           // There's no need for buttons to yell at everyone.

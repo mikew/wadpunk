@@ -16,6 +16,7 @@ const StarRating: React.FC<{
           <>
             <Button
               size="small"
+              variant="text"
               fullWidth
               onClick={() => {
                 props.onChange(0)
