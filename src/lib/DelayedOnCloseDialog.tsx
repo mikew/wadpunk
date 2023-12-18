@@ -1,14 +1,8 @@
 import { Close } from '@mui/icons-material'
+import type { ButtonProps, DialogProps, IconButtonProps } from '@mui/material'
+import { Button, Dialog, IconButton } from '@mui/material'
+import type { ConsumerProps } from 'react'
 import {
-  Button,
-  type ButtonProps,
-  Dialog,
-  type DialogProps,
-  IconButton,
-  type IconButtonProps,
-} from '@mui/material'
-import {
-  type ConsumerProps,
   createContext,
   useCallback,
   useContext,

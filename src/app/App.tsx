@@ -1,16 +1,15 @@
-import { type FetchResult, useMutation } from '@apollo/client'
+import type { FetchResult } from '@apollo/client'
+import { useMutation } from '@apollo/client'
 import { Box, CircularProgress } from '@mui/material'
-import { type PropsWithChildren, Suspense, useEffect, useState } from 'react'
+import type { PropsWithChildren } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 
 import GameList from '@src/games/GameList'
-import {
-  InitializeAppDocument,
-  type InitializeAppMutation,
-} from '@src/graphql/operations'
-import {
-  type SuspenseWrappedPromise,
-  wrapPromiseForSuspense,
-} from '@src/lib/wrapPromiseForSuspense'
+import type { InitializeAppMutation } from '@src/graphql/operations'
+import { InitializeAppDocument } from '@src/graphql/operations'
+import type { SuspenseWrappedPromise } from '@src/lib/wrapPromiseForSuspense'
+import { wrapPromiseForSuspense } from '@src/lib/wrapPromiseForSuspense'
+import SourcePortsDialog from '@src/sourcePorts/SourcePortsDialog'
 
 function App() {
   return (

@@ -22,6 +22,7 @@ import {
   useFormState,
 } from 'react-hook-form'
 
+import type { GetGameDialogFieldsQuery } from '@src/graphql/operations'
 import {
   GetGameDialogFieldsDocument,
   type GetGameDialogFieldsQuery,
@@ -30,7 +31,7 @@ import {
   StartGameDocument,
   UpdateGameDocument,
 } from '@src/graphql/operations'
-import { type Game } from '@src/graphql/types'
+import type { Game } from '@src/graphql/types'
 import DelayedOnCloseDialog, {
   DelayedOnCloseDialogCloseIcon,
   useDelayedOnCloseDialogTriggerClose,
@@ -43,7 +44,7 @@ import {
   GameFileListProvider,
   useGameFileListContext,
 } from './GameFileListContext'
-import { type GameListGame } from './GameList'
+import type { GameListGame } from './GameList'
 import isIwad from './isIwad'
 import useAllTags from './useAllTags'
 

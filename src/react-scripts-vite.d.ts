@@ -1,1 +1,1 @@
-/// <reference types="@promoboxx/react-scripts-vite/dist/client" />
+/// <reference types="@promoboxx/react-scripts-vite/client" />

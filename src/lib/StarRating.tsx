@@ -1,5 +1,6 @@
 import { Star, StarBorder } from '@mui/icons-material'
-import { type SvgIconProps, Stack, Tooltip, Button } from '@mui/material'
+import type { SvgIconProps } from '@mui/material'
+import { Stack, Tooltip, Button } from '@mui/material'
 import { useState } from 'react'
 
 const StarRating: React.FC<{

@@ -11,8 +11,9 @@ import { useWatch } from 'react-hook-form'
 
 import { GetGameFilesDocument } from '@src/graphql/operations'
 
-import { type GameDialogFormValues } from './GameDialog'
-import { type FileEntry, useGameFileListContext } from './GameFileListContext'
+import type { GameDialogFormValues } from './GameDialog'
+import type { FileEntry } from './GameFileListContext'
+import { useGameFileListContext } from './GameFileListContext'
 import isIwad from './isIwad'
 
 // TODO:

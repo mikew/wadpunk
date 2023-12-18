@@ -21,9 +21,9 @@ import {
 import useSimpleFilter from '@promoboxx/use-filter/dist/useSimpleFilter'
 import { useMemo, useState } from 'react'
 
+import type { GetGameListQueryQuery } from '@src/graphql/operations'
 import {
   GetGameListQueryDocument,
-  type GetGameListQueryQuery,
   OpenGamesFolderDocument,
   SetRatingDocument,
 } from '@src/graphql/operations'

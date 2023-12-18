@@ -1,5 +1,5 @@
 import { shallowEqual, useDispatch, useSelector } from 'react-redux'
-import { type AnyAction, type Dispatch } from 'redux'
+import type { UnknownAction, Dispatch } from 'redux'
 
 import type rootReducer from './rootReducer'
 
@@ -21,6 +21,6 @@ export const useRootDispatch: () => RootDispatch = useDispatch
 declare global {
   type RootState = ReturnType<typeof rootReducer>
   type RootGetState = () => RootState
-  type RootDispatch = Dispatch<AnyAction>
+  type RootDispatch = Dispatch<UnknownAction>
   type RootSelector<TSelected> = (state: RootState) => TSelected
 }
