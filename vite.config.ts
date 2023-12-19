@@ -1,4 +1,5 @@
 import { viteConfig, pluginOptions } from '@promoboxx/react-scripts-vite'
+import muteWarnings from '@promoboxx/react-scripts-vite/muteWarnings'
 import { defineConfig } from 'vite'
 
 pluginOptions.pwa = false
@@ -13,23 +14,31 @@ pluginOptions.checker = {
 export default defineConfig(async (env) => {
   const config = await viteConfig(env)
 
-  return {
-    ...config,
-    plugins: [...config.plugins],
-    server: {
-      ...config.server,
-      open: false,
-    },
-    resolve: {
-      alias: {
-        ...config.resolve?.alias,
-        '@mui/material': '@mui/material/modern',
-        '@mui/icons-material': '@mui/icons-material/esm',
-        '@mui/joy': '@mui/joy/modern',
-      },
-    },
-    build: {
-      ...config.build,
+  config.plugins?.unshift(
+    muteWarnings({
+      warningsToIgnore: [
+        [
+          'SOURCEMAP_ERROR',
+          'Error when using sourcemap for reporting an error:',
+        ],
+      ],
+    }),
+  )
+
+  config.server = {
+    ...config.server,
+    open: false,
+  }
+
+  config.resolve = {
+    ...config.resolve,
+    alias: {
+      ...config.resolve?.alias,
+      '@mui/material': '@mui/material/modern',
+      '@mui/icons-material': '@mui/icons-material/esm',
+      '@mui/joy': '@mui/joy/modern',
     },
   }
+
+  return config
 })

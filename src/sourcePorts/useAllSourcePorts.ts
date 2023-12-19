@@ -1,7 +1,7 @@
 import { useSuspenseQuery } from '@apollo/client'
 import { useMemo } from 'react'
 
-import { GetAllSourcePortsDocument } from '@src/graphql/operations'
+import { GetAllSourcePortsDocument } from '#src/graphql/operations'
 
 function useAllSourcePorts() {
   const { data, refetch } = useSuspenseQuery(GetAllSourcePortsDocument)

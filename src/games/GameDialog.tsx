@@ -22,22 +22,22 @@ import {
   useFormState,
 } from 'react-hook-form'
 
-import type { GetGameDialogFieldsQuery } from '@src/graphql/operations'
+import type { GetGameDialogFieldsQuery } from '#src/graphql/operations'
 import {
   GetGameDialogFieldsDocument,
   GetGameListQueryDocument,
   StartGameBetterDocument,
   StartGameDocument,
   UpdateGameDocument,
-} from '@src/graphql/operations'
-import type { Game } from '@src/graphql/types'
+} from '#src/graphql/operations'
+import type { Game } from '#src/graphql/types'
 import DelayedOnCloseDialog, {
   DelayedOnCloseDialogCloseIcon,
   useDelayedOnCloseDialogTriggerClose,
-} from '@src/lib/DelayedOnCloseDialog'
-import StarRating from '@src/lib/StarRating'
-import ReactHookFormTextField from '@src/react-hook-form/ReactHookFormTextField'
-import useAllSourcePorts from '@src/sourcePorts/useAllSourcePorts'
+} from '#src/lib/DelayedOnCloseDialog'
+import StarRating from '#src/lib/StarRating'
+import ReactHookFormTextField from '#src/react-hook-form/ReactHookFormTextField'
+import useAllSourcePorts from '#src/sourcePorts/useAllSourcePorts'
 
 import GameDialogFileList from './GameDialogFileList'
 import {

@@ -72,7 +72,7 @@ const config: CodegenConfig = {
 
             preset: 'import-types',
             presetConfig: {
-              typesPath: '@src/graphql/types',
+              typesPath: '#src/graphql/types',
             },
           },
         }

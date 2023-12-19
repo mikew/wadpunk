@@ -21,15 +21,15 @@ import {
 import useSimpleFilter from '@promoboxx/use-filter/dist/useSimpleFilter'
 import { useMemo, useState } from 'react'
 
-import type { GetGameListQueryQuery } from '@src/graphql/operations'
+import type { GetGameListQueryQuery } from '#src/graphql/operations'
 import {
   GetGameListQueryDocument,
   OpenGamesFolderDocument,
   SetRatingDocument,
-} from '@src/graphql/operations'
-import StarRating from '@src/lib/StarRating'
-import { useRootDispatch } from '@src/redux/helpers'
-import actions from '@src/sourcePorts/actions'
+} from '#src/graphql/operations'
+import StarRating from '#src/lib/StarRating'
+import { useRootDispatch } from '#src/redux/helpers'
+import actions from '#src/sourcePorts/actions'
 
 import calculateGamePlayTime from './calculateGamePlayTime'
 import GameDialog from './GameDialog'

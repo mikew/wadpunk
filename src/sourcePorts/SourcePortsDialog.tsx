@@ -10,12 +10,12 @@ import {
 } from '@mui/material'
 import { FormProvider, useForm } from 'react-hook-form'
 
-import { CreateSourcePortDocument } from '@src/graphql/operations'
+import { CreateSourcePortDocument } from '#src/graphql/operations'
 import DelayedOnCloseDialog, {
   DelayedOnCloseDialogCloseButton,
-} from '@src/lib/DelayedOnCloseDialog'
-import ReactHookFormTextField from '@src/react-hook-form/ReactHookFormTextField'
-import { useRootDispatch, useRootSelector } from '@src/redux/helpers'
+} from '#src/lib/DelayedOnCloseDialog'
+import ReactHookFormTextField from '#src/react-hook-form/ReactHookFormTextField'
+import { useRootDispatch, useRootSelector } from '#src/redux/helpers'
 
 import actions from './actions'
 import useAllSourcePorts from './useAllSourcePorts'

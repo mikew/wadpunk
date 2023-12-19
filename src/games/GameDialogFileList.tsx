@@ -9,7 +9,7 @@ import {
 import { useEffect } from 'react'
 import { useWatch } from 'react-hook-form'
 
-import { GetGameFilesDocument } from '@src/graphql/operations'
+import { GetGameFilesDocument } from '#src/graphql/operations'
 
 import type { GameDialogFormValues } from './GameDialog'
 import type { FileEntry } from './GameFileListContext'
