@@ -22,6 +22,7 @@ function App() {
     >
       <Initializer>
         <GameList />
+        <SourcePortsDialog />
       </Initializer>
     </Suspense>
   )
