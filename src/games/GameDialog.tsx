@@ -25,7 +25,6 @@ import {
 import type { GetGameDialogFieldsQuery } from '@src/graphql/operations'
 import {
   GetGameDialogFieldsDocument,
-  type GetGameDialogFieldsQuery,
   GetGameListQueryDocument,
   StartGameBetterDocument,
   StartGameDocument,
@@ -38,6 +37,7 @@ import DelayedOnCloseDialog, {
 } from '@src/lib/DelayedOnCloseDialog'
 import StarRating from '@src/lib/StarRating'
 import ReactHookFormTextField from '@src/react-hook-form/ReactHookFormTextField'
+import useAllSourcePorts from '@src/sourcePorts/useAllSourcePorts'
 
 import GameDialogFileList from './GameDialogFileList'
 import {
@@ -55,6 +55,7 @@ export interface GameDialogFormValues {
   tags: Game['tags']
   iwadId: NonNullable<Game['iwad_id']>
   extraGameIds: (string | GameListGame)[]
+  sourcePort: Game['source_port']
 }
 
 interface GameDialogProps {
@@ -101,6 +102,8 @@ const GameDialogInner: React.FC<{
     },
   })
 
+  const { sourcePorts } = useAllSourcePorts()
+
   const [updateGame] = useMutation(UpdateGameDocument)
 
   const { iwads, others } = useMemo(() => {
@@ -129,7 +132,7 @@ const GameDialogInner: React.FC<{
       notes: fullGame.notes,
       tags: fullGame.tags,
 
-      // sourcePortId: '',
+      sourcePort: fullGame.source_port || '',
       iwadId: fullGame.iwad_id || '',
       extraGameIds: fullGame.extra_mod_ids || [],
     },
@@ -179,6 +182,24 @@ const GameDialogInner: React.FC<{
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
               <Typography>{fullGame.description}</Typography>
+
+              <ReactHookFormTextField
+                name="sourcePort"
+                label="Source Port"
+                select
+              >
+                <MenuItem value={''}>
+                  <em>Default</em>
+                </MenuItem>
+
+                {sourcePorts.map((x) => {
+                  return (
+                    <MenuItem key={x.id} value={x.id}>
+                      {x.id}
+                    </MenuItem>
+                  )
+                })}
+              </ReactHookFormTextField>
 
               <Controller
                 name="tags"
@@ -305,7 +326,7 @@ const GameDialogInner: React.FC<{
                     notes: values.notes,
                     tags: values.tags,
 
-                    // source_port: values.source_port_id,
+                    source_port: values.sourcePort,
                     iwad_id: values.iwadId ? values.iwadId : null,
                     extra_mod_ids: values.extraGameIds.map((x) =>
                       typeof x === 'string' ? x : x.id,
