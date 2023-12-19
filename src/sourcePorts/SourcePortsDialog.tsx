@@ -1,4 +1,4 @@
-import { useMutation, useSuspenseQuery } from '@apollo/client'
+import { useMutation } from '@apollo/client'
 import {
   Button,
   DialogActions,
@@ -10,10 +10,7 @@ import {
 } from '@mui/material'
 import { FormProvider, useForm } from 'react-hook-form'
 
-import {
-  CreateSourcePortDocument,
-  GetAllSourcePortsDocument,
-} from '@src/graphql/operations'
+import { CreateSourcePortDocument } from '@src/graphql/operations'
 import DelayedOnCloseDialog, {
   DelayedOnCloseDialogCloseButton,
 } from '@src/lib/DelayedOnCloseDialog'
@@ -21,6 +18,7 @@ import ReactHookFormTextField from '@src/react-hook-form/ReactHookFormTextField'
 import { useRootDispatch, useRootSelector } from '@src/redux/helpers'
 
 import actions from './actions'
+import useAllSourcePorts from './useAllSourcePorts'
 
 interface AddSourcePortFormValues {
   id: string
@@ -28,7 +26,7 @@ interface AddSourcePortFormValues {
 }
 
 const SourcePortsDialog: React.FC = () => {
-  const { data, refetch } = useSuspenseQuery(GetAllSourcePortsDocument)
+  const { sourcePorts, refetch } = useAllSourcePorts()
   const isOpen = useRootSelector((state) => state.sourcePorts.isDialogOpen)
   const dispatch = useRootDispatch()
   const [createSourcePort] = useMutation(CreateSourcePortDocument)
@@ -48,7 +46,7 @@ const SourcePortsDialog: React.FC = () => {
     >
       <DialogTitle>Source Ports</DialogTitle>
       <DialogContent>
-        {data.getSourcePorts.map((x) => {
+        {sourcePorts.map((x) => {
           return (
             <ListItem key={x.id}>
               <ListItemText primary={x.id} secondary={x.command.join(' ')} />
