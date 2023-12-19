@@ -37,7 +37,7 @@ function Initializer(props: PropsWithChildren) {
   }, [initializeApp])
 
   return (
-    <>{wrappedPromise?.read()?.status === 'success' ? props.children : null}</>
+    <>{wrappedPromise?.read().status === 'success' ? props.children : null}</>
   )
 }
 
