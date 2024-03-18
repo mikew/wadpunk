@@ -1,16 +1,18 @@
 import { useQuery, useSuspenseQuery } from '@apollo/client'
 import { useMemo } from 'react'
 
-import { GetGameListQueryDocument } from '@src/graphql/operations'
-import { Game } from '@src/graphql/types'
+import { GetGameListQueryDocument } from '#src/graphql/operations'
+import type { Game } from '#src/graphql/types'
 
 const defaultTags = ['iwad', 'tc', 'mod']
 
 function useAllTags(suspense = false) {
+  // This won't change at runtime, and if it does, an error will be thrown
+  // anyways.
   const { data } = suspense
-    ? // eslint-disable-next-line react-hooks/rules-of-hooks
+    ? // eslint-disable-next-line react-hooks/rules-of-hooks -- see above
       useSuspenseQuery(GetGameListQueryDocument)
-    : // eslint-disable-next-line react-hooks/rules-of-hooks
+    : // eslint-disable-next-line react-hooks/rules-of-hooks -- see above
       useQuery(GetGameListQueryDocument)
 
   const tags = useMemo(() => {

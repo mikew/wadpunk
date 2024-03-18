@@ -1,13 +1,13 @@
 type WrappedPromiseStatus = 'pending' | 'success' | 'error'
 
 export interface SuspenseWrappedPromise<T> {
-  read: () => { result: T; status: WrappedPromiseStatus } | undefined
+  read: () => { result: T; status: WrappedPromiseStatus } | never
 }
 
 export function wrapPromiseForSuspense<T>(promise: Promise<T>) {
-  let status: 'pending' | 'success' | 'error' = 'pending'
+  let status: WrappedPromiseStatus = 'pending'
   let result: T
-  let err: any
+  let err: unknown
 
   const suspender = promise.then(
     (value) => {
@@ -22,12 +22,13 @@ export function wrapPromiseForSuspense<T>(promise: Promise<T>) {
 
   const wrappedPromise: SuspenseWrappedPromise<T> = {
     read() {
-      if (status === 'pending') {
-        throw suspender
-      } else if (status === 'error') {
-        throw err
-      } else if (status === 'success') {
-        return { status, result }
+      switch (status) {
+        case 'pending':
+          throw suspender
+        case 'error':
+          throw err
+        case 'success':
+          return { status, result }
       }
     },
   }

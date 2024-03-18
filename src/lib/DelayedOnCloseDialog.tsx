@@ -1,14 +1,8 @@
 import { Close } from '@mui/icons-material'
+import type { ButtonProps, DialogProps, IconButtonProps } from '@mui/material'
+import { Button, Dialog, IconButton } from '@mui/material'
+import type { ConsumerProps } from 'react'
 import {
-  Button,
-  ButtonProps,
-  Dialog,
-  DialogProps,
-  IconButton,
-  IconButtonProps,
-} from '@mui/material'
-import {
-  ConsumerProps,
   createContext,
   useCallback,
   useContext,
@@ -54,7 +48,7 @@ export const DelayedOnCloseDialogTriggerCloseContextConsumer: React.FC<
 }
 
 interface DelayedOnCloseDialogProps extends Omit<DialogProps, 'onClose'> {
-  onClose?: (event: {}, reason: DelayedOnCloseDialogCloseReason) => void
+  onClose?: (event: unknown, reason: DelayedOnCloseDialogCloseReason) => void
   shouldClose?: (
     reason: DelayedOnCloseDialogCloseReason,
   ) => boolean | void | undefined | null

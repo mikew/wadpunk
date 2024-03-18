@@ -1,5 +1,5 @@
+import type { PropsWithChildren } from 'react'
 import {
-  PropsWithChildren,
   createContext,
   useCallback,
   useContext,
@@ -34,9 +34,7 @@ export function useGameFileListContext() {
   return context
 }
 
-export const GameFileListProvider: React.FC<PropsWithChildren<{}>> = (
-  props,
-) => {
+export const GameFileListProvider: React.FC<PropsWithChildren> = (props) => {
   const [files, setFiles] = useState<FileEntry[]>([])
 
   const setEnabled = useCallback((relativePath: string, isEnabled: boolean) => {

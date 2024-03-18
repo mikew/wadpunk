@@ -21,13 +21,15 @@ import {
 import useSimpleFilter from '@promoboxx/use-filter/dist/useSimpleFilter'
 import { useMemo, useState } from 'react'
 
+import type { GetGameListQueryQuery } from '#src/graphql/operations'
 import {
   GetGameListQueryDocument,
-  GetGameListQueryQuery,
   OpenGamesFolderDocument,
   SetRatingDocument,
-} from '@src/graphql/operations'
-import StarRating from '@src/lib/StarRating'
+} from '#src/graphql/operations'
+import StarRating from '#src/lib/StarRating'
+import { useRootDispatch } from '#src/redux/helpers'
+import actions from '#src/sourcePorts/actions'
 
 import calculateGamePlayTime from './calculateGamePlayTime'
 import GameDialog from './GameDialog'
@@ -38,6 +40,7 @@ export type GameListGame = ArrayItemType<GetGameListQueryQuery['getGames']>
 
 const GameList: React.FC = () => {
   const { data, refetch } = useSuspenseQuery(GetGameListQueryDocument)
+  const dispatch = useRootDispatch()
 
   const [openGamesFolderMutation] = useMutation(OpenGamesFolderDocument)
   const [setRating] = useMutation(SetRatingDocument)
@@ -199,6 +202,14 @@ const GameList: React.FC = () => {
               startIcon={<FolderOpen />}
             >
               Open Games Folder
+            </Button>
+
+            <Button
+              onClick={() => {
+                dispatch(actions.toggleDialog())
+              }}
+            >
+              Source Ports
             </Button>
 
             <Button

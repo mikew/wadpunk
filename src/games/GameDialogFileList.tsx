@@ -7,12 +7,13 @@ import {
   ListItemText,
 } from '@mui/material'
 import { useEffect } from 'react'
-import { useField } from 'react-final-form'
+import { useWatch } from 'react-hook-form'
 
-import { GetGameFilesDocument } from '@src/graphql/operations'
+import { GetGameFilesDocument } from '#src/graphql/operations'
 
-import { GameDialogFormValues } from './GameDialog'
-import { FileEntry, useGameFileListContext } from './GameFileListContext'
+import type { GameDialogFormValues } from './GameDialog'
+import type { FileEntry } from './GameFileListContext'
+import { useGameFileListContext } from './GameFileListContext'
 import isIwad from './isIwad'
 
 // TODO:
@@ -23,28 +24,21 @@ import isIwad from './isIwad'
 //   reinitialize the form and lose any state the user has.
 const GameDialogFileList: React.FC = (props) => {
   const { setFiles, files, setEnabled } = useGameFileListContext()
-  const gameId = useField<GameDialogFormValues['id']>('id')
-  const {
-    input: { value: iwadIdValue },
-  } = useField<GameDialogFormValues['iwadId']>('iwadId', {
-    subscription: { value: true },
+  const gameId = useWatch<GameDialogFormValues, 'id'>({
+    name: 'id',
   })
-  const tagsField = useField<GameDialogFormValues['tags']>('tags', {
-    subscription: { value: true },
+  const iwadIdValue = useWatch<GameDialogFormValues, 'iwadId'>({
+    name: 'iwadId',
   })
-  const extraGameIdsField = useField<GameDialogFormValues['extraGameIds']>(
-    'extraGameIds',
-    {
-      subscription: { value: true },
-    },
-  )
-  const isGameIwad = isIwad(tagsField.input.value)
-  const iwadId = isGameIwad ? gameId.input.value : iwadIdValue
+  const tagsField = useWatch<GameDialogFormValues, 'tags'>({ name: 'tags' })
+  const extraGameIdsField = useWatch<GameDialogFormValues, 'extraGameIds'>({
+    name: 'extraGameIds',
+  })
+  const isGameIwad = isIwad(tagsField)
+  const iwadId = isGameIwad ? gameId : iwadIdValue
 
-  const allGameIds = (isGameIwad ? [] : [gameId.input.value]).concat(
-    extraGameIdsField.input.value.map((x) =>
-      typeof x === 'string' ? x : x.id,
-    ),
+  const allGameIds = (isGameIwad ? [] : [gameId]).concat(
+    extraGameIdsField.map((x) => (typeof x === 'string' ? x : x.id)),
   )
 
   const { data: gameFiles } = useSuspenseQuery(GetGameFilesDocument, {
