@@ -26,7 +26,7 @@ interface AddSourcePortFormValues {
 }
 
 const SourcePortsDialog: React.FC = () => {
-  const { sourcePorts, refetch } = useAllSourcePorts()
+  const { sourcePorts } = useAllSourcePorts()
   const isOpen = useRootSelector((state) => state.sourcePorts.isDialogOpen)
   const dispatch = useRootDispatch()
   const [createSourcePort] = useMutation(CreateSourcePortDocument)
@@ -73,7 +73,7 @@ const SourcePortsDialog: React.FC = () => {
                 },
               })
 
-              refetch()
+              invalidateApolloQuery(['getSourcePorts'])
               formApi.reset()
             })}
           >

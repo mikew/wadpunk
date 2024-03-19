@@ -21,6 +21,7 @@ import {
 import useSimpleFilter from '@promoboxx/use-filter/dist/useSimpleFilter'
 import { useMemo, useState } from 'react'
 
+import { invalidateApolloQuery } from '#src/graphql/graphqlClient'
 import type { GetGameListQueryQuery } from '#src/graphql/operations'
 import {
   GetGameListQueryDocument,
@@ -39,7 +40,7 @@ type ArrayItemType<T> = T extends Array<infer A> ? A : never
 export type GameListGame = ArrayItemType<GetGameListQueryQuery['getGames']>
 
 const GameList: React.FC = () => {
-  const { data, refetch } = useSuspenseQuery(GetGameListQueryDocument)
+  const { data } = useSuspenseQuery(GetGameListQueryDocument)
   const dispatch = useRootDispatch()
 
   const [openGamesFolderMutation] = useMutation(OpenGamesFolderDocument)
@@ -214,7 +215,7 @@ const GameList: React.FC = () => {
 
             <Button
               onClick={() => {
-                refetch()
+                invalidateApolloQuery(['getGames'])
               }}
             >
               Reload
