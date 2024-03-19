@@ -392,5 +392,16 @@ impl DataSource {
 
     Ok(source_port_record)
   }
+
+  pub async fn Mutation_deleteSourcePort(
+    &self,
+    _root: &Mutation,
+    _ctx: &Context<'_>,
+    id: String,
+  ) -> GraphQLResult<bool> {
+    database::delete_source_port(&id);
+
+    Ok(true)
+  }
 }
 }

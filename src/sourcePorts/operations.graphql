@@ -13,3 +13,7 @@ mutation createSourcePort($source_port: CreateSourcePortInput!) {
     is_default
   }
 }
+
+mutation deleteSourcePort($id: ID!) {
+  deleteSourcePort(id: $id)
+}
