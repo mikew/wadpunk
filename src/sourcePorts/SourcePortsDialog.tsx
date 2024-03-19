@@ -1,16 +1,22 @@
 import { useMutation } from '@apollo/client'
+import { Delete } from '@mui/icons-material'
 import {
   Button,
   DialogActions,
   DialogContent,
   DialogTitle,
+  IconButton,
   ListItem,
   ListItemText,
   Typography,
 } from '@mui/material'
 import { FormProvider, useForm } from 'react-hook-form'
 
-import { CreateSourcePortDocument } from '#src/graphql/operations'
+import { invalidateApolloQuery } from '#src/graphql/graphqlClient'
+import {
+  CreateSourcePortDocument,
+  DeleteSourcePortDocument,
+} from '#src/graphql/operations'
 import DelayedOnCloseDialog, {
   DelayedOnCloseDialogCloseButton,
 } from '#src/lib/DelayedOnCloseDialog'
@@ -26,10 +32,11 @@ interface AddSourcePortFormValues {
 }
 
 const SourcePortsDialog: React.FC = () => {
-  const { sourcePorts, refetch } = useAllSourcePorts()
+  const { sourcePorts } = useAllSourcePorts()
   const isOpen = useRootSelector((state) => state.sourcePorts.isDialogOpen)
   const dispatch = useRootDispatch()
   const [createSourcePort] = useMutation(CreateSourcePortDocument)
+  const [deleteSourcePort] = useMutation(DeleteSourcePortDocument)
   const formApi = useForm<AddSourcePortFormValues>({
     defaultValues: {
       id: '',
@@ -48,7 +55,23 @@ const SourcePortsDialog: React.FC = () => {
       <DialogContent>
         {sourcePorts.map((x) => {
           return (
-            <ListItem key={x.id}>
+            <ListItem
+              key={x.id}
+              secondaryAction={
+                <IconButton
+                  onClick={async () => {
+                    await deleteSourcePort({
+                      variables: {
+                        id: x.id,
+                      },
+                    })
+                    invalidateApolloQuery(['getSourcePorts'])
+                  }}
+                >
+                  <Delete />
+                </IconButton>
+              }
+            >
               <ListItemText primary={x.id} secondary={x.command.join(' ')} />
             </ListItem>
           )
@@ -73,7 +96,7 @@ const SourcePortsDialog: React.FC = () => {
                 },
               })
 
-              refetch()
+              invalidateApolloQuery(['getSourcePorts'])
               formApi.reset()
             })}
           >

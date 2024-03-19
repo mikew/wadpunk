@@ -21,11 +21,7 @@ pub fn reveal_file(path: &str) {
     if path.contains(",") {
       let new_path = match metadata(path).unwrap().is_dir() {
         true => path,
-        false => {
-          let mut path2 = PathBuf::from(path);
-          path2.pop();
-          path2.into_os_string().into_string().unwrap()
-        }
+        false => PathBuf::from(path).parent().unwrap().to_str().unwrap(),
       };
       Command::new("xdg-open").arg(new_path).spawn().unwrap();
     } else {
@@ -46,7 +42,10 @@ pub fn reveal_file(path: &str) {
 
   #[cfg(target_os = "macos")]
   {
-    Command::new("open").args(["-R", path]).spawn().unwrap();
+    Command::new("open")
+      .args(["--reveal", path])
+      .spawn()
+      .unwrap();
   }
 }
 

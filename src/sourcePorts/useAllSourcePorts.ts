@@ -1,7 +1,8 @@
 import { useSuspenseQuery } from '@apollo/client'
-import { useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 
 import { GetAllSourcePortsDocument } from '#src/graphql/operations'
+import type { SourcePort } from '#src/graphql/types'
 
 function useAllSourcePorts() {
   const { data, refetch } = useSuspenseQuery(GetAllSourcePortsDocument)
@@ -12,11 +13,24 @@ function useAllSourcePorts() {
     })
   }, [data.getSourcePorts])
 
-  const defaultSourcePort = data.getSourcePorts.find((x) => x.is_default)
+  const defaultSourcePort =
+    data.getSourcePorts.find((x) => x.is_default) || data.getSourcePorts[0]
+
+  const findSourcePortById = useCallback(
+    (id?: SourcePort['id'] | null) => {
+      if (!id || id === '-1') {
+        return defaultSourcePort
+      }
+
+      return data.getSourcePorts.find((x) => x.id === id)
+    },
+    [data.getSourcePorts, defaultSourcePort],
+  )
 
   return {
     sourcePorts: sortedSourcePorts,
     defaultSourcePort,
+    findSourcePortById,
     refetch,
   }
 }

@@ -210,6 +210,11 @@ pub fn save_source_port(source_port: SourcePort) {
   fs::write(json_path, json_str).unwrap();
 }
 
+pub fn delete_source_port(id: &str) {
+  let json_path = get_source_ports_directory().join(format!("{}.json", id));
+  fs::remove_file(json_path).unwrap();
+}
+
 #[derive(Serialize, Deserialize, Debug, Default, Clone)]
 pub struct DbGameMeta {
   pub rating: Option<i32>,

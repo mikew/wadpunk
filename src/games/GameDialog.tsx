@@ -14,6 +14,7 @@ import {
   Box,
   Stack,
 } from '@mui/material'
+import { enqueueSnackbar } from 'notistack'
 import { Suspense, useMemo } from 'react'
 import {
   Controller,
@@ -22,11 +23,10 @@ import {
   useFormState,
 } from 'react-hook-form'
 
+import { invalidateApolloQuery } from '#src/graphql/graphqlClient'
 import type { GetGameDialogFieldsQuery } from '#src/graphql/operations'
 import {
   GetGameDialogFieldsDocument,
-  GetGameListQueryDocument,
-  StartGameBetterDocument,
   StartGameDocument,
   UpdateGameDocument,
 } from '#src/graphql/operations'
@@ -96,13 +96,14 @@ const GameDialogInner: React.FC<{
   const allTags = useAllTags(true)
   const {
     data: { getGame: fullGame, getGames: games },
+    refetch,
   } = useSuspenseQuery(GetGameDialogFieldsDocument, {
     variables: {
       game_id: props.gameId,
     },
   })
 
-  const { sourcePorts } = useAllSourcePorts()
+  const { sourcePorts, defaultSourcePort } = useAllSourcePorts()
 
   const [updateGame] = useMutation(UpdateGameDocument)
 
@@ -132,7 +133,7 @@ const GameDialogInner: React.FC<{
       notes: fullGame.notes,
       tags: fullGame.tags,
 
-      sourcePort: fullGame.source_port || '',
+      sourcePort: fullGame.source_port || '-1',
       iwadId: fullGame.iwad_id || '',
       extraGameIds: fullGame.extra_mod_ids || [],
     },
@@ -188,8 +189,8 @@ const GameDialogInner: React.FC<{
                 label="Source Port"
                 select
               >
-                <MenuItem value={''}>
-                  <em>Default</em>
+                <MenuItem value={'-1'}>
+                  <em>Default ({defaultSourcePort?.id})</em>
                 </MenuItem>
 
                 {sourcePorts.map((x) => {
@@ -335,6 +336,9 @@ const GameDialogInner: React.FC<{
                   },
                 },
               })
+
+              // Refetch game so we get the updated values.
+              await refetch()
             })}
             resetForm={() => {
               formApi.reset()
@@ -351,12 +355,11 @@ const GameDialogActions: React.FC<{
   resetForm: () => void
   submitForm: (event: React.BaseSyntheticEvent) => Promise<void>
 }> = (props) => {
-  const [startGameMutation] = useMutation(StartGameDocument, {
-    refetchQueries: [{ query: GetGameListQueryDocument }],
-  })
+  const [startGameMutation] = useMutation(StartGameDocument)
   const { files: allFiles } = useGameFileListContext()
   const triggerClose = useDelayedOnCloseDialogTriggerClose()
   const formState = useFormState()
+  const { findSourcePortById } = useAllSourcePorts()
 
   return (
     <>
@@ -384,6 +387,25 @@ const GameDialogActions: React.FC<{
           try {
             await props.submitForm(event)
 
+            const sourcePort = findSourcePortById(props.game.source_port)
+
+            if (!sourcePort) {
+              enqueueSnackbar(
+                `Could not find source port with id "${props.game.source_port}"`,
+                { variant: 'error' },
+              )
+              return
+            }
+
+            const firstCommand = sourcePort.command[0]
+
+            if (!firstCommand) {
+              enqueueSnackbar(`Source port "${sourcePort.id}" has no command`, {
+                variant: 'error',
+              })
+              return
+            }
+
             const files: string[] = []
             let iwad: string | undefined = undefined
 
@@ -402,15 +424,18 @@ const GameDialogActions: React.FC<{
             const startGameResponse = await startGameMutation({
               variables: {
                 game_id: props.game.id,
-                source_port:
-                  '/Users/mike/Documents/GZDoom Launcher/SourcePorts/GZDoom.app/Contents/MacOS/gzdoom',
+                source_port: firstCommand,
                 iwad,
                 files,
               },
             })
 
+            invalidateApolloQuery(['getGames'])
+
             if (!startGameResponse.data?.startGame) {
-              throw new Error('startGame returned false')
+              enqueueSnackbar('Looks like something went wrong when running', {
+                variant: 'error',
+              })
             }
           } catch (err) {
             console.error(err)

@@ -9,6 +9,8 @@ use async_graphql::Result as GraphQLResult;
 use chrono::DateTime;
 use chrono::Utc;
 
+use plist;
+
 use crate::database;
 use crate::database::DbPlaySession;
 use crate::database::DbPlaySessionEntry;
@@ -158,6 +160,32 @@ impl DataSource {
     iwad: Option<String>,
     source_port: String,
   ) -> GraphQLResult<bool> {
+    let source_port = if cfg!(target_os = "macos") {
+      let plist_path = Path::new(&source_port).join("Contents").join("Info.plist");
+
+      if plist_path.exists() {
+        let info_plist = plist::Value::from_file(&plist_path).unwrap();
+        let executable = info_plist
+          .as_dictionary()
+          .and_then(|x| x.get("CFBundleExecutable"))
+          .and_then(|x| x.as_string())
+          .unwrap();
+
+        plist_path
+          .parent()
+          .unwrap()
+          .join("MacOS")
+          .join(executable)
+          .to_str()
+          .unwrap()
+          .to_string()
+      } else {
+        source_port
+      }
+    } else {
+      source_port
+    };
+
     let mut command = Command::new(source_port);
     let mut play_session = DbPlaySessionEntry {
       started_at: Some(Utc::now().to_rfc3339()),
@@ -364,5 +392,15 @@ impl DataSource {
 
     Ok(source_port_record)
   }
-}
+
+  pub async fn Mutation_deleteSourcePort(
+    &self,
+    _root: &Mutation,
+    _ctx: &Context<'_>,
+    id: String,
+  ) -> GraphQLResult<bool> {
+    database::delete_source_port(&id);
+
+    Ok(true)
+  }
 }
