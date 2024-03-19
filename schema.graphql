@@ -98,8 +98,6 @@ type Mutation {
     source_port: String!
   ): Boolean!
 
-  startGameBetter(game_id: ID!): Boolean!
-
   updateGame(game: GameInput!): Game!
 
   openGamesFolder(game_id: ID): Boolean!

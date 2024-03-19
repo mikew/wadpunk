@@ -431,8 +431,11 @@ const GameDialogActions: React.FC<{
             })
 
             invalidateApolloQuery(['getGames'])
+
             if (!startGameResponse.data?.startGame) {
-              throw new Error('startGame returned false')
+              enqueueSnackbar('Looks like something went wrong when running', {
+                variant: 'error',
+              })
             }
           } catch (err) {
             console.error(err)
