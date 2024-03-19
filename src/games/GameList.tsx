@@ -19,6 +19,7 @@ import {
   Toolbar,
 } from '@mui/material'
 import useSimpleFilter from '@promoboxx/use-filter/dist/useSimpleFilter'
+import { enqueueSnackbar } from 'notistack'
 import { useMemo, useState } from 'react'
 
 import { invalidateApolloQuery } from '#src/graphql/graphqlClient'
@@ -72,7 +73,7 @@ const GameList: React.FC = () => {
       })
 
       if (!response.data?.openGamesFolder) {
-        throw new Error('openGamesFolder returned false')
+        enqueueSnackbar('Could not open folder', { variant: 'error' })
       }
     } catch (err) {
       console.error(err)
