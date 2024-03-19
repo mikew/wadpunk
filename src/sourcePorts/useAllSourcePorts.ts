@@ -13,7 +13,8 @@ function useAllSourcePorts() {
     })
   }, [data.getSourcePorts])
 
-  const defaultSourcePort = data.getSourcePorts.find((x) => x.is_default)
+  const defaultSourcePort =
+    data.getSourcePorts.find((x) => x.is_default) || data.getSourcePorts[0]
 
   const findSourcePortById = useCallback(
     (id?: SourcePort['id'] | null) => {
