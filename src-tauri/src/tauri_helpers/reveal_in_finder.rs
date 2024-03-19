@@ -21,11 +21,7 @@ pub fn reveal_file(path: &str) {
     if path.contains(",") {
       let new_path = match metadata(path).unwrap().is_dir() {
         true => path,
-        false => {
-          let mut path2 = PathBuf::from(path);
-          path2.pop();
-          path2.to_str().unwrap()
-        }
+        false => PathBuf::from(path).parent().unwrap().to_str().unwrap(),
       };
       Command::new("xdg-open").arg(new_path).spawn().unwrap();
     } else {
