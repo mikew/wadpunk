@@ -24,7 +24,7 @@ pub fn reveal_file(path: &str) {
         false => {
           let mut path2 = PathBuf::from(path);
           path2.pop();
-          path2.into_os_string().into_string().unwrap()
+          path2.to_str().unwrap()
         }
       };
       Command::new("xdg-open").arg(new_path).spawn().unwrap();
@@ -46,7 +46,10 @@ pub fn reveal_file(path: &str) {
 
   #[cfg(target_os = "macos")]
   {
-    Command::new("open").args(["-R", path]).spawn().unwrap();
+    Command::new("open")
+      .args(["--reveal", path])
+      .spawn()
+      .unwrap();
   }
 }
 
