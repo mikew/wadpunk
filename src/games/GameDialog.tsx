@@ -100,7 +100,7 @@ const GameDialogInner: React.FC<{
     },
   })
 
-  const { sourcePorts } = useAllSourcePorts()
+  const { sourcePorts, defaultSourcePort } = useAllSourcePorts()
 
   const [updateGame] = useMutation(UpdateGameDocument)
 
@@ -130,7 +130,7 @@ const GameDialogInner: React.FC<{
       notes: fullGame.notes,
       tags: fullGame.tags,
 
-      sourcePort: fullGame.source_port || '',
+      sourcePort: fullGame.source_port || '-1',
       iwadId: fullGame.iwad_id || '',
       extraGameIds: fullGame.extra_mod_ids || [],
     },
@@ -186,8 +186,8 @@ const GameDialogInner: React.FC<{
                 label="Source Port"
                 select
               >
-                <MenuItem value={''}>
-                  <em>Default</em>
+                <MenuItem value={'-1'}>
+                  <em>Default ({defaultSourcePort?.id})</em>
                 </MenuItem>
 
                 {sourcePorts.map((x) => {
