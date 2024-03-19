@@ -25,8 +25,6 @@ import {
 import type { GetGameDialogFieldsQuery } from '#src/graphql/operations'
 import {
   GetGameDialogFieldsDocument,
-  GetGameListQueryDocument,
-  StartGameBetterDocument,
   StartGameDocument,
   UpdateGameDocument,
 } from '#src/graphql/operations'
