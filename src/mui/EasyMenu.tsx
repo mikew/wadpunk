@@ -84,24 +84,27 @@ export type EasyMenuItemProps = MenuItemProps & {
   onClickDelayed?: (event: React.MouseEvent<HTMLElement>) => void
 }
 
-export const EasyMenuItem: React.FC<EasyMenuItemProps> = (props) => {
+export const EasyMenuItem: React.FC<EasyMenuItemProps> = ({
+  onClickDelayed,
+  ...MenuItemProps
+}) => {
   const context = useContext(EasyMenuContext)
 
   return (
     <MenuItem
-      {...props}
+      {...MenuItemProps}
       onClick={(event) => {
-        if (props.onClickDelayed) {
+        if (onClickDelayed) {
           context.closeWithDelay(() => {
-            props.onClickDelayed?.(event)
+            onClickDelayed(event)
           })
-        } else if (props.onClick) {
-          props.onClick(event)
+        } else if (MenuItemProps.onClick) {
+          MenuItemProps.onClick(event)
           context.closeImmediately()
         }
       }}
     >
-      {props.children}
+      {MenuItemProps.children}
     </MenuItem>
   )
 }
