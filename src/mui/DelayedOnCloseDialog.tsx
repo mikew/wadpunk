@@ -11,7 +11,7 @@ import {
   useState,
 } from 'react'
 
-import useLatest from './useLatest'
+import useLatest from '../lib/useLatest'
 
 type DelayedOnCloseDialogCloseReason =
   | 'backdropClick'
