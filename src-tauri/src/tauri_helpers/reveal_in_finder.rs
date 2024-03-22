@@ -1,14 +1,17 @@
 #[cfg(target_os = "linux")]
-use std::path::PathBuf;
+use std::path::Path;
 use std::{fs::metadata, process::Command};
 
 // https://github.com/tauri-apps/tauri/issues/4062#issuecomment-1338048169
 pub fn reveal_file(path: &str) {
   #[cfg(target_os = "windows")]
   {
-    Command::new("explorer")
+    // `explorer /select` is strange and doesn't work with typical shell
+    // quoting, launching through cmd seems to work as expected.
+    Command::new("cmd")
+        .arg("/c")
         // The comma after select is not a typo
-        .args(["/select,", path])
+        .args(["explorer", format!("/select,{}", path).as_str()])
         .spawn()
         .unwrap();
   }
@@ -19,11 +22,7 @@ pub fn reveal_file(path: &str) {
     // comma.
     // https://gitlab.freedesktop.org/dbus/dbus/-/issues/76
     if path.contains(",") {
-      let new_path = match metadata(path).unwrap().is_dir() {
-        true => path,
-        false => PathBuf::from(path).parent().unwrap().to_str().unwrap(),
-      };
-      Command::new("xdg-open").arg(new_path).spawn().unwrap();
+      reveal_folder(Path::new(path).parent().unwrap().to_str().unwrap());
     } else {
       Command::new("dbus-send")
         .args([
