@@ -166,22 +166,24 @@ const GameList: React.FC = () => {
   return (
     <>
       <AppBar position="sticky">
-        <Toolbar>
-          <Stack direction="row" spacing={1}>
-            <Input
-              size="small"
-              margin="none"
-              value={filterInfo.filter.name}
-              placeholder="Filter ..."
-              onChange={(event) => {
-                updateFilter({ name: event.target.value })
-              }}
-              startAdornment={
+        <Toolbar sx={{ gap: 2 }}>
+          <TextField
+            size="small"
+            margin="none"
+            variant="standard"
+            value={filterInfo.filter.name}
+            label="Filter ..."
+            onChange={(event) => {
+              updateFilter({ name: event.target.value })
+            }}
+            InputProps={{
+              startAdornment: (
                 <InputAdornment position="start">
                   <Search />
                 </InputAdornment>
-              }
-            />
+              ),
+            }}
+          />
 
           <Stack direction="column">
             <EasyMenu
@@ -254,24 +256,32 @@ const GameList: React.FC = () => {
             />
           </Stack>
 
-            <Select
-              variant="standard"
-              size="small"
-              margin="none"
-              placeholder="Sort By ..."
-              value={debouncedFilterInfo.sort}
-              onChange={(event) => {
-                setSort(event.target.value, true)
+          <TextField
+            select
+            size="small"
+            margin="none"
+            variant="standard"
+            label="Sort By ..."
+            value={debouncedFilterInfo.sort}
+            onChange={(event) => {
+              setSort(event.target.value, true)
+            }}
+          >
+            <MenuItem value="name:asc">Name</MenuItem>
+            <MenuItem value="rating:desc">Rating</MenuItem>
+            <MenuItem value="playTime:desc">Play Time</MenuItem>
+            <MenuItem value="lastPlayed:desc">Last Played</MenuItem>
+          </TextField>
+
+          <div>
+            <Button
+              onClick={() => {
+                resetFilter(true)
               }}
             >
-              <MenuItem value="name:asc">Name</MenuItem>
-              <MenuItem value="rating:desc">Rating</MenuItem>
-              <MenuItem value="playTime:desc">Play Time</MenuItem>
-              <MenuItem value="lastPlayed:desc">Last Played</MenuItem>
-            </Select>
-
-            <Button onClick={() => resetFilter(true)}>Reset</Button>
-          </Stack>
+              Reset
+            </Button>
+          </div>
 
           <Box flexGrow="1" />
 
