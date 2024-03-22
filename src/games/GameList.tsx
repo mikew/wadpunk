@@ -1,5 +1,11 @@
 import { useMutation, useSuspenseQuery } from '@apollo/client'
-import { Search } from '@mui/icons-material'
+import {
+  ArrowDropDown,
+  Refresh,
+  Search,
+  Settings,
+  Terminal,
+} from '@mui/icons-material'
 import FolderOpen from '@mui/icons-material/FolderOpen'
 import {
   AppBar,
@@ -7,16 +13,17 @@ import {
   Button,
   Chip,
   IconButton,
-  Input,
   InputAdornment,
   List,
   ListItem,
   ListItemButton,
+  ListItemIcon,
   ListItemText,
   MenuItem,
-  Select,
   Stack,
+  TextField,
   Toolbar,
+  Typography,
 } from '@mui/material'
 import useSimpleFilter from '@promoboxx/use-filter/dist/useSimpleFilter'
 import { enqueueSnackbar } from 'notistack'
@@ -30,6 +37,7 @@ import {
   SetRatingDocument,
 } from '#src/graphql/operations'
 import StarRating from '#src/lib/StarRating'
+import { EasyMenu, EasyMenuItem } from '#src/mui/EasyMenu'
 import { useRootDispatch } from '#src/redux/helpers'
 import actions from '#src/sourcePorts/actions'
 
