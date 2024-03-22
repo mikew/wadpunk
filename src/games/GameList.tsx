@@ -275,32 +275,57 @@ const GameList: React.FC = () => {
 
           <Box flexGrow="1" />
 
-          <Stack direction="row" spacing={1}>
-            <Button
-              onClick={() => {
+          <EasyMenu
+            renderTrigger={(props) => {
+              return (
+                <IconButton {...props} edge="end">
+                  <Settings />
+                </IconButton>
+              )
+            }}
+            id="settings-menu"
+            anchorOrigin={{
+              horizontal: 'right',
+              vertical: 'bottom',
+            }}
+            transformOrigin={{
+              horizontal: 'right',
+              vertical: 'top',
+            }}
+            MenuListProps={{
+              dense: true,
+            }}
+          >
+            <EasyMenuItem
+              onClickDelayed={() => {
                 openGamesFolder()
               }}
-              startIcon={<FolderOpen />}
             >
               Open Games Folder
-            </Button>
+            </EasyMenuItem>
 
-            <Button
-              onClick={() => {
+            <EasyMenuItem
+              onClickDelayed={() => {
                 dispatch(actions.toggleDialog())
               }}
             >
+              <ListItemIcon>
+                <Terminal fontSize="small" />
+              </ListItemIcon>
               Source Ports
-            </Button>
+            </EasyMenuItem>
 
-            <Button
-              onClick={() => {
+            <EasyMenuItem
+              onClickDelayed={() => {
                 invalidateApolloQuery(['getGames'])
               }}
             >
+              <ListItemIcon>
+                <Refresh fontSize="small" />
+              </ListItemIcon>
               Reload
-            </Button>
-          </Stack>
+            </EasyMenuItem>
+          </EasyMenu>
         </Toolbar>
       </AppBar>
 
