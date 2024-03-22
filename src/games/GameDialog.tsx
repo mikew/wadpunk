@@ -150,7 +150,6 @@ const GameDialogInner: React.FC<{
             direction="row"
             alignItems="flex-start"
             justifyContent="space-between"
-            spacing="space-between"
           >
             <div>
               {fullGame.name}
@@ -174,7 +173,7 @@ const GameDialogInner: React.FC<{
               />
             </div>
             <div>
-              <DelayedOnCloseDialogCloseIcon />
+              <DelayedOnCloseDialogCloseIcon edge="end" />
             </div>
           </Stack>
         </DialogTitle>
