@@ -40,6 +40,12 @@ type ArrayItemType<T> = T extends Array<infer A> ? A : never
 
 export type GameListGame = ArrayItemType<GetGameListQueryQuery['getGames']>
 
+interface GameListFilter {
+  name: string
+  rating: number
+  starRatingMode: 'at_least' | 'equal' | 'at_most'
+}
+
 const GameList: React.FC = () => {
   const { data } = useSuspenseQuery(GetGameListQueryDocument)
   const dispatch = useRootDispatch()
@@ -54,11 +60,12 @@ const GameList: React.FC = () => {
     updateFilter,
     resetFilter,
     setSort,
-  } = useSimpleFilter('GameList', {
+  } = useSimpleFilter<GameListFilter>('GameList', {
     defaultFilterInfo: {
       filter: {
         name: '',
         rating: 0,
+        starRatingMode: 'at_least',
       },
       sort: 'name:asc',
     },
@@ -93,11 +100,18 @@ const GameList: React.FC = () => {
         shouldInclude &&= false
       }
 
-      if (
-        debouncedFilterInfo.filter.rating &&
-        x.rating !== debouncedFilterInfo.filter.rating
-      ) {
-        shouldInclude &&= false
+      if (debouncedFilterInfo.filter.rating) {
+        switch (debouncedFilterInfo.filter.starRatingMode) {
+          case 'at_most':
+            shouldInclude &&= x.rating <= debouncedFilterInfo.filter.rating
+            break
+          case 'equal':
+            shouldInclude &&= x.rating === debouncedFilterInfo.filter.rating
+            break
+          case 'at_least':
+            shouldInclude &&= x.rating >= debouncedFilterInfo.filter.rating
+            break
+        }
       }
 
       return shouldInclude
@@ -145,6 +159,7 @@ const GameList: React.FC = () => {
     data.getGames,
     debouncedFilterInfo.filter.name,
     debouncedFilterInfo.filter.rating,
+    debouncedFilterInfo.filter.starRatingMode,
     debouncedFilterInfo.sort,
   ])
 
@@ -168,12 +183,76 @@ const GameList: React.FC = () => {
               }
             />
 
+          <Stack direction="column">
+            <EasyMenu
+              id="filter-star-rating-mode"
+              renderTrigger={(props) => {
+                return (
+                  <Typography
+                    {...props}
+                    variant="overline"
+                    color="text.secondary"
+                    sx={{ cursor: 'pointer', lineHeight: 'initial' }}
+                  >
+                    {filterInfo.filter.starRatingMode}{' '}
+                    <ArrowDropDown fontSize="inherit" />
+                  </Typography>
+                )
+              }}
+              MenuListProps={{
+                dense: true,
+              }}
+            >
+              <EasyMenuItem
+                selected={filterInfo.filter.starRatingMode === 'at_most'}
+                onClickDelayed={() => {
+                  updateFilter({ starRatingMode: 'at_most' }, true)
+                }}
+              >
+                <ListItemIcon>
+                  <Typography variant="body2" color="text.secondary">
+                    &lt;=
+                  </Typography>
+                </ListItemIcon>
+                At Most
+              </EasyMenuItem>
+
+              <EasyMenuItem
+                selected={filterInfo.filter.starRatingMode === 'equal'}
+                onClickDelayed={() => {
+                  updateFilter({ starRatingMode: 'equal' }, true)
+                }}
+              >
+                <ListItemIcon>
+                  <Typography variant="body2" color="text.secondary">
+                    =
+                  </Typography>
+                </ListItemIcon>
+                Exactly
+              </EasyMenuItem>
+
+              <EasyMenuItem
+                selected={filterInfo.filter.starRatingMode === 'at_least'}
+                onClickDelayed={() => {
+                  updateFilter({ starRatingMode: 'at_least' }, true)
+                }}
+              >
+                <ListItemIcon>
+                  <Typography variant="body2" color="text.secondary">
+                    &gt;=
+                  </Typography>
+                </ListItemIcon>
+                At Least
+              </EasyMenuItem>
+            </EasyMenu>
+
             <StarRating
               value={debouncedFilterInfo.filter.rating}
               onChange={(value) => {
                 updateFilter({ rating: value }, true)
               }}
             />
+          </Stack>
 
             <Select
               variant="standard"
