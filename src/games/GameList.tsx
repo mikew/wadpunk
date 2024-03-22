@@ -191,6 +191,7 @@ const GameList: React.FC = () => {
                 </InputAdornment>
               ),
             }}
+            sx={{ flex: '0 0 200px' }}
           />
 
           <Stack direction="column">
@@ -274,6 +275,7 @@ const GameList: React.FC = () => {
             onChange={(event) => {
               setSort(event.target.value, true)
             }}
+            sx={{ flex: '0 0 200px' }}
           >
             <MenuItem value="name:asc">Name</MenuItem>
             <MenuItem value="rating:desc">Rating</MenuItem>
