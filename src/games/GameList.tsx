@@ -301,6 +301,9 @@ const GameList: React.FC = () => {
                 openGamesFolder()
               }}
             >
+              <ListItemIcon>
+                <FolderOpen fontSize="small" />
+              </ListItemIcon>
               Open Games Folder
             </EasyMenuItem>
 
