@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+set -ex
+
+RELEASE_TAG="release-$(date "+%F-%H-%M")"
+
+if ! gh release list | grep -q "${RELEASE_TAG}" ; then
+  gh release create "$RELEASE_TAG" --generate-notes --target "$GITHUB_SHA"
+fi
+
+if compgen -G "src-tauri/target/release/bundle/dmg/*.dmg" > /dev/null; then
+  gh release upload "$RELEASE_TAG" src-tauri/target/release/bundle/dmg/*.dmg
+fi
+
+if compgen -G "src-tauri/target/release/bundle/nsis/*.exe" > /dev/null; then
+  gh release upload "$RELEASE_TAG" src-tauri/target/release/bundle/nsis/*.exe
+fi
+
+if compgen -G "src-tauri/target/release/bundle/appimage/*.AppImage" > /dev/null; then
+  gh release upload "$RELEASE_TAG" src-tauri/target/release/bundle/appimage/*.AppImage
+fi

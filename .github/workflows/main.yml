@@ -43,6 +43,10 @@ jobs:
       - run: ./script/build
         shell: bash
 
+      - run: ./script/deploy
+        shell: bash
+        if: endsWith(github.ref, '/main')
+
       - uses: actions/upload-artifact@v4
         with:
           name: gzdoom-launcher-${{ matrix.platform }}
