@@ -6,12 +6,11 @@ use std::{fs::metadata, process::Command};
 pub fn reveal_file(path: &str) {
   #[cfg(target_os = "windows")]
   {
-    // `explorer /select` is strange and doesn't work with typical shell
-    // quoting, launching through cmd seems to work as expected.
-    Command::new("cmd")
-        .arg("/c")
+    // TODO Try to use `raw_arg` instead of `arg` and `args` to avoid issues.
+    // https://doc.rust-lang.org/std/os/windows/process/trait.CommandExt.html#tymethod.raw_arg
+    Command::new("explorer.exe")
         // The comma after select is not a typo
-        .args(["explorer", format!("/select,{}", path).as_str()])
+        .arg(format!("/select,{}", path).as_str())
         .spawn()
         .unwrap();
   }
