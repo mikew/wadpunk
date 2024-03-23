@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -ex
 
-RELEASE_TAG="release-$(date "+%F-%H-%M")"
+RELEASE_TAG="release-$(date "+%F")"
 
 if ! gh release list | grep -q "${RELEASE_TAG}" ; then
   gh release create "$RELEASE_TAG" --generate-notes --target "$GITHUB_SHA"
