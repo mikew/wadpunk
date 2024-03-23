@@ -243,7 +243,9 @@ impl DataSource {
     _ctx: &Context<'_>,
     _game_id: Option<String>,
   ) -> GraphQLResult<bool> {
-    todo!()
+    reveal_file_or_folder(database::get_source_ports_directory().to_str().unwrap());
+
+    Ok(true)
   }
 
   pub async fn Mutation_updateNotes(

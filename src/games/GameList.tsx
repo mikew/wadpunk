@@ -1,5 +1,11 @@
 import { useMutation, useSuspenseQuery } from '@apollo/client'
-import { Search } from '@mui/icons-material'
+import {
+  ArrowDropDown,
+  Refresh,
+  Search,
+  Settings,
+  Terminal,
+} from '@mui/icons-material'
 import FolderOpen from '@mui/icons-material/FolderOpen'
 import {
   AppBar,
@@ -7,22 +13,23 @@ import {
   Button,
   Chip,
   IconButton,
-  Input,
   InputAdornment,
   List,
   ListItem,
   ListItemButton,
+  ListItemIcon,
   ListItemText,
   MenuItem,
-  Select,
   Stack,
+  TextField,
   Toolbar,
+  Typography,
 } from '@mui/material'
 import useSimpleFilter from '@promoboxx/use-filter/dist/useSimpleFilter'
 import { enqueueSnackbar } from 'notistack'
 import { useMemo, useState } from 'react'
 
-import { invalidateApolloQuery } from '#src/graphql/graphqlClient'
+import { invalidateApolloCache } from '#src/graphql/graphqlClient'
 import type { GetGameListQueryQuery } from '#src/graphql/operations'
 import {
   GetGameListQueryDocument,
@@ -30,6 +37,7 @@ import {
   SetRatingDocument,
 } from '#src/graphql/operations'
 import StarRating from '#src/lib/StarRating'
+import { EasyMenu, EasyMenuItem } from '#src/mui/EasyMenu'
 import { useRootDispatch } from '#src/redux/helpers'
 import actions from '#src/sourcePorts/actions'
 
@@ -39,6 +47,12 @@ import GameDialog from './GameDialog'
 type ArrayItemType<T> = T extends Array<infer A> ? A : never
 
 export type GameListGame = ArrayItemType<GetGameListQueryQuery['getGames']>
+
+interface GameListFilter {
+  name: string
+  rating: number
+  starRatingMode: 'at_least' | 'equal' | 'at_most'
+}
 
 const GameList: React.FC = () => {
   const { data } = useSuspenseQuery(GetGameListQueryDocument)
@@ -54,11 +68,12 @@ const GameList: React.FC = () => {
     updateFilter,
     resetFilter,
     setSort,
-  } = useSimpleFilter('GameList', {
+  } = useSimpleFilter<GameListFilter>('GameList', {
     defaultFilterInfo: {
       filter: {
         name: '',
         rating: 0,
+        starRatingMode: 'at_least',
       },
       sort: 'name:asc',
     },
@@ -93,11 +108,18 @@ const GameList: React.FC = () => {
         shouldInclude &&= false
       }
 
-      if (
-        debouncedFilterInfo.filter.rating &&
-        x.rating !== debouncedFilterInfo.filter.rating
-      ) {
-        shouldInclude &&= false
+      if (debouncedFilterInfo.filter.rating) {
+        switch (debouncedFilterInfo.filter.starRatingMode) {
+          case 'at_most':
+            shouldInclude &&= x.rating <= debouncedFilterInfo.filter.rating
+            break
+          case 'equal':
+            shouldInclude &&= x.rating === debouncedFilterInfo.filter.rating
+            break
+          case 'at_least':
+            shouldInclude &&= x.rating >= debouncedFilterInfo.filter.rating
+            break
+        }
       }
 
       return shouldInclude
@@ -145,28 +167,95 @@ const GameList: React.FC = () => {
     data.getGames,
     debouncedFilterInfo.filter.name,
     debouncedFilterInfo.filter.rating,
+    debouncedFilterInfo.filter.starRatingMode,
     debouncedFilterInfo.sort,
   ])
 
   return (
     <>
       <AppBar position="sticky">
-        <Toolbar>
-          <Stack direction="row" spacing={1}>
-            <Input
-              size="small"
-              margin="none"
-              value={filterInfo.filter.name}
-              placeholder="Filter ..."
-              onChange={(event) => {
-                updateFilter({ name: event.target.value })
-              }}
-              startAdornment={
+        <Toolbar sx={{ gap: 2 }}>
+          <TextField
+            size="small"
+            margin="none"
+            variant="standard"
+            value={filterInfo.filter.name}
+            label="Filter ..."
+            onChange={(event) => {
+              updateFilter({ name: event.target.value })
+            }}
+            InputProps={{
+              startAdornment: (
                 <InputAdornment position="start">
                   <Search />
                 </InputAdornment>
-              }
-            />
+              ),
+            }}
+            sx={{ flex: '0 0 200px' }}
+          />
+
+          <Stack direction="column">
+            <EasyMenu
+              id="filter-star-rating-mode"
+              renderTrigger={(props) => {
+                return (
+                  <Typography
+                    {...props}
+                    variant="overline"
+                    color="text.secondary"
+                    sx={{ cursor: 'pointer', lineHeight: 'initial' }}
+                  >
+                    {filterInfo.filter.starRatingMode}{' '}
+                    <ArrowDropDown fontSize="inherit" />
+                  </Typography>
+                )
+              }}
+              MenuListProps={{
+                dense: true,
+              }}
+            >
+              <EasyMenuItem
+                selected={filterInfo.filter.starRatingMode === 'at_most'}
+                onClickDelayed={() => {
+                  updateFilter({ starRatingMode: 'at_most' }, true)
+                }}
+              >
+                <ListItemIcon>
+                  <Typography variant="body2" color="text.secondary">
+                    &lt;=
+                  </Typography>
+                </ListItemIcon>
+                At Most
+              </EasyMenuItem>
+
+              <EasyMenuItem
+                selected={filterInfo.filter.starRatingMode === 'equal'}
+                onClickDelayed={() => {
+                  updateFilter({ starRatingMode: 'equal' }, true)
+                }}
+              >
+                <ListItemIcon>
+                  <Typography variant="body2" color="text.secondary">
+                    =
+                  </Typography>
+                </ListItemIcon>
+                Exactly
+              </EasyMenuItem>
+
+              <EasyMenuItem
+                selected={filterInfo.filter.starRatingMode === 'at_least'}
+                onClickDelayed={() => {
+                  updateFilter({ starRatingMode: 'at_least' }, true)
+                }}
+              >
+                <ListItemIcon>
+                  <Typography variant="body2" color="text.secondary">
+                    &gt;=
+                  </Typography>
+                </ListItemIcon>
+                At Least
+              </EasyMenuItem>
+            </EasyMenu>
 
             <StarRating
               value={debouncedFilterInfo.filter.rating}
@@ -174,54 +263,92 @@ const GameList: React.FC = () => {
                 updateFilter({ rating: value }, true)
               }}
             />
+          </Stack>
 
-            <Select
-              variant="standard"
-              size="small"
-              margin="none"
-              placeholder="Sort By ..."
-              value={debouncedFilterInfo.sort}
-              onChange={(event) => {
-                setSort(event.target.value, true)
+          <TextField
+            select
+            size="small"
+            margin="none"
+            variant="standard"
+            label="Sort By ..."
+            value={debouncedFilterInfo.sort}
+            onChange={(event) => {
+              setSort(event.target.value, true)
+            }}
+            sx={{ flex: '0 0 200px' }}
+          >
+            <MenuItem value="name:asc">Name</MenuItem>
+            <MenuItem value="rating:desc">Rating</MenuItem>
+            <MenuItem value="playTime:desc">Play Time</MenuItem>
+            <MenuItem value="lastPlayed:desc">Last Played</MenuItem>
+          </TextField>
+
+          <div>
+            <Button
+              onClick={() => {
+                resetFilter(true)
               }}
             >
-              <MenuItem value="name:asc">Name</MenuItem>
-              <MenuItem value="rating:desc">Rating</MenuItem>
-              <MenuItem value="playTime:desc">Play Time</MenuItem>
-              <MenuItem value="lastPlayed:desc">Last Played</MenuItem>
-            </Select>
-
-            <Button onClick={() => resetFilter(true)}>Reset</Button>
-          </Stack>
+              Reset
+            </Button>
+          </div>
 
           <Box flexGrow="1" />
 
-          <Stack direction="row" spacing={1}>
-            <Button
-              onClick={() => {
+          <EasyMenu
+            renderTrigger={(props) => {
+              return (
+                <IconButton {...props} edge="end">
+                  <Settings />
+                </IconButton>
+              )
+            }}
+            id="settings-menu"
+            anchorOrigin={{
+              horizontal: 'right',
+              vertical: 'bottom',
+            }}
+            transformOrigin={{
+              horizontal: 'right',
+              vertical: 'top',
+            }}
+            MenuListProps={{
+              dense: true,
+            }}
+          >
+            <EasyMenuItem
+              onClickDelayed={() => {
                 openGamesFolder()
               }}
-              startIcon={<FolderOpen />}
             >
+              <ListItemIcon>
+                <FolderOpen fontSize="small" />
+              </ListItemIcon>
               Open Games Folder
-            </Button>
+            </EasyMenuItem>
 
-            <Button
-              onClick={() => {
+            <EasyMenuItem
+              onClickDelayed={() => {
                 dispatch(actions.toggleDialog())
               }}
             >
+              <ListItemIcon>
+                <Terminal fontSize="small" />
+              </ListItemIcon>
               Source Ports
-            </Button>
+            </EasyMenuItem>
 
-            <Button
-              onClick={() => {
-                invalidateApolloQuery(['getGames'])
+            <EasyMenuItem
+              onClickDelayed={() => {
+                invalidateApolloCache()
               }}
             >
+              <ListItemIcon>
+                <Refresh fontSize="small" />
+              </ListItemIcon>
               Reload
-            </Button>
-          </Stack>
+            </EasyMenuItem>
+          </EasyMenu>
         </Toolbar>
       </AppBar>
 

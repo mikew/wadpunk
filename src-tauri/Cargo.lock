@@ -1287,20 +1287,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "gzdoom-launcher"
-version = "0.0.0"
-dependencies = [
- "async-graphql",
- "chrono",
- "plist",
- "serde",
- "serde_json",
- "tauri",
- "tauri-build",
- "tauri-plugin-graphql",
-]
-
-[[package]]
 name = "handlebars"
 version = "4.3.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3465,6 +3451,20 @@ checksum = "d3b17ae1f6c8a2b28506cd96d412eebf83b4a0ff2cbefeeb952f2f9dfa44ba18"
 dependencies = [
  "cc",
  "libc",
+]
+
+[[package]]
+name = "wadpunk"
+version = "0.0.0"
+dependencies = [
+ "async-graphql",
+ "chrono",
+ "plist",
+ "serde",
+ "serde_json",
+ "tauri",
+ "tauri-build",
+ "tauri-plugin-graphql",
 ]
 
 [[package]]

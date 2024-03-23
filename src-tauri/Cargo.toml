@@ -1,7 +1,7 @@
 [package]
-name = "gzdoom-launcher"
+name = "wadpunk"
 version = "0.0.0"
-description = "gzdoom-launcher"
+description = "A wad organizer / GZDoom launcher inspired by Doom Launcher"
 authors = ["you"]
 license = ""
 repository = ""

@@ -19,7 +19,7 @@ import {
 } from '#src/graphql/operations'
 import DelayedOnCloseDialog, {
   DelayedOnCloseDialogCloseButton,
-} from '#src/lib/DelayedOnCloseDialog'
+} from '#src/mui/DelayedOnCloseDialog'
 import ReactHookFormTextField from '#src/react-hook-form/ReactHookFormTextField'
 import { useRootDispatch, useRootSelector } from '#src/redux/helpers'
 

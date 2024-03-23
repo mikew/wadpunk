@@ -65,6 +65,7 @@ const GameDialogFileList: React.FC = (props) => {
           selected:
             x.absolute.toLowerCase().endsWith('.wad') ||
             x.absolute.toLowerCase().endsWith('.pk3') ||
+            x.absolute.toLowerCase().endsWith('.ipk3') ||
             x.absolute.toLowerCase().endsWith('.iwad'),
         }
 
@@ -79,6 +80,7 @@ const GameDialogFileList: React.FC = (props) => {
           selected:
             x.absolute.toLowerCase().endsWith('.wad') ||
             x.absolute.toLowerCase().endsWith('.pk3') ||
+            x.absolute.toLowerCase().endsWith('.ipk3') ||
             x.absolute.toLowerCase().endsWith('.iwad'),
         }
 

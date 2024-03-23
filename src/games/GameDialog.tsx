@@ -31,11 +31,11 @@ import {
   UpdateGameDocument,
 } from '#src/graphql/operations'
 import type { Game } from '#src/graphql/types'
+import StarRating from '#src/lib/StarRating'
 import DelayedOnCloseDialog, {
   DelayedOnCloseDialogCloseIcon,
   useDelayedOnCloseDialogTriggerClose,
-} from '#src/lib/DelayedOnCloseDialog'
-import StarRating from '#src/lib/StarRating'
+} from '#src/mui/DelayedOnCloseDialog'
 import ReactHookFormTextField from '#src/react-hook-form/ReactHookFormTextField'
 import useAllSourcePorts from '#src/sourcePorts/useAllSourcePorts'
 
@@ -150,7 +150,6 @@ const GameDialogInner: React.FC<{
             direction="row"
             alignItems="flex-start"
             justifyContent="space-between"
-            spacing="space-between"
           >
             <div>
               {fullGame.name}
@@ -174,7 +173,7 @@ const GameDialogInner: React.FC<{
               />
             </div>
             <div>
-              <DelayedOnCloseDialogCloseIcon />
+              <DelayedOnCloseDialogCloseIcon edge="end" />
             </div>
           </Stack>
         </DialogTitle>
