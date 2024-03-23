@@ -28,4 +28,8 @@ export const invalidateApolloQuery = (queryNames: (keyof Query)[]) => {
   return response
 }
 
+export const invalidateApolloCache = () => {
+  apolloCache.reset()
+}
+
 export default graphqlClient
