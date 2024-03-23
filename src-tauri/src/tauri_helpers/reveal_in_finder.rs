@@ -1,3 +1,5 @@
+#[cfg(target_os = "windows")]
+use std::os::windows::process::CommandExt;
 #[cfg(target_os = "linux")]
 use std::path::Path;
 use std::{fs::metadata, process::Command};
@@ -10,7 +12,7 @@ pub fn reveal_file(path: &str) {
     // https://doc.rust-lang.org/std/os/windows/process/trait.CommandExt.html#tymethod.raw_arg
     Command::new("explorer.exe")
         // The comma after select is not a typo
-        .arg(format!("/select,{path}").as_str())
+        .raw_arg(format!("/select,{path}").as_str())
         .spawn()
         .unwrap();
   }
@@ -65,6 +67,14 @@ pub fn reveal_folder(path: &str) {
 }
 
 pub fn reveal_file_or_folder(path: &str) {
+  // Sometimes there is a forward slash at the end of the path, which causes
+  // issues on some platforms.
+  let path = if path.ends_with('/') {
+    &path[..path.len() - 1]
+  } else {
+    path
+  };
+
   if metadata(path).unwrap().is_dir() {
     reveal_folder(path);
   } else {
