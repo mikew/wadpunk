@@ -29,7 +29,7 @@ import useSimpleFilter from '@promoboxx/use-filter/dist/useSimpleFilter'
 import { enqueueSnackbar } from 'notistack'
 import { useMemo, useState } from 'react'
 
-import { invalidateApolloQuery } from '#src/graphql/graphqlClient'
+import { invalidateApolloCache } from '#src/graphql/graphqlClient'
 import type { GetGameListQueryQuery } from '#src/graphql/operations'
 import {
   GetGameListQueryDocument,
@@ -340,7 +340,7 @@ const GameList: React.FC = () => {
 
             <EasyMenuItem
               onClickDelayed={() => {
-                invalidateApolloQuery(['getGames'])
+                invalidateApolloCache()
               }}
             >
               <ListItemIcon>
