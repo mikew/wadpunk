@@ -58,6 +58,8 @@ jobs:
       - run: ./script/deploy
         shell: bash
         if: endsWith(github.ref, '/main')
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: actions/upload-artifact@v4
         with:
