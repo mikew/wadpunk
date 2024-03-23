@@ -10,7 +10,7 @@ pub fn reveal_file(path: &str) {
     // https://doc.rust-lang.org/std/os/windows/process/trait.CommandExt.html#tymethod.raw_arg
     Command::new("explorer.exe")
         // The comma after select is not a typo
-        .arg(format!("/select,{}", path).as_str())
+        .arg(format!("/select,{path}").as_str())
         .spawn()
         .unwrap();
   }
@@ -41,7 +41,7 @@ pub fn reveal_file(path: &str) {
   #[cfg(target_os = "macos")]
   {
     Command::new("open")
-      .args(["--reveal", path])
+      .args(["--reveal", "--", path])
       .spawn()
       .unwrap();
   }
