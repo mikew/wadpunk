@@ -15,7 +15,7 @@ pub fn get_data_directory() -> std::path::PathBuf {
   let fallback_documents_directory = home_dir().unwrap().join("Documents");
   let documents_directory = document_dir().unwrap_or(fallback_documents_directory);
 
-  documents_directory.join("GZDoom Launcher")
+  documents_directory.join("WADPunk")
 }
 
 pub fn get_games_directory() -> std::path::PathBuf {

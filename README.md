@@ -1,4 +1,4 @@
-# gzdoom-launcher
+# WADPunk
 
 A wad organizer / GZDoom launcher inspired by [Doom Launcher](https://github.com/nstlaurent/DoomLauncher)
 
