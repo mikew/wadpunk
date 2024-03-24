@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -ex
 
-npx standard-version
+npx commit-and-tag-version --message '[skip ci] %s'
 git push origin --tags HEAD
 
 RELEASE_TAG="v$(cat package.json | jq --raw-output .version)"
