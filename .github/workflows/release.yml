@@ -80,9 +80,8 @@ jobs:
             ~/.cargo/registry/index/
             ~/.cargo/registry/cache/
             ~/.cargo/git/db/
-            src-tauri/target/release/build
-            src-tauri/target/release/deps
-            src-tauri/target/release/incremental
+            src-tauri/target/
+            !src-tauri/target/release/bundle/
           key: ${{ runner.os }}-${{ runner.arch }}-cargo-${{ hashFiles('**/Cargo.lock') }}
           restore-keys: |
             ${{ runner.os }}-${{ runner.arch }}-cargo-
