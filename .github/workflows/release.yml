@@ -2,12 +2,41 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - main
+      - '**'
     tags-ignore:
       - '**'
 
 jobs:
+  release-prepare:
+    runs-on: ubuntu-20.04
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - run: ./script/release-prepare
+        shell: bash
+        if: endsWith(github.ref, '/main')
+
+      # prepare-env: Push as github bot.
+      # https://github.community/t/github-actions-bot-email-address/17204/5
+      - name: Prep for git push
+        run: |
+          git config --local user.name "github-actions[bot]"
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        shell: bash
+        if: endsWith(github.ref, '/main')
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-prepare
+          path: |
+            package.json
+        if: endsWith(github.ref, '/main')
+
   build:
+    needs:
+      - release-prepare
+
     strategy:
       fail-fast: false
       matrix:
@@ -64,6 +93,16 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.0-dev libappindicator3-dev librsvg2-dev patchelf
 
+      - uses: actions/download-artifact@v4
+        with:
+          name: release-prep
+        if: endsWith(github.ref, '/main')
+
+      - run: |
+          mv release-prepare/package.json .
+        shell: bash
+        if: endsWith(github.ref, '/main')
+
       - run: ./script/prepare-env
         shell: bash
 
@@ -72,6 +111,12 @@ jobs:
         env:
           TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
           TAURI_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
+
+      - run: ./script/deploy
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        if: endsWith(github.ref, '/main')
 
       - uses: actions/upload-artifact@v4
         with:
@@ -85,41 +130,22 @@ jobs:
             src-tauri/target/release/bundle/appimage/*.AppImage.tar.gz
             src-tauri/target/release/bundle/appimage/*.AppImage.tar.gz.sig
 
-  deploy:
+  release-finalize:
     needs:
       - build
 
-    if: endsWith(github.ref, '/main')
     runs-on: ubuntu-20.04
 
     steps:
       - uses: actions/checkout@v4
-
-      # prepare-env: Push as github bot.
-      # https://github.community/t/github-actions-bot-email-address/17204/5
-      - name: Prep for git push
-        run: |
-          git config --local user.name "github-actions[bot]"
-          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        if: endsWith(github.ref, '/main')
 
       - uses: actions/download-artifact@v4
+        with:
+          name: release-prep
+        if: endsWith(github.ref, '/main')
 
-      # This is CI specific, artifacts don't seem to be stored with a helpful
-      # path.
       - run: |
-          mkdir -p src-tauri/target/release/bundle
-          mv wadpunk-windows-latest-X64/* src-tauri/target/release/bundle
-
-          mkdir -p src-tauri/target/release/bundle/macos
-          mv wadpunk-macos-latest-X64/* src-tauri/target/release/bundle
-
-          mkdir -p src-tauri/target/release/bundle/appimage
-          mv wadpunk-ubuntu-20.04-X64/* src-tauri/target/release/bundle
+          mv release-prepare/package.json .
         shell: bash
-
-      - run: ./script/deploy
-        shell: bash
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
-          TAURI_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
+        if: endsWith(github.ref, '/main')
