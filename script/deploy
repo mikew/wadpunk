@@ -4,17 +4,17 @@ set -ex
 RELEASE_TAG="v$(cat package.json | jq --raw-output .version)"
 
 if compgen -G "src-tauri/target/release/bundle/macos/*.app.tar.gz" > /dev/null; then
-  gh release upload "$RELEASE_TAG" src-tauri/target/release/bundle/macos/*.app.tar.gz
-  gh release upload "$RELEASE_TAG" src-tauri/target/release/bundle/macos/*.app.tar.gz.sig
+  gh release upload "${RELEASE_TAG}" src-tauri/target/release/bundle/macos/*.app.tar.gz
+  gh release upload "${RELEASE_TAG}" src-tauri/target/release/bundle/macos/*.app.tar.gz.sig
 fi
 
 if compgen -G "src-tauri/target/release/bundle/nsis/*.exe" > /dev/null; then
-  gh release upload "$RELEASE_TAG" src-tauri/target/release/bundle/nsis/*.exe
-  gh release upload "$RELEASE_TAG" src-tauri/target/release/bundle/nsis/*.nsis.zip
-  gh release upload "$RELEASE_TAG" src-tauri/target/release/bundle/nsis/*.nsis.zip.sig
+  gh release upload "${RELEASE_TAG}" src-tauri/target/release/bundle/nsis/*.exe
+  gh release upload "${RELEASE_TAG}" src-tauri/target/release/bundle/nsis/*.nsis.zip
+  gh release upload "${RELEASE_TAG}" src-tauri/target/release/bundle/nsis/*.nsis.zip.sig
 fi
 
 if compgen -G "src-tauri/target/release/bundle/appimage/*.AppImage.tar.gz" > /dev/null; then
-  gh release upload "$RELEASE_TAG" src-tauri/target/release/bundle/appimage/*.AppImage.tar.gz
-  gh release upload "$RELEASE_TAG" src-tauri/target/release/bundle/appimage/*.AppImage.tar.gz.sig
+  gh release upload "${RELEASE_TAG}" src-tauri/target/release/bundle/appimage/*.AppImage.tar.gz
+  gh release upload "${RELEASE_TAG}" src-tauri/target/release/bundle/appimage/*.AppImage.tar.gz.sig
 fi

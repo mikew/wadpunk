@@ -16,21 +16,21 @@ if [ "$(uname -s)" = Darwin ]; then
   fi
 
   for f in src-tauri/target/release/bundle/macos/*.app; do
-    mv "$f" "${f/.app/-${TAURI_ARCH}.app}"
+    mv "${f}" "${f/.app/-${TAURI_ARCH}.app}"
   done
 
   for f in src-tauri/target/release/bundle/macos/*.app.tar.gz; do
-    mv "$f" "${f/.app.tar.gz/-${TAURI_ARCH}.app.tar.gz}"
+    mv "${f}" "${f/.app.tar.gz/-${TAURI_ARCH}.app.tar.gz}"
   done
 
   for f in src-tauri/target/release/bundle/macos/*.app.tar.gz.sig; do
-    mv "$f" "${f/.app.tar.gz.sig/-${TAURI_ARCH}.app.tar.gz.sig}"
+    mv "${f}" "${f/.app.tar.gz.sig/-${TAURI_ARCH}.app.tar.gz.sig}"
   done
 fi
 
 # .AppImage for some reason lowercases and hypenates the name.
 if [ "$(uname -s)" = Linux ]; then
   for f in src-tauri/target/release/bundle/appimage/wad-punk*; do
-    mv "$f" "${f/wad-punk/WADPunk}"
+    mv "${f}" "${f/wad-punk/WADPunk}"
   done
 fi

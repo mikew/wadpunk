@@ -7,5 +7,5 @@ git push origin --tags HEAD
 RELEASE_TAG="v$(cat package.json | jq --raw-output .version)"
 
 if ! gh release list | grep -q "${RELEASE_TAG}" ; then
-  gh release create "$RELEASE_TAG" --generate-notes --target "$GITHUB_SHA" --draft=true
+  gh release create "${RELEASE_TAG}" --generate-notes --target "${RELEASE_TAG}" --draft=true
 fi

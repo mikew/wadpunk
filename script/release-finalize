@@ -3,4 +3,4 @@ set -ex
 
 RELEASE_TAG="v$(cat package.json | jq --raw-output .version)"
 
-gh release edit --draft=false "$RELEASE_TAG"
+gh release edit --draft=false "${RELEASE_TAG}"
