@@ -23,6 +23,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # prepare-env: Setup node / pnpm.
       - uses: pnpm/action-setup@v3
         with:
           version: latest
@@ -42,12 +43,8 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-${{ runner.arch }}-pnpm-store-
 
+      # prepare-env: Setup rust.
       - uses: dtolnay/rust-toolchain@stable
-
-      - if: matrix.platform == 'ubuntu-20.04'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.0-dev libappindicator3-dev librsvg2-dev patchelf
 
       - uses: actions/cache@v4
         with:
@@ -61,17 +58,24 @@ jobs:
           restore_keys: |
             ${{ runner.os }}-${{ runner.arch }}-cargo-
 
-      - run: ./script/prepare-env
-        shell: bash
+      # prepare-env: Tauri deps for linux.
+      - if: matrix.platform == 'ubuntu-20.04'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.0-dev libappindicator3-dev librsvg2-dev patchelf
 
-      - run: ./script/build
-        shell: bash
-
+      # prepare-env: Push as github bot.
       # https://github.community/t/github-actions-bot-email-address/17204/5
       - name: Prep for git push
         run: |
           git config --local user.name "github-actions[bot]"
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - run: ./script/prepare-env
+        shell: bash
+
+      - run: ./script/build
+        shell: bash
 
       - run: ./script/deploy
         shell: bash
