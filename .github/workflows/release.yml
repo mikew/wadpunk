@@ -101,11 +101,6 @@ jobs:
           name: release-prepare
         if: endsWith(github.ref, '/main')
 
-      - run: |
-          mv release-prepare/package.json .
-        shell: bash
-        if: endsWith(github.ref, '/main')
-
       - run: ./script/prepare-env
         shell: bash
 
@@ -149,7 +144,4 @@ jobs:
           name: release-prepare
         if: endsWith(github.ref, '/main')
 
-      - run: |
-          mv release-prepare/package.json .
-        shell: bash
-        if: endsWith(github.ref, '/main')
+      - run: ./script/release-finalize
