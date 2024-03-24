@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -ex
+
+npx commit-and-tag-version --message '[skip ci] %s'
+git push origin --tags HEAD
+
+RELEASE_TAG="v$(cat package.json | jq --raw-output .version)"
+
+if ! gh release list | grep -q "${RELEASE_TAG}" ; then
+  gh release create "$RELEASE_TAG" --generate-notes --target "$GITHUB_SHA" --draft=true
+fi
