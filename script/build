@@ -3,7 +3,7 @@ set -ex
 
 ./script/prepare-env
 
-# ./node_modules/.bin/vite build
+./node_modules/.bin/vite build
 ./node_modules/.bin/tauri build
 
 # Macos .app bundes don't have the arch specified in the filename.
