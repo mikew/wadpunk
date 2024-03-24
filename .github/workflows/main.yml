@@ -92,6 +92,9 @@ jobs:
             src-tauri/target/release/bundle/appimage/*.AppImage.tar.gz.sig
 
   deploy:
+    needs:
+      - build
+
     if: endsWith(github.ref, '/main')
     runs-on: ubuntu-20.04
 
