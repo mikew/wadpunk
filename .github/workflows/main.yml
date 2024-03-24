@@ -55,7 +55,7 @@ jobs:
             ~/.cargo/git/db/
             src-tauri/target/
           key: ${{ runner.os }}-${{ runner.arch }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-          restore_keys: |
+          restore-keys: |
             ${{ runner.os }}-${{ runner.arch }}-cargo-
 
       # prepare-env: Tauri deps for linux.
