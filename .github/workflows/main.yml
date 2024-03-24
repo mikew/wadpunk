@@ -63,6 +63,12 @@ jobs:
       - run: ./script/build
         shell: bash
 
+      # https://github.community/t/github-actions-bot-email-address/17204/5
+      - name: Prep for git push
+        run: |
+          git config --local user.name "github-actions[bot]"
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
       - run: ./script/deploy
         shell: bash
         if: endsWith(github.ref, '/main')

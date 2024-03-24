@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
 set -ex
 
-RELEASE_TAG="release-$(date "+%F")"
+npx standard-version
+git push origin --tags HEAD
+
+RELEASE_TAG="v$(cat package.json | jq --raw-output .version)"
 
 if ! gh release list | grep -q "${RELEASE_TAG}" ; then
   gh release create "$RELEASE_TAG" --generate-notes --target "$GITHUB_SHA"
