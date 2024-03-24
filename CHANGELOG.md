@@ -1,6 +1,13 @@
 # Changelog
 
-All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
+All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
+### 0.1.2 (2024-03-24)
+
+
+### Features
+
+* Release prep ([#16](https://github.com/mikew/wadpunk/issues/16)) ([1530f78](https://github.com/mikew/wadpunk/commit/1530f781a639788bf8fe1b6f516f14e11ff42d03))
 
 ## 0.1.1 (2024-03-24)
 
