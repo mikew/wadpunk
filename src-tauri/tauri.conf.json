@@ -37,7 +37,7 @@
     "updater": {
       "active": true,
       "endpoints": [
-        "https://raw.githubusercontent.com/mikew/wadpunk/main/latest.json"
+        "https://gist.githubusercontent.com/mikew/3f402cf06b9b6440be9ac5c3605a5a99/raw/latest.json"
       ],
       "dialog": true,
       "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDNCRTk5RDgzNzE1Mjk2ODIKUldTQ2xsSnhnNTNwTzNyaEM4Ym91a2ZIZDN6dTExenJCblJvSVhERk0za1JKdXJQOUZzTy9aVHUK",
