@@ -34,6 +34,19 @@
       ]
     },
 
+    "updater": {
+      "active": true,
+      "endpoints": [
+        "https://raw.githubusercontent.com/mikew/wadpunk/main/latest.json"
+      ],
+      "dialog": true,
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDNCRTk5RDgzNzE1Mjk2ODIKUldTQ2xsSnhnNTNwTzNyaEM4Ym91a2ZIZDN6dTExenJCblJvSVhERk0za1JKdXJQOUZzTy9aVHUK",
+
+      "windows": {
+        "installMode": "passive"
+      }
+    },
+
     "security": {
       "csp": null
     },
