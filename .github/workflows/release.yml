@@ -25,6 +25,8 @@ jobs:
 
       - run: ./script/release-prepare
         shell: bash
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         if: endsWith(github.ref, '/main')
 
       - uses: actions/upload-artifact@v4
