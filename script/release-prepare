@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -ex
 
 npx commit-and-tag-version --message '[skip ci] %s'
 git push origin --tags HEAD
