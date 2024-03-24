@@ -27,3 +27,10 @@ if [ "$(uname -s)" = Darwin ]; then
     mv "$f" "${f/.app.tar.gz.sig/-${TAURI_ARCH}.app.tar.gz.sig}"
   done
 fi
+
+# .AppImage for some reason lowercases and hypenates the name.
+if [ "$(uname -s)" = Linux ]; then
+  for f in src-tauri/target/release/bundle/appimage/wad-punk*; do
+    mv "$f" "${f/wad-punk/WADPunk}"
+  done
+fi
