@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -ex
 
+rm -rf src-tauri/target/release/bundle
+
 ./script/prepare-env
 
 ./node_modules/.bin/vite build
