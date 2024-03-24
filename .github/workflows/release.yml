@@ -8,6 +8,7 @@ on:
 
 jobs:
   release-prepare:
+    if: endsWith(github.ref, '/main')
     runs-on: ubuntu-20.04
 
     steps:
