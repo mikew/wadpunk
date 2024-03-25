@@ -131,6 +131,9 @@ const theme = createTheme({
       },
     },
     MuiAlert: {
+      defaultProps: {
+        variant: 'filled',
+      },
       styleOverrides: {
         root: {
           pointerEvents: 'initial',
