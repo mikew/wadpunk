@@ -156,8 +156,16 @@ jobs:
         if: endsWith(github.ref, '/main')
 
       - uses: actions/download-artifact@v4
-        with:
-          name: release-prepare
+        if: endsWith(github.ref, '/main')
+
+      # This is CI specific, artifacts don't seem to be stored with a helpful
+      # path.
+      - run: |
+          mkdir -p src-tauri/target/release/bundle
+          mv wadpunk-windows-latest-X64/* src-tauri/target/release/bundle
+          mv wadpunk-macos-latest-X64/* src-tauri/target/release/bundle
+          mv wadpunk-ubuntu-20.04-X64/* src-tauri/target/release/bundle
+        shell: bash
         if: endsWith(github.ref, '/main')
 
       - run: ./script/release-finalize
