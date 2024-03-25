@@ -25,7 +25,7 @@ jobs:
       # build matrix.
       # We don't do anything with the commit or tag created, just need the
       # version bump.
-      - run: npx commit-and-tag-version --message '[skip ci] %s'
+      - run: npx commit-and-tag-version --skip.commit --skip.tag
         shell: bash
         if: endsWith(github.ref, '/main')
 

@@ -5,9 +5,7 @@ set -ex
 # them all at once is a little nicer.
 # Skipping tag for similar reasons, since we're committing later we can just tag
 # then.
-npx commit-and-tag-version \
-  --skip.commit \
-  --skip.tag
+npx commit-and-tag-version --skip.commit --skip.tag
 
 # Grab the release name.
 RELEASE_TAG="v$(cat package.json | jq --raw-output .version)"
