@@ -165,6 +165,8 @@ jobs:
           mv wadpunk-windows-latest-X64/* src-tauri/target/release/bundle
           mv wadpunk-macos-latest-X64/* src-tauri/target/release/bundle
           mv wadpunk-ubuntu-20.04-X64/* src-tauri/target/release/bundle
+
+          mv release-prepare/package.json package.json
         shell: bash
         if: endsWith(github.ref, '/main')
 
