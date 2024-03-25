@@ -4,10 +4,10 @@ set -ex
 RELEASE_TAG="v$(cat package.json | jq --raw-output .version)"
 git checkout -- package.json
 
+gh release edit --draft=false "${RELEASE_TAG}"
+
 git pull origin "${GITHUB_REF_NAME}"
 ./script/generate-tauri-updater-json "${RELEASE_TAG}" > tauri-updater.json
 git add tauri-updater.json
 git commit -m '[skip ci] Update tauri-updater.json'
 git push origin --tags HEAD
-
-gh release edit --draft=false "${RELEASE_TAG}"
