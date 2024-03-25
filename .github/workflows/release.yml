@@ -8,6 +8,10 @@ on:
     tags-ignore:
       - '**'
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   release-prepare:
     runs-on: ubuntu-20.04
@@ -151,3 +155,4 @@ jobs:
         shell: bash
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        if: endsWith(github.ref, '/main')
