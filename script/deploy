@@ -1,8 +1,21 @@
 #!/usr/bin/env bash
 set -ex
 
+# Skipping commit because we need to generate some more files, and committing
+# them all at once is a little nicer.
+# Skipping tag for similar reasons, since we're committing later we can just tag
+# then.
+npx commit-and-tag-version \
+  --skip.commit \
+  --skip.tag
+
+# Grab the release name.
 RELEASE_TAG="v$(cat package.json | jq --raw-output .version)"
 
+# Prepare the release.
+gh release create --generate-notes --draft=true "${RELEASE_TAG}"
+
+# Upload artifacts.
 if compgen -G "src-tauri/target/release/bundle/macos/*.app.tar.gz" > /dev/null; then
   gh release upload "${RELEASE_TAG}" src-tauri/target/release/bundle/macos/*.app.tar.gz
   gh release upload "${RELEASE_TAG}" src-tauri/target/release/bundle/macos/*.app.tar.gz.sig
@@ -18,3 +31,26 @@ if compgen -G "src-tauri/target/release/bundle/appimage/*.AppImage.tar.gz" > /de
   gh release upload "${RELEASE_TAG}" src-tauri/target/release/bundle/appimage/*.AppImage.tar.gz
   gh release upload "${RELEASE_TAG}" src-tauri/target/release/bundle/appimage/*.AppImage.tar.gz.sig
 fi
+
+# Need to mark it as not draft, otherwise the URLS to assets aren't accessible.
+# TODO We could just replace them ourselves, we know the path will be
+# `/${RELEASE_TAG}/...`
+gh release edit --draft=false "${RELEASE_TAG}"
+
+# Generate the Tauri updater JSON.
+./script/generate-tauri-updater-json "${RELEASE_TAG}" > tauri-updater.json
+
+# Commit and tag release.
+git add \
+  package.json \
+  CHANGELOG.md \
+  tauri-updater.json
+git commit --message "[skip ci] Release ${RELEASE_TAG}"
+git tag "${RELEASE_TAG}"
+
+# Get the SHA of the latest commit
+COMMIT_SHA=$(git rev-parse HEAD)
+git push --tags origin HEAD
+
+# Update the target for the release.
+gh release edit "--target=${COMMIT_SHA}" "${RELEASE_TAG}"
