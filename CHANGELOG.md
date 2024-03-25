@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## 0.1.11 (2024-03-25)
+
+
+### Features
+
+* Custom updater ([#19](https://github.com/mikew/wadpunk/issues/19)) ([bd0ee83](https://github.com/mikew/wadpunk/commit/bd0ee83ed7fdd3a892aeea2481911c134f7431e9))
+
 ## 0.1.10 (2024-03-24)
 
 ## 0.1.9 (2024-03-24)
