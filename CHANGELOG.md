@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## 0.1.24 (2024-03-25)
+
 ## [0.1.22](https://github.com/mikew/gzdoom-launcher/compare/v0.1.21...v0.1.22) (2024-03-25)
 
 ## 0.1.21 (2024-03-25)
