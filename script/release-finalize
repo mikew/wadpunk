@@ -2,6 +2,7 @@
 set -ex
 
 RELEASE_TAG="v$(cat package.json | jq --raw-output .version)"
+git checkout -- package.json
 
 git pull origin "${GITHUB_REF_NAME}"
 ./script/generate-tauri-updater-json "${RELEASE_TAG}" > tauri-updater.json
