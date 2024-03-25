@@ -11,6 +11,8 @@ import type { SuspenseWrappedPromise } from '#src/lib/wrapPromiseForSuspense'
 import { wrapPromiseForSuspense } from '#src/lib/wrapPromiseForSuspense'
 import SourcePortsDialog from '#src/sourcePorts/SourcePortsDialog'
 
+import UpdateNotifier from './UpdateNotifier'
+
 function App() {
   return (
     <Suspense
@@ -23,6 +25,7 @@ function App() {
       <Initializer>
         <GameList />
         <SourcePortsDialog />
+        <UpdateNotifier />
       </Initializer>
     </Suspense>
   )
