@@ -30,6 +30,8 @@ if compgen -G "src-tauri/target/release/bundle/appimage/*.AppImage.tar.gz" > /de
   gh release upload "${RELEASE_TAG}" src-tauri/target/release/bundle/appimage/*.AppImage.tar.gz.sig
 fi
 
+gh release edit --draft=false "${RELEASE_TAG}"
+
 # Commit and tag release.
 git add \
   package.json \
