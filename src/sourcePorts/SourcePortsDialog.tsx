@@ -1,11 +1,13 @@
 import { useMutation } from '@apollo/client'
-import { Delete } from '@mui/icons-material'
+import { Delete, Download, Edit, Terminal } from '@mui/icons-material'
 import {
+  Box,
   Button,
   DialogActions,
   DialogContent,
   DialogTitle,
   IconButton,
+  InputAdornment,
   ListItem,
   ListItemText,
   Typography,
@@ -79,8 +81,29 @@ const SourcePortsDialog: React.FC = () => {
 
         <Typography>Add New</Typography>
         <FormProvider {...formApi}>
-          <ReactHookFormTextField name="id" label="Name" />
-          <ReactHookFormTextField name="command" label="Command" size="small" />
+          <ReactHookFormTextField
+            name="id"
+            label="Name"
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <Edit />
+                </InputAdornment>
+              ),
+            }}
+          />
+          <ReactHookFormTextField
+            name="command"
+            label="Command"
+            size="small"
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <Terminal fontSize="small" />
+                </InputAdornment>
+              ),
+            }}
+          />
 
           <Button
             fullWidth
@@ -105,6 +128,10 @@ const SourcePortsDialog: React.FC = () => {
         </FormProvider>
       </DialogContent>
       <DialogActions>
+        <Button startIcon={<Download />} href="https://zdoom.org/downloads">
+          Download GZDoom
+        </Button>
+        <Box sx={{ flexGrow: 1 }} />
         <DelayedOnCloseDialogCloseButton>Close</DelayedOnCloseDialogCloseButton>
       </DialogActions>
     </DelayedOnCloseDialog>

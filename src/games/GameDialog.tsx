@@ -1,5 +1,12 @@
 import { useMutation, useSuspenseQuery } from '@apollo/client'
 import {
+  Edit,
+  Extension,
+  Label,
+  SportsEsports,
+  Terminal,
+} from '@mui/icons-material'
+import {
   Button,
   Typography,
   DialogTitle,
@@ -13,6 +20,7 @@ import {
   TextField,
   Box,
   Stack,
+  InputAdornment,
 } from '@mui/material'
 import { enqueueSnackbar } from 'notistack'
 import { Suspense, useMemo } from 'react'
@@ -187,6 +195,13 @@ const GameDialogInner: React.FC<{
                 name="sourcePort"
                 label="Source Port"
                 select
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Terminal />
+                    </InputAdornment>
+                  ),
+                }}
               >
                 <MenuItem value={'-1'}>
                   <em>Default ({defaultSourcePort?.id})</em>
@@ -223,6 +238,26 @@ const GameDialogInner: React.FC<{
                           inputRef={ref}
                           error={fieldState.invalid}
                           helperText={errorMessage}
+                          InputProps={{
+                            ...props.InputProps,
+                            startAdornment: (
+                              <>
+                                <InputAdornment position="start">
+                                  <Label />
+                                </InputAdornment>
+                                {props.InputProps.startAdornment}
+                              </>
+                            ),
+                          }}
+                          sx={{
+                            '& .MuiInputAdornment-positionStart': {
+                              alignSelf: 'flex-start',
+                            },
+                            '& .MuiInputAdornment-positionStart .MuiSvgIcon-root':
+                              {
+                                marginLeft: '4px',
+                              },
+                          }}
                         />
                       )}
                       disabled={isDisabled}
@@ -264,6 +299,13 @@ const GameDialogInner: React.FC<{
                       error={fieldState.invalid}
                       value={isGameIwad ? fullGame.id : field.value}
                       helperText={errorMessage}
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <SportsEsports />
+                          </InputAdornment>
+                        ),
+                      }}
                     >
                       <MenuItem value="">None</MenuItem>
 
@@ -286,6 +328,13 @@ const GameDialogInner: React.FC<{
                   multiple: true,
                 }}
                 label="Mods"
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Extension />
+                    </InputAdornment>
+                  ),
+                }}
               >
                 {others.map((x) => {
                   return (
@@ -302,6 +351,18 @@ const GameDialogInner: React.FC<{
                 multiline
                 minRows={2}
                 maxRows={8}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Edit sx={{ verticalAlign: 'middle' }} />
+                    </InputAdornment>
+                  ),
+                }}
+                sx={{
+                  '& .MuiInputAdornment-positionStart': {
+                    alignSelf: 'flex-start',
+                  },
+                }}
               />
             </Grid>
 
