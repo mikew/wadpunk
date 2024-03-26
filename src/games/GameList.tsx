@@ -1,6 +1,8 @@
 import { useMutation, useSuspenseQuery } from '@apollo/client'
 import {
+  Add,
   ArrowDropDown,
+  Download,
   Refresh,
   Search,
   Settings,
@@ -8,6 +10,8 @@ import {
 } from '@mui/icons-material'
 import FolderOpen from '@mui/icons-material/FolderOpen'
 import {
+  Alert,
+  AlertTitle,
   AppBar,
   Box,
   Button,
@@ -40,6 +44,7 @@ import StarRating from '#src/lib/StarRating'
 import { EasyMenu, EasyMenuItem } from '#src/mui/EasyMenu'
 import { useRootDispatch } from '#src/redux/helpers'
 import actions from '#src/sourcePorts/actions'
+import useAllSourcePorts from '#src/sourcePorts/useAllSourcePorts'
 
 import calculateGamePlayTime from './calculateGamePlayTime'
 import GameDialog from './GameDialog'
@@ -61,6 +66,7 @@ const GameList: React.FC = () => {
   const [openGamesFolderMutation] = useMutation(OpenGamesFolderDocument)
   const [setRating] = useMutation(SetRatingDocument)
   const [selectedId, setSelectedId] = useState<GameListGame['id']>()
+  const { sourcePorts } = useAllSourcePorts()
 
   const {
     debouncedFilterInfo,
@@ -351,6 +357,81 @@ const GameList: React.FC = () => {
           </EasyMenu>
         </Toolbar>
       </AppBar>
+
+      {sourcePorts.length === 0 ? (
+        <Alert severity="warning" sx={{ margin: 2 }}>
+          <AlertTitle>No Source Ports found</AlertTitle>
+          Source Ports are what WADPunk launches. You will need to add one
+          before you can play any game.
+          <br />
+          <br />
+          <Button
+            color="inherit"
+            size="small"
+            startIcon={<Add />}
+            onClick={() => {
+              dispatch(actions.toggleDialog())
+            }}
+          >
+            Add Source Port
+          </Button>
+        </Alert>
+      ) : undefined}
+
+      {data.getGames.length === 0 ? (
+        <Alert severity="warning" sx={{ margin: 2 }}>
+          <AlertTitle>No games found</AlertTitle>
+          You will need to add some games to your library before you can launch
+          anything. To quickly get started, you can:
+          <ol>
+            <li>
+              If you don't have access Doom or Doom II, you can download
+              Freedoom, which aims to provide all the content needed to form a
+              complete game for the Doom engine.
+              <br />
+              <Button
+                color="inherit"
+                size="small"
+                startIcon={<Download />}
+                sx={{ margin: 'auto' }}
+                href="https://freedoom.github.io/download.html"
+              >
+                Download Freedoom
+              </Button>
+            </li>
+            <li>
+              Extract the .wad files from freedoom.zip into your games folder.
+              <br />
+              <br />
+              <Button
+                color="inherit"
+                size="small"
+                startIcon={<FolderOpen />}
+                onClick={() => {
+                  openGamesFolder()
+                }}
+              >
+                Open Games Folder
+              </Button>
+            </li>
+            <li>
+              Refresh WADPunk. You can do this at any time in the settings menu.
+              <br />
+              <br />
+              <Button
+                color="inherit"
+                size="small"
+                startIcon={<Refresh />}
+                onClick={() => {
+                  invalidateApolloCache()
+                }}
+              >
+                Refresh
+              </Button>
+            </li>
+          </ol>
+        </Alert>
+      ) : undefined}
 
       <List disablePadding dense>
         {filtered.map((x) => {
