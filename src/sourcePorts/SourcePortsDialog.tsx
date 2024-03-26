@@ -128,7 +128,11 @@ const SourcePortsDialog: React.FC = () => {
         </FormProvider>
       </DialogContent>
       <DialogActions>
-        <Button startIcon={<Download />} href="https://zdoom.org/downloads">
+        <Button
+          startIcon={<Download />}
+          href="https://zdoom.org/downloads"
+          target="_blank"
+        >
           Download GZDoom
         </Button>
         <Box sx={{ flexGrow: 1 }} />
