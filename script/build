@@ -1,7 +1,36 @@
 #!/usr/bin/env bash
 set -ex
 
+rm -rf src-tauri/target/release/bundle
+
 ./script/prepare-env
 
 ./node_modules/.bin/vite build
 ./node_modules/.bin/tauri build
+
+# Macos .app bundes don't have the arch specified in the filename.
+if [ "$(uname -s)" = Darwin ]; then
+  TAURI_ARCH="x86_64"
+  if [[ $(sysctl -n machdep.cpu.brand_string) = Apple* ]]; then
+    TAURI_ARCH="aarch64"
+  fi
+
+  for f in src-tauri/target/release/bundle/macos/*.app; do
+    mv "${f}" "${f/.app/-${TAURI_ARCH}.app}"
+  done
+
+  for f in src-tauri/target/release/bundle/macos/*.app.tar.gz; do
+    mv "${f}" "${f/.app.tar.gz/-${TAURI_ARCH}.app.tar.gz}"
+  done
+
+  for f in src-tauri/target/release/bundle/macos/*.app.tar.gz.sig; do
+    mv "${f}" "${f/.app.tar.gz.sig/-${TAURI_ARCH}.app.tar.gz.sig}"
+  done
+fi
+
+# .AppImage for some reason lowercases and hypenates the name.
+if [ "$(uname -s)" = Linux ]; then
+  for f in src-tauri/target/release/bundle/appimage/wad-punk*; do
+    mv "${f}" "${f/wad-punk/WADPunk}"
+  done
+fi
