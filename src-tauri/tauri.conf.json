@@ -1,7 +1,7 @@
 {
   "package": {
     "productName": "WADPunk",
-    "version": "0.0.0"
+    "version": "../package.json"
   },
 
   "build": {
