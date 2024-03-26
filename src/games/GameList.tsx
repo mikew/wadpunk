@@ -378,8 +378,7 @@ const GameList: React.FC = () => {
         </Alert>
       ) : undefined}
 
-      {/* {data.getGames.length === 0 ? ( */}
-      {true ? (
+      {data.getGames.length === 0 ? (
         <Alert severity="warning" sx={{ margin: 2 }}>
           <AlertTitle>No games found</AlertTitle>
           You will need to add some games to your library before you can launch
