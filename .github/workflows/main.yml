@@ -70,6 +70,14 @@ jobs:
           restore-keys: |
             cargo-${{ runner.os }}-${{ runner.arch }}-
 
+      # Bumping the version in each build is easier than setting up a new job
+      # and transferring over artifacts.
+      # We do it again in the deploy job and then commit that along with other
+      # files generated during that phase.
+      - run: npx commit-and-tag-version --skip.commit --skip.tag
+        shell: bash
+        if: endsWith(github.ref, '/main')
+
       - run: ./script/prepare-env
         shell: bash
 
