@@ -1,0 +1,113 @@
+#!/usr/bin/env node
+// @ts-check
+
+import { spawnSync } from 'child_process'
+import * as fs from 'fs'
+import * as path from 'path'
+
+/** @typedef {('linux' | 'darwin' | 'windows')} TauriPlatform  */
+/** @typedef {('x86_64' | 'aarch64')} TauriArch  */
+/** @typedef {(`${TauriPlatform}-${TauriArch}`)} TauriUpdaterPlatformName */
+
+const releaseData = JSON.parse(
+  getProcessOutput('gh', [
+    'release',
+    'view',
+    '--json',
+    'assets,body,createdAt',
+    process.argv[2],
+  ]),
+)
+
+// console.log(releaseData)
+
+const files = fs
+  .readdirSync('src-tauri/target/release/bundle', {
+    recursive: true,
+  })
+  .map((x) => path.join('src-tauri/target/release/bundle', x))
+
+// console.log(files)
+
+function generateTauriUpdaterPlatform(
+  /** @type {TauriUpdaterPlatformName} */
+  platform,
+  /** @type {(signaturePath: string) => boolean} */
+  signatureFinder,
+  /** @type {(asset: {}) => boolean} */
+  assetFinder,
+) {
+  const asset = releaseData.assets.find(assetFinder)
+  const signatureFile = files.find(signatureFinder)
+
+  if (asset && signatureFile) {
+    return {
+      [platform]: {
+        signature: fs.readFileSync(signatureFile, 'utf-8').trim(),
+        url: asset.url,
+      },
+    }
+  }
+
+  return {}
+}
+
+const updaterData = {
+  version: process.argv[2],
+  notes: releaseData.body,
+  pub_date: releaseData.createdAt,
+  platforms: {
+    // TODO Native Apple Silicon builds.
+    ...generateTauriUpdaterPlatform(
+      'darwin-aarch64',
+      (signaturePath) => signaturePath.endsWith('x86_64.app.tar.gz.sig'),
+      (asset) => asset.name.endsWith('-x86_64.app.tar.gz'),
+    ),
+    ...generateTauriUpdaterPlatform(
+      'darwin-x86_64',
+      (signaturePath) => signaturePath.endsWith('x86_64.app.tar.gz.sig'),
+      (asset) => asset.name.endsWith('-x86_64.app.tar.gz'),
+    ),
+
+    // TODO Support linux-aarch64.
+    // ...generateTauriUpdaterPlatform(
+    //   'linux-aarch64',
+    //   (signaturePath) => signaturePath.endsWith('_aarch64.AppImage.tar.gz.sig'),
+    //   (asset) => asset.name.endsWith('_aarch64.AppImage.tar.gz'),
+    // ),
+    ...generateTauriUpdaterPlatform(
+      'linux-x86_64',
+      (signaturePath) => signaturePath.endsWith('_amd64.AppImage.tar.gz.sig'),
+      (asset) => asset.name.endsWith('_amd64.AppImage.tar.gz'),
+    ),
+
+    // TODO Support windows-aarch64.
+    // ...generateTauriUpdaterPlatform(
+    //   'windows-aarch64',
+    //   (signaturePath) => signaturePath.endsWith('_aarch64-setup.nsis.zip.sig'),
+    //   (asset) => asset.name.endsWith('_aarch64-setup.nsis.zip'),
+    // ),
+    ...generateTauriUpdaterPlatform(
+      'windows-x86_64',
+      (signaturePath) => signaturePath.endsWith('_x64-setup.nsis.zip.sig'),
+      (asset) => asset.name.endsWith('_x64-setup.nsis.zip'),
+    ),
+  },
+}
+
+process.stdout.write(JSON.stringify(updaterData, undefined, 2))
+
+function getProcessOutput(
+  /** @type {string} */
+  command,
+  /** @type {string[]} */
+  args,
+) {
+  const process = spawnSync(command, args)
+
+  if (process.error) {
+    throw process.error
+  }
+
+  return process.stdout.toString()
+}
