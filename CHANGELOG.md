@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## 0.2.3 (2024-03-26)
+
+
+### Bug Fixes
+
+* Onboarding fast fixes ([#23](https://github.com/mikew/wadpunk/issues/23)) ([ba59774](https://github.com/mikew/wadpunk/commit/ba597749b28af79abec4f135a17d985c0046d54f))
+
 ## 0.2.2 (2024-03-26)
 
 
