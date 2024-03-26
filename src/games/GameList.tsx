@@ -395,6 +395,7 @@ const GameList: React.FC = () => {
                 startIcon={<Download />}
                 sx={{ margin: 'auto' }}
                 href="https://freedoom.github.io/download.html"
+                target="_blank"
               >
                 Download Freedoom
               </Button>
@@ -415,7 +416,7 @@ const GameList: React.FC = () => {
               </Button>
             </li>
             <li>
-              Refresh WADPunk. You can do this at any time in the settings menu.
+              Reload WADPunk. You can do this at any time in the settings menu.
               <br />
               <br />
               <Button
@@ -426,7 +427,7 @@ const GameList: React.FC = () => {
                   invalidateApolloCache()
                 }}
               >
-                Refresh
+                Reload
               </Button>
             </li>
           </ol>
