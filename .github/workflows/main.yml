@@ -75,10 +75,6 @@ jobs:
 
       - run: ./script/build
         shell: bash
-
-      - run: ./script/deploy
-        shell: bash
-        if: endsWith(github.ref, '/main')
         env:
           TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
           TAURI_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
@@ -95,3 +91,41 @@ jobs:
             src-tauri/target/release/bundle/macos/*.app.tar.gz.sig
             src-tauri/target/release/bundle/appimage/*.AppImage.tar.gz
             src-tauri/target/release/bundle/appimage/*.AppImage.tar.gz.sig
+
+  deploy:
+    needs:
+      - build
+
+    runs-on: ubuntu-20.04
+
+    steps:
+      - uses: actions/checkout@v4
+        if: endsWith(github.ref, '/main')
+
+      # prepare-env: Push as github bot.
+      # https://github.community/t/github-actions-bot-email-address/17204/5
+      - name: Prep for git push
+        run: |
+          git config --local user.name "github-actions[bot]"
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        shell: bash
+        if: endsWith(github.ref, '/main')
+
+      - uses: actions/download-artifact@v4
+        if: endsWith(github.ref, '/main')
+
+      # This is CI specific, artifacts don't seem to be stored with a helpful
+      # path.
+      - run: |
+          mkdir -p src-tauri/target/release/bundle
+          mv wadpunk-windows-latest-X64/* src-tauri/target/release/bundle
+          mv wadpunk-macos-latest-X64/* src-tauri/target/release/bundle
+          mv wadpunk-ubuntu-20.04-X64/* src-tauri/target/release/bundle
+        shell: bash
+        if: endsWith(github.ref, '/main')
+
+      - run: ./script/deploy
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        if: endsWith(github.ref, '/main')

@@ -1,20 +1,47 @@
 #!/usr/bin/env bash
 set -ex
 
-RELEASE_TAG="release-$(date "+%F")"
+# Skipping commit because we need to generate some more files, and committing
+# them all at once is a little nicer.
+# Skipping tag for similar reasons, since we're committing later we can just tag
+# then.
+npx commit-and-tag-version --skip.commit --skip.tag
 
-if ! gh release list | grep -q "${RELEASE_TAG}" ; then
-  gh release create "$RELEASE_TAG" --generate-notes --target "$GITHUB_SHA"
-fi
+# Grab the release name.
+RELEASE_TAG="v$(cat package.json | jq --raw-output .version)"
 
-if compgen -G "src-tauri/target/release/bundle/dmg/*.dmg" > /dev/null; then
-  gh release upload "$RELEASE_TAG" src-tauri/target/release/bundle/dmg/*.dmg
+# Prepare the release.
+gh release create --generate-notes --draft=true "${RELEASE_TAG}"
+
+# Upload artifacts.
+if compgen -G "src-tauri/target/release/bundle/macos/*.app.tar.gz" > /dev/null; then
+  gh release upload "${RELEASE_TAG}" src-tauri/target/release/bundle/macos/*.app.tar.gz
+  gh release upload "${RELEASE_TAG}" src-tauri/target/release/bundle/macos/*.app.tar.gz.sig
 fi
 
 if compgen -G "src-tauri/target/release/bundle/nsis/*.exe" > /dev/null; then
-  gh release upload "$RELEASE_TAG" src-tauri/target/release/bundle/nsis/*.exe
+  gh release upload "${RELEASE_TAG}" src-tauri/target/release/bundle/nsis/*.exe
+  gh release upload "${RELEASE_TAG}" src-tauri/target/release/bundle/nsis/*.nsis.zip
+  gh release upload "${RELEASE_TAG}" src-tauri/target/release/bundle/nsis/*.nsis.zip.sig
 fi
 
-if compgen -G "src-tauri/target/release/bundle/appimage/*.AppImage" > /dev/null; then
-  gh release upload "$RELEASE_TAG" src-tauri/target/release/bundle/appimage/*.AppImage
+if compgen -G "src-tauri/target/release/bundle/appimage/*.AppImage.tar.gz" > /dev/null; then
+  gh release upload "${RELEASE_TAG}" src-tauri/target/release/bundle/appimage/*.AppImage.tar.gz
+  gh release upload "${RELEASE_TAG}" src-tauri/target/release/bundle/appimage/*.AppImage.tar.gz.sig
 fi
+
+# Commit and tag release.
+git add \
+  package.json \
+  CHANGELOG.md \
+  tauri-updater.json
+git commit --message "[skip ci] Release ${RELEASE_TAG}"
+git tag "${RELEASE_TAG}"
+
+# Get the SHA of the latest commit
+COMMIT_SHA=$(git rev-parse HEAD)
+git push --force origin "${RELEASE_TAG}"
+git push origin HEAD
+
+# Update the target for the release.
+gh release edit "--target=${COMMIT_SHA}" "${RELEASE_TAG}"
