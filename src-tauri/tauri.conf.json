@@ -20,6 +20,10 @@
       },
       "dialog": {
         "open": true
+      },
+      "process": {
+        "relaunch": true,
+        "exit": true
       }
     },
 
@@ -32,6 +36,19 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ]
+    },
+
+    "updater": {
+      "active": true,
+      "endpoints": [
+        "https://gist.githubusercontent.com/mikew/3f402cf06b9b6440be9ac5c3605a5a99/raw/latest.json"
+      ],
+      "dialog": false,
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDNCRTk5RDgzNzE1Mjk2ODIKUldTQ2xsSnhnNTNwTzNyaEM4Ym91a2ZIZDN6dTExenJCblJvSVhERk0za1JKdXJQOUZzTy9aVHUK",
+
+      "windows": {
+        "installMode": "passive"
+      }
     },
 
     "security": {
