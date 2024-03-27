@@ -216,62 +216,6 @@ const GameDialogInner: React.FC<{
                 })}
               </ReactHookFormTextField>
 
-              <Controller
-                name="tags"
-                render={({
-                  field: { ref, onChange, ...field },
-                  fieldState,
-                  formState,
-                }) => {
-                  const isDisabled = formState.isSubmitting
-                  const errorMessage = fieldState.error?.message
-
-                  return (
-                    <Autocomplete<string, true, undefined, true>
-                      {...field}
-                      openOnFocus
-                      ChipProps={{ size: 'small' }}
-                      renderInput={(props) => (
-                        <TextField
-                          {...props}
-                          label="Tags"
-                          inputRef={ref}
-                          error={fieldState.invalid}
-                          helperText={errorMessage}
-                          InputProps={{
-                            ...props.InputProps,
-                            startAdornment: (
-                              <>
-                                <InputAdornment position="start">
-                                  <Label />
-                                </InputAdornment>
-                                {props.InputProps.startAdornment}
-                              </>
-                            ),
-                          }}
-                          sx={{
-                            '& .MuiInputAdornment-positionStart': {
-                              alignSelf: 'flex-start',
-                            },
-                            '& .MuiInputAdornment-positionStart .MuiSvgIcon-root':
-                              {
-                                marginLeft: '4px',
-                              },
-                          }}
-                        />
-                      )}
-                      disabled={isDisabled}
-                      freeSolo
-                      onChange={(_event, value) => {
-                        onChange(value)
-                      }}
-                      options={allTags}
-                      multiple
-                    />
-                  )
-                }}
-              />
-
               {/*
                   This field is a little tricky:
 
@@ -298,7 +242,7 @@ const GameDialogInner: React.FC<{
                       disabled={isDisabled}
                       error={fieldState.invalid}
                       value={isGameIwad ? fullGame.id : field.value}
-                      helperText={errorMessage}
+                      helperText={errorMessage || 'All games require an IWAD.'}
                       InputProps={{
                         startAdornment: (
                           <InputAdornment position="start">
@@ -344,6 +288,65 @@ const GameDialogInner: React.FC<{
                   )
                 })}
               </ReactHookFormTextField>
+
+              <Controller
+                name="tags"
+                render={({
+                  field: { ref, onChange, ...field },
+                  fieldState,
+                  formState,
+                }) => {
+                  const isDisabled = formState.isSubmitting
+                  const errorMessage = fieldState.error?.message
+
+                  return (
+                    <Autocomplete<string, true, undefined, true>
+                      {...field}
+                      openOnFocus
+                      ChipProps={{ size: 'small' }}
+                      renderInput={(props) => (
+                        <TextField
+                          {...props}
+                          label="Tags"
+                          inputRef={ref}
+                          error={fieldState.invalid}
+                          helperText={
+                            errorMessage ||
+                            'Tag a game with "iwad" to mark it as an IWAD.'
+                          }
+                          InputProps={{
+                            ...props.InputProps,
+                            startAdornment: (
+                              <>
+                                <InputAdornment position="start">
+                                  <Label />
+                                </InputAdornment>
+                                {props.InputProps.startAdornment}
+                              </>
+                            ),
+                          }}
+                          sx={{
+                            '& .MuiInputAdornment-positionStart': {
+                              alignSelf: 'flex-start',
+                            },
+                            '& .MuiInputAdornment-positionStart .MuiSvgIcon-root':
+                              {
+                                marginLeft: '4px',
+                              },
+                          }}
+                        />
+                      )}
+                      disabled={isDisabled}
+                      freeSolo
+                      onChange={(_event, value) => {
+                        onChange(value)
+                      }}
+                      options={allTags}
+                      multiple
+                    />
+                  )
+                }}
+              />
 
               <ReactHookFormTextField
                 name="notes"
