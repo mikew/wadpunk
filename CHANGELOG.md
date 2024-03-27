@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## 0.2.5 (2024-03-27)
+
+
+### Bug Fixes
+
+* Re-order fields in game form and add some helper text ([#34](https://github.com/mikew/wadpunk/issues/34)) ([ab1dde1](https://github.com/mikew/wadpunk/commit/ab1dde154f5a017fe5d957e610a5b8fc07ba30ed)), closes [#31](https://github.com/mikew/wadpunk/issues/31)
+
 ## 0.2.4 (2024-03-27)
 
 
