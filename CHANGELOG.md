@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## 0.2.4 (2024-03-27)
+
+
+### Features
+
+* Point Tauri Updater to in-repo file ([#33](https://github.com/mikew/wadpunk/issues/33)) ([925422b](https://github.com/mikew/wadpunk/commit/925422b3433df9cc1acf3ca7991278796c3e7418)), closes [#32](https://github.com/mikew/wadpunk/issues/32)
+
 ## 0.2.3 (2024-03-26)
 
 
