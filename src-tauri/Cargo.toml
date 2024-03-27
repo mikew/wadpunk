@@ -20,6 +20,7 @@ tauri-plugin-graphql = "2.0.0"
 async-graphql = "5.0.0"
 chrono = "0.4.31"
 plist = "1.6.0"
+tauri-plugin-window-state = "0.1.1"
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem
