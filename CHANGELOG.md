@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## 0.2.6 (2024-03-27)
+
+
+### Features
+
+* Remember window size ([#35](https://github.com/mikew/wadpunk/issues/35)) ([28cf844](https://github.com/mikew/wadpunk/commit/28cf844c2bc0f5c0b4962efcadeb4e27e4bdd5e9)), closes [#30](https://github.com/mikew/wadpunk/issues/30)
+
 ## 0.2.5 (2024-03-27)
 
 
