@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## 0.2.8 (2024-03-31)
+
+
+### Bug Fixes
+
+* Tweak iwad field help text ([#39](https://github.com/mikew/wadpunk/issues/39)) ([b739de4](https://github.com/mikew/wadpunk/commit/b739de4acaf94ccad86d21219e63e178649e3376))
+
 ## 0.2.7 (2024-03-31)
 
 
