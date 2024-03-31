@@ -149,6 +149,9 @@ const GameDialogInner: React.FC<{
 
   const tags = formApi.watch('tags')
   const isGameIwad = isIwad(tags)
+  const iwadFieldHelperText = isGameIwad
+    ? 'This game will be used as the IWAD.'
+    : 'All games require an IWAD.'
 
   return (
     <FormProvider {...formApi}>
@@ -242,7 +245,7 @@ const GameDialogInner: React.FC<{
                       disabled={isDisabled}
                       error={fieldState.invalid}
                       value={isGameIwad ? fullGame.id : field.value}
-                      helperText={errorMessage || 'All games require an IWAD.'}
+                      helperText={errorMessage || iwadFieldHelperText}
                       InputProps={{
                         startAdornment: (
                           <InputAdornment position="start">
