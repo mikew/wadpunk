@@ -198,7 +198,27 @@ impl DataSource {
 
     if let Some(valid_files) = files {
       for valid_file in valid_files {
-        command.args(["-file", &valid_file]);
+        // If the file ends with .deh, add `-deh <file>`, if the file ends with
+        // .bex, add `-bex <file>`, otherwise just add `-file <file>`
+        // I really don't like Rust.
+        let file_extension = Path::new(&valid_file)
+          .extension()
+          .unwrap_or_default()
+          .to_str()
+          .unwrap_or_default()
+          .to_lowercase();
+
+        match file_extension.as_str() {
+          "deh" => {
+            command.args(["-deh", &valid_file]);
+          }
+          "bex" => {
+            command.args(["-bex", &valid_file]);
+          }
+          _ => {
+            command.args(["-file", &valid_file]);
+          }
+        }
       }
     }
 
