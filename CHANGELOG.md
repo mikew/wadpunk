@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## 0.2.7 (2024-03-31)
+
+
+### Features
+
+* Add support for deh / bex files ([#37](https://github.com/mikew/wadpunk/issues/37)) ([cebafb9](https://github.com/mikew/wadpunk/commit/cebafb985f4fb1f7a04a69929dcfd95aacb87f4e))
+
 ## 0.2.6 (2024-03-27)
 
 
