@@ -38,13 +38,13 @@ impl DataSource {
   ) -> GraphQLResult<Vec<PlaySession>> {
     let mut gql_play_sessions: Vec<PlaySession> = vec![];
 
-    let meta_path = database::get_meta_directory()
+    let json_path = database::get_details_directory()
       .join(&root.name)
       .join("playSessions.json");
-    let json_contents = fs::read_to_string(meta_path).unwrap_or("{}".to_string());
-    let play_session_meta = serde_json::from_str::<DbPlaySession>(&json_contents).unwrap();
+    let json_contents = fs::read_to_string(json_path).unwrap_or("{}".to_string());
+    let play_session = serde_json::from_str::<DbPlaySession>(&json_contents).unwrap();
 
-    if let Some(play_sessions) = play_session_meta.sessions {
+    if let Some(play_sessions) = play_session.sessions {
       for play_session in play_sessions {
         if let Some(started_at) = play_session.started_at {
           if let Some(ended_at) = play_session.ended_at {
@@ -72,8 +72,8 @@ impl DataSource {
     _root: &Game,
     _ctx: &Context<'_>,
   ) -> GraphQLResult<Option<Vec<GameEnabledFile>>> {
-    let meta = database::load_game_meta(&_root.id);
-    let enabled_files = meta.enabled_files;
+    let details = database::load_game_details(&_root.id);
+    let enabled_files = details.enabled_files;
 
     let v: Option<Vec<GameEnabledFile>> = Some(
       enabled_files
@@ -95,7 +95,7 @@ impl DataSource {
     _ctx: &Context<'_>,
     id: String,
   ) -> GraphQLResult<Game> {
-    Ok(database::load_game_with_meta(&id))
+    Ok(database::load_game_with_details(&id))
   }
 
   pub async fn Query_getAppSettings(
@@ -204,7 +204,7 @@ impl DataSource {
 
     command.args([
       "-savedir",
-      database::get_meta_directory()
+      database::get_details_directory()
         .join(database::normalize_name_from_id(&game_id))
         .join("saves")
         .to_str()
