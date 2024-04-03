@@ -3,6 +3,7 @@ import {
   Add,
   ArrowDropDown,
   Download,
+  ExitToApp,
   Refresh,
   Search,
   Settings,
@@ -30,6 +31,7 @@ import {
   Typography,
 } from '@mui/material'
 import useSimpleFilter from '@promoboxx/use-filter/dist/useSimpleFilter'
+import { process } from '@tauri-apps/api'
 import { enqueueSnackbar } from 'notistack'
 import { useMemo, useState } from 'react'
 
@@ -353,6 +355,17 @@ const GameList: React.FC = () => {
                 <Refresh fontSize="small" />
               </ListItemIcon>
               Reload
+            </EasyMenuItem>
+
+            <EasyMenuItem
+              onClickDelayed={() => {
+                process.exit(0)
+              }}
+            >
+              <ListItemIcon>
+                <ExitToApp fontSize="small" />
+              </ListItemIcon>
+              Exit
             </EasyMenuItem>
           </EasyMenu>
         </Toolbar>
