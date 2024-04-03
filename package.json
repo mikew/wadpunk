@@ -5,6 +5,9 @@
   "type": "module",
   "devDependencies": {
     "@apollo/client": "^3.8.7",
+    "@dnd-kit/core": "^6.1.0",
+    "@dnd-kit/modifiers": "^7.0.0",
+    "@dnd-kit/sortable": "^8.0.0",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@graphql-codegen/cli": "^5.0.0",
@@ -14,6 +17,7 @@
     "@graphql-codegen/typescript": "^4.0.1",
     "@graphql-codegen/typescript-operations": "^4.0.1",
     "@mui/icons-material": "^5.14.16",
+    "@mui/material": "^5.15.14",
     "@promoboxx/eslint-config": "^3.2.0",
     "@promoboxx/react-scripts-vite": "^0.2.2",
     "@promoboxx/use-filter": "^1.11.2",
@@ -34,12 +38,5 @@
     "redux": "^5.0.0",
     "redux-easy-mode": "^1.5.0",
     "typescript": "^5.2.2"
-  },
-  "peerDependencies": {
-    "@graphql-codegen/plugin-helpers": "x",
-    "@graphql-typed-document-node/core": "x",
-    "@mui/material": "x",
-    "graphql": "x",
-    "vite": "x"
   }
 }
