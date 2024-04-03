@@ -127,6 +127,9 @@ const GameDialogInner: React.FC<{
       }
     }
 
+    iwads.sort((a, b) => a.name.localeCompare(b.name))
+    others.sort((a, b) => a.name.localeCompare(b.name))
+
     return {
       iwads,
       others,
