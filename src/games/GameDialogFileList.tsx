@@ -24,6 +24,7 @@ import {
   List,
   ListItem,
   ListItemText,
+  useTheme,
 } from '@mui/material'
 import type { SwitchBaseProps } from '@mui/material/internal/SwitchBase'
 import { useEffect } from 'react'
@@ -168,29 +169,39 @@ interface SortableItemProps {
 }
 
 const SortableItem: React.FC<SortableItemProps> = (props) => {
-  const { attributes, listeners, setNodeRef, transform, transition } =
-    useSortable({
-      id: props.file.id,
-      disabled: props.file.isIwad || !props.file.selected,
-    })
-
-  const style = {
-    // transform: CSS.Transform.toString(transform),
-    transform: transform
-      ? `translate3d(${transform.x}px, ${transform.y}px, 0)`
-      : undefined,
+  const theme = useTheme()
+  const canSort = !props.file.isIwad && props.file.selected
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
     transition,
-  }
+    isSorting,
+  } = useSortable({
+    id: props.file.id,
+    disabled: !canSort,
+    transition: {
+      duration: theme.transitions.duration.shortest,
+      easing: theme.transitions.easing.sharp,
+    },
+  })
 
   return (
     <ListItem
       ref={setNodeRef}
-      style={style}
       disableGutters
       disablePadding
       {...attributes}
       {...listeners}
       component="div"
+      sx={{
+        cursor: isSorting ? 'grabbing' : canSort ? 'grab' : undefined,
+        transition,
+        transform: transform
+          ? `translate3d(${transform.x}px, ${transform.y}px, 0)`
+          : undefined,
+      }}
     >
       <Checkbox
         size="small"
