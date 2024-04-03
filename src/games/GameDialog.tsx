@@ -39,6 +39,7 @@ import {
   UpdateGameDocument,
 } from '#src/graphql/operations'
 import type { Game } from '#src/graphql/types'
+import pathWithoutExtension from '#src/lib/pathWithoutExtension'
 import StarRating from '#src/lib/StarRating'
 import DelayedOnCloseDialog, {
   DelayedOnCloseDialogCloseIcon,
@@ -127,8 +128,12 @@ const GameDialogInner: React.FC<{
       }
     }
 
-    iwads.sort((a, b) => a.name.localeCompare(b.name))
-    others.sort((a, b) => a.name.localeCompare(b.name))
+    iwads.sort((a, b) =>
+      pathWithoutExtension(a.name).localeCompare(pathWithoutExtension(b.name)),
+    )
+    others.sort((a, b) =>
+      pathWithoutExtension(a.name).localeCompare(pathWithoutExtension(b.name)),
+    )
 
     return {
       iwads,
