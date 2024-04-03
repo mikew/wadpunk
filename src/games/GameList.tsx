@@ -44,6 +44,7 @@ import {
   OpenGamesFolderDocument,
   SetRatingDocument,
 } from '#src/graphql/operations'
+import pathWithoutExtension from '#src/lib/pathWithoutExtension'
 import StarRating from '#src/lib/StarRating'
 import { EasyMenu, EasyMenuItem } from '#src/mui/EasyMenu'
 import { useRootDispatch } from '#src/redux/helpers'
@@ -141,7 +142,9 @@ const GameList: React.FC = () => {
 
     filtered.sort((a, b) => {
       if (sortKey === 'name') {
-        return a.name.localeCompare(b.name)
+        return pathWithoutExtension(a.name).localeCompare(
+          pathWithoutExtension(b.name),
+        )
       }
 
       if (sortKey === 'rating') {
