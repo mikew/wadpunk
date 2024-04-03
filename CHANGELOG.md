@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## 0.2.9 (2024-04-03)
+
+
+### Features
+
+* Various new features ([#46](https://github.com/mikew/wadpunk/issues/46)) ([9f036a4](https://github.com/mikew/wadpunk/commit/9f036a42a8f3c84aa6f47ded1211f356dc8510ba))
+
 ## 0.2.8 (2024-03-31)
 
 
