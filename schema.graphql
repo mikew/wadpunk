@@ -41,6 +41,11 @@ type SourcePort {
   is_default: Boolean!
 }
 
+type AppInfo {
+  name: String!
+  version: String!
+}
+
 type Query {
   getGames: [Game!]!
   getGame(id: ID!): Game!
@@ -49,6 +54,8 @@ type Query {
   getSourcePorts: [SourcePort!]!
 
   getAppSettings: AppSettings!
+
+  getAppInfo: AppInfo!
 }
 
 input GameEnabledFileInput {

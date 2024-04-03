@@ -3,6 +3,7 @@ import {
   Add,
   ArrowDropDown,
   Download,
+  ExitToApp,
   Refresh,
   Search,
   Settings,
@@ -16,6 +17,7 @@ import {
   Box,
   Button,
   Chip,
+  Divider,
   IconButton,
   InputAdornment,
   List,
@@ -30,16 +32,19 @@ import {
   Typography,
 } from '@mui/material'
 import useSimpleFilter from '@promoboxx/use-filter/dist/useSimpleFilter'
+import { process } from '@tauri-apps/api'
 import { enqueueSnackbar } from 'notistack'
 import { useMemo, useState } from 'react'
 
 import { invalidateApolloCache } from '#src/graphql/graphqlClient'
 import type { GetGameListQueryQuery } from '#src/graphql/operations'
 import {
+  GetAppInfoDocument,
   GetGameListQueryDocument,
   OpenGamesFolderDocument,
   SetRatingDocument,
 } from '#src/graphql/operations'
+import pathWithoutExtension from '#src/lib/pathWithoutExtension'
 import StarRating from '#src/lib/StarRating'
 import { EasyMenu, EasyMenuItem } from '#src/mui/EasyMenu'
 import { useRootDispatch } from '#src/redux/helpers'
@@ -67,6 +72,7 @@ const GameList: React.FC = () => {
   const [setRating] = useMutation(SetRatingDocument)
   const [selectedId, setSelectedId] = useState<GameListGame['id']>()
   const { sourcePorts } = useAllSourcePorts()
+  const { data: appInfoData } = useSuspenseQuery(GetAppInfoDocument)
 
   const {
     debouncedFilterInfo,
@@ -136,7 +142,9 @@ const GameList: React.FC = () => {
 
     filtered.sort((a, b) => {
       if (sortKey === 'name') {
-        return a.name.localeCompare(b.name)
+        return pathWithoutExtension(a.name).localeCompare(
+          pathWithoutExtension(b.name),
+        )
       }
 
       if (sortKey === 'rating') {
@@ -354,6 +362,27 @@ const GameList: React.FC = () => {
               </ListItemIcon>
               Reload
             </EasyMenuItem>
+
+            <EasyMenuItem
+              onClickDelayed={() => {
+                process.exit(0)
+              }}
+            >
+              <ListItemIcon>
+                <ExitToApp fontSize="small" />
+              </ListItemIcon>
+              Exit
+            </EasyMenuItem>
+
+            <Divider />
+
+            <Typography
+              color="text.secondary"
+              variant="body2"
+              textAlign="center"
+            >
+              {appInfoData.getAppInfo.name} v{appInfoData.getAppInfo.version}
+            </Typography>
           </EasyMenu>
         </Toolbar>
       </AppBar>

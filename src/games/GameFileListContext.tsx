@@ -12,6 +12,9 @@ export interface FileEntry {
   absolute: string
   relative: string
   selected: boolean
+  // TODO This only exists for dnd-kit. Maybe move it to the server and have it
+  // be `${ABSOLUTE}`
+  id: string
 }
 
 export interface GameFileListContextType {

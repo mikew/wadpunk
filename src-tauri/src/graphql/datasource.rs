@@ -10,10 +10,12 @@ use chrono::DateTime;
 use chrono::Utc;
 
 use plist;
+use tauri::AppHandle;
 
 use crate::database;
 use crate::database::DbPlaySession;
 use crate::database::DbPlaySessionEntry;
+use crate::graphql::generated::AppInfo;
 use crate::tauri_helpers::reveal_in_finder::reveal_file_or_folder;
 
 use super::generated::AppSettings;
@@ -149,6 +151,16 @@ impl DataSource {
     _ctx: &Context<'_>,
   ) -> GraphQLResult<Vec<SourcePort>> {
     Ok(database::find_all_source_ports())
+  }
+
+  pub async fn Query_getAppInfo(&self, _root: &Query, ctx: &Context<'_>) -> GraphQLResult<AppInfo> {
+    let app_handle = ctx.data_unchecked::<AppHandle>();
+    let package_info = app_handle.package_info();
+
+    Ok(AppInfo {
+      name: package_info.name.to_string(),
+      version: package_info.version.to_string(),
+    })
   }
 
   pub async fn Mutation_startGame(
