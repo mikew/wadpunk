@@ -17,6 +17,7 @@ import {
   Box,
   Button,
   Chip,
+  Divider,
   IconButton,
   InputAdornment,
   List,
@@ -38,6 +39,7 @@ import { useMemo, useState } from 'react'
 import { invalidateApolloCache } from '#src/graphql/graphqlClient'
 import type { GetGameListQueryQuery } from '#src/graphql/operations'
 import {
+  GetAppInfoDocument,
   GetGameListQueryDocument,
   OpenGamesFolderDocument,
   SetRatingDocument,
@@ -69,6 +71,7 @@ const GameList: React.FC = () => {
   const [setRating] = useMutation(SetRatingDocument)
   const [selectedId, setSelectedId] = useState<GameListGame['id']>()
   const { sourcePorts } = useAllSourcePorts()
+  const { data: appInfoData } = useSuspenseQuery(GetAppInfoDocument)
 
   const {
     debouncedFilterInfo,
@@ -367,6 +370,16 @@ const GameList: React.FC = () => {
               </ListItemIcon>
               Exit
             </EasyMenuItem>
+
+            <Divider />
+
+            <Typography
+              color="text.secondary"
+              variant="body2"
+              textAlign="center"
+            >
+              {appInfoData.getAppInfo.name} v{appInfoData.getAppInfo.version}
+            </Typography>
           </EasyMenu>
         </Toolbar>
       </AppBar>
