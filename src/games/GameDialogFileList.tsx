@@ -150,8 +150,8 @@ const GameDialogFileList: React.FC = (props) => {
                 <SortableItem
                   key={x.id}
                   file={x}
-                  onCheckboxChange={(event) => {
-                    setEnabled(x.relative, event.target.checked)
+                  onCheckboxChange={(event, checked) => {
+                    setEnabled(x.relative, checked)
                   }}
                 />
               )
@@ -207,6 +207,9 @@ const SortableItem: React.FC<SortableItemProps> = (props) => {
         size="small"
         checked={props.file.selected}
         onChange={props.onCheckboxChange}
+        onPointerDown={(event) => {
+          event.stopPropagation()
+        }}
       />
       <ListItemText
         primary={props.file.relative}
