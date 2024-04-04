@@ -171,6 +171,7 @@ impl DataSource {
     game_id: String,
     iwad: Option<String>,
     source_port: String,
+    custom_config: Option<bool>,
   ) -> GraphQLResult<bool> {
     let source_port = if cfg!(target_os = "macos") {
       let plist_path = Path::new(&source_port).join("Contents").join("Info.plist");
@@ -231,6 +232,19 @@ impl DataSource {
             command.args(["-file", &valid_file]);
           }
         }
+      }
+    }
+
+    if let Some(custom_config) = custom_config {
+      if custom_config {
+        command.args([
+          "-config",
+          database::get_meta_directory()
+            .join(database::normalize_name_from_id(&game_id))
+            .join("config.ini")
+            .to_str()
+            .unwrap(),
+        ]);
       }
     }
 
@@ -372,6 +386,8 @@ impl DataSource {
       game_record.source_port = game.source_port;
       game_record.iwad_id = game.iwad_id;
       game_record.extra_mod_ids = game.extra_mod_ids;
+
+      game_record.use_custom_config = game.use_custom_config.unwrap_or(false);
 
       database::save_game(game_record.clone());
 
