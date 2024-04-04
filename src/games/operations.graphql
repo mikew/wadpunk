@@ -29,6 +29,8 @@ query getGameDialogFields($game_id: ID!) {
     iwad_id
     extra_mod_ids
 
+    use_custom_config
+
     enabled_files {
       is_enabled
       relative
@@ -59,12 +61,14 @@ mutation startGame(
   $iwad: String
   $files: [String!]
   $source_port: String!
+  $use_custom_config: Boolean
 ) {
   startGame(
     game_id: $game_id
     iwad: $iwad
     files: $files
     source_port: $source_port
+    use_custom_config: $use_custom_config
   )
 }
 
