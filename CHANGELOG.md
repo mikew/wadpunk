@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## 0.2.10 (2024-04-04)
+
+
+### Bug Fixes
+
+* Enabling / disabling of files ([#48](https://github.com/mikew/wadpunk/issues/48)) ([285cc10](https://github.com/mikew/wadpunk/commit/285cc10294a309c1363661a2c7a1c0e655692cc6))
+
 ## 0.2.9 (2024-04-03)
 
 
