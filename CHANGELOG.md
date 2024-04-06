@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## 0.2.11 (2024-04-06)
+
+
+### Features
+
+* Custom config ([#47](https://github.com/mikew/wadpunk/issues/47)) ([0b392cd](https://github.com/mikew/wadpunk/commit/0b392cd537aa5d7f8ea57e47a0c29df6f0a35c1e)), closes [#45](https://github.com/mikew/wadpunk/issues/45)
+
 ## 0.2.10 (2024-04-04)
 
 
