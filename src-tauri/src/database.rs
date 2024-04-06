@@ -84,6 +84,8 @@ pub fn load_game_with_meta(id: &str) -> Game {
     source_port: game_meta.source_port,
     iwad_id: game_meta.iwad_id,
     extra_mod_ids: game_meta.extra_mod_ids,
+
+    use_custom_config: game_meta.use_custom_config.unwrap_or(false),
   };
 }
 
@@ -156,6 +158,8 @@ pub fn save_game(game: Game) {
     iwad_id: game.iwad_id,
     extra_mod_ids: game.extra_mod_ids,
     enabled_files: Some(vec![]),
+
+    use_custom_config: Some(game.use_custom_config),
   };
 
   let json_str = serde_json::to_string(&game_meta_json).unwrap();
@@ -226,6 +230,8 @@ pub struct DbGameMeta {
   pub source_port: Option<String>,
   pub extra_mod_ids: Option<Vec<String>>,
   pub enabled_files: Option<Vec<DbGameEnabledFile>>,
+
+  pub use_custom_config: Option<bool>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Default, Clone)]

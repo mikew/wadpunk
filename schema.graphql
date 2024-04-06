@@ -13,6 +13,8 @@ type Game {
   enabled_files: [GameEnabledFile!]
 
   play_sessions: [PlaySession!]!
+
+  use_custom_config: Boolean!
 }
 
 type GameEnabledFile {
@@ -75,6 +77,8 @@ input GameInput {
   iwad_id: String
   extra_mod_ids: [String!]
   enabled_files: [GameEnabledFileInput!]
+
+  use_custom_config: Boolean
 }
 
 input CreateSourcePortInput {
@@ -103,6 +107,7 @@ type Mutation {
     iwad: String
     files: [String!]
     source_port: String!
+    use_custom_config: Boolean
   ): Boolean!
 
   updateGame(game: GameInput!): Game!

@@ -21,6 +21,9 @@ import {
   Box,
   Stack,
   InputAdornment,
+  FormControlLabel,
+  Checkbox,
+  FormHelperText,
 } from '@mui/material'
 import { enqueueSnackbar } from 'notistack'
 import { Suspense, useMemo } from 'react'
@@ -65,6 +68,7 @@ export interface GameDialogFormValues {
   iwadId: NonNullable<Game['iwad_id']>
   extraGameIds: (string | GameListGame)[]
   sourcePort: Game['source_port']
+  useCustomConfig: Game['use_custom_config']
 }
 
 interface GameDialogProps {
@@ -152,6 +156,8 @@ const GameDialogInner: React.FC<{
       sourcePort: fullGame.source_port || '-1',
       iwadId: fullGame.iwad_id || '',
       extraGameIds: fullGame.extra_mod_ids || [],
+
+      useCustomConfig: fullGame.use_custom_config || false,
     },
   })
 
@@ -227,6 +233,34 @@ const GameDialogInner: React.FC<{
                 })}
               </ReactHookFormTextField>
 
+              <Controller
+                name="useCustomConfig"
+                render={({
+                  field: { ref, value, ...field },
+                  fieldState,
+                  formState,
+                }) => {
+                  const isDisabled = formState.isSubmitting
+                  const errorMessage = fieldState.error?.message
+
+                  return (
+                    <>
+                      <FormControlLabel
+                        inputRef={ref}
+                        checked={value}
+                        control={<Checkbox {...field} disabled={isDisabled} />}
+                        label="Use Custom Config"
+                      />
+                      {errorMessage ? (
+                        <FormHelperText error={fieldState.invalid}>
+                          {errorMessage}
+                        </FormHelperText>
+                      ) : undefined}
+                    </>
+                  )
+                }}
+              />
+
               {/*
                   This field is a little tricky:
 
@@ -248,6 +282,7 @@ const GameDialogInner: React.FC<{
                   return (
                     <TextField
                       {...field}
+                      inputRef={ref}
                       label="IWAD"
                       select
                       disabled={isDisabled}
@@ -406,6 +441,8 @@ const GameDialogInner: React.FC<{
                     extra_mod_ids: values.extraGameIds.map((x) =>
                       typeof x === 'string' ? x : x.id,
                     ),
+
+                    use_custom_config: values.useCustomConfig,
                     // enabled_files: values.enabledFiles,
                   },
                 },
@@ -501,6 +538,7 @@ const GameDialogActions: React.FC<{
                 source_port: firstCommand,
                 iwad,
                 files,
+                use_custom_config: props.game.use_custom_config,
               },
             })
 
