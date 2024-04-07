@@ -15,17 +15,19 @@ use tauri::AppHandle;
 use crate::database;
 use crate::database::DbPlaySession;
 use crate::database::DbPlaySessionEntry;
+use crate::database::DbPreviousFileStateItem;
+use crate::database::DbSourcePort;
 use crate::graphql::generated::AppInfo;
 use crate::tauri_helpers::reveal_in_finder::reveal_file_or_folder;
 
 use super::generated::AppSettings;
 use super::generated::CreateSourcePortInput;
 use super::generated::Game;
-use super::generated::GameEnabledFile;
 use super::generated::GameFileEntry;
 use super::generated::GameInput;
 use super::generated::Mutation;
 use super::generated::PlaySession;
+use super::generated::PreviousFileStateItem;
 use super::generated::Query;
 use super::generated::SourcePort;
 use super::generated::UpdateSourcePortInput;
@@ -71,11 +73,11 @@ impl DataSource {
 
   pub async fn Game_previous_file_state(
     &self,
-    _root: &Game,
+    root: &Game,
     _ctx: &Context<'_>,
   ) -> GraphQLResult<Vec<PreviousFileStateItem>> {
     Ok(
-      database::load_game_meta(&_root.id)
+      database::load_game_meta(&root.id)
         .previous_file_state
         .into_iter()
         .flatten()
@@ -94,7 +96,7 @@ impl DataSource {
     _ctx: &Context<'_>,
     id: String,
   ) -> GraphQLResult<Game> {
-    Ok(database::load_game_with_meta(&id))
+    Ok(database::load_game_with_meta(&id).to_game())
   }
 
   pub async fn Query_getAppSettings(
@@ -139,7 +141,12 @@ impl DataSource {
     _root: &Query,
     _ctx: &Context<'_>,
   ) -> GraphQLResult<Vec<Game>> {
-    Ok(database::find_all_games())
+    Ok(
+      database::find_all_games()
+        .into_iter()
+        .map(|x| x.to_game())
+        .collect(),
+    )
   }
 
   pub async fn Query_getSourcePorts(
@@ -147,7 +154,12 @@ impl DataSource {
     _root: &Query,
     _ctx: &Context<'_>,
   ) -> GraphQLResult<Vec<SourcePort>> {
-    Ok(database::find_all_source_ports())
+    Ok(
+      database::find_all_source_ports()
+        .into_iter()
+        .map(|x| x.to_source_port())
+        .collect(),
+    )
   }
 
   pub async fn Query_getAppInfo(&self, _root: &Query, ctx: &Context<'_>) -> GraphQLResult<AppInfo> {
@@ -168,8 +180,12 @@ impl DataSource {
     game_id: String,
     iwad: Option<String>,
     source_port: String,
-    custom_config: Option<bool>,
+    use_custom_config: Option<bool>,
   ) -> GraphQLResult<bool> {
+    // If running on macOS, check if the `${source_port}/Contents/Info.plist`
+    // exists.
+    // If it does, we need to get `CFBundleExecutable` from it and run
+    // `${source_port}/Contents/MacOS/${CFBundleExecutable}`
     let source_port = if cfg!(target_os = "macos") {
       let plist_path = Path::new(&source_port).join("Contents").join("Info.plist");
 
@@ -232,8 +248,8 @@ impl DataSource {
       }
     }
 
-    if let Some(custom_config) = custom_config {
-      if custom_config {
+    if let Some(use_custom_config) = use_custom_config {
+      if use_custom_config {
         command.args([
           "-config",
           database::get_meta_directory()
@@ -298,12 +314,12 @@ impl DataSource {
     game_id: String,
     notes: String,
   ) -> GraphQLResult<Game> {
-    if let Some(mut game) = database::find_game_by_id(&game_id) {
-      game.notes = notes;
+    if let Some(mut db_game) = database::find_game_by_id(&game_id) {
+      db_game.notes = Some(notes);
 
-      database::save_game(game.clone());
+      database::save_game(db_game.clone());
 
-      return Ok(game);
+      return Ok(db_game.to_game());
     }
 
     Err(Error {
@@ -320,12 +336,12 @@ impl DataSource {
     game_id: String,
     rating: i32,
   ) -> GraphQLResult<Game> {
-    if let Some(mut game) = database::find_game_by_id(&game_id) {
-      game.rating = rating;
+    if let Some(mut db_game) = database::find_game_by_id(&game_id) {
+      db_game.rating = Some(rating);
 
-      database::save_game(game.clone());
+      database::save_game(db_game.clone());
 
-      return Ok(game);
+      return Ok(db_game.to_game());
     }
 
     Err(Error {
@@ -342,12 +358,12 @@ impl DataSource {
     game_id: String,
     tags: Vec<String>,
   ) -> GraphQLResult<Game> {
-    if let Some(mut game) = database::find_game_by_id(&game_id) {
-      game.tags = tags;
+    if let Some(mut db_game) = database::find_game_by_id(&game_id) {
+      db_game.tags = Some(tags);
 
-      database::save_game(game.clone());
+      database::save_game(db_game.clone());
 
-      return Ok(game);
+      return Ok(db_game.to_game());
     }
 
     Err(Error {
@@ -363,29 +379,18 @@ impl DataSource {
     _ctx: &Context<'_>,
     game: GameInput,
   ) -> GraphQLResult<Game> {
-    if let Some(mut game_record) = database::find_game_by_id(&game.id) {
-      if let Some(rating) = game.rating {
-        game_record.rating = rating;
-      }
+    if let Some(mut db_game) = database::find_game_by_id(&game.id) {
+      db_game.rating = game.rating;
+      db_game.description = game.description;
+      db_game.notes = game.notes;
+      db_game.tags = game.tags;
 
-      if let Some(description) = game.description {
-        game_record.description = description;
-      }
+      db_game.source_port = game.source_port;
+      db_game.iwad_id = game.iwad_id;
+      db_game.extra_mod_ids = game.extra_mod_ids;
 
-      if let Some(notes) = game.notes {
-        game_record.notes = notes;
-      }
-
-      if let Some(tags) = game.tags {
-        game_record.tags = tags;
-      }
-
-      game_record.source_port = game.source_port;
-      game_record.iwad_id = game.iwad_id;
-      game_record.extra_mod_ids = game.extra_mod_ids;
-
-      game_record.use_custom_config = game.use_custom_config.unwrap_or(false);
-      game_record.previous_file_state = Some(
+      db_game.use_custom_config = game.use_custom_config;
+      db_game.previous_file_state = Some(
         game
           .previous_file_state
           .into_iter()
@@ -398,9 +403,9 @@ impl DataSource {
           .collect(),
       );
 
-      database::save_game(game_record.clone());
+      database::save_game(db_game.clone());
 
-      return Ok(game_record);
+      return Ok(db_game.to_game());
     }
 
     Err(Error {
@@ -426,15 +431,14 @@ impl DataSource {
     _ctx: &Context<'_>,
     source_port: CreateSourcePortInput,
   ) -> GraphQLResult<SourcePort> {
-    let source_port_record = SourcePort {
-      id: source_port.id,
-      command: source_port.command,
-      is_default: false,
+    let db_source_port = DbSourcePort {
+      id: Some(source_port.id),
+      command: Some(source_port.command),
     };
 
-    database::save_source_port(source_port_record.clone());
+    database::save_source_port(db_source_port.clone());
 
-    Ok(source_port_record)
+    Ok(db_source_port.to_source_port())
   }
 
   pub async fn Mutation_updateSourcePort(
@@ -443,13 +447,13 @@ impl DataSource {
     _ctx: &Context<'_>,
     source_port: UpdateSourcePortInput,
   ) -> GraphQLResult<SourcePort> {
-    let mut source_port_record = database::find_source_port_by_id(source_port.id);
+    let mut db_source_port = database::find_source_port_by_id(source_port.id);
 
-    source_port_record.command = source_port.command;
+    db_source_port.command = Some(source_port.command);
 
-    database::save_source_port(source_port_record.clone());
+    database::save_source_port(db_source_port.clone());
 
-    Ok(source_port_record)
+    Ok(db_source_port.to_source_port())
   }
 
   pub async fn Mutation_deleteSourcePort(
