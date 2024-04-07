@@ -245,8 +245,9 @@ const SortableItem: React.FC<SortableItemProps> = (props) => {
     >
       <Checkbox
         size="small"
-        checked={props.file.selected}
+        checked={props.file.isIwad ? true : props.file.selected}
         onChange={props.onCheckboxChange}
+        disabled={props.file.isIwad}
         onPointerDown={(event) => {
           event.stopPropagation()
         }}
