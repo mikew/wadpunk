@@ -31,7 +31,7 @@ query getGameDialogFields($game_id: ID!) {
 
     use_custom_config
 
-    enabled_files {
+    previous_file_state {
       is_enabled
       relative
     }
@@ -85,7 +85,7 @@ mutation updateGame($game: GameInput!) {
     iwad_id
     extra_mod_ids
 
-    enabled_files {
+    previous_file_state {
       is_enabled
       relative
     }

@@ -36,8 +36,8 @@ pub fn init_games() {
   fs::create_dir_all(get_meta_directory()).unwrap();
 }
 
-pub fn find_all_games() -> Vec<Game> {
-  let mut games: Vec<Game> = vec![];
+pub fn find_all_games() -> Vec<DbGameMeta> {
+  let mut db_games: Vec<DbGameMeta> = vec![];
   let paths = read_dir(get_games_directory(), false).unwrap();
 
   for game_disk_entry in paths {
@@ -54,10 +54,10 @@ pub fn find_all_games() -> Vec<Game> {
       name.to_string()
     };
 
-    games.push(load_game_with_meta(&game_id))
+    db_games.push(load_game_with_meta(&game_id))
   }
 
-  games
+  db_games
 }
 
 pub fn normalize_name_from_id(id: &str) -> &str {
@@ -68,25 +68,18 @@ pub fn normalize_name_from_id(id: &str) -> &str {
   }
 }
 
-pub fn load_game_with_meta(id: &str) -> Game {
-  let name_normalized = normalize_name_from_id(id);
-  let game_meta = load_game_meta(id);
+pub fn load_game_with_meta(id: &str) -> DbGameMeta {
+  let mut game_meta = load_game_meta(id);
 
-  return Game {
-    id: id.to_string(),
-    name: name_normalized.to_string(),
+  if game_meta.id.is_none() {
+    game_meta.id = Some(id.to_string());
+  }
 
-    rating: game_meta.rating.unwrap_or_default(),
-    description: game_meta.description.unwrap_or_default(),
-    notes: game_meta.notes.unwrap_or_default(),
-    tags: game_meta.tags.unwrap_or_default(),
+  if game_meta.name.is_none() {
+    game_meta.name = Some(normalize_name_from_id(id).to_string());
+  }
 
-    source_port: game_meta.source_port,
-    iwad_id: game_meta.iwad_id,
-    extra_mod_ids: game_meta.extra_mod_ids,
-
-    use_custom_config: game_meta.use_custom_config.unwrap_or(false),
-  };
+  game_meta
 }
 
 pub fn load_game_meta(game_id: &str) -> DbGameMeta {
@@ -104,15 +97,15 @@ pub fn load_game_play_sessions(game_id: &str) -> DbPlaySession {
   serde_json::from_str::<DbPlaySession>(&json_contents).unwrap()
 }
 
-pub fn record_game_play_session(game_id: &str, play_session: DbPlaySessionEntry) {
+pub fn record_game_play_session(game_id: &str, db_play_session_entry: DbPlaySessionEntry) {
   let file_path = get_meta_directory().join(game_id).join("playSessions.json");
 
-  let mut play_sessions = load_game_play_sessions(game_id);
-  let mut play_sessions_sessions = play_sessions.sessions.clone().unwrap_or_default();
-  play_sessions_sessions.push(play_session.clone());
-  play_sessions.sessions = Some(play_sessions_sessions);
+  let mut db_play_sessions = load_game_play_sessions(game_id);
+  let mut play_sessions_sessions = db_play_sessions.sessions.clone().unwrap_or_default();
+  play_sessions_sessions.push(db_play_session_entry.clone());
+  db_play_sessions.sessions = Some(play_sessions_sessions);
 
-  let json_str = serde_json::to_string(&play_sessions).unwrap();
+  let json_str = serde_json::to_string(&db_play_sessions).unwrap();
 
   fs::create_dir_all(file_path.parent().unwrap()).unwrap();
   fs::write(file_path, json_str).unwrap();
@@ -140,36 +133,24 @@ pub fn find_all_game_files(game_id: &str) -> Vec<String> {
   files
 }
 
-pub fn find_game_by_id(id: &str) -> Option<Game> {
-  let game = load_game_with_meta(id);
-  return Some(game);
+pub fn find_game_by_id(id: &str) -> Option<DbGameMeta> {
+  let db_game = load_game_with_meta(id);
+  return Some(db_game);
 }
 
-pub fn save_game(game: Game) {
-  let json_meta_path = get_meta_directory().join(&game.name).join("meta.json");
+pub fn save_game(db_game: DbGameMeta) {
+  let json_meta_path = get_meta_directory()
+    .join(db_game.name.clone().unwrap())
+    .join("meta.json");
 
-  let game_meta_json = DbGameMeta {
-    rating: Some(game.rating),
-    description: Some(game.description),
-    notes: Some(game.notes),
-    tags: Some(game.tags),
-
-    source_port: game.source_port,
-    iwad_id: game.iwad_id,
-    extra_mod_ids: game.extra_mod_ids,
-    enabled_files: Some(vec![]),
-
-    use_custom_config: Some(game.use_custom_config),
-  };
-
-  let json_str = serde_json::to_string(&game_meta_json).unwrap();
+  let json_str = serde_json::to_string(&db_game).unwrap();
 
   fs::create_dir_all(json_meta_path.parent().unwrap()).unwrap();
   fs::write(json_meta_path, json_str).unwrap();
 }
 
-pub fn find_all_source_ports() -> Vec<SourcePort> {
-  let mut source_ports: Vec<SourcePort> = vec![];
+pub fn find_all_source_ports() -> Vec<DbSourcePort> {
+  let mut db_source_ports: Vec<DbSourcePort> = vec![];
   let paths = read_dir(get_source_ports_directory(), false).unwrap();
 
   for source_port_disk_entry in paths {
@@ -185,30 +166,22 @@ pub fn find_all_source_ports() -> Vec<SourcePort> {
     }
 
     let source_port_id = name.strip_suffix(".json").unwrap().to_string();
-    source_ports.push(find_source_port_by_id(source_port_id))
+    db_source_ports.push(find_source_port_by_id(source_port_id))
   }
 
-  source_ports
+  db_source_ports
 }
 
-pub fn find_source_port_by_id(source_port_id: String) -> SourcePort {
+pub fn find_source_port_by_id(source_port_id: String) -> DbSourcePort {
   let json_path = get_source_ports_directory().join(format!("{}.json", source_port_id));
   let json_contents = fs::read_to_string(json_path).unwrap_or("{}".to_string());
-  let db_source_port = serde_json::from_str::<DbSourcePort>(&json_contents).unwrap();
 
-  SourcePort {
-    id: db_source_port.id.unwrap(),
-    command: db_source_port.command.unwrap(),
-    is_default: false,
-  }
+  serde_json::from_str::<DbSourcePort>(&json_contents).unwrap()
 }
 
-pub fn save_source_port(source_port: SourcePort) {
-  let json_path = get_source_ports_directory().join(format!("{}.json", source_port.id));
-  let db_source_port = DbSourcePort {
-    id: Some(source_port.id),
-    command: Some(source_port.command),
-  };
+pub fn save_source_port(db_source_port: DbSourcePort) {
+  let json_path =
+    get_source_ports_directory().join(format!("{}.json", db_source_port.id.clone().unwrap()));
   let json_str = serde_json::to_string(&db_source_port).unwrap();
 
   fs::write(json_path, json_str).unwrap();
@@ -221,6 +194,8 @@ pub fn delete_source_port(id: &str) {
 
 #[derive(Serialize, Deserialize, Debug, Default, Clone)]
 pub struct DbGameMeta {
+  pub id: Option<String>,
+  pub name: Option<String>,
   pub rating: Option<i32>,
   pub description: Option<String>,
   pub notes: Option<String>,
@@ -229,15 +204,35 @@ pub struct DbGameMeta {
   pub iwad_id: Option<String>,
   pub source_port: Option<String>,
   pub extra_mod_ids: Option<Vec<String>>,
-  pub enabled_files: Option<Vec<DbGameEnabledFile>>,
+  pub previous_file_state: Option<Vec<DbPreviousFileStateItem>>,
 
   pub use_custom_config: Option<bool>,
 }
 
+impl DbGameMeta {
+  pub fn to_game(&self) -> Game {
+    Game {
+      id: self.id.clone().unwrap(),
+      name: self.name.clone().unwrap_or_default(),
+      rating: self.rating.unwrap_or_default(),
+      description: self.description.clone().unwrap_or_default(),
+      notes: self.notes.clone().unwrap_or_default(),
+      tags: self.tags.clone().unwrap_or_default(),
+
+      iwad_id: Some(self.iwad_id.clone().unwrap_or_default()),
+      source_port: Some(self.source_port.clone().unwrap_or_default()),
+      extra_mod_ids: Some(self.extra_mod_ids.clone().unwrap_or_default()),
+      // previous_file_state: self.previous_file_state.clone().unwrap_or_default(),
+      use_custom_config: self.use_custom_config.unwrap_or_default(),
+    }
+  }
+}
+
 #[derive(Serialize, Deserialize, Debug, Default, Clone)]
-pub struct DbGameEnabledFile {
+pub struct DbPreviousFileStateItem {
   pub is_enabled: bool,
   pub relative: String,
+  pub absolute: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, Default, Clone)]
@@ -264,5 +259,15 @@ fn recurse_disk_entry(dir: DiskEntry, files: &mut Vec<String>) {
     }
   } else {
     files.push(dir.path.to_str().unwrap().to_string());
+  }
+}
+
+impl DbSourcePort {
+  pub fn to_source_port(&self) -> SourcePort {
+    SourcePort {
+      id: self.id.clone().unwrap(),
+      command: self.command.clone().unwrap_or_default(),
+      is_default: false,
+    }
   }
 }

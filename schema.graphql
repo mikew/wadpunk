@@ -10,14 +10,15 @@ type Game {
   source_port: String
   iwad_id: String
   extra_mod_ids: [String!]
-  enabled_files: [GameEnabledFile!]
+  previous_file_state: [PreviousFileStateItem!]!
 
   play_sessions: [PlaySession!]!
 
   use_custom_config: Boolean!
 }
 
-type GameEnabledFile {
+type PreviousFileStateItem {
+  absolute: String!
   relative: String!
   is_enabled: Boolean!
 }
@@ -60,7 +61,8 @@ type Query {
   getAppInfo: AppInfo!
 }
 
-input GameEnabledFileInput {
+input PreviousFileStateItemInput {
+  absolute: String!
   relative: String!
   is_enabled: Boolean!
 }
@@ -76,7 +78,7 @@ input GameInput {
   source_port: String
   iwad_id: String
   extra_mod_ids: [String!]
-  enabled_files: [GameEnabledFileInput!]
+  previous_file_state: [PreviousFileStateItemInput!]
 
   use_custom_config: Boolean
 }

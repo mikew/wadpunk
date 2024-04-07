@@ -30,6 +30,7 @@ import type { SwitchBaseProps } from '@mui/material/internal/SwitchBase'
 import { useEffect } from 'react'
 import { useWatch } from 'react-hook-form'
 
+import type { GetGameDialogFieldsQuery } from '#src/graphql/operations'
 import { GetGameFilesDocument } from '#src/graphql/operations'
 
 import type { GameDialogFormValues } from './GameDialog'
@@ -37,13 +38,17 @@ import type { FileEntry } from './GameFileListContext'
 import { useGameFileListContext } from './GameFileListContext'
 import isIwad from './isIwad'
 
+interface GameDialogFileListProps {
+  previousFileState: GetGameDialogFieldsQuery['getGame']['previous_file_state']
+}
+
 // TODO:
 // There's some issues with keeping this stuff in the form state.
 // - The initial value is an empty array, so when the form is reset, the files
 //   disappear.
 // - We can't do the queries in the main component, because that would
 //   reinitialize the form and lose any state the user has.
-const GameDialogFileList: React.FC = (props) => {
+const GameDialogFileList: React.FC<GameDialogFileListProps> = (props) => {
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
@@ -102,27 +107,62 @@ const GameDialogFileList: React.FC = (props) => {
       }) || []),
 
       ...(gameFiles.getGameFiles.map((x) => {
+        const previousEntry = props.previousFileState.find(
+          (p) => p.relative === x.relative,
+        )
+        let isSelected: boolean | undefined = undefined
+
+        if (previousEntry) {
+          if (previousEntry.is_enabled === false) {
+            isSelected = false
+          }
+        }
+
+        if (isSelected == null) {
+          isSelected =
+            x.absolute.toLowerCase().endsWith('.wad') ||
+            x.absolute.toLowerCase().endsWith('.pk3') ||
+            x.absolute.toLowerCase().endsWith('.ipk3') ||
+            x.absolute.toLowerCase().endsWith('.iwad')
+        }
+
         const entry: FileEntry = {
           id: x.absolute,
           isIwad: false,
           absolute: x.absolute,
           relative: x.relative,
-          selected:
-            x.absolute.toLowerCase().endsWith('.wad') ||
-            x.absolute.toLowerCase().endsWith('.pk3') ||
-            x.absolute.toLowerCase().endsWith('.ipk3') ||
-            x.absolute.toLowerCase().endsWith('.iwad'),
+          selected: isSelected,
         }
 
         return entry
       }) || []),
     ]
 
+    allFiles.sort((a, b) => {
+      const indexA = props.previousFileState.findIndex(
+        (x) => x.relative === a.relative,
+      )
+      const indexB = props.previousFileState.findIndex(
+        (x) => x.relative === b.relative,
+      )
+
+      if (indexA == null || indexB == null) {
+        return 0
+      }
+
+      return indexA - indexB
+    })
+
     setFiles(allFiles)
 
     // Trigger a resize so the iwad / mods dropdowns reposition themselves.
     window.dispatchEvent(new Event('resize'))
-  }, [gameFiles.getGameFiles, iwadFiles.getGameFiles, setFiles])
+  }, [
+    gameFiles.getGameFiles,
+    iwadFiles.getGameFiles,
+    props.previousFileState,
+    setFiles,
+  ])
 
   return (
     <>
@@ -205,8 +245,9 @@ const SortableItem: React.FC<SortableItemProps> = (props) => {
     >
       <Checkbox
         size="small"
-        checked={props.file.selected}
+        checked={props.file.isIwad ? true : props.file.selected}
         onChange={props.onCheckboxChange}
+        disabled={props.file.isIwad}
         onPointerDown={(event) => {
           event.stopPropagation()
         }}
