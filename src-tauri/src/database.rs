@@ -229,15 +229,16 @@ pub struct DbGameMeta {
   pub iwad_id: Option<String>,
   pub source_port: Option<String>,
   pub extra_mod_ids: Option<Vec<String>>,
-  pub enabled_files: Option<Vec<DbGameEnabledFile>>,
+  pub previous_file_state: Option<Vec<DbPreviousFileStateItem>>,
 
   pub use_custom_config: Option<bool>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Default, Clone)]
-pub struct DbGameEnabledFile {
+pub struct DbPreviousFileStateItem {
   pub is_enabled: bool,
   pub relative: String,
+  pub absolute: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, Default, Clone)]

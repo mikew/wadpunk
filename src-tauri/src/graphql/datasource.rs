@@ -69,26 +69,23 @@ impl DataSource {
     Ok(gql_play_sessions)
   }
 
-  pub async fn Game_enabled_files(
+  pub async fn Game_previous_file_state(
     &self,
     _root: &Game,
     _ctx: &Context<'_>,
-  ) -> GraphQLResult<Option<Vec<GameEnabledFile>>> {
-    let meta = database::load_game_meta(&_root.id);
-    let enabled_files = meta.enabled_files;
-
-    let v: Option<Vec<GameEnabledFile>> = Some(
-      enabled_files
+  ) -> GraphQLResult<Vec<PreviousFileStateItem>> {
+    Ok(
+      database::load_game_meta(&_root.id)
+        .previous_file_state
         .into_iter()
         .flatten()
-        .map(|x| GameEnabledFile {
+        .map(|x| PreviousFileStateItem {
+          absolute: x.absolute,
           relative: x.relative,
           is_enabled: x.is_enabled,
         })
         .collect(),
-    );
-
-    Ok(v)
+    )
   }
 
   pub async fn Query_getGame(
@@ -388,6 +385,18 @@ impl DataSource {
       game_record.extra_mod_ids = game.extra_mod_ids;
 
       game_record.use_custom_config = game.use_custom_config.unwrap_or(false);
+      game_record.previous_file_state = Some(
+        game
+          .previous_file_state
+          .into_iter()
+          .flatten()
+          .map(|x| DbPreviousFileStateItem {
+            is_enabled: x.is_enabled,
+            relative: x.relative,
+            absolute: x.absolute,
+          })
+          .collect(),
+      );
 
       database::save_game(game_record.clone());
 
