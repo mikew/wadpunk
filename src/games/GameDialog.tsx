@@ -53,6 +53,7 @@ import useAllSourcePorts from '#src/sourcePorts/useAllSourcePorts'
 
 import GameDialogFileList from './GameDialogFileList'
 import {
+  GameFileListContext,
   GameFileListProvider,
   useGameFileListContext,
 } from './GameFileListContext'
@@ -417,44 +418,57 @@ const GameDialogInner: React.FC<{
 
             <Grid item xs={12} sm={6}>
               <Suspense fallback={<CircularProgress />}>
-                <GameDialogFileList />
+                <GameDialogFileList
+                  previousFileState={fullGame.previous_file_state}
+                />
               </Suspense>
             </Grid>
           </Grid>
         </DialogContent>
 
         <DialogActions>
-          <GameDialogActions
-            game={fullGame}
-            submitForm={formApi.handleSubmit(async (values) => {
-              await updateGame({
-                variables: {
-                  game: {
-                    id: props.gameId,
-                    rating: values.rating,
-                    // description: values.description,
-                    notes: values.notes,
-                    tags: values.tags,
+          <GameFileListContext.Consumer>
+            {(value) => {
+              return (
+                <GameDialogActions
+                  game={fullGame}
+                  submitForm={formApi.handleSubmit(async (values) => {
+                    await updateGame({
+                      variables: {
+                        game: {
+                          id: props.gameId,
+                          rating: values.rating,
+                          // description: values.description,
+                          notes: values.notes,
+                          tags: values.tags,
 
-                    source_port: values.sourcePort,
-                    iwad_id: values.iwadId ? values.iwadId : null,
-                    extra_mod_ids: values.extraGameIds.map((x) =>
-                      typeof x === 'string' ? x : x.id,
-                    ),
+                          source_port: values.sourcePort,
+                          iwad_id: values.iwadId ? values.iwadId : null,
+                          extra_mod_ids: values.extraGameIds.map((x) =>
+                            typeof x === 'string' ? x : x.id,
+                          ),
 
-                    use_custom_config: values.useCustomConfig,
-                    // enabled_files: values.enabledFiles,
-                  },
-                },
-              })
+                          previous_file_state: value?.files.map((x) => ({
+                            absolute: x.absolute,
+                            relative: x.relative,
+                            is_enabled: x.selected,
+                          })),
 
-              // Refetch game so we get the updated values.
-              await refetch()
-            })}
-            resetForm={() => {
-              formApi.reset()
+                          use_custom_config: values.useCustomConfig,
+                        },
+                      },
+                    })
+
+                    // Refetch game so we get the updated values.
+                    await refetch()
+                  })}
+                  resetForm={() => {
+                    formApi.reset()
+                  }}
+                />
+              )
             }}
-          />
+          </GameFileListContext.Consumer>
         </DialogActions>
       </GameFileListProvider>
     </FormProvider>

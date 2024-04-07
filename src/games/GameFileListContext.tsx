@@ -23,7 +23,8 @@ export interface GameFileListContextType {
   setEnabled: (relativePath: string, isEnabled: boolean) => void
 }
 
-const GameFileListContext = createContext<GameFileListContextType | null>(null)
+export const GameFileListContext =
+  createContext<GameFileListContextType | null>(null)
 
 export function useGameFileListContext() {
   const context = useContext(GameFileListContext)
