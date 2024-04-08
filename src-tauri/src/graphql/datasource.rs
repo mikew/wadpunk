@@ -182,12 +182,17 @@ impl DataSource {
     source_port: String,
     use_custom_config: Option<bool>,
   ) -> GraphQLResult<bool> {
+    let db_source_port = database::find_source_port_by_id(source_port);
+    let db_source_port_command = db_source_port.command.unwrap();
+    let main_exe = db_source_port_command.first().unwrap().clone();
+    let base_args = &db_source_port_command[1..];
+
     // If running on macOS, check if the `${source_port}/Contents/Info.plist`
     // exists.
     // If it does, we need to get `CFBundleExecutable` from it and run
     // `${source_port}/Contents/MacOS/${CFBundleExecutable}`
-    let source_port = if cfg!(target_os = "macos") {
-      let plist_path = Path::new(&source_port).join("Contents").join("Info.plist");
+    let main_exe = if cfg!(target_os = "macos") {
+      let plist_path = Path::new(&main_exe).join("Contents").join("Info.plist");
 
       if plist_path.exists() {
         let info_plist = plist::Value::from_file(&plist_path).unwrap();
@@ -206,17 +211,14 @@ impl DataSource {
           .unwrap()
           .to_string()
       } else {
-        source_port
+        main_exe
       }
     } else {
-      source_port
+      main_exe
     };
 
-    let mut command = Command::new(source_port);
-    let mut play_session = DbPlaySessionEntry {
-      started_at: Some(Utc::now().to_rfc3339()),
-      ended_at: None,
-    };
+    let mut command = Command::new(main_exe);
+    command.args(base_args);
 
     if let Some(valid_iwad) = iwad {
       command.args(["-iwad", &valid_iwad]);
@@ -269,6 +271,11 @@ impl DataSource {
         .to_str()
         .unwrap(),
     ]);
+
+    let mut play_session = DbPlaySessionEntry {
+      started_at: Some(Utc::now().to_rfc3339()),
+      ended_at: None,
+    };
 
     let exit_status = command.status().unwrap();
 
