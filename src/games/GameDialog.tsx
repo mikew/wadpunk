@@ -498,10 +498,9 @@ const GameDialogActions: React.FC<{
       </Button>
 
       <Button
-        onClick={(event) => {
-          props.submitForm(event).then(() => {
-            triggerClose('closeClick')
-          })
+        onClick={async (event) => {
+          await props.submitForm(event)
+          triggerClose('closeClick')
         }}
       >
         Save
