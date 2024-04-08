@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## 0.2.13 (2024-04-08)
+
+
+### Features
+
+* Support command array ([#52](https://github.com/mikew/wadpunk/issues/52)) ([31c6ae6](https://github.com/mikew/wadpunk/commit/31c6ae62e65367525761ea1c8b664fe670500e3f))
+
 ## 0.2.12 (2024-04-07)
 
 
