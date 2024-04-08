@@ -484,7 +484,6 @@ const GameDialogActions: React.FC<{
   const { files: allFiles } = useGameFileListContext()
   const triggerClose = useDelayedOnCloseDialogTriggerClose()
   const formState = useFormState()
-  const { findSourcePortById } = useAllSourcePorts()
 
   return (
     <>
@@ -498,9 +497,10 @@ const GameDialogActions: React.FC<{
       </Button>
 
       <Button
-        onClick={async (event) => {
-          await props.submitForm(event)
-          triggerClose('closeClick')
+        onClick={(event) => {
+          props.submitForm(event).then(() => {
+            triggerClose('closeClick')
+          })
         }}
       >
         Save
@@ -512,22 +512,11 @@ const GameDialogActions: React.FC<{
           try {
             await props.submitForm(event)
 
-            const sourcePort = findSourcePortById(props.game.source_port)
-
-            if (!sourcePort) {
+            if (!props.game.source_port) {
               enqueueSnackbar(
                 `Could not find source port with id "${props.game.source_port}"`,
                 { variant: 'error' },
               )
-              return
-            }
-
-            const firstCommand = sourcePort.command[0]
-
-            if (!firstCommand) {
-              enqueueSnackbar(`Source port "${sourcePort.id}" has no command`, {
-                variant: 'error',
-              })
               return
             }
 
@@ -549,7 +538,7 @@ const GameDialogActions: React.FC<{
             const startGameResponse = await startGameMutation({
               variables: {
                 game_id: props.game.id,
-                source_port: firstCommand,
+                source_port: props.game.source_port,
                 iwad,
                 files,
                 use_custom_config: props.game.use_custom_config,
