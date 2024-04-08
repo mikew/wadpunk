@@ -522,15 +522,6 @@ const GameDialogActions: React.FC<{
               return
             }
 
-            const firstCommand = sourcePort.command[0]
-
-            if (!firstCommand) {
-              enqueueSnackbar(`Source port "${sourcePort.id}" has no command`, {
-                variant: 'error',
-              })
-              return
-            }
-
             const files: string[] = []
             let iwad: string | undefined = undefined
 
@@ -549,7 +540,7 @@ const GameDialogActions: React.FC<{
             const startGameResponse = await startGameMutation({
               variables: {
                 game_id: props.game.id,
-                source_port: firstCommand,
+                source_port: sourcePort.id,
                 iwad,
                 files,
                 use_custom_config: props.game.use_custom_config,
