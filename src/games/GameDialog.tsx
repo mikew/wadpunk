@@ -484,6 +484,7 @@ const GameDialogActions: React.FC<{
   const { files: allFiles } = useGameFileListContext()
   const triggerClose = useDelayedOnCloseDialogTriggerClose()
   const formState = useFormState()
+  const { findSourcePortById } = useAllSourcePorts()
 
   return (
     <>
@@ -512,7 +513,9 @@ const GameDialogActions: React.FC<{
           try {
             await props.submitForm(event)
 
-            if (!props.game.source_port) {
+            const sourcePort = findSourcePortById(props.game.source_port)
+
+            if (!sourcePort) {
               enqueueSnackbar(
                 `Could not find source port with id "${props.game.source_port}"`,
                 { variant: 'error' },
@@ -538,7 +541,7 @@ const GameDialogActions: React.FC<{
             const startGameResponse = await startGameMutation({
               variables: {
                 game_id: props.game.id,
-                source_port: props.game.source_port,
+                source_port: sourcePort.id,
                 iwad,
                 files,
                 use_custom_config: props.game.use_custom_config,
