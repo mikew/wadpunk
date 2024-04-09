@@ -31,3 +31,5 @@ dist-ssr
 /src/graphql/operations.ts
 /graphql-schema.json
 *.rs.temp
+
+vcpkg_installed/
