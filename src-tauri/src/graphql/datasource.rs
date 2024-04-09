@@ -18,6 +18,7 @@ use crate::database::DbPlaySessionEntry;
 use crate::database::DbPreviousFileStateItem;
 use crate::database::DbSourcePort;
 use crate::graphql::generated::AppInfo;
+use crate::importer;
 use crate::tauri_helpers::reveal_in_finder::reveal_file_or_folder;
 
 use super::generated::AppSettings;
@@ -470,6 +471,17 @@ impl DataSource {
     id: String,
   ) -> GraphQLResult<bool> {
     database::delete_source_port(&id);
+
+    Ok(true)
+  }
+
+  pub async fn Mutation_importFile(
+    &self,
+    _root: &Mutation,
+    _ctx: &Context<'_>,
+    file_path: String,
+  ) -> GraphQLResult<bool> {
+    importer::import_file(&file_path);
 
     Ok(true)
   }

@@ -124,4 +124,6 @@ type Mutation {
   createSourcePort(source_port: CreateSourcePortInput!): SourcePort!
   updateSourcePort(source_port: UpdateSourcePortInput!): SourcePort!
   deleteSourcePort(id: ID!): Boolean!
+
+  importFile(file_path: String!): Boolean!
 }
