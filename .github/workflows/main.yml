@@ -69,6 +69,24 @@ jobs:
           brew install libarchive
         shell: bash
 
+      - name: Cache vcpkg installed
+        if: matrix.platform == 'windows-latest'
+        uses: actions/cache@v4
+        with:
+          path: $VCPKG_ROOT/installed
+          key: vcpkg-${{ runner.os }}-${{ runner.arch }}
+        env:
+          VCPKG_ROOT: 'C:\vcpkg'
+
+      - name: Cache vcpkg downloads
+        if: matrix.platform == 'windows-latest'
+        uses: actions/cache@v4
+        with:
+          path: $VCPKG_ROOT/downloads
+          key: vcpkg-${{ runner.os }}-${{ runner.arch }}
+        env:
+          VCPKG_ROOT: 'C:\vcpkg'
+
       # prepare-env: Tauri / rust dependencies.
       - if: matrix.platform == 'windows-latest'
         run: |
@@ -78,7 +96,9 @@ jobs:
           popd
 
           # For compress-tools.
-          vcpkg integrate install; vcpkg install
+          vcpkg integrate install
+          vcpkg install
+          ls -l vcpkg_installed/x64-windows/lib/
         env:
           VCPKG_ROOT: 'C:\vcpkg'
         shell: bash
@@ -112,6 +132,7 @@ jobs:
         env:
           TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
           TAURI_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
+          VCPKG_ROOT: 'C:\vcpkg'
 
       - uses: actions/upload-artifact@v4
         with:
