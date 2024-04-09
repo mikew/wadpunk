@@ -9,8 +9,6 @@ use fs_extra::{copy_items, dir::CopyOptions};
 use crate::database;
 
 pub fn import_file(file: &str) {
-  println!("Importing file: {}", file);
-
   let lowercase = file.to_lowercase();
 
   if lowercase.ends_with(".zip")
@@ -21,15 +19,12 @@ pub fn import_file(file: &str) {
     || lowercase.ends_with(".xz")
     || lowercase.ends_with(".zst")
   {
-    println!("Archive detected ...");
     extract_archive_to_games_directory(file);
   } else {
     let file_path = Path::new(file);
     let games_directory = database::get_games_directory();
 
     let destination = games_directory.join(file_path.file_name().unwrap());
-
-    println!("Moving file to: {:?}", destination);
 
     let mut copy_options = CopyOptions::new();
     copy_options.overwrite = true;

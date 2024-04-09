@@ -24,7 +24,7 @@ const ImportDropZone: React.FC<React.PropsWithChildren> = (props) => {
   const [currentImportStatus, setCurrentImportStatus] = useState<
     ImportStatus | undefined
   >()
-  const [wut] = useMutation(ImportFileDocument)
+  const [importFile] = useMutation(ImportFileDocument)
 
   const tauriFileDrop = useTauriFileDrop(async (event) => {
     let i = 0
@@ -36,7 +36,7 @@ const ImportDropZone: React.FC<React.PropsWithChildren> = (props) => {
         status: 'importing',
       })
 
-      await wut({ variables: { file_path: file } })
+      await importFile({ variables: { file_path: file } })
 
       i++
     }
