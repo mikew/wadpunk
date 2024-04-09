@@ -4,6 +4,7 @@ import type { PropsWithChildren } from 'react'
 import { Suspense, useEffect, useState } from 'react'
 
 import GameList from '#src/games/GameList'
+import ImportDropZone from '#src/games/ImportDropZone'
 import { InitializeAppDocument } from '#src/graphql/operations'
 import type { SuspenseWrappedPromise } from '#src/lib/wrapPromiseForSuspense'
 import { wrapPromiseForSuspense } from '#src/lib/wrapPromiseForSuspense'
@@ -21,7 +22,10 @@ function App() {
       }
     >
       <Initializer>
-        <GameList />
+        <ImportDropZone>
+          <GameList />
+        </ImportDropZone>
+
         <SourcePortsDialog />
         <UpdateNotifier />
       </Initializer>
