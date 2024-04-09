@@ -50,11 +50,32 @@ jobs:
       # prepare-env: Setup rust.
       - uses: dtolnay/rust-toolchain@stable
 
-      # prepare-env: Tauri deps for linux.
+      # prepare-env: Tauri / rust dependencies.
       - if: matrix.platform == 'ubuntu-20.04'
         run: |
+          # For tauri.
           sudo apt-get update
           sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.0-dev libappindicator3-dev librsvg2-dev patchelf
+
+          # For compress-tools.
+          sudo apt-get install libarchive-dev
+        shell: bash
+
+      # prepare-env: Tauri / rust dependencies.
+      - if: matrix.platform == 'macos-latest'
+        run: |
+          # For compress-tools.
+          brew install pkgconfig
+          brew install libarchive
+        shell: bash
+
+      # prepare-env: Tauri / rust dependencies.
+      - if: matrix.platform == 'windows-latest'
+        run: |
+          # For compress-tools.
+          vcpkg integrate install; vcpkg install libarchive
+        env:
+          VCPKG_ROOT: 'C:\vcpkg'
         shell: bash
 
       - uses: actions/cache@v4
