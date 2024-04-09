@@ -73,7 +73,7 @@ jobs:
       - if: matrix.platform == 'windows-latest'
         run: |
           # For compress-tools.
-          vcpkg integrate install; vcpkg install libarchive
+          vcpkg integrate install; vcpkg install
         env:
           VCPKG_ROOT: 'C:\vcpkg'
         shell: bash
