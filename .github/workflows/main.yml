@@ -72,6 +72,11 @@ jobs:
       # prepare-env: Tauri / rust dependencies.
       - if: matrix.platform == 'windows-latest'
         run: |
+          VCPKG_BASELINE=$(cat vcpkg.json | jq --raw-output '."builtin-baseline"')
+          pushd "$VCPKG_ROOT"
+          git fetch origin "$VCPKG_BASELINE"
+          popd
+
           # For compress-tools.
           vcpkg integrate install; vcpkg install
         env:
