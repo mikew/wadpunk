@@ -6,6 +6,7 @@ use graphql::datasource::DataSource;
 
 mod database;
 mod graphql;
+mod importer;
 mod tauri_commands;
 mod tauri_helpers;
 

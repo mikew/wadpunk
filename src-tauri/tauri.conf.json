@@ -15,11 +15,7 @@
   "tauri": {
     "allowlist": {
       "shell": {
-        "all": false,
-        "open": ".*"
-      },
-      "dialog": {
-        "open": true
+        "sidecar": true
       },
       "process": {
         "relaunch": true,
@@ -35,7 +31,8 @@
         "icons/128x128@2x.png",
         "icons/icon.icns",
         "icons/icon.ico"
-      ]
+      ],
+      "externalBin": ["./sidecar/7zip/7za"]
     },
 
     "updater": {

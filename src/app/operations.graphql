@@ -8,3 +8,7 @@ query getAppInfo {
     version
   }
 }
+
+mutation importFile($file_path: String!) {
+  importFile(file_path: $file_path)
+}
