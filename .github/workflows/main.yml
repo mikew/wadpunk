@@ -50,7 +50,7 @@ jobs:
       # prepare-env: Setup rust.
       - uses: dtolnay/rust-toolchain@stable
 
-      # prepare-env: Tauri / rust dependencies.
+      # prepare-env: Tauri deps for linux.
       - if: matrix.platform == 'ubuntu-20.04'
         run: |
           # For tauri.

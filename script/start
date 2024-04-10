@@ -3,10 +3,6 @@ set -ex
 
 ./script/prepare-env
 
-if [ "$(uname -s)" = "Darwin" ]; then
-  export PKG_CONFIG_PATH="$(dirname "$(brew ls libarchive | grep .pc$)"):$PKG_CONFIG_PATH"
-fi
-
 ./node_modules/.bin/concurrently \
   'GRAPHQL_CODEGEN_MODE=server ./node_modules/.bin/nodemon --watch ./schema.graphql --exec ./node_modules/.bin/graphql-codegen' \
   'GRAPHQL_CODEGEN_MODE=client ./node_modules/.bin/nodemon --watch ./src --ext graphql --exec ./node_modules/.bin/graphql-codegen' \
