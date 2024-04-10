@@ -180,7 +180,7 @@ const GameDialogFileList: React.FC<GameDialogFileListProps> = (props) => {
             event.over ? x.id === event.over.id : false,
           )
 
-          if (oldIndex && newIndex) {
+          if (oldIndex !== -1 && newIndex !== -1) {
             const newValue = arrayMove(files, oldIndex, newIndex)
             setFiles(newValue)
           }
