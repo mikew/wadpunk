@@ -53,7 +53,6 @@ jobs:
       # prepare-env: Tauri deps for linux.
       - if: matrix.platform == 'ubuntu-20.04'
         run: |
-          # For tauri.
           sudo apt-get update
           sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.0-dev libappindicator3-dev librsvg2-dev patchelf
         shell: bash

@@ -1,10 +1,6 @@
 #!/usr/bin/env bash
 set -ex
 
-if [ "$(uname -s)" = "Darwin" ]; then
-  export PKG_CONFIG_PATH="$(dirname "$(brew ls libarchive | grep .pc$)"):$PKG_CONFIG_PATH"
-fi
-
 rm -rf src-tauri/target/release/bundle
 
 ./script/prepare-env
