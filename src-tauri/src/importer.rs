@@ -3,8 +3,8 @@ use std::{
   path::Path,
 };
 
-use compress_tools::{uncompress_archive, Ownership};
 use fs_extra::{copy_items, dir::CopyOptions};
+use tauri::api::process::Command;
 
 use crate::database;
 
@@ -21,11 +21,6 @@ pub fn import_file(file: &str) {
   {
     extract_archive_to_games_directory(file);
   } else {
-    let file_path = Path::new(file);
-    let games_directory = database::get_games_directory();
-
-    let destination = games_directory.join(file_path.file_name().unwrap());
-
     let mut copy_options = CopyOptions::new();
     copy_options.overwrite = true;
 
@@ -34,7 +29,6 @@ pub fn import_file(file: &str) {
 }
 
 pub fn extract_archive_to_games_directory(file: &str) {
-  let source = File::open(file).unwrap();
   let games_directory = database::get_games_directory();
 
   // Get basename of source without extension.
@@ -46,5 +40,14 @@ pub fn extract_archive_to_games_directory(file: &str) {
 
   create_dir_all(&destination).unwrap();
 
-  uncompress_archive(source, &destination, Ownership::Ignore).unwrap();
+  Command::new_sidecar("7za")
+    .unwrap()
+    .args([
+      "x",
+      "-aoa",
+      &format!("-o{}", destination.to_str().unwrap()),
+      file,
+    ])
+    .status()
+    .unwrap();
 }
