@@ -7,6 +7,7 @@ query getGameListQuery {
     tags
     rating
     iwad_id
+    installed_at
 
     play_sessions {
       duration

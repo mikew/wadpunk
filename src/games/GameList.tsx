@@ -164,6 +164,13 @@ const GameList: React.FC = () => {
         )
       }
 
+      if (sortKey === 'installedAt') {
+        const valueA = new Date(a.installed_at)
+        const valueB = new Date(b.installed_at)
+
+        return valueA.valueOf() - valueB.valueOf()
+      }
+
       return 0
     })
 
@@ -290,6 +297,7 @@ const GameList: React.FC = () => {
             <MenuItem value="rating:desc">Rating</MenuItem>
             <MenuItem value="playTime:desc">Play Time</MenuItem>
             <MenuItem value="lastPlayed:desc">Last Played</MenuItem>
+            <MenuItem value="installedAt:desc">Date Installed</MenuItem>
           </TextField>
 
           <div>
