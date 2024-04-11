@@ -1,39 +1,35 @@
 # WADPunk
 
-A wad organizer / GZDoom launcher inspired by [Doom Launcher](https://github.com/nstlaurent/DoomLauncher)
+[Download the latest release](https://github.com/mikew/wadpunk/releases/latest).
+
+WADPunk is a cross-platform app to help you manage your WAD library and launch
+Source Ports like GZDoom.
 
 ![](https://raw.githubusercontent.com/mikew/wadpunk/readme-resources/src/game%20list.png)
 
 | ![](https://raw.githubusercontent.com/mikew/wadpunk/readme-resources/src/game%20dialog%20cult%20of%20despair.png) | ![](https://raw.githubusercontent.com/mikew/wadpunk/readme-resources/src/game%20dialog%20golden%20souls%202.png) | ![](https://raw.githubusercontent.com/mikew/wadpunk/readme-resources/src/game%20dialog%20doom%202.png) |
 | ----------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
 
-## Installation
-
-[Download the latest release](https://github.com/mikew/wadpunk/releases/latest).
-
-WADPunk will check for updates when starting.
-
-### Getting Started
-
-The app will walk you through downloading GZDoom and Freedom.
-
-The idea is, you put your .wad files in your Games folder. WADPunk will read all
-those files and folders and present them as Games which you launch in a Source
-Port
+The idea is you have a Games folder filled with `.wad` files or folders. WADPunk
+will read everything in that folder and present them as Games which you launch
+in a Source Port.
 
 Games can be tagged with anything you want, and some default tags are included.
 `iwad` is a special tag used so WADPunk knows which IWAD to use when launching
-your game. Anything tagged with that will be presented for you to choose from when launching a game.
+your game. Anything tagged with that will be presented for you to choose from
+when launching a game.
 
 You can then launch those games and:
 
-- Choose from multiple of your source ports.
-- Save files are separated per Game.
-- Optionally use a separate config from all of your other Games.
+- Specify a Source Port.
+- Separate save files.
+- Use a separate config (optional).
 - Easily add other .wads.
 - Choose from any of your IWADs.
 - Drag + drop to sort all files.
-- Supports .deh and .bex files.
+- Specify .deh and .bex files.
+
+WADPunk was inspired by [Doom Launcher](https://github.com/nstlaurent/DoomLauncher).
 
 ## Development
 
