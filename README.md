@@ -12,7 +12,7 @@ Source Ports like GZDoom.
 
 The idea is you have a Games folder filled with `.wad` files or folders. WADPunk
 will read everything in that folder and present them as Games which you launch
-in a Source Port
+in a Source Port.
 
 Games can be tagged with anything you want, and some default tags are included.
 `iwad` is a special tag used so WADPunk knows which IWAD to use when launching
