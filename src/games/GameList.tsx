@@ -294,11 +294,12 @@ const GameList: React.FC = () => {
 
           <div>
             <Button
+              size="small"
               onClick={() => {
                 resetFilter(true)
               }}
             >
-              Reset
+              Clear
             </Button>
           </div>
 

@@ -73,6 +73,7 @@ const UpdateNotifier: React.FC = () => {
       >
         Update
       </Button>
+
       <Button
         size="small"
         color="inherit"
@@ -98,6 +99,7 @@ const UpdateNotifier: React.FC = () => {
           Update available: v{updateManifest?.version}
         </Alert>
       </Snackbar>
+
       <Dialog
         open={isReleaseNotesDialogVisible}
         onClose={() => {
@@ -105,6 +107,7 @@ const UpdateNotifier: React.FC = () => {
         }}
       >
         <DialogTitle>v{updateManifest?.version} Release Notes</DialogTitle>
+
         <DialogContent>
           <div
             // eslint-disable-next-line react/no-danger -- need to render markdown.

@@ -98,9 +98,12 @@ const GameDialogFileList: React.FC<GameDialogFileListProps> = (props) => {
           relative: x.relative,
           selected:
             x.absolute.toLowerCase().endsWith('.wad') ||
+            x.absolute.toLowerCase().endsWith('.iwad') ||
+            x.absolute.toLowerCase().endsWith('.pwad') ||
             x.absolute.toLowerCase().endsWith('.pk3') ||
             x.absolute.toLowerCase().endsWith('.ipk3') ||
-            x.absolute.toLowerCase().endsWith('.iwad'),
+            x.absolute.toLowerCase().endsWith('.deh') ||
+            x.absolute.toLowerCase().endsWith('.bex'),
         }
 
         return entry
@@ -121,9 +124,12 @@ const GameDialogFileList: React.FC<GameDialogFileListProps> = (props) => {
         if (isSelected == null) {
           isSelected =
             x.absolute.toLowerCase().endsWith('.wad') ||
+            x.absolute.toLowerCase().endsWith('.iwad') ||
+            x.absolute.toLowerCase().endsWith('.pwad') ||
             x.absolute.toLowerCase().endsWith('.pk3') ||
             x.absolute.toLowerCase().endsWith('.ipk3') ||
-            x.absolute.toLowerCase().endsWith('.iwad')
+            x.absolute.toLowerCase().endsWith('.deh') ||
+            x.absolute.toLowerCase().endsWith('.bex')
         }
 
         const entry: FileEntry = {
@@ -174,7 +180,7 @@ const GameDialogFileList: React.FC<GameDialogFileListProps> = (props) => {
             event.over ? x.id === event.over.id : false,
           )
 
-          if (oldIndex && newIndex) {
+          if (oldIndex !== -1 && newIndex !== -1) {
             const newValue = arrayMove(files, oldIndex, newIndex)
             setFiles(newValue)
           }
