@@ -15,6 +15,7 @@ type Game {
   play_sessions: [PlaySession!]!
 
   use_custom_config: Boolean!
+  installed_at: String!
 }
 
 type PreviousFileStateItem {

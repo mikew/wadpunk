@@ -1,6 +1,8 @@
 use std::fs;
 use std::vec;
 
+use chrono::TimeZone;
+use chrono::Utc;
 use serde::{Deserialize, Serialize};
 use tauri::api::dir::DiskEntry;
 use tauri::api::{
@@ -84,6 +86,26 @@ pub fn load_game_with_meta(id: &str) -> DbGameMeta {
 
 pub fn load_game_meta(game_id: &str) -> DbGameMeta {
   let json_meta_path = get_meta_directory().join(game_id).join("meta.json");
+
+  if !json_meta_path.exists() {
+    let db_game = DbGameMeta {
+      id: Some(game_id.to_string()),
+      name: Some(normalize_name_from_id(game_id).to_string()),
+      rating: None,
+      description: None,
+      notes: None,
+      tags: None,
+      iwad_id: None,
+      source_port: None,
+      extra_mod_ids: None,
+      previous_file_state: None,
+      use_custom_config: None,
+
+      installed_at: Some(Utc::now().to_rfc3339()),
+    };
+
+    save_game(db_game);
+  }
 
   let json_contents = fs::read_to_string(json_meta_path).unwrap_or("{}".to_string());
 
@@ -207,6 +229,7 @@ pub struct DbGameMeta {
   pub previous_file_state: Option<Vec<DbPreviousFileStateItem>>,
 
   pub use_custom_config: Option<bool>,
+  pub installed_at: Option<String>,
 }
 
 impl DbGameMeta {
@@ -224,6 +247,10 @@ impl DbGameMeta {
       extra_mod_ids: Some(self.extra_mod_ids.clone().unwrap_or_default()),
       // previous_file_state: self.previous_file_state.clone().unwrap_or_default(),
       use_custom_config: self.use_custom_config.unwrap_or_default(),
+      installed_at: self
+        .installed_at
+        .clone()
+        .unwrap_or(Utc.timestamp_opt(0, 0).unwrap().to_rfc3339()),
     }
   }
 }
@@ -258,6 +285,10 @@ fn recurse_disk_entry(dir: DiskEntry, files: &mut Vec<String>) {
       recurse_disk_entry(d, files);
     }
   } else {
+    if dir.name.unwrap().starts_with(".") {
+      return;
+    }
+
     files.push(dir.path.to_str().unwrap().to_string());
   }
 }
