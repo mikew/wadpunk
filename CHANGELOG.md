@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## 0.2.16 (2024-04-11)
+
+
+### Features
+
+* Store `installed_at` ([#57](https://github.com/mikew/wadpunk/issues/57)) ([a7f6a84](https://github.com/mikew/wadpunk/commit/a7f6a842bd7ebab042be8ffec1233487bdd07c59)), closes [#42](https://github.com/mikew/wadpunk/issues/42)
+
 ## 0.2.15 (2024-04-11)
 
 
