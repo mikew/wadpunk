@@ -2,11 +2,10 @@ query getGameListQuery {
   getGames {
     id
     name
-    description
     notes
     tags
     rating
-    iwad_id
+    installed_at
 
     play_sessions {
       duration

@@ -1,7 +1,4 @@
-use std::{
-  fs::{create_dir_all, File},
-  path::Path,
-};
+use std::{fs::create_dir_all, path::Path};
 
 use fs_extra::{copy_items, dir::CopyOptions};
 use tauri::api::process::Command;

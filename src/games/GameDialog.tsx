@@ -530,7 +530,7 @@ const GameDialogActions: React.FC<{
                 continue
               }
 
-              if (fileEntry.isIwad) {
+              if (fileEntry.isIwad && !iwad) {
                 iwad = fileEntry.absolute
               } else {
                 files.push(fileEntry.absolute)
