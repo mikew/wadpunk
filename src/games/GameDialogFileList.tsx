@@ -216,7 +216,6 @@ interface SortableItemProps {
 
 const SortableItem: React.FC<SortableItemProps> = (props) => {
   const theme = useTheme()
-  const canSort = !props.file.isIwad && props.file.selected
   const {
     attributes,
     listeners,
@@ -226,7 +225,6 @@ const SortableItem: React.FC<SortableItemProps> = (props) => {
     isSorting,
   } = useSortable({
     id: props.file.id,
-    disabled: !canSort,
     transition: {
       duration: theme.transitions.duration.shortest,
       easing: theme.transitions.easing.sharp,
@@ -242,7 +240,7 @@ const SortableItem: React.FC<SortableItemProps> = (props) => {
       {...listeners}
       component="div"
       sx={{
-        cursor: isSorting ? 'grabbing' : canSort ? 'grab' : undefined,
+        cursor: isSorting ? 'grabbing' : 'grab',
         transition,
         transform: transform
           ? `translate3d(${transform.x}px, ${transform.y}px, 0)`
