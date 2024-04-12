@@ -18,8 +18,13 @@ jobs:
       fail-fast: false
       matrix:
         platform:
+          # macos-x64
           - macos-latest
+          # macos-aarch64
+          - macos-14
+          # linux-x64
           - ubuntu-20.04
+          # windows-x64
           - windows-latest
 
     runs-on: ${{ matrix.platform }}
