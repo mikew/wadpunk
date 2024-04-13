@@ -14,6 +14,11 @@ pluginOptions.checker = {
 export default defineConfig(async (env) => {
   const config = await viteConfig(env)
 
+  config.build = {
+    ...config.build,
+    sourcemap: false,
+  }
+
   config.plugins?.unshift(
     muteWarnings({
       warningsToIgnore: [

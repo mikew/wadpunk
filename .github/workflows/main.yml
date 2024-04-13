@@ -18,8 +18,13 @@ jobs:
       fail-fast: false
       matrix:
         platform:
+          # macos-x64
           - macos-latest
+          # macos-aarch64
+          - macos-14
+          # linux-x64
           - ubuntu-20.04
+          # windows-x64
           - windows-latest
 
     runs-on: ${{ matrix.platform }}
@@ -86,6 +91,9 @@ jobs:
         env:
           TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
           TAURI_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
+          APPLE_SIGNING_IDENTITY: ${{ secrets.APPLE_SIGNING_IDENTITY }}
+          APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
+          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
 
       - uses: actions/upload-artifact@v4
         with:
@@ -128,6 +136,7 @@ jobs:
           mkdir -p src-tauri/target/release/bundle
           mv wadpunk-windows-latest-X64/* src-tauri/target/release/bundle
           mv wadpunk-macos-latest-X64/* src-tauri/target/release/bundle
+          mv wadpunk-macos-latest-ARM64/* src-tauri/target/release/bundle
           mv wadpunk-ubuntu-20.04-X64/* src-tauri/target/release/bundle
         shell: bash
         if: endsWith(github.ref, '/main')

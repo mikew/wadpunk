@@ -57,15 +57,14 @@ const updaterData = {
   notes: releaseData.body,
   pub_date: releaseData.createdAt,
   platforms: {
-    // TODO Native Apple Silicon builds.
     ...generateTauriUpdaterPlatform(
       'darwin-aarch64',
-      (signaturePath) => signaturePath.endsWith('x86_64.app.tar.gz.sig'),
-      (asset) => asset.name.endsWith('-x86_64.app.tar.gz'),
+      (signaturePath) => signaturePath.endsWith('-aarch64.app.tar.gz.sig'),
+      (asset) => asset.name.endsWith('-aarch64.app.tar.gz'),
     ),
     ...generateTauriUpdaterPlatform(
       'darwin-x86_64',
-      (signaturePath) => signaturePath.endsWith('x86_64.app.tar.gz.sig'),
+      (signaturePath) => signaturePath.endsWith('-x86_64.app.tar.gz.sig'),
       (asset) => asset.name.endsWith('-x86_64.app.tar.gz'),
     ),
 
