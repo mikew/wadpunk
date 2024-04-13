@@ -136,7 +136,7 @@ jobs:
           mkdir -p src-tauri/target/release/bundle
           mv wadpunk-windows-latest-X64/* src-tauri/target/release/bundle
           mv wadpunk-macos-latest-X64/* src-tauri/target/release/bundle
-          mv wadpunk-macos-latest-ARM64/* src-tauri/target/release/bundle
+          mv wadpunk-macos-14-ARM64/* src-tauri/target/release/bundle
           mv wadpunk-ubuntu-20.04-X64/* src-tauri/target/release/bundle
         shell: bash
         if: endsWith(github.ref, '/main')
