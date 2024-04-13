@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## 1.2.0 (2024-04-13)
+
+
+### Features
+
+* fix ci ([214e740](https://github.com/mikew/wadpunk/commit/214e740b2759c558d04bb7cf533da32e2680b0a9))
+
 ## 1.1.0 (2024-04-11)
 
 
