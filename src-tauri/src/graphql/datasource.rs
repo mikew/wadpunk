@@ -388,28 +388,44 @@ impl DataSource {
     game: GameInput,
   ) -> GraphQLResult<Game> {
     if let Some(mut db_game) = database::find_game_by_id(&game.id) {
-      db_game.rating = game.rating;
-      db_game.description = game.description;
-      db_game.notes = game.notes;
-      db_game.tags = game.tags;
+      if let Some(rating) = game.rating {
+        db_game.rating = Some(rating);
+      }
+      if let Some(description) = game.description {
+        db_game.description = Some(description);
+      }
+      if let Some(notes) = game.notes {
+        db_game.notes = Some(notes);
+      }
+      if let Some(tags) = game.tags {
+        db_game.tags = Some(tags);
+      }
 
-      db_game.source_port = game.source_port;
-      db_game.iwad_id = game.iwad_id;
-      db_game.extra_mod_ids = game.extra_mod_ids;
+      if let Some(source_port) = game.source_port {
+        db_game.source_port = Some(source_port);
+      }
+      if let Some(iwad_id) = game.iwad_id {
+        db_game.iwad_id = Some(iwad_id);
+      }
+      if let Some(extra_mod_ids) = game.extra_mod_ids {
+        db_game.extra_mod_ids = Some(extra_mod_ids);
+      }
 
-      db_game.use_custom_config = game.use_custom_config;
-      db_game.previous_file_state = Some(
-        game
-          .previous_file_state
-          .into_iter()
-          .flatten()
-          .map(|x| DbPreviousFileStateItem {
-            is_enabled: x.is_enabled,
-            relative: x.relative,
-            absolute: x.absolute,
-          })
-          .collect(),
-      );
+      if let Some(use_custom_config) = game.use_custom_config {
+        db_game.use_custom_config = Some(use_custom_config);
+      }
+      if let Some(previous_file_state) = game.previous_file_state {
+        db_game.previous_file_state = Some(
+          previous_file_state
+            .into_iter()
+            .map(|x| DbPreviousFileStateItem {
+              is_enabled: x.is_enabled,
+              relative: x.relative,
+              absolute: x.absolute,
+            })
+            .collect(),
+        );
+      }
 
       database::save_game(db_game.clone());
 

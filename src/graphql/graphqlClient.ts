@@ -30,6 +30,10 @@ export const invalidateApolloQuery = (queryNames: (keyof Query)[]) => {
 
 export const invalidateApolloCache = () => {
   apolloCache.reset()
+
+  // See note towards the end of
+  // https://www.apollographql.com/docs/react/caching/garbage-collection/#cacheevict
+  apolloCache.gc()
 }
 
 export default graphqlClient

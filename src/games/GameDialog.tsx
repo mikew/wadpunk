@@ -49,6 +49,7 @@ import DelayedOnCloseDialog, {
   useDelayedOnCloseDialogTriggerClose,
 } from '#src/mui/DelayedOnCloseDialog'
 import ReactHookFormTextField from '#src/react-hook-form/ReactHookFormTextField'
+import { useRootDispatch, useRootSelector } from '#src/redux/helpers'
 import useAllSourcePorts from '#src/sourcePorts/useAllSourcePorts'
 
 import GameDialogFileList from './GameDialogFileList'
@@ -57,8 +58,9 @@ import {
   GameFileListProvider,
   useGameFileListContext,
 } from './GameFileListContext'
-import type { GameListGame } from './GameList'
 import isIwad from './isIwad'
+import { actions } from './redux'
+import type { GameDialogGame, GameListGame } from './types'
 import useAllTags from './useAllTags'
 
 export interface GameDialogFormValues {
@@ -72,17 +74,20 @@ export interface GameDialogFormValues {
   useCustomConfig: Game['use_custom_config']
 }
 
-interface GameDialogProps {
-  gameId: Game['id']
-  open: boolean
-  onClose: (event: unknown, reason: string) => void
-}
+export const GameDialogSuspense: React.FC = () => {
+  const selectedId = useRootSelector((state) => state.games.selectedId)
+  const dispatch = useRootDispatch()
 
-const GameDialog: React.FC<GameDialogProps> = (props) => {
+  const isOpen = !!selectedId
+
+  const onClose = () => {
+    dispatch(actions.setSelectedId(undefined))
+  }
+
   return (
     <Suspense
       fallback={
-        <Dialog open={props.open}>
+        <Dialog open={isOpen}>
           <DialogContent>
             <Box padding={4} justifyContent="center">
               <CircularProgress />
@@ -91,21 +96,17 @@ const GameDialog: React.FC<GameDialogProps> = (props) => {
         </Dialog>
       }
     >
-      <DelayedOnCloseDialog
-        open={props.open}
-        onClose={props.onClose}
-        maxWidth="lg"
-        fullWidth
-      >
-        <GameDialogInner gameId={props.gameId} onClose={props.onClose} />
-      </DelayedOnCloseDialog>
+      {selectedId ? (
+        <GameDialog open={isOpen} gameId={selectedId} onClose={onClose} />
+      ) : undefined}
     </Suspense>
   )
 }
 
-const GameDialogInner: React.FC<{
-  gameId: GameDialogProps['gameId']
-  onClose: GameDialogProps['onClose']
+const GameDialog: React.FC<{
+  open: boolean
+  gameId: Game['id']
+  onClose: () => void
 }> = (props) => {
   const allTags = useAllTags(true)
   const {
@@ -169,100 +170,108 @@ const GameDialogInner: React.FC<{
     : 'All games require an IWAD.'
 
   return (
-    <FormProvider {...formApi}>
-      <GameFileListProvider>
-        <DialogTitle>
-          <Stack
-            direction="row"
-            alignItems="flex-start"
-            justifyContent="space-between"
-          >
-            <div>
-              {fullGame.name}
+    <DelayedOnCloseDialog
+      open={props.open}
+      onClose={props.onClose}
+      maxWidth="lg"
+      fullWidth
+    >
+      <FormProvider {...formApi}>
+        <GameFileListProvider>
+          <DialogTitle>
+            <Stack
+              direction="row"
+              alignItems="flex-start"
+              justifyContent="space-between"
+            >
+              <div>
+                {fullGame.name}
 
-              <Controller
-                name="rating"
-                render={(renderProps) => {
-                  return (
-                    <StarRating
-                      value={renderProps.field.value}
-                      onChange={(value) => {
-                        if (renderProps.formState.isSubmitting) {
-                          return
-                        }
+                <Controller
+                  name="rating"
+                  render={(renderProps) => {
+                    return (
+                      <StarRating
+                        value={renderProps.field.value}
+                        onChange={(value) => {
+                          if (renderProps.formState.isSubmitting) {
+                            return
+                          }
 
-                        renderProps.field.onChange(value)
-                      }}
-                    />
-                  )
-                }}
-              />
-            </div>
-            <div>
-              <DelayedOnCloseDialogCloseIcon edge="end" />
-            </div>
-          </Stack>
-        </DialogTitle>
-
-        <DialogContent>
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={6}>
-              <Typography>{fullGame.description}</Typography>
-
-              <ReactHookFormTextField
-                name="sourcePort"
-                label="Source Port"
-                select
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <Terminal />
-                    </InputAdornment>
-                  ),
-                }}
-              >
-                <MenuItem value={'-1'}>
-                  <em>Default ({defaultSourcePort?.id})</em>
-                </MenuItem>
-
-                {sourcePorts.map((x) => {
-                  return (
-                    <MenuItem key={x.id} value={x.id}>
-                      {x.id}
-                    </MenuItem>
-                  )
-                })}
-              </ReactHookFormTextField>
-
-              <Controller
-                name="useCustomConfig"
-                render={({
-                  field: { ref, value, ...field },
-                  fieldState,
-                  formState,
-                }) => {
-                  const isDisabled = formState.isSubmitting
-                  const errorMessage = fieldState.error?.message
-
-                  return (
-                    <>
-                      <FormControlLabel
-                        inputRef={ref}
-                        checked={value}
-                        control={<Checkbox {...field} disabled={isDisabled} />}
-                        label="Use Custom Config"
+                          renderProps.field.onChange(value)
+                        }}
                       />
-                      {errorMessage ? (
-                        <FormHelperText error={fieldState.invalid}>
-                          {errorMessage}
-                        </FormHelperText>
-                      ) : undefined}
-                    </>
-                  )
-                }}
-              />
+                    )
+                  }}
+                />
+              </div>
+              <div>
+                <DelayedOnCloseDialogCloseIcon edge="end" />
+              </div>
+            </Stack>
+          </DialogTitle>
 
-              {/*
+          <DialogContent>
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={6}>
+                <Typography>{fullGame.description}</Typography>
+
+                <ReactHookFormTextField
+                  name="sourcePort"
+                  label="Source Port"
+                  select
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Terminal />
+                      </InputAdornment>
+                    ),
+                  }}
+                >
+                  <MenuItem value={'-1'}>
+                    <em>Default ({defaultSourcePort?.id})</em>
+                  </MenuItem>
+
+                  {sourcePorts.map((x) => {
+                    return (
+                      <MenuItem key={x.id} value={x.id}>
+                        {x.id}
+                      </MenuItem>
+                    )
+                  })}
+                </ReactHookFormTextField>
+
+                <Controller
+                  name="useCustomConfig"
+                  render={({
+                    field: { ref, value, ...field },
+                    fieldState,
+                    formState,
+                  }) => {
+                    const isDisabled = formState.isSubmitting
+                    const errorMessage = fieldState.error?.message
+
+                    return (
+                      <>
+                        <FormControlLabel
+                          inputRef={ref}
+                          checked={value}
+                          control={
+                            <Checkbox {...field} disabled={isDisabled} />
+                          }
+                          label="Use Custom Config"
+                        />
+                        {errorMessage ? (
+                          <FormHelperText error={fieldState.invalid}>
+                            {errorMessage}
+                          </FormHelperText>
+                        ) : undefined}
+                      </>
+                    )
+                  }}
+                />
+
+                {/*
                   This field is a little tricky:
 
                   If the game is tagged with `iwad`, it gets disabled and the
@@ -270,213 +279,214 @@ const GameDialogInner: React.FC<{
 
                   That latter part means we can't easily use `ReactHookFormTextField`
                   */}
-              <Controller<GameDialogFormValues, 'iwadId'>
-                name="iwadId"
-                render={({
-                  field: { ref, ...field },
-                  fieldState,
-                  formState,
-                }) => {
-                  const isDisabled = isGameIwad || formState.isSubmitting
-                  const errorMessage = fieldState.error?.message
+                <Controller<GameDialogFormValues, 'iwadId'>
+                  name="iwadId"
+                  render={({
+                    field: { ref, ...field },
+                    fieldState,
+                    formState,
+                  }) => {
+                    const isDisabled = isGameIwad || formState.isSubmitting
+                    const errorMessage = fieldState.error?.message
 
-                  return (
-                    <TextField
-                      {...field}
-                      inputRef={ref}
-                      label="IWAD"
-                      select
-                      disabled={isDisabled}
-                      error={fieldState.invalid}
-                      value={isGameIwad ? fullGame.id : field.value}
-                      helperText={errorMessage || iwadFieldHelperText}
-                      InputProps={{
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <SportsEsports />
-                          </InputAdornment>
-                        ),
-                      }}
-                    >
-                      <MenuItem value="">None</MenuItem>
-
-                      {iwads.map((x) => {
-                        return (
-                          <MenuItem key={x.id} value={x.id}>
-                            {x.name}
-                          </MenuItem>
-                        )
-                      })}
-                    </TextField>
-                  )
-                }}
-              />
-
-              <ReactHookFormTextField
-                name="extraGameIds"
-                select
-                SelectProps={{
-                  multiple: true,
-                }}
-                label="Mods"
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <Extension />
-                    </InputAdornment>
-                  ),
-                }}
-              >
-                {others.map((x) => {
-                  return (
-                    <MenuItem key={x.id} value={x.id}>
-                      {x.name}
-                    </MenuItem>
-                  )
-                })}
-              </ReactHookFormTextField>
-
-              <Controller
-                name="tags"
-                render={({
-                  field: { ref, onChange, ...field },
-                  fieldState,
-                  formState,
-                }) => {
-                  const isDisabled = formState.isSubmitting
-                  const errorMessage = fieldState.error?.message
-
-                  return (
-                    <Autocomplete<string, true, undefined, true>
-                      {...field}
-                      openOnFocus
-                      ChipProps={{ size: 'small' }}
-                      renderInput={(props) => (
-                        <TextField
-                          {...props}
-                          label="Tags"
-                          inputRef={ref}
-                          error={fieldState.invalid}
-                          helperText={
-                            errorMessage ||
-                            'Tag a game with "iwad" to mark it as an IWAD.'
-                          }
-                          InputProps={{
-                            ...props.InputProps,
-                            startAdornment: (
-                              <>
-                                <InputAdornment position="start">
-                                  <Label />
-                                </InputAdornment>
-                                {props.InputProps.startAdornment}
-                              </>
-                            ),
-                          }}
-                          sx={{
-                            '& .MuiInputAdornment-positionStart': {
-                              alignSelf: 'flex-start',
-                            },
-                            '& .MuiInputAdornment-positionStart .MuiSvgIcon-root':
-                              {
-                                marginLeft: '4px',
-                              },
-                          }}
-                        />
-                      )}
-                      disabled={isDisabled}
-                      freeSolo
-                      onChange={(_event, value) => {
-                        onChange(value)
-                      }}
-                      options={allTags}
-                      multiple
-                    />
-                  )
-                }}
-              />
-
-              <ReactHookFormTextField
-                name="notes"
-                label="Notes"
-                multiline
-                minRows={2}
-                maxRows={8}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <Edit sx={{ verticalAlign: 'middle' }} />
-                    </InputAdornment>
-                  ),
-                }}
-                sx={{
-                  '& .MuiInputAdornment-positionStart': {
-                    alignSelf: 'flex-start',
-                  },
-                }}
-              />
-            </Grid>
-
-            <Grid item xs={12} sm={6}>
-              <Suspense fallback={<CircularProgress />}>
-                <GameDialogFileList
-                  previousFileState={fullGame.previous_file_state}
-                />
-              </Suspense>
-            </Grid>
-          </Grid>
-        </DialogContent>
-
-        <DialogActions>
-          <GameFileListContext.Consumer>
-            {(value) => {
-              return (
-                <GameDialogActions
-                  game={fullGame}
-                  submitForm={formApi.handleSubmit(async (values) => {
-                    await updateGame({
-                      variables: {
-                        game: {
-                          id: props.gameId,
-                          rating: values.rating,
-                          // description: values.description,
-                          notes: values.notes,
-                          tags: values.tags,
-
-                          source_port: values.sourcePort,
-                          iwad_id: values.iwadId ? values.iwadId : null,
-                          extra_mod_ids: values.extraGameIds.map((x) =>
-                            typeof x === 'string' ? x : x.id,
+                    return (
+                      <TextField
+                        {...field}
+                        inputRef={ref}
+                        label="IWAD"
+                        select
+                        disabled={isDisabled}
+                        error={fieldState.invalid}
+                        value={isGameIwad ? fullGame.id : field.value}
+                        helperText={errorMessage || iwadFieldHelperText}
+                        InputProps={{
+                          startAdornment: (
+                            <InputAdornment position="start">
+                              <SportsEsports />
+                            </InputAdornment>
                           ),
+                        }}
+                      >
+                        <MenuItem value="">None</MenuItem>
 
-                          previous_file_state: value?.files.map((x) => ({
-                            absolute: x.absolute,
-                            relative: x.relative,
-                            is_enabled: x.selected,
-                          })),
-
-                          use_custom_config: values.useCustomConfig,
-                        },
-                      },
-                    })
-
-                    // Refetch game so we get the updated values.
-                    await refetch()
-                  })}
-                  resetForm={() => {
-                    formApi.reset()
+                        {iwads.map((x) => {
+                          return (
+                            <MenuItem key={x.id} value={x.id}>
+                              {x.name}
+                            </MenuItem>
+                          )
+                        })}
+                      </TextField>
+                    )
                   }}
                 />
-              )
-            }}
-          </GameFileListContext.Consumer>
-        </DialogActions>
-      </GameFileListProvider>
-    </FormProvider>
+
+                <ReactHookFormTextField
+                  name="extraGameIds"
+                  select
+                  SelectProps={{
+                    multiple: true,
+                  }}
+                  label="Mods"
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Extension />
+                      </InputAdornment>
+                    ),
+                  }}
+                >
+                  {others.map((x) => {
+                    return (
+                      <MenuItem key={x.id} value={x.id}>
+                        {x.name}
+                      </MenuItem>
+                    )
+                  })}
+                </ReactHookFormTextField>
+
+                <Controller
+                  name="tags"
+                  render={({
+                    field: { ref, onChange, ...field },
+                    fieldState,
+                    formState,
+                  }) => {
+                    const isDisabled = formState.isSubmitting
+                    const errorMessage = fieldState.error?.message
+
+                    return (
+                      <Autocomplete<string, true, undefined, true>
+                        {...field}
+                        openOnFocus
+                        ChipProps={{ size: 'small' }}
+                        renderInput={(props) => (
+                          <TextField
+                            {...props}
+                            label="Tags"
+                            inputRef={ref}
+                            error={fieldState.invalid}
+                            helperText={
+                              errorMessage ||
+                              'Tag a game with "iwad" to mark it as an IWAD.'
+                            }
+                            InputProps={{
+                              ...props.InputProps,
+                              startAdornment: (
+                                <>
+                                  <InputAdornment position="start">
+                                    <Label />
+                                  </InputAdornment>
+                                  {props.InputProps.startAdornment}
+                                </>
+                              ),
+                            }}
+                            sx={{
+                              '& .MuiInputAdornment-positionStart': {
+                                alignSelf: 'flex-start',
+                              },
+                              '& .MuiInputAdornment-positionStart .MuiSvgIcon-root':
+                                {
+                                  marginLeft: '4px',
+                                },
+                            }}
+                          />
+                        )}
+                        disabled={isDisabled}
+                        freeSolo
+                        onChange={(_event, value) => {
+                          onChange(value)
+                        }}
+                        options={allTags}
+                        multiple
+                      />
+                    )
+                  }}
+                />
+
+                <ReactHookFormTextField
+                  name="notes"
+                  label="Notes"
+                  multiline
+                  minRows={2}
+                  maxRows={8}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Edit sx={{ verticalAlign: 'middle' }} />
+                      </InputAdornment>
+                    ),
+                  }}
+                  sx={{
+                    '& .MuiInputAdornment-positionStart': {
+                      alignSelf: 'flex-start',
+                    },
+                  }}
+                />
+              </Grid>
+
+              <Grid item xs={12} sm={6}>
+                <Suspense fallback={<CircularProgress />}>
+                  <GameDialogFileList
+                    previousFileState={fullGame.previous_file_state}
+                  />
+                </Suspense>
+              </Grid>
+            </Grid>
+          </DialogContent>
+
+          <DialogActions>
+            <GameFileListContext.Consumer>
+              {(value) => {
+                return (
+                  <GameDialogActions
+                    game={fullGame}
+                    submitForm={formApi.handleSubmit(async (values) => {
+                      await updateGame({
+                        variables: {
+                          game: {
+                            id: props.gameId,
+                            rating: values.rating,
+                            // description: values.description,
+                            notes: values.notes,
+                            tags: values.tags,
+
+                            source_port: values.sourcePort,
+                            iwad_id: values.iwadId ? values.iwadId : null,
+                            extra_mod_ids: values.extraGameIds.map((x) =>
+                              typeof x === 'string' ? x : x.id,
+                            ),
+
+                            previous_file_state: value?.files.map((x) => ({
+                              absolute: x.absolute,
+                              relative: x.relative,
+                              is_enabled: x.selected,
+                            })),
+
+                            use_custom_config: values.useCustomConfig,
+                          },
+                        },
+                      })
+
+                      // Refetch game so we get the updated values.
+                      await refetch()
+                    })}
+                    resetForm={() => {
+                      formApi.reset()
+                    }}
+                  />
+                )
+              }}
+            </GameFileListContext.Consumer>
+          </DialogActions>
+        </GameFileListProvider>
+      </FormProvider>
+    </DelayedOnCloseDialog>
   )
 }
 
 const GameDialogActions: React.FC<{
-  game: GetGameDialogFieldsQuery['getGame']
+  game: GameDialogGame
   resetForm: () => void
   submitForm: (event: React.BaseSyntheticEvent) => Promise<void>
 }> = (props) => {
@@ -565,5 +575,3 @@ const GameDialogActions: React.FC<{
     </>
   )
 }
-
-export default GameDialog
