@@ -1,64 +1,28 @@
 import { useMutation, useSuspenseQuery } from '@apollo/client'
-import {
-  ArrowDropDown,
-  ExitToApp,
-  Refresh,
-  Search,
-  Settings,
-  Terminal,
-} from '@mui/icons-material'
 import FolderOpen from '@mui/icons-material/FolderOpen'
 import {
-  AppBar,
-  Box,
-  Button,
   Chip,
-  Divider,
   IconButton,
-  InputAdornment,
   List,
   ListItem,
   ListItemButton,
-  ListItemIcon,
   ListItemText,
-  MenuItem,
   Stack,
-  TextField,
-  Toolbar,
-  Typography,
 } from '@mui/material'
 import useSimpleFilter from '@promoboxx/use-filter/dist/useSimpleFilter'
-import { process } from '@tauri-apps/api'
-import { enqueueSnackbar } from 'notistack'
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 
-import OnboardingAlerts from '#src/app/OnboardingAlerts'
-import { invalidateApolloCache } from '#src/graphql/graphqlClient'
-import type { GetGameListQueryQuery } from '#src/graphql/operations'
+import { AppToolbarPortal } from '#src/app/AppToolbarArea'
+import * as games from '#src/games/redux'
 import {
-  GetAppInfoDocument,
   GetGameListQueryDocument,
-  OpenGamesFolderDocument,
   SetRatingDocument,
 } from '#src/graphql/operations'
 import pathWithoutExtension from '#src/lib/pathWithoutExtension'
 import StarRating from '#src/lib/StarRating'
-import { EasyMenu, EasyMenuItem } from '#src/mui/EasyMenu'
 import { useRootDispatch } from '#src/redux/helpers'
-import actions from '#src/sourcePorts/actions'
 
 import calculateGamePlayTime from './calculateGamePlayTime'
-import GameDialog from './GameDialog'
-
-type ArrayItemType<T> = T extends Array<infer A> ? A : never
-
-export type GameListGame = ArrayItemType<GetGameListQueryQuery['getGames']>
-
-interface GameListFilter {
-  name: string
-  rating: number
-  starRatingMode: 'at_least' | 'equal' | 'at_most'
-}
 import type { GameListFilter } from './GameFilterToolbar'
 import GameFilterToolbar from './GameFilterToolbar'
 import useOpenGamesFolder from './useOpenGamesFolder'
@@ -68,7 +32,7 @@ const GameList: React.FC = () => {
   const dispatch = useRootDispatch()
 
   const [setRating] = useMutation(SetRatingDocument)
-  const { data: appInfoData } = useSuspenseQuery(GetAppInfoDocument)
+  const { openGamesFolder } = useOpenGamesFolder()
 
   const filterApi = useSimpleFilter<GameListFilter>('GameList', {
     defaultFilterInfo: {

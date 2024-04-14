@@ -1,8 +1,9 @@
 import { useMutation } from '@apollo/client'
-import { Box, CircularProgress } from '@mui/material'
+import { AppBar, Box, CircularProgress, Toolbar } from '@mui/material'
 import type { PropsWithChildren } from 'react'
 import { Suspense, useEffect, useState } from 'react'
 
+import { GameDialogSuspense } from '#src/games/GameDialog'
 import GameList from '#src/games/GameList'
 import ImportDropZone from '#src/games/ImportDropZone'
 import { InitializeAppDocument } from '#src/graphql/operations'
@@ -10,6 +11,8 @@ import type { SuspenseWrappedPromise } from '#src/lib/wrapPromiseForSuspense'
 import { wrapPromiseForSuspense } from '#src/lib/wrapPromiseForSuspense'
 import SourcePortsDialog from '#src/sourcePorts/SourcePortsDialog'
 
+import AppCogMenu from './AppCogMenu'
+import { AppToolbarProvider, AppToolbarSlot } from './AppToolbarArea'
 import OnboardingAlerts from './OnboardingAlerts'
 import UpdateNotifier from './UpdateNotifier'
 
