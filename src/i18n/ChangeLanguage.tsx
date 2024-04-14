@@ -1,6 +1,7 @@
-import { ArrowDropDown } from '@mui/icons-material'
-import { Box, Menu, MenuItem } from '@mui/material'
-import { useState } from 'react'
+import { ArrowDropDown, Language } from '@mui/icons-material'
+import { ListItemIcon, MenuItem } from '@mui/material'
+
+import { EasyMenu, EasyMenuItem } from '#src/mui/EasyMenu'
 
 import i18nConfig from './config'
 import { useI18nContext } from './lib/i18nContext'
@@ -8,53 +9,46 @@ import { useI18nContext } from './lib/i18nContext'
 const ChangeLanguage: React.FC = () => {
   const { setLocale, locale, t } = useI18nContext()
 
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
-  const open = Boolean(anchorEl)
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget)
-  }
-  const handleClose = () => {
-    setAnchorEl(null)
-  }
-
   return (
-    <>
-      <Box component="span" sx={{ cursor: 'pointer' }} onClick={handleClick}>
-        {t(`languageSelector.languages.${locale.toLowerCase()}`)}
-        <ArrowDropDown color="inherit" />
-      </Box>
-
-      <Menu
-        open={open}
-        onClose={handleClose}
-        anchorEl={anchorEl}
-        anchorOrigin={{
-          horizontal: 'right',
-          vertical: 'bottom',
-        }}
-        transformOrigin={{
-          horizontal: 'right',
-          vertical: 'top',
-        }}
-      >
-        {i18nConfig.supportedLocales?.map((x) => {
-          return (
-            <MenuItem
-              key={x}
-              component="a"
-              target="_blank"
-              selected={locale === x}
-              onClick={() => {
-                setLocale(x)
-                setAnchorEl(null)
-              }}
-            >
-              {t(`languageSelector.languages.${x.toLowerCase()}`)}
-            </MenuItem>
-          )
-        })}
-      </Menu>
-    </>
+    <EasyMenu
+      renderTrigger={(props) => {
+        return (
+          <MenuItem {...props}>
+            <ListItemIcon>
+              <Language fontSize="small" />
+            </ListItemIcon>
+            {t(`languageSelector.languages.${locale.toLowerCase()}`)}
+            <ArrowDropDown color="inherit" />
+          </MenuItem>
+        )
+      }}
+      id="settings-menu"
+      anchorOrigin={{
+        horizontal: 'left',
+        vertical: 'bottom',
+      }}
+      transformOrigin={{
+        horizontal: 'left',
+        vertical: 'top',
+      }}
+      MenuListProps={{
+        dense: true,
+      }}
+    >
+      {i18nConfig.supportedLocales?.map((x) => {
+        return (
+          <EasyMenuItem
+            key={x}
+            selected={locale === x}
+            onClickDelayed={() => {
+              setLocale(x)
+            }}
+          >
+            {t(`languageSelector.languages.${x.toLowerCase()}`)}
+          </EasyMenuItem>
+        )
+      })}
+    </EasyMenu>
   )
 }
 
