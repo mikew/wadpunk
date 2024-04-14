@@ -1,8 +1,6 @@
-import type { Dict } from 'i18n-js'
+import type { I18nConfig, I18nTranslations } from './lib/types'
 
-import type { I18nConfig } from './lib/types'
-
-const localeMap: Record<string, () => Promise<Dict>> = {
+const localeMap: Record<string, () => Promise<I18nTranslations>> = {
   en: () => import('./translations/en.json').then((m) => m.default),
   fr: () => import('#src/i18n/translations/fr.json').then((m) => m.default),
   de: () => import('#src/i18n/translations/de.json').then((m) => m.default),
