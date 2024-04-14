@@ -171,8 +171,6 @@ const GameList: React.FC = () => {
 
   return (
     <>
-
-      <OnboardingAlerts />
       <AppToolbarPortal portalKey="GameFilterToolbar">
         <GameFilterToolbar filterApi={filterApi} />
       </AppToolbarPortal>

@@ -10,6 +10,7 @@ import type { SuspenseWrappedPromise } from '#src/lib/wrapPromiseForSuspense'
 import { wrapPromiseForSuspense } from '#src/lib/wrapPromiseForSuspense'
 import SourcePortsDialog from '#src/sourcePorts/SourcePortsDialog'
 
+import OnboardingAlerts from './OnboardingAlerts'
 import UpdateNotifier from './UpdateNotifier'
 
 function App() {
@@ -31,6 +32,8 @@ function App() {
                 <AppCogMenu />
               </Toolbar>
             </AppBar>
+
+            <OnboardingAlerts />
 
             <GameList />
           </AppToolbarProvider>
