@@ -1,0 +1,156 @@
+{
+  "shared": {
+    "clear": "Clear",
+    "reset": "Reset",
+    "save": "Save",
+    "close": "Close"
+  },
+
+  "app": {
+    "actions": {
+      "reload": "Reload",
+      "exit": "Exit"
+    },
+
+    "nameAndVersion": "{{name}} v{{version}}"
+  },
+
+  "games": {
+    "actions": {
+      "openGamesFolder": "Open Games Folder",
+      "start": "Play"
+    },
+
+    "filter": {
+      "fields": {
+        "name": {
+          "label": "Filter ..."
+        },
+        "starRatingMode": {
+          "at_least": "At least",
+          "equal": "Exactly",
+          "at_most": "At Most"
+        },
+        "sort": {
+          "label": "Sort by ...",
+          "options": {
+            "name": "Name",
+            "rating": "Rating",
+            "popularity": "Popularity"
+          }
+        }
+      }
+    },
+
+    "fields": {
+      "name": {
+        "label": "Name"
+      },
+      "rating": {
+        "label": "Rating"
+      },
+      "playTime": {
+        "label": "Play Time"
+      },
+      "lastPlayed": {
+        "label": "Last Played"
+      },
+      "installed_at": {
+        "label": "Date Installed"
+      },
+      "sourcePort": {
+        "label": "Source Port"
+      },
+      "iwad": {
+        "label": "IWAD",
+        "helperText": "All games require an IWAD.",
+        "helperTextWhenIwad": "This game will be used as the IWAD."
+      },
+      "extraGames": {
+        "label": "Mods"
+      },
+      "tags": {
+        "label": "Tags",
+        "helperText": "Tag a game with \"iwad\" to mark it as an IWAD."
+      },
+      "notes": {
+        "label": "Notes"
+      },
+      "useCustomConfig": {
+        "label": "Use Custom Config"
+      },
+      "files": {
+        "label": "Files"
+      }
+    },
+
+    "onboarding": {
+      "noGames": {
+        "title": "No games found",
+        "message": "You will need to add some games to your library before you can launch anything. To quickly get started, you can:",
+        "step1": "If you don't have access Doom or Doom II, you can download Freedoom, which aims to provide all the content needed to form a complete game for the Doom engine.",
+        "step2": "Extract Freedoom anywhere.",
+        "step3": "Drag \"freedoom1.wad\" and \"freedoom2.wad\" into this window.",
+        "downloadFreedoom": "Download \"Freedoom: Phase 1+2\""
+      }
+    },
+
+    "notifications": {
+      "startError": "Looks like something went wrong when running",
+      "openGamesFolderError": "Could not open folder"
+    }
+  },
+
+  "sourcePorts": {
+    "title": "Source Ports",
+    "default": "Default ({{sourcePort}})",
+    "addNew": "Add New",
+    "downloadGZDoom": "Download GZDoom",
+
+    "onboarding": {
+      "noSourcePorts": {
+        "title": "No Source Ports found",
+        "message": "Source Ports are what WADPunk launches. You will need to add one before you can play any game."
+      }
+    },
+
+    "actions": {
+      "create": "Create",
+      "addSourcePort": "Add Source Port"
+    },
+
+    "fields": {
+      "id": {
+        "label": "Name"
+      },
+      "command": {
+        "label": "Command"
+      }
+    }
+  },
+
+  "updateNotifier": {
+    "actions": {
+      "relaunch": "Restart",
+      "install": "Update",
+      "viewNotes": "View Notes"
+    },
+
+    "notifications": {
+      "errorInstalling": "Error while installing update: {{error}}",
+      "updateAvailable": "Update available: v{{version}}"
+    },
+
+    "releaseNotes": {
+      "title": "v{{version}} Release Notes"
+    }
+  },
+
+  "languageSelector": {
+    "languages": {
+      "en": "English",
+      "fr": "Francais (French)",
+      "de": "Deutsch (German)"
+    }
+  }
+}
