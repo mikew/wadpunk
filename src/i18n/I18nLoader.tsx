@@ -23,7 +23,7 @@ const I18nLoader: React.FC<React.PropsWithChildren> = (props) => {
     async function run() {
       await prepareSupportedLocales()
       const currentLocale = normalizeLocale(
-        localStorage.getItem(i18nConfig.cookieName),
+        localStorage.getItem(i18nConfig.cookieName) || navigator.languages[0],
       )
       const translations = await i18nConfig.loadTranslations(currentLocale)
 
