@@ -16,6 +16,8 @@ import { parse } from 'marked'
 import { enqueueSnackbar } from 'notistack'
 import { useEffect, useState } from 'react'
 
+import { useI18nContext } from '#src/i18n/lib/i18nContext'
+
 const UpdateNotifier: React.FC = () => {
   const [shouldUpdate, setShouldUpdate] = useState(false)
   const [needsRestart, setNeedsRestart] = useState(false)
@@ -25,6 +27,7 @@ const UpdateNotifier: React.FC = () => {
   const [isReleaseNotesDialogVisible, setIsReleaseNotesDialogVisible] =
     useState(false)
   const [isUpdating, setIsUpdating] = useState(false)
+  const { t } = useI18nContext()
 
   useEffect(() => {
     async function run() {
@@ -48,7 +51,7 @@ const UpdateNotifier: React.FC = () => {
         await relaunch()
       }}
     >
-      Restart
+      {t('updateNotifier.actions.relaunch')}
     </Button>
   ) : (
     <Stack direction="row" spacing={1}>
@@ -63,15 +66,20 @@ const UpdateNotifier: React.FC = () => {
             // await relaunch()
           } catch (err) {
             console.error(err)
-            enqueueSnackbar(`Error while installing update: ${err}`, {
-              variant: 'error',
-            })
+            enqueueSnackbar(
+              t('updateNotifier.notifications.errorInstalling', {
+                error: String(err),
+              }),
+              {
+                variant: 'error',
+              },
+            )
           }
 
           setIsUpdating(false)
         }}
       >
-        Update
+        {t('updateNotifier.actions.install')}
       </Button>
 
       <Button
@@ -81,7 +89,7 @@ const UpdateNotifier: React.FC = () => {
           setIsReleaseNotesDialogVisible(true)
         }}
       >
-        View Notes
+        {t('updateNotifier.actions.viewNotes')}
       </Button>
     </Stack>
   )
@@ -96,7 +104,9 @@ const UpdateNotifier: React.FC = () => {
         }}
       >
         <Alert severity="success" action={action} icon={<Update />}>
-          Update available: v{updateManifest?.version}
+          {t('updateNotifier.notifications.updateAvailable', {
+            version: updateManifest?.version,
+          })}
         </Alert>
       </Snackbar>
 
@@ -106,7 +116,11 @@ const UpdateNotifier: React.FC = () => {
           setIsReleaseNotesDialogVisible(false)
         }}
       >
-        <DialogTitle>v{updateManifest?.version} Release Notes</DialogTitle>
+        <DialogTitle>
+          {t('updateNotifier.releaseNotes.title', {
+            version: updateManifest?.version,
+          })}
+        </DialogTitle>
 
         <DialogContent>
           <div

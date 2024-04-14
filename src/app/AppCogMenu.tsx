@@ -12,6 +12,8 @@ import { process } from '@tauri-apps/api'
 import useOpenGamesFolder from '#src/games/useOpenGamesFolder'
 import { invalidateApolloCache } from '#src/graphql/graphqlClient'
 import { GetAppInfoDocument } from '#src/graphql/operations'
+import ChangeLanguage from '#src/i18n/ChangeLanguage'
+import { useI18nContext } from '#src/i18n/lib/i18nContext'
 import { EasyMenu, EasyMenuItem } from '#src/mui/EasyMenu'
 import { useRootDispatch } from '#src/redux/helpers'
 import actions from '#src/sourcePorts/actions'
@@ -20,6 +22,7 @@ const AppCogMenu: React.FC = () => {
   const { openGamesFolder } = useOpenGamesFolder()
   const dispatch = useRootDispatch()
   const { data: appInfoData } = useSuspenseQuery(GetAppInfoDocument)
+  const { t } = useI18nContext()
 
   return (
     <EasyMenu
@@ -51,7 +54,7 @@ const AppCogMenu: React.FC = () => {
         <ListItemIcon>
           <Terminal fontSize="small" />
         </ListItemIcon>
-        Source Ports
+        {t('sourcePorts.title')}
       </EasyMenuItem>
 
       <EasyMenuItem
@@ -62,7 +65,7 @@ const AppCogMenu: React.FC = () => {
         <ListItemIcon>
           <FolderOpen fontSize="small" />
         </ListItemIcon>
-        Open Games Folder
+        {t('games.actions.openGamesFolder')}
       </EasyMenuItem>
 
       <Divider />
@@ -75,7 +78,7 @@ const AppCogMenu: React.FC = () => {
         <ListItemIcon>
           <Refresh fontSize="small" />
         </ListItemIcon>
-        Reload
+        {t('app.actions.reload')}
       </EasyMenuItem>
 
       <Divider />
@@ -88,13 +91,18 @@ const AppCogMenu: React.FC = () => {
         <ListItemIcon>
           <ExitToApp fontSize="small" />
         </ListItemIcon>
-        Exit
+        {t('app.actions.exit')}
       </EasyMenuItem>
 
       <Divider />
 
+      <ChangeLanguage />
+
       <Typography color="text.secondary" variant="body2" textAlign="center">
-        {appInfoData.getAppInfo.name} v{appInfoData.getAppInfo.version}
+        {t('app.nameAndVersion', {
+          name: appInfoData.getAppInfo.name,
+          version: appInfoData.getAppInfo.version,
+        })}
       </Typography>
     </EasyMenu>
   )

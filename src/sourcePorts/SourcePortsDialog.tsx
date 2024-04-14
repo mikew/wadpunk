@@ -19,6 +19,7 @@ import {
   CreateSourcePortDocument,
   DeleteSourcePortDocument,
 } from '#src/graphql/operations'
+import { useI18nContext } from '#src/i18n/lib/i18nContext'
 import DelayedOnCloseDialog, {
   DelayedOnCloseDialogCloseButton,
 } from '#src/mui/DelayedOnCloseDialog'
@@ -45,6 +46,7 @@ const SourcePortsDialog: React.FC = () => {
       command: '',
     },
   })
+  const { t } = useI18nContext()
 
   return (
     <DelayedOnCloseDialog
@@ -53,7 +55,7 @@ const SourcePortsDialog: React.FC = () => {
         dispatch(actions.toggleDialog())
       }}
     >
-      <DialogTitle>Source Ports</DialogTitle>
+      <DialogTitle>{t('sourcePorts.title')}</DialogTitle>
       <DialogContent>
         {sourcePorts.map((x) => {
           return (
@@ -79,11 +81,11 @@ const SourcePortsDialog: React.FC = () => {
           )
         })}
 
-        <Typography>Add New</Typography>
+        <Typography>{t('sourcePorts.addNew')}</Typography>
         <FormProvider {...formApi}>
           <ReactHookFormTextField
             name="id"
-            label="Name"
+            label={t('sourcePorts.fields.id.label')}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
@@ -94,7 +96,7 @@ const SourcePortsDialog: React.FC = () => {
           />
           <ReactHookFormTextField
             name="command"
-            label="Command"
+            label={t('sourcePorts.fields.command.label')}
             size="small"
             InputProps={{
               startAdornment: (
@@ -123,7 +125,7 @@ const SourcePortsDialog: React.FC = () => {
               formApi.reset()
             })}
           >
-            Create
+            {t('sourcePorts.actions.create')}
           </Button>
         </FormProvider>
       </DialogContent>
@@ -133,10 +135,12 @@ const SourcePortsDialog: React.FC = () => {
           href="https://zdoom.org/downloads"
           target="_blank"
         >
-          Download GZDoom
+          {t('sourcePorts.downloadGZDoom')}
         </Button>
         <Box sx={{ flexGrow: 1 }} />
-        <DelayedOnCloseDialogCloseButton>Close</DelayedOnCloseDialogCloseButton>
+        <DelayedOnCloseDialogCloseButton>
+          {t('shared.close')}
+        </DelayedOnCloseDialogCloseButton>
       </DialogActions>
     </DelayedOnCloseDialog>
   )
