@@ -59,6 +59,8 @@ interface GameListFilter {
   rating: number
   starRatingMode: 'at_least' | 'equal' | 'at_most'
 }
+import type { GameListFilter } from './GameFilterToolbar'
+import GameFilterToolbar from './GameFilterToolbar'
 import useOpenGamesFolder from './useOpenGamesFolder'
 
 const GameList: React.FC = () => {
@@ -69,13 +71,7 @@ const GameList: React.FC = () => {
   const [selectedId, setSelectedId] = useState<GameListGame['id']>()
   const { data: appInfoData } = useSuspenseQuery(GetAppInfoDocument)
 
-  const {
-    debouncedFilterInfo,
-    filterInfo,
-    updateFilter,
-    resetFilter,
-    setSort,
-  } = useSimpleFilter<GameListFilter>('GameList', {
+  const filterApi = useSimpleFilter<GameListFilter>('GameList', {
     defaultFilterInfo: {
       filter: {
         name: '',
@@ -86,6 +82,7 @@ const GameList: React.FC = () => {
     },
   })
 
+  const { debouncedFilterInfo } = filterApi
 
   const filtered = useMemo(() => {
     const filtered = data.getGames.filter((x) => {
@@ -174,134 +171,11 @@ const GameList: React.FC = () => {
 
   return (
     <>
-      <AppBar position="sticky">
-        <Toolbar sx={{ gap: 2 }}>
-          <TextField
-            size="small"
-            margin="none"
-            variant="standard"
-            value={filterInfo.filter.name}
-            label="Filter ..."
-            onChange={(event) => {
-              updateFilter({ name: event.target.value })
-            }}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <Search />
-                </InputAdornment>
-              ),
-            }}
-            sx={{ flex: '0 0 200px' }}
-          />
-
-          <Stack direction="column">
-            <EasyMenu
-              id="filter-star-rating-mode"
-              renderTrigger={(props) => {
-                return (
-                  <Typography
-                    {...props}
-                    variant="overline"
-                    color="text.secondary"
-                    sx={{ cursor: 'pointer', lineHeight: 'initial' }}
-                  >
-                    {filterInfo.filter.starRatingMode}{' '}
-                    <ArrowDropDown fontSize="inherit" />
-                  </Typography>
-                )
-              }}
-              MenuListProps={{
-                dense: true,
-              }}
-            >
-              <EasyMenuItem
-                selected={filterInfo.filter.starRatingMode === 'at_most'}
-                onClickDelayed={() => {
-                  updateFilter({ starRatingMode: 'at_most' }, true)
-                }}
-              >
-                <ListItemIcon>
-                  <Typography variant="body2" color="text.secondary">
-                    &lt;=
-                  </Typography>
-                </ListItemIcon>
-                At Most
-              </EasyMenuItem>
-
-              <EasyMenuItem
-                selected={filterInfo.filter.starRatingMode === 'equal'}
-                onClickDelayed={() => {
-                  updateFilter({ starRatingMode: 'equal' }, true)
-                }}
-              >
-                <ListItemIcon>
-                  <Typography variant="body2" color="text.secondary">
-                    =
-                  </Typography>
-                </ListItemIcon>
-                Exactly
-              </EasyMenuItem>
-
-              <EasyMenuItem
-                selected={filterInfo.filter.starRatingMode === 'at_least'}
-                onClickDelayed={() => {
-                  updateFilter({ starRatingMode: 'at_least' }, true)
-                }}
-              >
-                <ListItemIcon>
-                  <Typography variant="body2" color="text.secondary">
-                    &gt;=
-                  </Typography>
-                </ListItemIcon>
-                At Least
-              </EasyMenuItem>
-            </EasyMenu>
-
-            <StarRating
-              value={debouncedFilterInfo.filter.rating}
-              onChange={(value) => {
-                updateFilter({ rating: value }, true)
-              }}
-            />
-          </Stack>
-
-          <TextField
-            select
-            size="small"
-            margin="none"
-            variant="standard"
-            label="Sort By ..."
-            value={debouncedFilterInfo.sort}
-            onChange={(event) => {
-              setSort(event.target.value, true)
-            }}
-            sx={{ flex: '0 0 200px' }}
-          >
-            <MenuItem value="name:asc">Name</MenuItem>
-            <MenuItem value="rating:desc">Rating</MenuItem>
-            <MenuItem value="playTime:desc">Play Time</MenuItem>
-            <MenuItem value="lastPlayed:desc">Last Played</MenuItem>
-            <MenuItem value="installedAt:desc">Date Installed</MenuItem>
-          </TextField>
-
-          <div>
-            <Button
-              size="small"
-              onClick={() => {
-                resetFilter(true)
-              }}
-            >
-              Clear
-            </Button>
-          </div>
-
-          <Box flexGrow="1" />
-
-        </Toolbar>
-      </AppBar>
 
       <OnboardingAlerts />
+      <AppToolbarPortal portalKey="GameFilterToolbar">
+        <GameFilterToolbar filterApi={filterApi} />
+      </AppToolbarPortal>
 
       <List disablePadding dense>
         {filtered.map((x) => {

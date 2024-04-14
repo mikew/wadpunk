@@ -23,7 +23,17 @@ function App() {
     >
       <Initializer>
         <ImportDropZone>
-          <GameList />
+          <AppToolbarProvider>
+            <AppBar position="sticky">
+              <Toolbar sx={{ gap: 2 }}>
+                <AppToolbarSlot />
+                <Box flexGrow="1" />
+                <AppCogMenu />
+              </Toolbar>
+            </AppBar>
+
+            <GameList />
+          </AppToolbarProvider>
         </ImportDropZone>
 
         <SourcePortsDialog />
