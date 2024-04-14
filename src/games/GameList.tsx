@@ -59,12 +59,12 @@ interface GameListFilter {
   rating: number
   starRatingMode: 'at_least' | 'equal' | 'at_most'
 }
+import useOpenGamesFolder from './useOpenGamesFolder'
 
 const GameList: React.FC = () => {
   const { data } = useSuspenseQuery(GetGameListQueryDocument)
   const dispatch = useRootDispatch()
 
-  const [openGamesFolderMutation] = useMutation(OpenGamesFolderDocument)
   const [setRating] = useMutation(SetRatingDocument)
   const [selectedId, setSelectedId] = useState<GameListGame['id']>()
   const { data: appInfoData } = useSuspenseQuery(GetAppInfoDocument)
@@ -86,21 +86,6 @@ const GameList: React.FC = () => {
     },
   })
 
-  async function openGamesFolder(game_id?: string) {
-    try {
-      const response = await openGamesFolderMutation({
-        variables: {
-          game_id,
-        },
-      })
-
-      if (!response.data?.openGamesFolder) {
-        enqueueSnackbar('Could not open folder', { variant: 'error' })
-      }
-    } catch (err) {
-      console.error(err)
-    }
-  }
 
   const filtered = useMemo(() => {
     const filtered = data.getGames.filter((x) => {
@@ -313,81 +298,6 @@ const GameList: React.FC = () => {
 
           <Box flexGrow="1" />
 
-          <EasyMenu
-            renderTrigger={(props) => {
-              return (
-                <IconButton {...props} edge="end">
-                  <Settings />
-                </IconButton>
-              )
-            }}
-            id="settings-menu"
-            anchorOrigin={{
-              horizontal: 'right',
-              vertical: 'bottom',
-            }}
-            transformOrigin={{
-              horizontal: 'right',
-              vertical: 'top',
-            }}
-            MenuListProps={{
-              dense: true,
-            }}
-          >
-            <EasyMenuItem
-              onClickDelayed={() => {
-                openGamesFolder()
-              }}
-            >
-              <ListItemIcon>
-                <FolderOpen fontSize="small" />
-              </ListItemIcon>
-              Open Games Folder
-            </EasyMenuItem>
-
-            <EasyMenuItem
-              onClickDelayed={() => {
-                dispatch(actions.toggleDialog())
-              }}
-            >
-              <ListItemIcon>
-                <Terminal fontSize="small" />
-              </ListItemIcon>
-              Source Ports
-            </EasyMenuItem>
-
-            <EasyMenuItem
-              onClickDelayed={() => {
-                invalidateApolloCache()
-              }}
-            >
-              <ListItemIcon>
-                <Refresh fontSize="small" />
-              </ListItemIcon>
-              Reload
-            </EasyMenuItem>
-
-            <EasyMenuItem
-              onClickDelayed={() => {
-                process.exit(0)
-              }}
-            >
-              <ListItemIcon>
-                <ExitToApp fontSize="small" />
-              </ListItemIcon>
-              Exit
-            </EasyMenuItem>
-
-            <Divider />
-
-            <Typography
-              color="text.secondary"
-              variant="body2"
-              textAlign="center"
-            >
-              {appInfoData.getAppInfo.name} v{appInfoData.getAppInfo.version}
-            </Typography>
-          </EasyMenu>
         </Toolbar>
       </AppBar>
 
