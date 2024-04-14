@@ -1,7 +1,6 @@
 import { useMutation } from '@apollo/client'
-import { AppBar, Box, CircularProgress, Toolbar } from '@mui/material'
-import type { PropsWithChildren } from 'react'
-import { Suspense, useEffect, useState } from 'react'
+import { AppBar, Box, Toolbar } from '@mui/material'
+import { useEffect, useState } from 'react'
 
 import { GameDialogSuspense } from '#src/games/GameDialog'
 import GameList from '#src/games/GameList'
@@ -18,39 +17,31 @@ import UpdateNotifier from './UpdateNotifier'
 
 function App() {
   return (
-    <Suspense
-      fallback={
-        <Box padding={4} justifyContent="center">
-          <CircularProgress />
-        </Box>
-      }
-    >
-      <Initializer>
-        <ImportDropZone>
-          <AppToolbarProvider>
-            <AppBar position="sticky">
-              <Toolbar sx={{ gap: 2 }}>
-                <AppToolbarSlot />
-                <Box flexGrow="1" />
-                <AppCogMenu />
-              </Toolbar>
-            </AppBar>
+    <Initializer>
+      <ImportDropZone>
+        <AppToolbarProvider>
+          <AppBar position="sticky">
+            <Toolbar sx={{ gap: 2 }}>
+              <AppToolbarSlot />
+              <Box flexGrow="1" />
+              <AppCogMenu />
+            </Toolbar>
+          </AppBar>
 
-            <OnboardingAlerts />
+          <OnboardingAlerts />
 
-            <GameList />
-          </AppToolbarProvider>
-        </ImportDropZone>
+          <GameList />
+        </AppToolbarProvider>
+      </ImportDropZone>
 
-        <GameDialogSuspense />
-        <SourcePortsDialog />
-        <UpdateNotifier />
-      </Initializer>
-    </Suspense>
+      <GameDialogSuspense />
+      <SourcePortsDialog />
+      <UpdateNotifier />
+    </Initializer>
   )
 }
 
-function Initializer(props: PropsWithChildren) {
+function Initializer(props: React.PropsWithChildren) {
   const [initializeApp] = useMutation(InitializeAppDocument)
   const [wrappedPromise, setWrappedPromise] =
     useState<SuspenseWrappedPromise<unknown>>()
