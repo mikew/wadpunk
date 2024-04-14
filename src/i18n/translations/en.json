@@ -148,8 +148,8 @@
 
   "languageSelector": {
     "languages": {
-      "en": "English",
-      "fr": "Francais (French)",
+      "en-ca": "English",
+      "fr-ca": "Français (French)",
       "de": "Deutsch (German)"
     }
   }
