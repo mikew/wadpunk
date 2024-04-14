@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## 1.2.2 (2024-04-14)
+
+
+### Bug Fixes
+
+* Exit button ([#64](https://github.com/mikew/wadpunk/issues/64)) ([6a870e7](https://github.com/mikew/wadpunk/commit/6a870e76a07eb4788eb37906045d03e115ec8f27))
+
 ## 1.2.1 (2024-04-14)
 
 ## 1.2.0 (2024-04-13)
