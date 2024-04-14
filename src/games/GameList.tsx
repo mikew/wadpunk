@@ -68,7 +68,6 @@ const GameList: React.FC = () => {
   const dispatch = useRootDispatch()
 
   const [setRating] = useMutation(SetRatingDocument)
-  const [selectedId, setSelectedId] = useState<GameListGame['id']>()
   const { data: appInfoData } = useSuspenseQuery(GetAppInfoDocument)
 
   const filterApi = useSimpleFilter<GameListFilter>('GameList', {
@@ -191,7 +190,7 @@ const GameList: React.FC = () => {
               <ListItemButton
                 disableRipple
                 onClick={() => {
-                  setSelectedId(x.id)
+                  dispatch(games.actions.setSelectedId(x.id))
                 }}
               >
                 <ListItemText
@@ -252,14 +251,6 @@ const GameList: React.FC = () => {
           )
         })}
       </List>
-
-      {selectedId ? (
-        <GameDialog
-          open={!!selectedId}
-          gameId={selectedId}
-          onClose={() => setSelectedId(undefined)}
-        />
-      ) : undefined}
     </>
   )
 }

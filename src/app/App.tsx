@@ -39,6 +39,7 @@ function App() {
           </AppToolbarProvider>
         </ImportDropZone>
 
+        <GameDialogSuspense />
         <SourcePortsDialog />
         <UpdateNotifier />
       </Initializer>
