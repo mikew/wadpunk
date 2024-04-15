@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## 1.3.0 (2024-04-15)
+
+
+### Features
+
+* I18N ([#63](https://github.com/mikew/wadpunk/issues/63)) ([5d94a08](https://github.com/mikew/wadpunk/commit/5d94a08941c93b7ed3bae00b690175a6dcaea2d3))
+
 ## 1.2.2 (2024-04-14)
 
 
