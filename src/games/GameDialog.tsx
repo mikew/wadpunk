@@ -42,6 +42,7 @@ import {
   UpdateGameDocument,
 } from '#src/graphql/operations'
 import type { Game } from '#src/graphql/types'
+import { useI18nContext } from '#src/i18n/lib/i18nContext'
 import pathWithoutExtension from '#src/lib/pathWithoutExtension'
 import StarRating from '#src/lib/StarRating'
 import DelayedOnCloseDialog, {
@@ -163,11 +164,13 @@ const GameDialog: React.FC<{
     },
   })
 
+  const { t } = useI18nContext()
+
   const tags = formApi.watch('tags')
   const isGameIwad = isIwad(tags)
   const iwadFieldHelperText = isGameIwad
-    ? 'This game will be used as the IWAD.'
-    : 'All games require an IWAD.'
+    ? t('games.fields.iwad.helperTextWhenIwad')
+    : t('games.fields.iwad.helperText')
 
   return (
     <DelayedOnCloseDialog
@@ -218,7 +221,7 @@ const GameDialog: React.FC<{
 
                 <ReactHookFormTextField
                   name="sourcePort"
-                  label="Source Port"
+                  label={t('games.fields.sourcePort.label')}
                   select
                   InputProps={{
                     startAdornment: (
@@ -229,7 +232,11 @@ const GameDialog: React.FC<{
                   }}
                 >
                   <MenuItem value={'-1'}>
-                    <em>Default ({defaultSourcePort?.id})</em>
+                    <em>
+                      {t('sourcePorts.default', {
+                        sourcePort: defaultSourcePort?.id,
+                      })}
+                    </em>
                   </MenuItem>
 
                   {sourcePorts.map((x) => {
@@ -259,7 +266,7 @@ const GameDialog: React.FC<{
                           control={
                             <Checkbox {...field} disabled={isDisabled} />
                           }
-                          label="Use Custom Config"
+                          label={t('games.fields.useCustomConfig.label')}
                         />
                         {errorMessage ? (
                           <FormHelperText error={fieldState.invalid}>
@@ -293,7 +300,7 @@ const GameDialog: React.FC<{
                       <TextField
                         {...field}
                         inputRef={ref}
-                        label="IWAD"
+                        label={t('games.fields.iwad.label')}
                         select
                         disabled={isDisabled}
                         error={fieldState.invalid}
@@ -307,7 +314,7 @@ const GameDialog: React.FC<{
                           ),
                         }}
                       >
-                        <MenuItem value="">None</MenuItem>
+                        <MenuItem value="">{t('shared.none')}</MenuItem>
 
                         {iwads.map((x) => {
                           return (
@@ -327,7 +334,7 @@ const GameDialog: React.FC<{
                   SelectProps={{
                     multiple: true,
                   }}
-                  label="Mods"
+                  label={t('games.fields.extraGames.label')}
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
@@ -363,12 +370,11 @@ const GameDialog: React.FC<{
                         renderInput={(props) => (
                           <TextField
                             {...props}
-                            label="Tags"
+                            label={t('games.fields.tags.label')}
                             inputRef={ref}
                             error={fieldState.invalid}
                             helperText={
-                              errorMessage ||
-                              'Tag a game with "iwad" to mark it as an IWAD.'
+                              errorMessage || t('games.fields.tags.helperText')
                             }
                             InputProps={{
                               ...props.InputProps,
@@ -406,7 +412,7 @@ const GameDialog: React.FC<{
 
                 <ReactHookFormTextField
                   name="notes"
-                  label="Notes"
+                  label={t('games.fields.notes.label')}
                   multiline
                   minRows={2}
                   maxRows={8}
@@ -495,6 +501,7 @@ const GameDialogActions: React.FC<{
   const triggerClose = useDelayedOnCloseDialogTriggerClose()
   const formState = useFormState()
   const { findSourcePortById } = useAllSourcePorts()
+  const { t } = useI18nContext()
 
   return (
     <>
@@ -504,7 +511,7 @@ const GameDialogActions: React.FC<{
           props.resetForm()
         }}
       >
-        Reset
+        {t('shared.reset')}
       </Button>
 
       <Button
@@ -513,7 +520,7 @@ const GameDialogActions: React.FC<{
           triggerClose('closeClick')
         }}
       >
-        Save
+        {t('shared.save')}
       </Button>
 
       <Button
@@ -560,7 +567,7 @@ const GameDialogActions: React.FC<{
             invalidateApolloQuery(['getGames'])
 
             if (!startGameResponse.data?.startGame) {
-              enqueueSnackbar('Looks like something went wrong when running', {
+              enqueueSnackbar(t('games.notifications.startError'), {
                 variant: 'error',
               })
             }
@@ -570,7 +577,7 @@ const GameDialogActions: React.FC<{
         }}
         disabled={formState.isSubmitting || !formState.isValid}
       >
-        Play
+        {t('games.actions.start')}
       </Button>
     </>
   )

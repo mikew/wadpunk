@@ -3,11 +3,14 @@ import type { SvgIconProps } from '@mui/material'
 import { Stack, Tooltip, Button } from '@mui/material'
 import { useState } from 'react'
 
+import { useI18nContext } from '#src/i18n/lib/i18nContext'
+
 const StarRating: React.FC<{
   value: number
   onChange: (value: number) => void
 }> = (props) => {
   const [hoverIndex, setHoverIndex] = useState<number>()
+  const { t } = useI18nContext()
 
   return (
     <Tooltip
@@ -23,7 +26,7 @@ const StarRating: React.FC<{
                 props.onChange(0)
               }}
             >
-              Clear
+              {t('shared.clear')}
             </Button>
           </>
         )

@@ -3,6 +3,7 @@ import { Add, Download } from '@mui/icons-material'
 import { Alert, AlertTitle, Button } from '@mui/material'
 
 import { GetGameListQueryDocument } from '#src/graphql/operations'
+import { useI18nContext } from '#src/i18n/lib/i18nContext'
 import { useRootDispatch } from '#src/redux/helpers'
 import actions from '#src/sourcePorts/actions'
 import useAllSourcePorts from '#src/sourcePorts/useAllSourcePorts'
@@ -11,14 +12,16 @@ const OnboardingAlerts: React.FC = () => {
   const { data } = useSuspenseQuery(GetGameListQueryDocument)
   const { sourcePorts } = useAllSourcePorts()
   const dispatch = useRootDispatch()
+  const { t } = useI18nContext()
 
   return (
     <>
       {sourcePorts.length === 0 ? (
         <Alert severity="warning" sx={{ margin: 2 }}>
-          <AlertTitle>No Source Ports found</AlertTitle>
-          Source Ports are what WADPunk launches. You will need to add one
-          before you can play any game.
+          <AlertTitle>
+            {t('sourcePorts.onboarding.noSourcePorts.title')}
+          </AlertTitle>
+          {t('sourcePorts.onboarding.noSourcePorts.message')}
           <br />
           <br />
           <Button
@@ -29,21 +32,19 @@ const OnboardingAlerts: React.FC = () => {
               dispatch(actions.toggleDialog())
             }}
           >
-            Add Source Port
+            {t('sourcePorts.actions.addSourcePort')}
           </Button>
         </Alert>
       ) : undefined}
 
       {data.getGames.length === 0 ? (
         <Alert severity="warning" sx={{ margin: 2 }}>
-          <AlertTitle>No games found</AlertTitle>
-          You will need to add some games to your library before you can launch
-          anything. To quickly get started, you can:
+          <AlertTitle>{t('games.onboarding.noGames.title')}</AlertTitle>
+          {t('games.onboarding.noGames.message')}
+
           <ol>
             <li>
-              If you don't have access Doom or Doom II, you can download
-              Freedoom, which aims to provide all the content needed to form a
-              complete game for the Doom engine.
+              {t('games.onboarding.noGames.step1')}
               <br />
               <br />
               <Button
@@ -53,13 +54,13 @@ const OnboardingAlerts: React.FC = () => {
                 href="https://freedoom.github.io/download.html"
                 target="_blank"
               >
-                Download "Freedoom: Phase 1+2"
+                {t('games.onboarding.noGames.downloadFreedoom')}
               </Button>
               <br />
               <br />
             </li>
-            <li>Extract Freedoom anywhere.</li>
-            <li>Drag "freedoom1.wad" and "freedoom2.wad" into this window.</li>
+            <li>{t('games.onboarding.noGames.step2')}</li>
+            <li>{t('games.onboarding.noGames.step3')}</li>
           </ol>
         </Alert>
       ) : undefined}

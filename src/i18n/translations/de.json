@@ -1,0 +1,156 @@
+{
+  "shared": {
+    "clear": "Löschen",
+    "reset": "Zurücksetzen",
+    "save": "Speichern",
+    "close": "Schließen"
+  },
+
+  "app": {
+    "actions": {
+      "reload": "Neu laden",
+      "exit": "Beenden"
+    },
+
+    "nameAndVersion": "{{name}} v{{version}}"
+  },
+
+  "games": {
+    "actions": {
+      "openGamesFolder": "Spieleordner öffnen",
+      "start": "Spielen"
+    },
+
+    "filter": {
+      "fields": {
+        "name": {
+          "label": "Filtern ..."
+        },
+        "starRatingMode": {
+          "at_least": "Mindestens",
+          "equal": "Genau",
+          "at_most": "Höchstens"
+        },
+        "sort": {
+          "label": "Sortieren nach ...",
+          "options": {
+            "name": "Name",
+            "rating": "Bewertung",
+            "popularity": "Beliebtheit"
+          }
+        }
+      }
+    },
+
+    "fields": {
+      "name": {
+        "label": "Name"
+      },
+      "rating": {
+        "label": "Bewertung"
+      },
+      "playTime": {
+        "label": "Spielzeit"
+      },
+      "lastPlayed": {
+        "label": "Zuletzt gespielt"
+      },
+      "installed_at": {
+        "label": "Installationsdatum"
+      },
+      "sourcePort": {
+        "label": "Quellport"
+      },
+      "iwad": {
+        "label": "IWAD",
+        "helperText": "Alle Spiele benötigen eine IWAD.",
+        "helperTextWhenIwad": "Dieses Spiel wird als IWAD verwendet."
+      },
+      "extraGames": {
+        "label": "Mods"
+      },
+      "tags": {
+        "label": "Tags",
+        "helperText": "Markieren Sie ein Spiel mit \"iwad\", um es als IWAD zu kennzeichnen."
+      },
+      "notes": {
+        "label": "Notizen"
+      },
+      "useCustomConfig": {
+        "label": "Benutzerdefinierte Konfiguration verwenden"
+      },
+      "files": {
+        "label": "Dateien"
+      }
+    },
+
+    "onboarding": {
+      "noGames": {
+        "title": "Keine Spiele gefunden",
+        "message": "Sie müssen einige Spiele zu Ihrer Bibliothek hinzufügen, bevor Sie etwas starten können. Um schnell zu beginnen, können Sie:",
+        "step1": "Wenn Sie keinen Zugang zu Doom oder Doom II haben, können Sie Freedoom herunterladen, das alle Inhalte bereitstellt, die benötigt werden, um ein vollständiges Spiel für den Doom-Engine zu erstellen.",
+        "step2": "Extrahieren Sie Freedoom irgendwo.",
+        "step3": "Ziehen Sie \"freedoom1.wad\" und \"freedoom2.wad\" in dieses Fenster.",
+        "downloadFreedoom": "Laden Sie \"Freedoom: Phase 1+2\" herunter"
+      }
+    },
+
+    "notifications": {
+      "startError": "Es sieht so aus, als wäre beim Ausführen etwas schiefgegangen",
+      "openGamesFolderError": "Ordner konnte nicht geöffnet werden"
+    }
+  },
+
+  "sourcePorts": {
+    "title": "Quellports",
+    "default": "Standard ({{sourcePort}})",
+    "addNew": "Neuen hinzufügen",
+    "downloadGZDoom": "GZDoom herunterladen",
+
+    "onboarding": {
+      "noSourcePorts": {
+        "title": "Keine Quellports gefunden",
+        "message": "Quellports sind das, was WADPunk startet. Sie müssen einen hinzufügen, bevor Sie ein Spiel spielen können."
+      }
+    },
+
+    "actions": {
+      "create": "Erstellen",
+      "addSourcePort": "Quellport hinzufügen"
+    },
+
+    "fields": {
+      "id": {
+        "label": "Name"
+      },
+      "command": {
+        "label": "Befehl"
+      }
+    }
+  },
+
+  "updateNotifier": {
+    "actions": {
+      "relaunch": "Neustart",
+      "install": "Aktualisieren",
+      "viewNotes": "Notizen anzeigen"
+    },
+
+    "notifications": {
+      "errorInstalling": "Fehler beim Installieren des Updates: {{error}}",
+      "updateAvailable": "Update verfügbar: v{{version}}"
+    },
+
+    "releaseNotes": {
+      "title": "Versionshinweise v{{version}}"
+    }
+  },
+
+  "languageSelector": {
+    "languages": {
+      "en-ca": "English (Englisch)",
+      "fr-ca": "Français (Französisch)",
+      "de": "Deutsch"
+    }
+  }
+}

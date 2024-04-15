@@ -10,6 +10,7 @@ import {
 } from '@mui/material'
 import type { SimpleFilterApi } from '@promoboxx/use-filter/dist/useSimpleFilter'
 
+import { useI18nContext } from '#src/i18n/lib/i18nContext'
 import StarRating from '#src/lib/StarRating'
 import { EasyMenu, EasyMenuItem } from '#src/mui/EasyMenu'
 
@@ -22,6 +23,8 @@ export interface GameListFilter {
 const GameFilterToolbar: React.FC<{
   filterApi: SimpleFilterApi<GameListFilter>
 }> = ({ filterApi }) => {
+  const { t } = useI18nContext()
+
   return (
     <>
       <TextField
@@ -29,7 +32,7 @@ const GameFilterToolbar: React.FC<{
         margin="none"
         variant="standard"
         value={filterApi.filterInfo.filter.name}
-        label="Filter ..."
+        label={t('games.filter.fields.name.label')}
         onChange={(event) => {
           filterApi.updateFilter({ name: event.target.value })
         }}
@@ -54,7 +57,9 @@ const GameFilterToolbar: React.FC<{
                 color="text.secondary"
                 sx={{ cursor: 'pointer', lineHeight: 'initial' }}
               >
-                {filterApi.filterInfo.filter.starRatingMode}{' '}
+                {t(
+                  `games.filter.fields.starRatingMode.${filterApi.filterInfo.filter.starRatingMode}`,
+                )}{' '}
                 <ArrowDropDown fontSize="inherit" />
               </Typography>
             )
@@ -74,7 +79,7 @@ const GameFilterToolbar: React.FC<{
                 &lt;=
               </Typography>
             </ListItemIcon>
-            At Most
+            {t(`games.filter.fields.starRatingMode.at_most`)}
           </EasyMenuItem>
 
           <EasyMenuItem
@@ -88,7 +93,7 @@ const GameFilterToolbar: React.FC<{
                 =
               </Typography>
             </ListItemIcon>
-            Exactly
+            {t(`games.filter.fields.starRatingMode.equal`)}
           </EasyMenuItem>
 
           <EasyMenuItem
@@ -102,7 +107,7 @@ const GameFilterToolbar: React.FC<{
                 &gt;=
               </Typography>
             </ListItemIcon>
-            At Least
+            {t(`games.filter.fields.starRatingMode.at_least`)}
           </EasyMenuItem>
         </EasyMenu>
 
@@ -119,18 +124,26 @@ const GameFilterToolbar: React.FC<{
         size="small"
         margin="none"
         variant="standard"
-        label="Sort By ..."
+        label={t('games.filter.fields.sort.label')}
         value={filterApi.debouncedFilterInfo.sort}
         onChange={(event) => {
           filterApi.setSort(event.target.value, true)
         }}
         sx={{ flex: '0 0 200px' }}
       >
-        <MenuItem value="name:asc">Name</MenuItem>
-        <MenuItem value="rating:desc">Rating</MenuItem>
-        <MenuItem value="playTime:desc">Play Time</MenuItem>
-        <MenuItem value="lastPlayed:desc">Last Played</MenuItem>
-        <MenuItem value="installedAt:desc">Date Installed</MenuItem>
+        <MenuItem value="name:asc">{t('games.fields.name.label')}</MenuItem>
+        <MenuItem value="rating:desc">
+          {t('games.fields.rating.label')}
+        </MenuItem>
+        <MenuItem value="playTime:desc">
+          {t('games.fields.playTime.label')}
+        </MenuItem>
+        <MenuItem value="lastPlayed:desc">
+          {t('games.fields.lastPlayed.label')}
+        </MenuItem>
+        <MenuItem value="installedAt:desc">
+          {t('games.fields.installed_at.label')}
+        </MenuItem>
       </TextField>
 
       <div>
@@ -140,7 +153,7 @@ const GameFilterToolbar: React.FC<{
             filterApi.resetFilter(true)
           }}
         >
-          Clear
+          {t('shared.clear')}
         </Button>
       </div>
     </>

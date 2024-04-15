@@ -1,17 +1,25 @@
 import { ApolloProvider } from '@apollo/client'
-import { CssBaseline, Slide, ThemeProvider } from '@mui/material'
+import {
+  Box,
+  CircularProgress,
+  CssBaseline,
+  Slide,
+  ThemeProvider,
+} from '@mui/material'
 import { setFilterStore } from '@promoboxx/use-filter/dist/store'
 import localStorageStore from '@promoboxx/use-filter/dist/store/localStorageStore'
 import { SnackbarProvider } from 'notistack'
-import { StrictMode } from 'react'
+import { StrictMode, Suspense, lazy } from 'react'
 import { createRoot } from 'react-dom/client'
 import { Provider } from 'react-redux'
 
-import App from './app/App'
 import theme from './app/theme'
 import graphqlClient from './graphql/graphqlClient'
+import I18nLoader from './i18n/I18nLoader'
 import NotistackMuiAlert from './mui/NotistackMuiAlert'
 import createRootStore from './redux/createRootStore'
+
+const App = lazy(() => import('./app/App'))
 
 setFilterStore(localStorageStore)
 
@@ -39,7 +47,17 @@ createRoot(rootElement).render(
             maxSnack={3}
           >
             <CssBaseline>
-              <App />
+              <Suspense
+                fallback={
+                  <Box padding={4} justifyContent="center">
+                    <CircularProgress />
+                  </Box>
+                }
+              >
+                <I18nLoader>
+                  <App />
+                </I18nLoader>
+              </Suspense>
             </CssBaseline>
           </SnackbarProvider>
         </ThemeProvider>
