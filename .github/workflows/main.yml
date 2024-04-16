@@ -48,7 +48,7 @@ jobs:
         with:
           path: |
             ${{ env.STORE_PATH }}
-          key: pnpm-store-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+          key: pnpm-store-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('pnpm-lock.yaml') }}
           restore-keys: |
             pnpm-store-${{ runner.os }}-${{ runner.arch }}-
 
@@ -71,7 +71,7 @@ jobs:
             ~/.cargo/git/db/
             src-tauri/target/
             !src-tauri/target/release/bundle/
-          key: cargo-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('**/Cargo.lock') }}
+          key: cargo-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('src-tauri/Cargo.lock') }}
           restore-keys: |
             cargo-${{ runner.os }}-${{ runner.arch }}-
 
