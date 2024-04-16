@@ -62,18 +62,20 @@ jobs:
           sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.0-dev libappindicator3-dev librsvg2-dev patchelf
         shell: bash
 
-      - uses: actions/cache@v4
-        with:
-          path: |
-            ~/.cargo/bin/
-            ~/.cargo/registry/index/
-            ~/.cargo/registry/cache/
-            ~/.cargo/git/db/
-            src-tauri/target/
-            !src-tauri/target/release/bundle/
-          key: cargo-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('**/Cargo.lock') }}
-          restore-keys: |
-            cargo-${{ runner.os }}-${{ runner.arch }}-
+      # Disabled due to an issue that really seems on the GitHub side of things.
+      # https://github.com/mikew/wadpunk/actions/runs/8699792278/job/23859424428
+      # - uses: actions/cache@v4
+      #   with:
+      #     path: |
+      #       ~/.cargo/bin/
+      #       ~/.cargo/registry/index/
+      #       ~/.cargo/registry/cache/
+      #       ~/.cargo/git/db/
+      #       src-tauri/target/
+      #       !src-tauri/target/release/bundle/
+      #     key: cargo-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('**/Cargo.lock') }}
+      #     restore-keys: |
+      #       cargo-${{ runner.os }}-${{ runner.arch }}-
 
       # Bumping the version in each build is easier than setting up a new job
       # and transferring over artifacts.
