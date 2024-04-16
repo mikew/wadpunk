@@ -15,7 +15,8 @@
   "tauri": {
     "allowlist": {
       "shell": {
-        "sidecar": true
+        "sidecar": true,
+        "open": ".*"
       },
       "process": {
         "relaunch": true,

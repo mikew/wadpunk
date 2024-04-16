@@ -9,7 +9,7 @@ pluginOptions.checker = {
     initialIsOpen: false,
   },
 }
-// pluginOptions.checker = false
+pluginOptions.checker = false
 
 export default defineConfig(async (env) => {
   const config = await viteConfig(env)
