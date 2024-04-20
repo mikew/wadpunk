@@ -11,6 +11,7 @@ import { useState } from 'react'
 
 import { invalidateApolloQuery } from '#src/graphql/graphqlClient'
 import { ImportFileDocument } from '#src/graphql/operations'
+import { useRootSelector } from '#src/redux/helpers'
 import useTauriFileDrop from '#src/tauri/useTauriFileDrop'
 
 interface ImportStatus {
@@ -25,8 +26,15 @@ const ImportDropZone: React.FC<React.PropsWithChildren> = (props) => {
     ImportStatus | undefined
   >()
   const [importFile] = useMutation(ImportFileDocument)
+  const isSourcePortsDialogOpen = useRootSelector(
+    (state) => state.sourcePorts.isDialogOpen,
+  )
 
   const tauriFileDrop = useTauriFileDrop(async (event) => {
+    if (isSourcePortsDialogOpen) {
+      return
+    }
+
     let i = 0
     for (const file of event.payload) {
       setCurrentImportStatus({
@@ -97,8 +105,10 @@ const ImportDropZone: React.FC<React.PropsWithChildren> = (props) => {
         </Alert>
       </Snackbar>
 
-      <Dialog open={Boolean(tauriFileDrop.isDraggingOver)}>
-        <DialogContent>Drop files to import ...</DialogContent>
+      <Dialog
+        open={Boolean(!isSourcePortsDialogOpen && tauriFileDrop.isDraggingOver)}
+      >
+        <DialogContent>Drop to import Games ...</DialogContent>
       </Dialog>
     </div>
   )
