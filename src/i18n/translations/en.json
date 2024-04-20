@@ -3,7 +3,8 @@
     "clear": "Clear",
     "reset": "Reset",
     "save": "Save",
-    "close": "Close"
+    "close": "Close",
+    "delete": "Delete"
   },
 
   "app": {
