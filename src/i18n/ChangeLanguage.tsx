@@ -1,5 +1,5 @@
 import { ArrowDropDown, Language } from '@mui/icons-material'
-import { ListItemIcon, MenuItem } from '@mui/material'
+import { ListItemIcon, ListItemText, MenuItem } from '@mui/material'
 
 import { EasyMenu, EasyMenuItem } from '#src/mui/EasyMenu'
 
@@ -17,7 +17,9 @@ const ChangeLanguage: React.FC = () => {
             <ListItemIcon>
               <Language fontSize="small" />
             </ListItemIcon>
-            {t(`languageSelector.languages.${locale.toLowerCase()}`)}
+            <ListItemText>
+              {t(`languageSelector.languages.${locale.toLowerCase()}`)}
+            </ListItemText>
             <ArrowDropDown color="inherit" />
           </MenuItem>
         )
