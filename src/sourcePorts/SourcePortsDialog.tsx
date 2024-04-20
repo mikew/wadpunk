@@ -197,11 +197,10 @@ const SourcePortsDialog: React.FC = () => {
                 onDeleteClick={async () => {
                   if (
                     await confirm({
-                      title: 'Delete Source Port',
-                      message:
-                        'Are you sure you want to delete this source port?',
-                      confirmLabel: 'Delete',
-                      cancelLabel: 'Cancel',
+                      title: t('sourcePorts.confirmDelete.title'),
+                      message: t('sourcePorts.confirmDelete.message'),
+                      confirmLabel: t('shared.delete'),
+                      // cancelLabel: t('shared.cancel'),
                     })
                   ) {
                     await deleteSourcePort({
@@ -218,7 +217,7 @@ const SourcePortsDialog: React.FC = () => {
       </DelayedOnCloseDialog>
 
       <Dialog open={Boolean(isOpen && tauriFileDrop.isDraggingOver)}>
-        <DialogContent>Drop to import Source Port ...</DialogContent>
+        <DialogContent>{t('sourcePorts.actions.dropToImport')}</DialogContent>
       </Dialog>
     </>
   )

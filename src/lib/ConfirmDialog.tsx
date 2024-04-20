@@ -14,13 +14,15 @@ import {
   useState,
 } from 'react'
 
+import { useI18nContext } from '#src/i18n/lib/i18nContext'
+
 import useLatest from './useLatest'
 
 interface ConfirmDialogUiOptions {
-  title?: string
-  message?: string
-  confirmLabel?: string
-  cancelLabel?: string
+  title?: React.ReactNode
+  message?: React.ReactNode
+  confirmLabel?: React.ReactNode
+  cancelLabel?: React.ReactNode
 }
 
 const confirmDialogContext = createContext<{
@@ -94,6 +96,7 @@ export function useConfirmDialog() {
 
 export const ConfirmDialog: React.FC = () => {
   const context = useContext(confirmDialogContext)
+  const { t } = useI18nContext()
 
   return (
     <Dialog
@@ -107,10 +110,14 @@ export const ConfirmDialog: React.FC = () => {
           context.setUi({})
         },
       }}
+      maxWidth="xs"
+      fullWidth
     >
-      <DialogTitle>{context.ui.title}</DialogTitle>
+      <DialogTitle>{context.ui.title || t('confirm.defaultTitle')}</DialogTitle>
 
-      <DialogContent>{context.ui.message}</DialogContent>
+      <DialogContent>
+        {context.ui.message || t('confirm.defaultMessage')}
+      </DialogContent>
 
       <DialogActions>
         <Button
@@ -121,7 +128,7 @@ export const ConfirmDialog: React.FC = () => {
             context.setIsOpen(false)
           }}
         >
-          {context.ui.confirmLabel}
+          {context.ui.confirmLabel || t('shared.yes')}
         </Button>
 
         <Button
@@ -130,7 +137,7 @@ export const ConfirmDialog: React.FC = () => {
             context.setIsOpen(false)
           }}
         >
-          {context.ui.cancelLabel}
+          {context.ui.cancelLabel || t('shared.cancel')}
         </Button>
       </DialogActions>
     </Dialog>
