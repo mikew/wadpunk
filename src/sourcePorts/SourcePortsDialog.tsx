@@ -1,148 +1,226 @@
 import { useMutation } from '@apollo/client'
-import { Delete, Download, Edit, Terminal } from '@mui/icons-material'
+import { Add, Download } from '@mui/icons-material'
 import {
   Box,
   Button,
-  DialogActions,
+  Dialog,
   DialogContent,
   DialogTitle,
-  IconButton,
-  InputAdornment,
+  Divider,
+  List,
   ListItem,
+  ListItemButton,
   ListItemText,
+  Stack,
   Typography,
 } from '@mui/material'
-import { FormProvider, useForm } from 'react-hook-form'
+import { useMemo, useRef } from 'react'
+import type { UseFormReturn } from 'react-hook-form'
 
 import { invalidateApolloQuery } from '#src/graphql/graphqlClient'
 import {
   CreateSourcePortDocument,
   DeleteSourcePortDocument,
+  UpdateSourcePortDocument,
 } from '#src/graphql/operations'
 import { useI18nContext } from '#src/i18n/lib/i18nContext'
+import basename from '#src/lib/basename'
+import { useConfirmDialog } from '#src/lib/ConfirmDialog'
 import DelayedOnCloseDialog, {
-  DelayedOnCloseDialogCloseButton,
+  DelayedOnCloseDialogCloseIcon,
 } from '#src/mui/DelayedOnCloseDialog'
-import ReactHookFormTextField from '#src/react-hook-form/ReactHookFormTextField'
 import { useRootDispatch, useRootSelector } from '#src/redux/helpers'
+import useTauriFileDrop from '#src/tauri/useTauriFileDrop'
 
 import actions from './actions'
+import type { AddSourcePortFormValues } from './SourcePortForm'
+import SourcePortForm from './SourcePortForm'
 import useAllSourcePorts from './useAllSourcePorts'
-
-interface AddSourcePortFormValues {
-  id: string
-  command: string
-}
 
 const SourcePortsDialog: React.FC = () => {
   const { sourcePorts } = useAllSourcePorts()
   const isOpen = useRootSelector((state) => state.sourcePorts.isDialogOpen)
   const dispatch = useRootDispatch()
   const [createSourcePort] = useMutation(CreateSourcePortDocument)
+  const [updateSourcePort] = useMutation(UpdateSourcePortDocument)
   const [deleteSourcePort] = useMutation(DeleteSourcePortDocument)
-  const formApi = useForm<AddSourcePortFormValues>({
-    defaultValues: {
-      id: '',
-      command: '',
-    },
-  })
+  const selectedId = useRootSelector((state) => state.sourcePorts.selectedId)
+  const selectedSourcePort = useMemo(() => {
+    return sourcePorts.find((x) => x.id === selectedId)
+  }, [selectedId, sourcePorts])
+  const { confirm } = useConfirmDialog()
+  const formRef = useRef<UseFormReturn<AddSourcePortFormValues> | null>(null)
+
   const { t } = useI18nContext()
+  const isAddingNew = selectedId === '-1'
+
+  const tauriFileDrop = useTauriFileDrop(async (event) => {
+    if (!isOpen) {
+      return
+    }
+
+    formRef.current?.setValue('id', basename(event.payload[0] || ''))
+    formRef.current?.setValue('command', event.payload[0] || '')
+  })
 
   return (
-    <DelayedOnCloseDialog
-      open={isOpen}
-      onClose={() => {
-        dispatch(actions.toggleDialog())
-      }}
-    >
-      <DialogTitle>{t('sourcePorts.title')}</DialogTitle>
-      <DialogContent>
-        {sourcePorts.map((x) => {
-          return (
-            <ListItem
-              key={x.id}
-              secondaryAction={
-                <IconButton
-                  onClick={async () => {
-                    await deleteSourcePort({
+    <>
+      <DelayedOnCloseDialog
+        open={isOpen}
+        maxWidth="lg"
+        fullWidth
+        onClose={() => {
+          dispatch(actions.toggleDialog())
+        }}
+      >
+        <DialogTitle>
+          {t('sourcePorts.title')}
+          <DelayedOnCloseDialogCloseIcon edge="end" />
+        </DialogTitle>
+
+        <DialogContent>
+          <Stack
+            direction="row"
+            spacing={2}
+            divider={<Divider orientation="vertical" flexItem />}
+          >
+            <Box sx={{ width: '300px' }}>
+              <List dense disablePadding>
+                <ListItem divider disablePadding>
+                  <ListItemButton
+                    onClick={() => {
+                      dispatch(actions.setSelectedId('-1'))
+                    }}
+                    selected={isAddingNew}
+                  >
+                    <ListItemText primary={<strong>Add New</strong>} />
+                    <Add />
+                  </ListItemButton>
+                </ListItem>
+
+                {sourcePorts.map((x) => {
+                  return (
+                    <ListItem key={x.id} disablePadding divider>
+                      <ListItemButton
+                        selected={selectedId === x.id}
+                        onClick={() => {
+                          dispatch(actions.setSelectedId(x.id))
+                        }}
+                      >
+                        <ListItemText
+                          primary={x.id}
+                          secondaryTypographyProps={{
+                            sx: { wordWrap: 'break-word' },
+                          }}
+                        />
+                      </ListItemButton>
+                    </ListItem>
+                  )
+                })}
+              </List>
+
+              <Divider />
+
+              <Box textAlign="center">
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  gutterBottom
+                  sx={{ marginTop: 1 }}
+                >
+                  Don't know where to get started?
+                </Typography>
+
+                <Button
+                  startIcon={<Download />}
+                  href="https://zdoom.org/downloads"
+                  target="_blank"
+                >
+                  {t('sourcePorts.downloadGZDoom')}
+                </Button>
+              </Box>
+            </Box>
+
+            <Box style={{ flexGrow: '1' }}>
+              <SourcePortForm
+                // key is needed here for react-hook-form. Without it, even though
+                // new objects are passed to `defaultValues`, it never reflects
+                // them in the fields.
+                // We also can't just use `selectedId` because there's a period
+                // where that is set but `selectedSourcePort` is null because the
+                // query is still loading. This way ensures the key changes when
+                // `selectedSourcePort` does.
+                key={selectedSourcePort ? selectedSourcePort.id : '-1'}
+                ref={formRef}
+                sourcePort={
+                  selectedSourcePort
+                    ? {
+                        ...selectedSourcePort,
+                        command: selectedSourcePort.command[0] || '',
+                      }
+                    : {
+                        id: '',
+                        command: '',
+                      }
+                }
+                onClickSave={async (values, formApi) => {
+                  if (isAddingNew) {
+                    await createSourcePort({
                       variables: {
-                        id: x.id,
+                        source_port: {
+                          id: values.id,
+                          // TODO This is a hack because I don't want to deal with the
+                          // array-ness of the command in the UI yet.
+                          command: values.command ? [values.command] : [],
+                        },
                       },
                     })
+
+                    formApi.reset()
+
                     invalidateApolloQuery(['getSourcePorts'])
-                  }}
-                >
-                  <Delete />
-                </IconButton>
-              }
-            >
-              <ListItemText primary={x.id} secondary={x.command.join(' ')} />
-            </ListItem>
-          )
-        })}
 
-        <Typography>{t('sourcePorts.addNew')}</Typography>
-        <FormProvider {...formApi}>
-          <ReactHookFormTextField
-            name="id"
-            label={t('sourcePorts.fields.id.label')}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <Edit />
-                </InputAdornment>
-              ),
-            }}
-          />
-          <ReactHookFormTextField
-            name="command"
-            label={t('sourcePorts.fields.command.label')}
-            size="small"
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <Terminal fontSize="small" />
-                </InputAdornment>
-              ),
-            }}
-          />
+                    dispatch(actions.setSelectedId(values.id))
+                  } else {
+                    await updateSourcePort({
+                      variables: {
+                        source_port: {
+                          id: values.id,
+                          command: values.command ? [values.command] : [],
+                        },
+                      },
+                    })
 
-          <Button
-            fullWidth
-            onClick={formApi.handleSubmit(async (values) => {
-              await createSourcePort({
-                variables: {
-                  source_port: {
-                    id: values.id,
-                    // TODO This is a hack because I don't want to deal with the
-                    // array-ness of the command in the UI yet.
-                    command: values.command ? [values.command] : [],
-                  },
-                },
-              })
+                    invalidateApolloQuery(['getSourcePorts'])
+                  }
+                }}
+                onDeleteClick={async () => {
+                  if (
+                    await confirm({
+                      title: 'Delete Source Port',
+                      message:
+                        'Are you sure you want to delete this source port?',
+                      confirmLabel: 'Delete',
+                      cancelLabel: 'Cancel',
+                    })
+                  ) {
+                    await deleteSourcePort({
+                      variables: { id: selectedId },
+                    })
+                    dispatch(actions.setSelectedId('-1'))
+                    invalidateApolloQuery(['getSourcePorts'])
+                  }
+                }}
+              />
+            </Box>
+          </Stack>
+        </DialogContent>
+      </DelayedOnCloseDialog>
 
-              invalidateApolloQuery(['getSourcePorts'])
-              formApi.reset()
-            })}
-          >
-            {t('sourcePorts.actions.create')}
-          </Button>
-        </FormProvider>
-      </DialogContent>
-      <DialogActions>
-        <Button
-          startIcon={<Download />}
-          href="https://zdoom.org/downloads"
-          target="_blank"
-        >
-          {t('sourcePorts.downloadGZDoom')}
-        </Button>
-        <Box sx={{ flexGrow: 1 }} />
-        <DelayedOnCloseDialogCloseButton>
-          {t('shared.close')}
-        </DelayedOnCloseDialogCloseButton>
-      </DialogActions>
-    </DelayedOnCloseDialog>
+      <Dialog open={Boolean(isOpen && tauriFileDrop.isDraggingOver)}>
+        <DialogContent>Drop to import Source Port ...</DialogContent>
+      </Dialog>
+    </>
   )
 }
 
