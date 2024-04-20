@@ -11,6 +11,7 @@ import { useState } from 'react'
 
 import { invalidateApolloQuery } from '#src/graphql/graphqlClient'
 import { ImportFileDocument } from '#src/graphql/operations'
+import basename from '#src/lib/basename'
 import { useRootSelector } from '#src/redux/helpers'
 import useTauriFileDrop from '#src/tauri/useTauriFileDrop'
 
@@ -65,9 +66,7 @@ const ImportDropZone: React.FC<React.PropsWithChildren> = (props) => {
   const currentIndex = currentImportStatus?.index || 0
   const currentLength = currentImportStatus?.length || 1
 
-  const currentFileName = currentImportStatus?.currentFilePath.slice(
-    currentImportStatus.currentFilePath.lastIndexOf('/') + 1,
-  )
+  const currentFileName = basename(currentImportStatus?.currentFilePath || '')
 
   const message =
     currentImportStatus?.status === 'importing'
