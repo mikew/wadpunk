@@ -198,7 +198,6 @@ const SourcePortsDialog: React.FC = () => {
                       title: t('sourcePorts.confirmDelete.title'),
                       message: t('sourcePorts.confirmDelete.message'),
                       confirmLabel: t('shared.delete'),
-                      // cancelLabel: t('shared.cancel'),
                     })
                   ) {
                     await deleteSourcePort({
