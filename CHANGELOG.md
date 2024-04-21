@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## 1.4.0 (2024-04-21)
+
+
+### Features
+
+* Redesign source ports dialog ([#67](https://github.com/mikew/wadpunk/issues/67)) ([27a7bad](https://github.com/mikew/wadpunk/commit/27a7bad18be3a5b08ea63bd0313937e960d3d237))
+
 ## 1.3.2 (2024-04-17)
 
 ## 1.3.1 (2024-04-16)
