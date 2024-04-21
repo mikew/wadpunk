@@ -183,7 +183,7 @@ const SourcePortsDialog: React.FC = () => {
                     await updateSourcePort({
                       variables: {
                         source_port: {
-                          id: values.id,
+                          id: selectedId,
                           command: values.command ? [values.command] : [],
                         },
                       },
