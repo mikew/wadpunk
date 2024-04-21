@@ -9,7 +9,6 @@ import {
 import {
   Button,
   Typography,
-  DialogTitle,
   DialogActions,
   DialogContent,
   Autocomplete,
@@ -19,7 +18,6 @@ import {
   CircularProgress,
   TextField,
   Box,
-  Stack,
   InputAdornment,
   FormControlLabel,
   Checkbox,
@@ -46,7 +44,7 @@ import { useI18nContext } from '#src/i18n/lib/i18nContext'
 import pathWithoutExtension from '#src/lib/pathWithoutExtension'
 import StarRating from '#src/lib/StarRating'
 import DelayedOnCloseDialog, {
-  DelayedOnCloseDialogCloseIcon,
+  DelayedOnCloseDialogTitleWithCloseIcon,
   useDelayedOnCloseDialogTriggerClose,
 } from '#src/mui/DelayedOnCloseDialog'
 import ReactHookFormTextField from '#src/react-hook-form/ReactHookFormTextField'
@@ -181,38 +179,27 @@ const GameDialog: React.FC<{
     >
       <FormProvider {...formApi}>
         <GameFileListProvider>
-          <DialogTitle>
-            <Stack
-              direction="row"
-              alignItems="flex-start"
-              justifyContent="space-between"
-            >
-              <div>
-                {fullGame.name}
+          <DelayedOnCloseDialogTitleWithCloseIcon>
+            {fullGame.name}
 
-                <Controller
-                  name="rating"
-                  render={(renderProps) => {
-                    return (
-                      <StarRating
-                        value={renderProps.field.value}
-                        onChange={(value) => {
-                          if (renderProps.formState.isSubmitting) {
-                            return
-                          }
+            <Controller
+              name="rating"
+              render={(renderProps) => {
+                return (
+                  <StarRating
+                    value={renderProps.field.value}
+                    onChange={(value) => {
+                      if (renderProps.formState.isSubmitting) {
+                        return
+                      }
 
-                          renderProps.field.onChange(value)
-                        }}
-                      />
-                    )
-                  }}
-                />
-              </div>
-              <div>
-                <DelayedOnCloseDialogCloseIcon edge="end" />
-              </div>
-            </Stack>
-          </DialogTitle>
+                      renderProps.field.onChange(value)
+                    }}
+                  />
+                )
+              }}
+            />
+          </DelayedOnCloseDialogTitleWithCloseIcon>
 
           <DialogContent>
             <Grid container spacing={2}>

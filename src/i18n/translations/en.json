@@ -3,7 +3,11 @@
     "clear": "Clear",
     "reset": "Reset",
     "save": "Save",
-    "close": "Close"
+    "close": "Close",
+    "delete": "Delete",
+    "yes": "Yes",
+    "no": "No",
+    "cancel": "Cancel"
   },
 
   "app": {
@@ -18,7 +22,8 @@
   "games": {
     "actions": {
       "openGamesFolder": "Open Games Folder",
-      "start": "Play"
+      "start": "Play",
+      "dropToImport": "Drop to import Games ..."
     },
 
     "filter": {
@@ -116,7 +121,8 @@
 
     "actions": {
       "create": "Create",
-      "addSourcePort": "Add Source Port"
+      "addSourcePort": "Add Source Port",
+      "dropToImport": "Drop to import Source Port ..."
     },
 
     "fields": {
@@ -126,6 +132,11 @@
       "command": {
         "label": "Command"
       }
+    },
+
+    "confirmDelete": {
+      "title": "Delete Source Port",
+      "message": "Are you sure you want to delete this Source Port?"
     }
   },
 
@@ -144,6 +155,11 @@
     "releaseNotes": {
       "title": "v{{version}} Release Notes"
     }
+  },
+
+  "confirm": {
+    "defaultTitle": "Are you sure?",
+    "defaultMessage": "This cannot be undone."
   },
 
   "languageSelector": {

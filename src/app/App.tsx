@@ -23,7 +23,9 @@ function App() {
           <AppBar position="sticky">
             <Toolbar sx={{ gap: 2 }}>
               <AppToolbarSlot />
+
               <Box flexGrow="1" />
+
               <AppCogMenu />
             </Toolbar>
           </AppBar>

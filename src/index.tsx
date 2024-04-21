@@ -16,6 +16,7 @@ import { Provider } from 'react-redux'
 import theme from './app/theme'
 import graphqlClient from './graphql/graphqlClient'
 import I18nLoader from './i18n/I18nLoader'
+import { ConfirmDialog, ConfirmDialogProvider } from './lib/ConfirmDialog'
 import NotistackMuiAlert from './mui/NotistackMuiAlert'
 import createRootStore from './redux/createRootStore'
 
@@ -55,7 +56,10 @@ createRoot(rootElement).render(
                 }
               >
                 <I18nLoader>
-                  <App />
+                  <ConfirmDialogProvider>
+                    <App />
+                    <ConfirmDialog />
+                  </ConfirmDialogProvider>
                 </I18nLoader>
               </Suspense>
             </CssBaseline>

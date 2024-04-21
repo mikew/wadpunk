@@ -11,6 +11,9 @@ import { useState } from 'react'
 
 import { invalidateApolloQuery } from '#src/graphql/graphqlClient'
 import { ImportFileDocument } from '#src/graphql/operations'
+import { useI18nContext } from '#src/i18n/lib/i18nContext'
+import basename from '#src/lib/basename'
+import { useRootSelector } from '#src/redux/helpers'
 import useTauriFileDrop from '#src/tauri/useTauriFileDrop'
 
 interface ImportStatus {
@@ -25,8 +28,16 @@ const ImportDropZone: React.FC<React.PropsWithChildren> = (props) => {
     ImportStatus | undefined
   >()
   const [importFile] = useMutation(ImportFileDocument)
+  const isSourcePortsDialogOpen = useRootSelector(
+    (state) => state.sourcePorts.isDialogOpen,
+  )
+  const { t } = useI18nContext()
 
   const tauriFileDrop = useTauriFileDrop(async (event) => {
+    if (isSourcePortsDialogOpen) {
+      return
+    }
+
     let i = 0
     for (const file of event.payload) {
       setCurrentImportStatus({
@@ -57,9 +68,7 @@ const ImportDropZone: React.FC<React.PropsWithChildren> = (props) => {
   const currentIndex = currentImportStatus?.index || 0
   const currentLength = currentImportStatus?.length || 1
 
-  const currentFileName = currentImportStatus?.currentFilePath.slice(
-    currentImportStatus.currentFilePath.lastIndexOf('/') + 1,
-  )
+  const currentFileName = basename(currentImportStatus?.currentFilePath || '')
 
   const message =
     currentImportStatus?.status === 'importing'
@@ -97,8 +106,10 @@ const ImportDropZone: React.FC<React.PropsWithChildren> = (props) => {
         </Alert>
       </Snackbar>
 
-      <Dialog open={Boolean(tauriFileDrop.isDraggingOver)}>
-        <DialogContent>Drop files to import ...</DialogContent>
+      <Dialog
+        open={Boolean(!isSourcePortsDialogOpen && tauriFileDrop.isDraggingOver)}
+      >
+        <DialogContent>{t('games.actions.dropToImport')}</DialogContent>
       </Dialog>
     </div>
   )
