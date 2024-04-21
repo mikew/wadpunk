@@ -1,6 +1,11 @@
 import { Close } from '@mui/icons-material'
-import type { ButtonProps, DialogProps, IconButtonProps } from '@mui/material'
-import { Button, Dialog, IconButton } from '@mui/material'
+import type {
+  ButtonProps,
+  DialogProps,
+  DialogTitleProps,
+  IconButtonProps,
+} from '@mui/material'
+import { Button, Dialog, DialogTitle, IconButton, Stack } from '@mui/material'
 import type { ConsumerProps } from 'react'
 import {
   createContext,
@@ -101,8 +106,13 @@ const DelayedOnCloseDialog: React.FC<DelayedOnCloseDialogProps> = (props) => {
   )
 }
 
+export type DelayedOnCloseDialogCloseIconProps = Omit<
+  IconButtonProps,
+  'onClick' | 'children'
+>
+
 export const DelayedOnCloseDialogCloseIcon: React.FC<
-  Omit<IconButtonProps, 'onClick' | 'children'>
+  DelayedOnCloseDialogCloseIconProps
 > = (props) => {
   const triggerClose = useDelayedOnCloseDialogTriggerClose()
 
@@ -130,6 +140,32 @@ export const DelayedOnCloseDialogCloseButton: React.FC<
         triggerClose('closeClick')
       }}
     />
+  )
+}
+
+interface DelayedOnCloseDialogTitleWithCloseIconProps extends DialogTitleProps {
+  slotProps?: {
+    closeIcon?: DelayedOnCloseDialogCloseIconProps
+  }
+}
+
+export const DelayedOnCloseDialogTitleWithCloseIcon: React.FC<
+  DelayedOnCloseDialogTitleWithCloseIconProps
+> = ({ slotProps, ...props }) => {
+  return (
+    <DialogTitle {...props}>
+      <Stack
+        direction="row"
+        alignItems="flex-start"
+        justifyContent="space-between"
+      >
+        <div>{props.children}</div>
+
+        <div>
+          <DelayedOnCloseDialogCloseIcon edge="end" {...slotProps?.closeIcon} />
+        </div>
+      </Stack>
+    </DialogTitle>
   )
 }
 

@@ -5,7 +5,6 @@ import {
   Button,
   Dialog,
   DialogContent,
-  DialogTitle,
   Divider,
   List,
   ListItem,
@@ -27,7 +26,7 @@ import { useI18nContext } from '#src/i18n/lib/i18nContext'
 import basename from '#src/lib/basename'
 import { useConfirmDialog } from '#src/lib/ConfirmDialog'
 import DelayedOnCloseDialog, {
-  DelayedOnCloseDialogCloseIcon,
+  DelayedOnCloseDialogTitleWithCloseIcon,
 } from '#src/mui/DelayedOnCloseDialog'
 import { useRootDispatch, useRootSelector } from '#src/redux/helpers'
 import useTauriFileDrop from '#src/tauri/useTauriFileDrop'
@@ -73,10 +72,9 @@ const SourcePortsDialog: React.FC = () => {
           dispatch(actions.toggleDialog())
         }}
       >
-        <DialogTitle>
+        <DelayedOnCloseDialogTitleWithCloseIcon>
           {t('sourcePorts.title')}
-          <DelayedOnCloseDialogCloseIcon edge="end" />
-        </DialogTitle>
+        </DelayedOnCloseDialogTitleWithCloseIcon>
 
         <DialogContent>
           <Stack
