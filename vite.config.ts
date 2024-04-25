@@ -11,36 +11,6 @@ export default defineConfig(async (env) => {
   config.build = {
     ...config.build,
     sourcemap: false,
-
-    // rollupOptions: {
-    //   output: {
-    //     manualChunks: (id) => {
-    //       if (
-    //         id.includes('@mui') ||
-    //         id.includes('notistack') ||
-    //         id.includes('@popperjs') ||
-    //         id.includes('@emotion')
-    //       ) {
-    //         return 'mui'
-    //       }
-
-    //       if (
-    //         id.includes('@apollo') ||
-    //         id.includes('optimism') ||
-    //         id.includes('zen-observable')
-    //       ) {
-    //         return 'apollo'
-    //       }
-
-    //       if (id.includes('node_modules')) {
-    //         return 'vendor'
-    //       }
-    //     },
-    //     // manualChunks: {
-    //     //   mui: ['@mui/material', '@mui/icons-material'],
-    //     // },
-    //   },
-    // },
   }
 
   config.plugins?.unshift(
