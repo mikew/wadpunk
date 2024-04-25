@@ -121,9 +121,7 @@ const GameDialogFileList: React.FC<GameDialogFileListProps> = (props) => {
         let isSelected: boolean | undefined = undefined
 
         if (previousEntry) {
-          if (previousEntry.is_enabled === false) {
-            isSelected = false
-          }
+          isSelected = previousEntry.is_enabled
         }
 
         if (isSelected == null) {
