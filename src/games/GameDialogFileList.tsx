@@ -105,6 +105,8 @@ const GameDialogFileList: React.FC<GameDialogFileListProps> = (props) => {
             x.absolute.toLowerCase().endsWith('.pwad') ||
             x.absolute.toLowerCase().endsWith('.pk3') ||
             x.absolute.toLowerCase().endsWith('.ipk3') ||
+            x.absolute.toLowerCase().endsWith('.pk7') ||
+            x.absolute.toLowerCase().endsWith('.pke') ||
             x.absolute.toLowerCase().endsWith('.deh') ||
             x.absolute.toLowerCase().endsWith('.bex'),
         }
@@ -119,9 +121,7 @@ const GameDialogFileList: React.FC<GameDialogFileListProps> = (props) => {
         let isSelected: boolean | undefined = undefined
 
         if (previousEntry) {
-          if (previousEntry.is_enabled === false) {
-            isSelected = false
-          }
+          isSelected = previousEntry.is_enabled
         }
 
         if (isSelected == null) {
@@ -131,6 +131,8 @@ const GameDialogFileList: React.FC<GameDialogFileListProps> = (props) => {
             x.absolute.toLowerCase().endsWith('.pwad') ||
             x.absolute.toLowerCase().endsWith('.pk3') ||
             x.absolute.toLowerCase().endsWith('.ipk3') ||
+            x.absolute.toLowerCase().endsWith('.pk7') ||
+            x.absolute.toLowerCase().endsWith('.pke') ||
             x.absolute.toLowerCase().endsWith('.deh') ||
             x.absolute.toLowerCase().endsWith('.bex')
         }

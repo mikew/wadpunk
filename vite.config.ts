@@ -3,12 +3,6 @@ import muteWarnings from '@promoboxx/react-scripts-vite/muteWarnings'
 import { defineConfig } from 'vite'
 
 pluginOptions.pwa = false
-pluginOptions.checker = {
-  ...pluginOptions.checker,
-  overlay: {
-    initialIsOpen: false,
-  },
-}
 // pluginOptions.checker = false
 
 export default defineConfig(async (env) => {
