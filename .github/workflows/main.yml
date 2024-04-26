@@ -19,13 +19,13 @@ jobs:
       matrix:
         platform:
           # macos-x64
-          - macos-latest
+          - macos-12
           # macos-aarch64
           - macos-14
           # linux-x64
           - ubuntu-20.04
           # windows-x64
-          - windows-latest
+          - windows-2019
 
     runs-on: ${{ matrix.platform }}
 
@@ -134,8 +134,8 @@ jobs:
       # path.
       - run: |
           mkdir -p src-tauri/target/release/bundle
-          cp -rl wadpunk-windows-latest-X64/* src-tauri/target/release/bundle
-          cp -rl wadpunk-macos-latest-X64/* src-tauri/target/release/bundle
+          cp -rl wadpunk-windows-2019-X64/* src-tauri/target/release/bundle
+          cp -rl wadpunk-macos-12-X64/* src-tauri/target/release/bundle
           cp -rl wadpunk-macos-14-ARM64/* src-tauri/target/release/bundle
           cp -rl wadpunk-ubuntu-20.04-X64/* src-tauri/target/release/bundle
         shell: bash
