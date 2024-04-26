@@ -10,7 +10,7 @@ import {
   Stack,
 } from '@mui/material'
 import useSimpleFilter from '@promoboxx/use-filter/dist/useSimpleFilter'
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 
 import { AppToolbarPortal } from '#src/app/AppToolbarArea'
 import * as games from '#src/games/redux'
@@ -20,6 +20,7 @@ import {
 } from '#src/graphql/operations'
 import pathWithoutExtension from '#src/lib/pathWithoutExtension'
 import StarRating from '#src/lib/StarRating'
+import VirtualizedList from '#src/lib/VirtualizedList'
 import { useRootDispatch } from '#src/redux/helpers'
 
 import calculateGamePlayTime from './calculateGamePlayTime'
@@ -132,68 +133,87 @@ const GameList: React.FC = () => {
     debouncedFilterInfo.sort,
   ])
 
+  const [totalHeight, setTotalHeight] = useState<number>(0)
+
   return (
     <>
       <AppToolbarPortal portalKey="GameFilterToolbar">
         <GameFilterToolbar filterApi={filterApi} />
       </AppToolbarPortal>
 
-      <List disablePadding dense>
-        {filtered.map((x) => {
-          let playTime = calculateGamePlayTime(x.play_sessions)
+      <List disablePadding dense component="div" sx={{ height: totalHeight }}>
+        <VirtualizedList
+          itemHeight={60}
+          buffer={3}
+          items={filtered}
+          scrollElement={window}
+          setContainerHeight={setTotalHeight}
+          renderItem={(props) => {
+            const x = props.item
 
-          let playtimeMessage =
-            playTime === 0
-              ? 'Never played'
-              : `${new Date(playTime * 1000)
-                  .toISOString()
-                  .substring(11, 19)} played`
+            let playTime = calculateGamePlayTime(x.play_sessions)
 
-          return (
-            <ListItem key={x.id} disableGutters disablePadding divider>
-              <ListItemButton
-                disableRipple
-                onClick={() => {
-                  dispatch(games.actions.setSelectedId(x.id))
-                }}
+            let playtimeMessage =
+              playTime === 0
+                ? 'Never played'
+                : `${new Date(playTime * 1000)
+                    .toISOString()
+                    .substring(11, 19)} played`
+
+            return (
+              <ListItem
+                key={x.id}
+                disableGutters
+                disablePadding
+                divider
+                style={props.style}
+                component="div"
               >
-                <ListItemText
-                  primary={x.name}
-                  secondary={
-                    <>
-                      {playtimeMessage} / {x.notes}
-                    </>
-                  }
-                />
-              </ListItemButton>
-
-              <Stack direction="row" spacing={1} alignItems="center">
-                <Stack direction="row" spacing={1}>
-                  {x.tags.map((tag) => {
-                    return (
-                      <Chip
-                        variant="outlined"
-                        size="small"
-                        key={tag}
-                        label={tag}
-                      />
-                    )
-                  })}
-                </Stack>
-
-                <StarRating
-                  value={x.rating}
-                  onChange={(value) => {
-                    setRating({
-                      variables: {
-                        game_id: x.id,
-                        rating: value,
-                      },
-                    })
+                <ListItemButton
+                  disableRipple
+                  onClick={() => {
+                    dispatch(games.actions.setSelectedId(x.id))
                   }}
-                />
+                >
+                  <ListItemText
+                    primary={x.name}
+                    primaryTypographyProps={{ noWrap: true }}
+                    secondary={
+                      <>
+                        {playtimeMessage} / {x.notes}
+                      </>
+                    }
+                    secondaryTypographyProps={{ noWrap: true }}
+                  />
+                </ListItemButton>
 
-                {/* <IconButton
+                <Stack direction="row" spacing={1} alignItems="center">
+                  <Stack direction="row" spacing={1}>
+                    {x.tags.map((tag) => {
+                      return (
+                        <Chip
+                          variant="outlined"
+                          size="small"
+                          key={tag}
+                          label={tag}
+                        />
+                      )
+                    })}
+                  </Stack>
+
+                  <StarRating
+                    value={x.rating}
+                    onChange={(value) => {
+                      setRating({
+                        variables: {
+                          game_id: x.id,
+                          rating: value,
+                        },
+                      })
+                    }}
+                  />
+
+                  {/* <IconButton
                   onClick={() => {
                     startGame(x)
                   }}
@@ -202,18 +222,19 @@ const GameList: React.FC = () => {
                   <PlayArrow />
                 </IconButton> */}
 
-                <IconButton
-                  onClick={() => {
-                    openGamesFolder(x.id)
-                  }}
-                  size="small"
-                >
-                  <FolderOpen />
-                </IconButton>
-              </Stack>
-            </ListItem>
-          )
-        })}
+                  <IconButton
+                    onClick={() => {
+                      openGamesFolder(x.id)
+                    }}
+                    size="small"
+                  >
+                    <FolderOpen fontSize="small" />
+                  </IconButton>
+                </Stack>
+              </ListItem>
+            )
+          }}
+        />
       </List>
     </>
   )
