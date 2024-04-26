@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## 1.4.1 (2024-04-26)
+
+
+### Bug Fixes
+
+* Fix mac builds ([#73](https://github.com/mikew/wadpunk/issues/73)) ([3fb19a7](https://github.com/mikew/wadpunk/commit/3fb19a7ec6c6e43a03b25da1bdd49b54300be115))
+
 ## 1.4.0 (2024-04-21)
 
 
