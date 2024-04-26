@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## 1.5.0 (2024-04-26)
+
+
+### Features
+
+* Virtualize the game list for performance ([#72](https://github.com/mikew/wadpunk/issues/72)) ([07f5069](https://github.com/mikew/wadpunk/commit/07f5069af9b41508bb13866486e281b3113fed87))
+
 ## 1.4.1 (2024-04-26)
 
 
