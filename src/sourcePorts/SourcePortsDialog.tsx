@@ -37,7 +37,7 @@ import SourcePortForm from './SourcePortForm'
 import useAllSourcePorts from './useAllSourcePorts'
 
 const SourcePortsDialog: React.FC = () => {
-  const { sourcePorts, knownSourcePorts } = useAllSourcePorts()
+  const { sourcePorts } = useAllSourcePorts()
   const isOpen = useRootSelector((state) => state.sourcePorts.isDialogOpen)
   const dispatch = useRootDispatch()
   const [createSourcePort] = useMutation(CreateSourcePortDocument)
