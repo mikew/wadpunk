@@ -42,12 +42,21 @@ type GameFileEntry {
 type SourcePort {
   id: ID!
   command: [String!]!
+  known_source_port_id: ID!
   is_default: Boolean!
 }
 
 type AppInfo {
   name: String!
   version: String!
+}
+
+type KnownSourcePort {
+  id: ID!
+  name: String!
+  description: String!
+  supports_custom_config: Boolean!
+  supports_save_dir: Boolean!
 }
 
 type Query {
@@ -60,6 +69,8 @@ type Query {
   getAppSettings: AppSettings!
 
   getAppInfo: AppInfo!
+
+  getKnownSourcePorts: [KnownSourcePort!]!
 }
 
 input PreviousFileStateItemInput {
@@ -87,6 +98,7 @@ input GameInput {
 input CreateSourcePortInput {
   id: ID!
   command: [String!]!
+  known_source_port_id: ID!
 
   # TODO Should this be a separate mutation? The field probably won't be in the
   # ui for editing source ports, will probably be in the list itself.
@@ -96,6 +108,7 @@ input CreateSourcePortInput {
 input UpdateSourcePortInput {
   id: ID!
   command: [String!]!
+  known_source_port_id: ID!
 
   # TODO Should this be a separate mutation? The field probably won't be in the
   # ui for editing source ports, will probably be in the list itself.

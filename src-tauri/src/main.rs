@@ -7,6 +7,7 @@ use graphql::datasource::DataSource;
 mod database;
 mod graphql;
 mod importer;
+mod known_source_ports;
 mod tauri_helpers;
 
 fn main() {

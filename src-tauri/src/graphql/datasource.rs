@@ -19,6 +19,9 @@ use crate::database::DbPreviousFileStateItem;
 use crate::database::DbSourcePort;
 use crate::graphql::generated::AppInfo;
 use crate::importer;
+use crate::known_source_ports;
+use crate::known_source_ports::find_known_source_port_from_id;
+use crate::known_source_ports::BuildCommandArgs;
 use crate::tauri_helpers::reveal_in_finder::reveal_file_or_folder;
 
 use super::generated::AppSettings;
@@ -26,6 +29,7 @@ use super::generated::CreateSourcePortInput;
 use super::generated::Game;
 use super::generated::GameFileEntry;
 use super::generated::GameInput;
+use super::generated::KnownSourcePort;
 use super::generated::Mutation;
 use super::generated::PlaySession;
 use super::generated::PreviousFileStateItem;
@@ -150,6 +154,19 @@ impl DataSource {
     )
   }
 
+  pub async fn Query_getKnownSourcePorts(
+    &self,
+    _root: &Query,
+    _ctx: &Context<'_>,
+  ) -> GraphQLResult<Vec<KnownSourcePort>> {
+    Ok(
+      known_source_ports::get_all_known_source_ports()
+        .into_iter()
+        .map(|x| x.to_known_source_port())
+        .collect(),
+    )
+  }
+
   pub async fn Query_getSourcePorts(
     &self,
     _root: &Query,
@@ -218,60 +235,23 @@ impl DataSource {
       main_exe
     };
 
-    let mut command = Command::new(main_exe);
+    let source_port_definition = find_known_source_port_from_id(
+      &db_source_port
+        .known_source_port_id
+        .unwrap_or("gzdoom".to_string()),
+    );
+
+    let args = source_port_definition.build_command(&BuildCommandArgs {
+      executable: main_exe,
+      game_id: game_id.clone(),
+      iwad: iwad.unwrap(),
+      files: files.unwrap_or_default(),
+      use_custom_config: use_custom_config.unwrap_or_default(),
+    });
+
+    let mut command = Command::new(&args[0]);
     command.args(base_args);
-
-    if let Some(valid_iwad) = iwad {
-      command.args(["-iwad", &valid_iwad]);
-    }
-
-    if let Some(valid_files) = files {
-      for valid_file in valid_files {
-        // If the file ends with .deh, add `-deh <file>`, if the file ends with
-        // .bex, add `-bex <file>`, otherwise just add `-file <file>`
-        // I really don't like Rust.
-        let file_extension = Path::new(&valid_file)
-          .extension()
-          .unwrap_or_default()
-          .to_str()
-          .unwrap_or_default()
-          .to_lowercase();
-
-        match file_extension.as_str() {
-          "deh" => {
-            command.args(["-deh", &valid_file]);
-          }
-          "bex" => {
-            command.args(["-bex", &valid_file]);
-          }
-          _ => {
-            command.args(["-file", &valid_file]);
-          }
-        }
-      }
-    }
-
-    if let Some(use_custom_config) = use_custom_config {
-      if use_custom_config {
-        command.args([
-          "-config",
-          database::get_meta_directory()
-            .join(database::normalize_name_from_id(&game_id))
-            .join("config.ini")
-            .to_str()
-            .unwrap(),
-        ]);
-      }
-    }
-
-    command.args([
-      "-savedir",
-      database::get_meta_directory()
-        .join(database::normalize_name_from_id(&game_id))
-        .join("saves")
-        .to_str()
-        .unwrap(),
-    ]);
+    command.args(&args[1..]);
 
     let mut play_session = DbPlaySessionEntry {
       started_at: Some(Utc::now().to_rfc3339()),
@@ -458,6 +438,7 @@ impl DataSource {
     let db_source_port = DbSourcePort {
       id: Some(source_port.id),
       command: Some(source_port.command),
+      known_source_port_id: Some(source_port.known_source_port_id),
     };
 
     database::save_source_port(db_source_port.clone());
@@ -474,6 +455,7 @@ impl DataSource {
     let mut db_source_port = database::find_source_port_by_id(source_port.id);
 
     db_source_port.command = Some(source_port.command);
+    db_source_port.known_source_port_id = Some(source_port.known_source_port_id);
 
     database::save_source_port(db_source_port.clone());
 
