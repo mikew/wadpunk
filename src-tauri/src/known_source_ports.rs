@@ -64,6 +64,13 @@ impl DbKnownSourcePort {
       description: "".to_string(),
       supports_custom_config: self.supports_custom_config(),
       supports_save_dir: self.supports_save_dir(),
+      example_command: self.build_command(&BuildCommandArgs {
+        executable: self.id().to_string(),
+        iwad: "doom2.iwad".to_string(),
+        files: vec!["example.wad".to_string()],
+        use_custom_config: true,
+        game_id: "doom2".to_string(),
+      }),
     }
   }
 

@@ -12,6 +12,7 @@ query getAllSourcePorts {
     description
     supports_custom_config
     supports_save_dir
+    example_command
   }
 }
 
