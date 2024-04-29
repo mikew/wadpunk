@@ -29,6 +29,7 @@ function useAllSourcePorts() {
 
   return {
     sourcePorts: sortedSourcePorts,
+    knownSourcePorts: data.getKnownSourcePorts,
     defaultSourcePort,
     findSourcePortById,
     refetch,

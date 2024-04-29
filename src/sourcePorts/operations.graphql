@@ -2,7 +2,16 @@ query getAllSourcePorts {
   getSourcePorts {
     id
     command
+    known_source_port_id
     is_default
+  }
+
+  getKnownSourcePorts {
+    id
+    name
+    description
+    supports_custom_config
+    supports_save_dir
   }
 }
 

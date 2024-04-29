@@ -37,7 +37,7 @@ import SourcePortForm from './SourcePortForm'
 import useAllSourcePorts from './useAllSourcePorts'
 
 const SourcePortsDialog: React.FC = () => {
-  const { sourcePorts } = useAllSourcePorts()
+  const { sourcePorts, knownSourcePorts } = useAllSourcePorts()
   const isOpen = useRootSelector((state) => state.sourcePorts.isDialogOpen)
   const dispatch = useRootDispatch()
   const [createSourcePort] = useMutation(CreateSourcePortDocument)
@@ -161,6 +161,7 @@ const SourcePortsDialog: React.FC = () => {
                       }
                     : {
                         id: '',
+                        known_source_port_id: 'gzdoom',
                         command: '',
                       }
                 }
@@ -170,6 +171,7 @@ const SourcePortsDialog: React.FC = () => {
                       variables: {
                         source_port: {
                           id: values.id,
+                          known_source_port_id: values.known_source_port_id,
                           // TODO This is a hack because I don't want to deal with the
                           // array-ness of the command in the UI yet.
                           command: values.command ? [values.command] : [],
@@ -187,6 +189,7 @@ const SourcePortsDialog: React.FC = () => {
                       variables: {
                         source_port: {
                           id: selectedId,
+                          known_source_port_id: values.known_source_port_id,
                           command: values.command ? [values.command] : [],
                         },
                       },
