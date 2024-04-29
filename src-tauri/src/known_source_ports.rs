@@ -12,6 +12,8 @@ pub enum DbKnownSourcePort {
   GZDoom,
   EternityEngine,
   ChocolateDoom,
+  DSDA,
+  Woof,
 }
 
 impl DbKnownSourcePort {
@@ -20,6 +22,8 @@ impl DbKnownSourcePort {
       Self::GZDoom => "gzdoom".to_string(),
       Self::EternityEngine => "eternity".to_string(),
       Self::ChocolateDoom => "chocolate-doom".to_string(),
+      Self::DSDA => "dsda".to_string(),
+      Self::Woof => "woof".to_string(),
     }
   }
 
@@ -28,6 +32,8 @@ impl DbKnownSourcePort {
       Self::GZDoom => "GZDoom".to_string(),
       Self::EternityEngine => "Eternity Engine".to_string(),
       Self::ChocolateDoom => "Chocolate Doom".to_string(),
+      Self::DSDA => "DSDA".to_string(),
+      Self::Woof => "Woof".to_string(),
     }
   }
 
@@ -36,6 +42,8 @@ impl DbKnownSourcePort {
       Self::GZDoom => true,
       Self::EternityEngine => true,
       Self::ChocolateDoom => true,
+      Self::DSDA => true,
+      Self::Woof => true,
     }
   }
 
@@ -44,6 +52,8 @@ impl DbKnownSourcePort {
       Self::GZDoom => true,
       Self::EternityEngine => true,
       Self::ChocolateDoom => true,
+      Self::DSDA => true,
+      Self::Woof => true,
     }
   }
 
@@ -69,7 +79,7 @@ impl DbKnownSourcePort {
         .to_string();
 
       match self {
-        Self::GZDoom | Self::EternityEngine | Self::ChocolateDoom => {
+        Self::GZDoom | Self::EternityEngine | Self::ChocolateDoom | Self::DSDA | Self::Woof => {
           command.push("-config".to_string());
           command.push(config_path);
         }
@@ -87,7 +97,7 @@ impl DbKnownSourcePort {
         command.push("-savedir".to_string());
         command.push(save_dir);
       }
-      Self::EternityEngine => {
+      Self::EternityEngine | Self::DSDA | Self::Woof => {
         command.push("-save".to_string());
         command.push(save_dir);
       }
@@ -101,21 +111,21 @@ impl DbKnownSourcePort {
       // .bex, add `-bex <file>`, otherwise just add `-file <file>`
       if file.ends_with(".deh") {
         match self {
-          Self::GZDoom | Self::EternityEngine | Self::ChocolateDoom => {
+          Self::GZDoom | Self::EternityEngine | Self::ChocolateDoom | Self::DSDA | Self::Woof => {
             command.push("-deh".to_string());
             command.push(file.clone());
           }
         }
       } else if file.ends_with(".bex") {
         match self {
-          Self::GZDoom | Self::EternityEngine | Self::ChocolateDoom => {
+          Self::GZDoom | Self::EternityEngine | Self::ChocolateDoom | Self::DSDA | Self::Woof => {
             command.push("-deh".to_string());
             command.push(file.clone());
           }
         }
       } else {
         match self {
-          Self::GZDoom | Self::EternityEngine => {
+          Self::GZDoom | Self::EternityEngine | Self::DSDA | Self::Woof => {
             command.push("-file".to_string());
             command.push(file.clone());
           }
@@ -136,6 +146,8 @@ pub fn get_all_known_source_ports() -> Vec<DbKnownSourcePort> {
     DbKnownSourcePort::GZDoom,
     DbKnownSourcePort::EternityEngine,
     DbKnownSourcePort::ChocolateDoom,
+    DbKnownSourcePort::DSDA,
+    DbKnownSourcePort::Woof,
   ]
 }
 
