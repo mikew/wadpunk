@@ -10,6 +10,8 @@ query getAllSourcePorts {
     id
     name
     description
+    home_page_url
+    download_page_url
     supports_custom_config
     supports_save_dir
     example_command

@@ -8,6 +8,7 @@ import ImportDropZone from '#src/games/ImportDropZone'
 import { InitializeAppDocument } from '#src/graphql/operations'
 import type { SuspenseWrappedPromise } from '#src/lib/wrapPromiseForSuspense'
 import { wrapPromiseForSuspense } from '#src/lib/wrapPromiseForSuspense'
+import KnownSourcePortsDialog from '#src/sourcePorts/KnownSourcePortsDialog'
 import SourcePortsDialog from '#src/sourcePorts/SourcePortsDialog'
 
 import AppCogMenu from './AppCogMenu'
@@ -37,7 +38,10 @@ function App() {
       </ImportDropZone>
 
       <GameDialogSuspense />
+
       <SourcePortsDialog />
+      <KnownSourcePortsDialog />
+
       <UpdateNotifier />
     </Initializer>
   )

@@ -1,12 +1,21 @@
 import { Edit, Terminal } from '@mui/icons-material'
-import { Box, Button, InputAdornment, MenuItem, Stack } from '@mui/material'
+import {
+  Box,
+  Button,
+  InputAdornment,
+  Link,
+  MenuItem,
+  Stack,
+} from '@mui/material'
 import { forwardRef, useImperativeHandle } from 'react'
 import type { UseFormReturn } from 'react-hook-form'
 import { FormProvider, useForm } from 'react-hook-form'
 
 import { useI18nContext } from '#src/i18n/lib/i18nContext'
 import ReactHookFormTextField from '#src/react-hook-form/ReactHookFormTextField'
+import { useRootDispatch } from '#src/redux/helpers'
 
+import actions from './actions'
 import useAllSourcePorts from './useAllSourcePorts'
 
 export interface AddSourcePortFormValues {
@@ -32,6 +41,7 @@ const SourcePortForm = forwardRef<
   const { t } = useI18nContext()
   useImperativeHandle(ref, () => formApi, [formApi])
   const { knownSourcePorts } = useAllSourcePorts()
+  const dispatch = useRootDispatch()
 
   return (
     <FormProvider {...formApi}>
@@ -54,6 +64,17 @@ const SourcePortForm = forwardRef<
           label="Type"
           select
           sx={{ flex: '0 0 250px' }}
+          helperText={
+            <>
+              <Link
+                onClick={() => {
+                  dispatch(actions.toggleKnownSourcePortsDialog())
+                }}
+              >
+                More Info
+              </Link>
+            </>
+          }
         >
           {knownSourcePorts.map((sourcePort) => {
             return (
