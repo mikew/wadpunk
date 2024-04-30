@@ -57,6 +57,31 @@ impl DbKnownSourcePort {
     }
   }
 
+  pub fn home_page_url(&self) -> String {
+    match self {
+      Self::GZDoom => "https://zdoom.org/".to_string(),
+      Self::EternityEngine => "https://eternity.youfailit.net/wiki/Eternity_Engine".to_string(),
+      Self::ChocolateDoom => "https://www.chocolate-doom.org/".to_string(),
+      Self::DSDA => "https://github.com/kraflab/dsda-doom".to_string(),
+      Self::Woof => "https://github.com/fabiangreffrath/woof".to_string(),
+    }
+  }
+
+  pub fn download_page_url(&self) -> String {
+    match self {
+      Self::GZDoom => "https://github.com/ZDoom/gzdoom/releases".to_string(),
+      Self::EternityEngine => {
+        "https://github.com/team-eternity/eternity/releases/latest".to_string()
+      }
+      Self::ChocolateDoom => "https://www.chocolate-doom.org/wiki/index.php/Downloads".to_string(),
+      Self::DSDA => {
+        "https://drive.google.com/drive/folders/1KMU1dY0HZrY5h2EyPzxxXuyH8DunAJV_?usp=sharing"
+          .to_string()
+      }
+      Self::Woof => "https://github.com/fabiangreffrath/woof/releases/latest".to_string(),
+    }
+  }
+
   pub fn to_known_source_port(&self) -> KnownSourcePort {
     KnownSourcePort {
       id: self.id(),
@@ -64,6 +89,8 @@ impl DbKnownSourcePort {
       description: "".to_string(),
       supports_custom_config: self.supports_custom_config(),
       supports_save_dir: self.supports_save_dir(),
+      home_page_url: self.home_page_url(),
+      download_page_url: self.download_page_url(),
       example_command: self.build_command(&BuildCommandArgs {
         executable: self.id().to_string(),
         iwad: "doom2.iwad".to_string(),
