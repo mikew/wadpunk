@@ -85,7 +85,7 @@ const SourcePortsDialog: React.FC = () => {
             spacing={2}
             divider={<Divider orientation="vertical" flexItem />}
           >
-            <Box sx={{ width: '300px' }}>
+            <Box sx={{ flex: '0 0 300px' }}>
               <List dense disablePadding>
                 <ListItem divider disablePadding>
                   <ListItemButton
@@ -142,7 +142,7 @@ const SourcePortsDialog: React.FC = () => {
               </Box>
             </Box>
 
-            <Box style={{ flexGrow: '1' }}>
+            <Box flexGrow="1">
               <SourcePortForm
                 // key is needed here for react-hook-form. Without it, even though
                 // new objects are passed to `defaultValues`, it never reflects
