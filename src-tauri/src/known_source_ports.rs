@@ -94,7 +94,7 @@ impl DbKnownSourcePort {
       example_command: self.build_command(&BuildCommandArgs {
         executable: self.id().to_string(),
         iwad: "doom2.iwad".to_string(),
-        files: vec!["example.wad".to_string()],
+        files: vec!["example1.wad".to_string(), "example2.wad".to_string()],
         use_custom_config: true,
         game_id: "doom2".to_string(),
       }),
