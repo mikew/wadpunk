@@ -6,14 +6,14 @@ export interface State {
   isDialogOpen: boolean
   selectedId: string
   isKnownSourcePortsDialogOpen: boolean
-  knownSourcePortId: string
+  selectedKnownSourcePortIds: string[]
 }
 
 export const initialState: State = {
   isDialogOpen: false,
   selectedId: '-1',
   isKnownSourcePortsDialogOpen: false,
-  knownSourcePortId: '-1',
+  selectedKnownSourcePortIds: [],
 }
 
 export const reducer = createReducer(initialState, (builder) => {
@@ -30,8 +30,29 @@ export const reducer = createReducer(initialState, (builder) => {
       ...state,
       isKnownSourcePortsDialogOpen: !state.isKnownSourcePortsDialogOpen,
     }))
-    .addHandler(actions.setSelectedKnownSourcePort, (state, action) => ({
-      ...state,
-      knownSourcePortId: action.payload.id,
-    }))
+    .addHandler(actions.setSelectedKnownSourcePort, (state, action) => {
+      const { ids, mode } = action.payload
+      let selectedKnownSourcePortIds: string[] = []
+
+      if (mode === 'exclusive') {
+        selectedKnownSourcePortIds = [...ids]
+      } else if (mode === 'toggle') {
+        for (const id of ids) {
+          if (state.selectedKnownSourcePortIds.includes(id)) {
+            selectedKnownSourcePortIds =
+              state.selectedKnownSourcePortIds.filter((x) => x !== id)
+          } else {
+            selectedKnownSourcePortIds = [
+              ...state.selectedKnownSourcePortIds,
+              id,
+            ]
+          }
+        }
+      }
+
+      return {
+        ...state,
+        selectedKnownSourcePortIds,
+      }
+    })
 })

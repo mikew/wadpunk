@@ -5,6 +5,7 @@ import {
   ExpandMore,
   OpenInNew,
 } from '@mui/icons-material'
+import type { AccordionProps } from '@mui/material'
 import {
   Accordion,
   AccordionActions,
@@ -32,8 +33,8 @@ const KnownSourcePortsDialog: React.FC = () => {
   const isOpen = useRootSelector(
     (state) => state.sourcePorts.isKnownSourcePortsDialogOpen,
   )
-  const selectedId = useRootSelector(
-    (state) => state.sourcePorts.knownSourcePortId,
+  const selectedIds = useRootSelector(
+    (state) => state.sourcePorts.selectedKnownSourcePortIds,
   )
   const dispatch = useRootDispatch()
 
@@ -60,7 +61,15 @@ const KnownSourcePortsDialog: React.FC = () => {
             <KnownSourcePortCard
               key={x.id}
               sourcePort={x}
-              defaultExpanded={x.id === selectedId}
+              expanded={selectedIds.includes(x.id)}
+              onChange={(event) => {
+                dispatch(
+                  actions.setSelectedKnownSourcePort({
+                    ids: [x.id],
+                    mode: 'toggle',
+                  }),
+                )
+              }}
             />
           )
         })}
@@ -72,15 +81,17 @@ const KnownSourcePortsDialog: React.FC = () => {
 const CHECK_MARK = <Check color="success" fontSize="small" />
 const WARNING_ICON = <Cancel color="warning" fontSize="small" />
 
-const KnownSourcePortCard: React.FC<{
+interface KnownSourcePortCardProps extends Omit<AccordionProps, 'children'> {
   sourcePort: KnownSourcePortListItem
-  defaultExpanded?: boolean
-}> = (props) => {
+}
+
+const KnownSourcePortCard: React.FC<KnownSourcePortCardProps> = (props) => {
+  const { sourcePort, ...accordionProps } = props
   const [isExampleCommandExpanded, setIsExampleCommandExpanded] =
     useState(false)
 
   return (
-    <Accordion defaultExpanded={props.defaultExpanded}>
+    <Accordion {...accordionProps}>
       <AccordionSummary expandIcon={<ExpandMore />}>
         {props.sourcePort.name}
       </AccordionSummary>

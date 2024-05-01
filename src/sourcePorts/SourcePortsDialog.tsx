@@ -140,8 +140,15 @@ const SourcePortsDialog: React.FC = () => {
 
                 <Button
                   startIcon={<Download />}
-                  href={gzdoom.download_page_url}
-                  target="_blank"
+                  onClick={() => {
+                    dispatch(
+                      actions.setSelectedKnownSourcePort({
+                        ids: ['gzdoom'],
+                        mode: 'exclusive',
+                      }),
+                    )
+                    dispatch(actions.toggleKnownSourcePortsDialog())
+                  }}
                 >
                   {t('sourcePorts.downloadWithLabel', { name: gzdoom.name })}
                 </Button>

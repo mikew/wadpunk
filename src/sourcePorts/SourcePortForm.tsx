@@ -42,6 +42,7 @@ const SourcePortForm = forwardRef<
   useImperativeHandle(ref, () => formApi, [formApi])
   const { knownSourcePorts } = useAllSourcePorts()
   const dispatch = useRootDispatch()
+  const knownSourcePortId = formApi.watch('known_source_port_id')
 
   return (
     <FormProvider {...formApi}>
@@ -63,11 +64,17 @@ const SourcePortForm = forwardRef<
           name="known_source_port_id"
           label="Type"
           select
-          sx={{ flex: '0 0 250px' }}
+          sx={{ flex: '0 0 200px' }}
           helperText={
             <>
               <Link
                 onClick={() => {
+                  dispatch(
+                    actions.setSelectedKnownSourcePort({
+                      ids: [knownSourcePortId],
+                      mode: 'exclusive',
+                    }),
+                  )
                   dispatch(actions.toggleKnownSourcePortsDialog())
                 }}
               >

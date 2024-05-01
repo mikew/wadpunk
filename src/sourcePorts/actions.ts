@@ -5,5 +5,8 @@ export default createActions('sourcePorts', {
   setSelectedId: (id: string) => ({ id }),
 
   toggleKnownSourcePortsDialog: () => {},
-  setSelectedKnownSourcePort: (id: string) => ({ id }),
+  setSelectedKnownSourcePort: (args: {
+    ids: string[]
+    mode: 'exclusive' | 'toggle'
+  }) => args,
 })
