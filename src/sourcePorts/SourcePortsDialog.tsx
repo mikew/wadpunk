@@ -37,7 +37,7 @@ import SourcePortForm from './SourcePortForm'
 import useAllSourcePorts from './useAllSourcePorts'
 
 const SourcePortsDialog: React.FC = () => {
-  const { sourcePorts } = useAllSourcePorts()
+  const { sourcePorts, knownSourcePorts } = useAllSourcePorts()
   const isOpen = useRootSelector((state) => state.sourcePorts.isDialogOpen)
   const dispatch = useRootDispatch()
   const [createSourcePort] = useMutation(CreateSourcePortDocument)
@@ -52,6 +52,12 @@ const SourcePortsDialog: React.FC = () => {
 
   const { t } = useI18nContext()
   const isAddingNew = selectedId === '-1'
+
+  const gzdoom = knownSourcePorts.find((x) => x.id === 'gzdoom')
+
+  if (!gzdoom) {
+    throw new Error('gzdoom known source port not found')
+  }
 
   const tauriFileDrop = useTauriFileDrop(async (event) => {
     if (!isOpen) {
@@ -134,10 +140,10 @@ const SourcePortsDialog: React.FC = () => {
 
                 <Button
                   startIcon={<Download />}
-                  href="https://zdoom.org/downloads"
+                  href={gzdoom.download_page_url}
                   target="_blank"
                 >
-                  {t('sourcePorts.downloadGZDoom')}
+                  {t('sourcePorts.downloadWithLabel', { name: gzdoom.name })}
                 </Button>
               </Box>
             </Box>
