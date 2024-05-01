@@ -16,7 +16,7 @@ import ReactHookFormTextField from '#src/react-hook-form/ReactHookFormTextField'
 import { useRootDispatch } from '#src/redux/helpers'
 
 import actions from './actions'
-import useAllSourcePorts from './useAllSourcePorts'
+import { useSourcePortsContext } from './sourcePortsContext'
 
 export interface AddSourcePortFormValues {
   id: string
@@ -40,7 +40,7 @@ const SourcePortForm = forwardRef<
   })
   const { t } = useI18nContext()
   useImperativeHandle(ref, () => formApi, [formApi])
-  const { knownSourcePorts } = useAllSourcePorts()
+  const { knownSourcePorts } = useSourcePortsContext()
   const dispatch = useRootDispatch()
   const knownSourcePortId = formApi.watch('known_source_port_id')
 

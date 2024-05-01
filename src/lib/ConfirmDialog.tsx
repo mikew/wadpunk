@@ -7,6 +7,7 @@ import {
 } from '@mui/material'
 import {
   createContext,
+  memo,
   useCallback,
   useContext,
   useEffect,
@@ -42,29 +43,29 @@ const confirmDialogContext = createContext<{
   ui: {},
 })
 
-export const ConfirmDialogProvider: React.FC<React.PropsWithChildren> = ({
-  children,
-}) => {
-  const [isOpen, setIsOpen] = useState(false)
-  const [ui, setUi] = useState<ConfirmDialogUiOptions>({})
-  const currentResolve = useRef<
-    (resolveFn: boolean | PromiseLike<boolean>) => void
-  >(() => {})
+export const ConfirmDialogProvider: React.FC<React.PropsWithChildren> = memo(
+  ({ children }) => {
+    const [isOpen, setIsOpen] = useState(false)
+    const [ui, setUi] = useState<ConfirmDialogUiOptions>({})
+    const currentResolve = useRef<
+      (resolveFn: boolean | PromiseLike<boolean>) => void
+    >(() => {})
 
-  return (
-    <confirmDialogContext.Provider
-      value={{
-        currentResolve,
-        setUi,
-        setIsOpen,
-        isOpen,
-        ui,
-      }}
-    >
-      {children}
-    </confirmDialogContext.Provider>
-  )
-}
+    return (
+      <confirmDialogContext.Provider
+        value={{
+          currentResolve,
+          setUi,
+          setIsOpen,
+          isOpen,
+          ui,
+        }}
+      >
+        {children}
+      </confirmDialogContext.Provider>
+    )
+  },
+)
 
 export function useConfirmDialog() {
   const context = useContext(confirmDialogContext)
@@ -94,7 +95,7 @@ export function useConfirmDialog() {
   }
 }
 
-export const ConfirmDialog: React.FC = () => {
+export const ConfirmDialog: React.FC = memo(() => {
   const context = useContext(confirmDialogContext)
   const { t } = useI18nContext()
 
@@ -142,4 +143,4 @@ export const ConfirmDialog: React.FC = () => {
       </DialogActions>
     </Dialog>
   )
-}
+})

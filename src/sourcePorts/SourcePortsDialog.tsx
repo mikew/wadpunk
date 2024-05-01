@@ -34,10 +34,10 @@ import useTauriFileDrop from '#src/tauri/useTauriFileDrop'
 import actions from './actions'
 import type { AddSourcePortFormValues } from './SourcePortForm'
 import SourcePortForm from './SourcePortForm'
-import useAllSourcePorts from './useAllSourcePorts'
+import { useSourcePortsContext } from './sourcePortsContext'
 
 const SourcePortsDialog: React.FC = () => {
-  const { sourcePorts, knownSourcePorts } = useAllSourcePorts()
+  const { sourcePorts, knownSourcePorts } = useSourcePortsContext()
   const isOpen = useRootSelector((state) => state.sourcePorts.isDialogOpen)
   const dispatch = useRootDispatch()
   const [createSourcePort] = useMutation(CreateSourcePortDocument)
@@ -132,7 +132,7 @@ const SourcePortsDialog: React.FC = () => {
                 <Typography
                   variant="body2"
                   color="text.secondary"
-                  gutterBottom
+                  paragraph
                   sx={{ marginTop: 1 }}
                 >
                   Don't know where to get started?

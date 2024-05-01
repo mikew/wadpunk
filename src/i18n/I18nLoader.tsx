@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { memo, useEffect, useRef, useState } from 'react'
 
 import {
   wrapPromiseForSuspense,
@@ -53,4 +53,4 @@ const I18nLoader: React.FC<React.PropsWithChildren> = (props) => {
   )
 }
 
-export default I18nLoader
+export default memo(I18nLoader)

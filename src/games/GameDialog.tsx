@@ -49,7 +49,7 @@ import DelayedOnCloseDialog, {
 } from '#src/mui/DelayedOnCloseDialog'
 import ReactHookFormTextField from '#src/react-hook-form/ReactHookFormTextField'
 import { useRootDispatch, useRootSelector } from '#src/redux/helpers'
-import useAllSourcePorts from '#src/sourcePorts/useAllSourcePorts'
+import { useSourcePortsContext } from '#src/sourcePorts/sourcePortsContext'
 
 import GameDialogFileList from './GameDialogFileList'
 import {
@@ -117,7 +117,7 @@ const GameDialog: React.FC<{
     },
   })
 
-  const { sourcePorts, defaultSourcePort } = useAllSourcePorts()
+  const { sourcePorts, defaultSourcePort } = useSourcePortsContext()
 
   const [updateGame] = useMutation(UpdateGameDocument)
 
@@ -487,7 +487,7 @@ const GameDialogActions: React.FC<{
   const { files: allFiles } = useGameFileListContext()
   const triggerClose = useDelayedOnCloseDialogTriggerClose()
   const formState = useFormState()
-  const { findSourcePortById } = useAllSourcePorts()
+  const { findSourcePortById } = useSourcePortsContext()
   const { t } = useI18nContext()
 
   return (

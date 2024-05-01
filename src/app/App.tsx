@@ -1,6 +1,6 @@
 import { useMutation } from '@apollo/client'
 import { AppBar, Box, Toolbar } from '@mui/material'
-import { useEffect, useState } from 'react'
+import { memo, useEffect, useState } from 'react'
 
 import { GameDialogSuspense } from '#src/games/GameDialog'
 import GameList from '#src/games/GameList'
@@ -61,4 +61,4 @@ function Initializer(props: React.PropsWithChildren) {
   )
 }
 
-export default App
+export default memo(App)

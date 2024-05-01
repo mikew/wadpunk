@@ -6,11 +6,11 @@ import { GetGameListQueryDocument } from '#src/graphql/operations'
 import { useI18nContext } from '#src/i18n/lib/i18nContext'
 import { useRootDispatch } from '#src/redux/helpers'
 import actions from '#src/sourcePorts/actions'
-import useAllSourcePorts from '#src/sourcePorts/useAllSourcePorts'
+import { useSourcePortsContext } from '#src/sourcePorts/sourcePortsContext'
 
 const OnboardingAlerts: React.FC = () => {
   const { data } = useSuspenseQuery(GetGameListQueryDocument)
-  const { sourcePorts } = useAllSourcePorts()
+  const { sourcePorts } = useSourcePortsContext()
   const dispatch = useRootDispatch()
   const { t } = useI18nContext()
 

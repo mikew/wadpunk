@@ -27,11 +27,11 @@ import DelayedOnCloseDialog, {
 import { useRootDispatch, useRootSelector } from '#src/redux/helpers'
 
 import actions from './actions'
+import { useSourcePortsContext } from './sourcePortsContext'
 import type { KnownSourcePortListItem } from './types'
-import useAllSourcePorts from './useAllSourcePorts'
 
 const KnownSourcePortsDialog: React.FC = () => {
-  const { knownSourcePorts } = useAllSourcePorts()
+  const { knownSourcePorts } = useSourcePortsContext()
   const isOpen = useRootSelector(
     (state) => state.sourcePorts.isKnownSourcePortsDialogOpen,
   )
@@ -130,6 +130,7 @@ const KnownSourcePortCard: React.FC<KnownSourcePortCardProps> = (props) => {
           variant="text"
           fullWidth
           startIcon={<ExpandMore />}
+          size="small"
           onClick={() => {
             setIsExampleCommandExpanded(!isExampleCommandExpanded)
           }}
