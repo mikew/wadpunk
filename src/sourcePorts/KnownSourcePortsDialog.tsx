@@ -6,19 +6,21 @@ import {
   OpenInNew,
 } from '@mui/icons-material'
 import {
+  Accordion,
+  AccordionActions,
+  AccordionDetails,
+  AccordionSummary,
   Button,
-  Card,
-  CardActions,
-  CardContent,
-  CardHeader,
   Collapse,
-  Dialog,
   DialogContent,
-  Grid,
+  DialogContentText,
   Stack,
 } from '@mui/material'
 import { useState } from 'react'
 
+import DelayedOnCloseDialog, {
+  DelayedOnCloseDialogTitleWithCloseIcon,
+} from '#src/mui/DelayedOnCloseDialog'
 import { useRootDispatch, useRootSelector } from '#src/redux/helpers'
 
 import actions from './actions'
@@ -30,45 +32,60 @@ const KnownSourcePortsDialog: React.FC = () => {
   const isOpen = useRootSelector(
     (state) => state.sourcePorts.isKnownSourcePortsDialogOpen,
   )
+  const selectedId = useRootSelector(
+    (state) => state.sourcePorts.knownSourcePortId,
+  )
   const dispatch = useRootDispatch()
 
   return (
-    <Dialog
+    <DelayedOnCloseDialog
       open={isOpen}
       onClose={() => {
         dispatch(actions.toggleKnownSourcePortsDialog())
       }}
     >
+      <DelayedOnCloseDialogTitleWithCloseIcon>
+        <span>Known Source Ports</span>
+
+        <DialogContentText>
+          WADPunk supports a number of Source Ports. Even if your favorite isn't
+          listed, it might still work: check the Example Command, and if it
+          looks similar to what you use, give it a try!
+        </DialogContentText>
+      </DelayedOnCloseDialogTitleWithCloseIcon>
+
       <DialogContent>
-        <Grid container spacing={2}>
-          {knownSourcePorts.map((x) => {
-            return (
-              <Grid key={x.id} item xs={12}>
-                <KnownSourcePortCard sourcePort={x} />
-              </Grid>
-            )
-          })}
-        </Grid>
+        {knownSourcePorts.map((x) => {
+          return (
+            <KnownSourcePortCard
+              key={x.id}
+              sourcePort={x}
+              defaultExpanded={x.id === selectedId}
+            />
+          )
+        })}
       </DialogContent>
-    </Dialog>
+    </DelayedOnCloseDialog>
   )
 }
 
 const CHECK_MARK = <Check color="success" fontSize="small" />
 const WARNING_ICON = <Cancel color="warning" fontSize="small" />
 
-const KnownSourcePortCard: React.FC<{ sourcePort: KnownSourcePortListItem }> = (
-  props,
-) => {
-  const [isExpanded, setIsExpanded] = useState(false)
+const KnownSourcePortCard: React.FC<{
+  sourcePort: KnownSourcePortListItem
+  defaultExpanded?: boolean
+}> = (props) => {
+  const [isExampleCommandExpanded, setIsExampleCommandExpanded] =
+    useState(false)
 
   return (
-    <Card>
-      <CardHeader
-        title={props.sourcePort.name}
-        subheader={props.sourcePort.description}
-      />
-      <CardContent>
+    <Accordion defaultExpanded={props.defaultExpanded}>
+      <AccordionSummary expandIcon={<ExpandMore />}>
+        {props.sourcePort.name}
+      </AccordionSummary>
+
+      <AccordionDetails>
         <Stack spacing={1} direction="row" alignItems="center">
           {props.sourcePort.supports_custom_config ? CHECK_MARK : WARNING_ICON}
 
@@ -86,17 +103,17 @@ const KnownSourcePortCard: React.FC<{ sourcePort: KnownSourcePortListItem }> = (
           fullWidth
           startIcon={<ExpandMore />}
           onClick={() => {
-            setIsExpanded(!isExpanded)
+            setIsExampleCommandExpanded(!isExampleCommandExpanded)
           }}
         >
           Example Command
         </Button>
-        <Collapse in={isExpanded}>
+        <Collapse in={isExampleCommandExpanded}>
           <code>{props.sourcePort.example_command.join(' ')}</code>
         </Collapse>
-      </CardContent>
+      </AccordionDetails>
 
-      <CardActions>
+      <AccordionActions>
         <Button
           href={props.sourcePort.home_page_url}
           target="_blank"
@@ -112,8 +129,8 @@ const KnownSourcePortCard: React.FC<{ sourcePort: KnownSourcePortListItem }> = (
         >
           Download
         </Button>
-      </CardActions>
-    </Card>
+      </AccordionActions>
+    </Accordion>
   )
 }
 
