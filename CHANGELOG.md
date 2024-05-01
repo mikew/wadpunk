@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## 1.6.0 (2024-05-01)
+
+
+### Features
+
+* Better support for other Source Ports ([#75](https://github.com/mikew/wadpunk/issues/75)) ([c97fdef](https://github.com/mikew/wadpunk/commit/c97fdeff708fa7eb1d248f22262ba97ccc8bb21e)), closes [#74](https://github.com/mikew/wadpunk/issues/74)
+
 ## 1.5.0 (2024-04-26)
 
 
