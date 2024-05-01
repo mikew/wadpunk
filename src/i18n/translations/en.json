@@ -111,6 +111,7 @@
     "default": "Default ({{sourcePort}})",
     "addNew": "Add New",
     "downloadGZDoom": "Download GZDoom",
+    "downloadWithLabel": "Download {{name}}",
 
     "onboarding": {
       "noSourcePorts": {
