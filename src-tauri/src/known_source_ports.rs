@@ -86,7 +86,6 @@ impl DbKnownSourcePort {
     KnownSourcePort {
       id: self.id(),
       name: self.name(),
-      description: "".to_string(),
       supports_custom_config: self.supports_custom_config(),
       supports_save_dir: self.supports_save_dir(),
       home_page_url: self.home_page_url(),

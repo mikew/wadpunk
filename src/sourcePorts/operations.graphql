@@ -9,7 +9,6 @@ query getAllSourcePorts {
   getKnownSourcePorts {
     id
     name
-    description
     home_page_url
     download_page_url
     supports_custom_config

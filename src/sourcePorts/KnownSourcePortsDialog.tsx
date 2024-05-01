@@ -16,9 +16,11 @@ import {
   DialogContent,
   DialogContentText,
   Stack,
+  Typography,
 } from '@mui/material'
 import { useState } from 'react'
 
+import { useI18nContext } from '#src/i18n/lib/i18nContext'
 import DelayedOnCloseDialog, {
   DelayedOnCloseDialogTitleWithCloseIcon,
 } from '#src/mui/DelayedOnCloseDialog'
@@ -86,9 +88,14 @@ interface KnownSourcePortCardProps extends Omit<AccordionProps, 'children'> {
 }
 
 const KnownSourcePortCard: React.FC<KnownSourcePortCardProps> = (props) => {
+  const { t } = useI18nContext()
   const { sourcePort, ...accordionProps } = props
   const [isExampleCommandExpanded, setIsExampleCommandExpanded] =
     useState(false)
+  const description = t(
+    `knownSourcePorts.info.${props.sourcePort.id}.description`,
+    { defaultValue: '' },
+  )
 
   return (
     <Accordion {...accordionProps}>
@@ -109,6 +116,16 @@ const KnownSourcePortCard: React.FC<KnownSourcePortCardProps> = (props) => {
           <span>Supports save directory</span>
         </Stack>
 
+        {description ? (
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            sx={{ marginY: 2 }}
+          >
+            {description}
+          </Typography>
+        ) : undefined}
+
         <Button
           variant="text"
           fullWidth
@@ -120,7 +137,9 @@ const KnownSourcePortCard: React.FC<KnownSourcePortCardProps> = (props) => {
           Example Command
         </Button>
         <Collapse in={isExampleCommandExpanded}>
-          <code>{props.sourcePort.example_command.join(' ')}</code>
+          <Typography variant="body2">
+            <code>{props.sourcePort.example_command.join(' ')}</code>
+          </Typography>
         </Collapse>
       </AccordionDetails>
 
@@ -129,6 +148,7 @@ const KnownSourcePortCard: React.FC<KnownSourcePortCardProps> = (props) => {
           href={props.sourcePort.home_page_url}
           target="_blank"
           startIcon={<OpenInNew />}
+          size="small"
         >
           Home Page
         </Button>
@@ -137,6 +157,7 @@ const KnownSourcePortCard: React.FC<KnownSourcePortCardProps> = (props) => {
           href={props.sourcePort.download_page_url}
           target="_blank"
           startIcon={<Download />}
+          size="small"
         >
           Download
         </Button>

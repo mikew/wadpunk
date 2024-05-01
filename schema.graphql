@@ -54,7 +54,6 @@ type AppInfo {
 type KnownSourcePort {
   id: ID!
   name: String!
-  description: String!
   supports_custom_config: Boolean!
   supports_save_dir: Boolean!
   example_command: [String!]!

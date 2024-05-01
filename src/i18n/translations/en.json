@@ -141,6 +141,26 @@
     }
   },
 
+  "knownSourcePorts": {
+    "info": {
+      "gzdoom": {
+        "description": "GZDoom is a feature centric port for all Doom engine games, based on ZDoom, adding an OpenGL renderer and powerful scripting capabilities."
+      },
+      "eternity": {
+        "description": "The Eternity Engine is Team Eternity's advanced Doom source port. It is meant as a versatile feature port which keeps gameplay compatibility with its roots while advancing with powerful features such as new ways to design levels and modding capabilities."
+      },
+      "chocolate-doom": {
+        "description": "Chocolate Doom is a Doom source port that accurately reproduces the experience of Doom as it was played in the 1990s."
+      },
+      "dsda": {
+        "description": "This is a successor of prboom+ with extra tooling for demo recording and playback, with a focus on speedrunning and quality of life."
+      },
+      "woof": {
+        "description": "Woof! is a continuation of the Boom/MBF bloodline of Doom source ports."
+      }
+    }
+  },
+
   "updateNotifier": {
     "actions": {
       "relaunch": "Restart",
