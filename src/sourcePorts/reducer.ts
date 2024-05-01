@@ -6,12 +6,14 @@ export interface State {
   isDialogOpen: boolean
   selectedId: string
   isKnownSourcePortsDialogOpen: boolean
+  knownSourcePortId: string
 }
 
 export const initialState: State = {
   isDialogOpen: false,
   selectedId: '-1',
   isKnownSourcePortsDialogOpen: false,
+  knownSourcePortId: '-1',
 }
 
 export const reducer = createReducer(initialState, (builder) => {
@@ -27,5 +29,9 @@ export const reducer = createReducer(initialState, (builder) => {
     .addHandler(actions.toggleKnownSourcePortsDialog, (state, action) => ({
       ...state,
       isKnownSourcePortsDialogOpen: !state.isKnownSourcePortsDialogOpen,
+    }))
+    .addHandler(actions.setSelectedKnownSourcePort, (state, action) => ({
+      ...state,
+      knownSourcePortId: action.payload.id,
     }))
 })
