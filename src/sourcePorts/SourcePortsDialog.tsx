@@ -34,10 +34,10 @@ import useTauriFileDrop from '#src/tauri/useTauriFileDrop'
 import actions from './actions'
 import type { AddSourcePortFormValues } from './SourcePortForm'
 import SourcePortForm from './SourcePortForm'
-import useAllSourcePorts from './useAllSourcePorts'
+import { useSourcePortsContext } from './sourcePortsContext'
 
 const SourcePortsDialog: React.FC = () => {
-  const { sourcePorts } = useAllSourcePorts()
+  const { sourcePorts, knownSourcePorts } = useSourcePortsContext()
   const isOpen = useRootSelector((state) => state.sourcePorts.isDialogOpen)
   const dispatch = useRootDispatch()
   const [createSourcePort] = useMutation(CreateSourcePortDocument)
@@ -52,6 +52,12 @@ const SourcePortsDialog: React.FC = () => {
 
   const { t } = useI18nContext()
   const isAddingNew = selectedId === '-1'
+
+  const gzdoom = knownSourcePorts.find((x) => x.id === 'gzdoom')
+
+  if (!gzdoom) {
+    throw new Error('gzdoom known source port not found')
+  }
 
   const tauriFileDrop = useTauriFileDrop(async (event) => {
     if (!isOpen) {
@@ -85,7 +91,7 @@ const SourcePortsDialog: React.FC = () => {
             spacing={2}
             divider={<Divider orientation="vertical" flexItem />}
           >
-            <Box sx={{ width: '300px' }}>
+            <Box sx={{ flex: '0 0 300px' }}>
               <List dense disablePadding>
                 <ListItem divider disablePadding>
                   <ListItemButton
@@ -126,7 +132,7 @@ const SourcePortsDialog: React.FC = () => {
                 <Typography
                   variant="body2"
                   color="text.secondary"
-                  gutterBottom
+                  paragraph
                   sx={{ marginTop: 1 }}
                 >
                   Don't know where to get started?
@@ -134,15 +140,22 @@ const SourcePortsDialog: React.FC = () => {
 
                 <Button
                   startIcon={<Download />}
-                  href="https://zdoom.org/downloads"
-                  target="_blank"
+                  onClick={() => {
+                    dispatch(
+                      actions.setSelectedKnownSourcePort({
+                        ids: ['gzdoom'],
+                        mode: 'exclusive',
+                      }),
+                    )
+                    dispatch(actions.toggleKnownSourcePortsDialog())
+                  }}
                 >
-                  {t('sourcePorts.downloadGZDoom')}
+                  {t('sourcePorts.downloadWithLabel', { name: gzdoom.name })}
                 </Button>
               </Box>
             </Box>
 
-            <Box style={{ flexGrow: '1' }}>
+            <Box flexGrow="1">
               <SourcePortForm
                 // key is needed here for react-hook-form. Without it, even though
                 // new objects are passed to `defaultValues`, it never reflects
@@ -161,6 +174,7 @@ const SourcePortsDialog: React.FC = () => {
                       }
                     : {
                         id: '',
+                        known_source_port_id: 'gzdoom',
                         command: '',
                       }
                 }
@@ -170,6 +184,7 @@ const SourcePortsDialog: React.FC = () => {
                       variables: {
                         source_port: {
                           id: values.id,
+                          known_source_port_id: values.known_source_port_id,
                           // TODO This is a hack because I don't want to deal with the
                           // array-ness of the command in the UI yet.
                           command: values.command ? [values.command] : [],
@@ -187,6 +202,7 @@ const SourcePortsDialog: React.FC = () => {
                       variables: {
                         source_port: {
                           id: selectedId,
+                          known_source_port_id: values.known_source_port_id,
                           command: values.command ? [values.command] : [],
                         },
                       },

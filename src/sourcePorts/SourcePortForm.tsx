@@ -1,15 +1,27 @@
 import { Edit, Terminal } from '@mui/icons-material'
-import { Box, Button, InputAdornment, Stack } from '@mui/material'
+import {
+  Box,
+  Button,
+  InputAdornment,
+  Link,
+  MenuItem,
+  Stack,
+} from '@mui/material'
 import { forwardRef, useImperativeHandle } from 'react'
 import type { UseFormReturn } from 'react-hook-form'
 import { FormProvider, useForm } from 'react-hook-form'
 
 import { useI18nContext } from '#src/i18n/lib/i18nContext'
 import ReactHookFormTextField from '#src/react-hook-form/ReactHookFormTextField'
+import { useRootDispatch } from '#src/redux/helpers'
+
+import actions from './actions'
+import { useSourcePortsContext } from './sourcePortsContext'
 
 export interface AddSourcePortFormValues {
   id: string
   command: string
+  known_source_port_id: string
 }
 
 const SourcePortForm = forwardRef<
@@ -28,21 +40,59 @@ const SourcePortForm = forwardRef<
   })
   const { t } = useI18nContext()
   useImperativeHandle(ref, () => formApi, [formApi])
+  const { knownSourcePorts } = useSourcePortsContext()
+  const dispatch = useRootDispatch()
+  const knownSourcePortId = formApi.watch('known_source_port_id')
 
   return (
     <FormProvider {...formApi}>
-      <ReactHookFormTextField
-        name="id"
-        label={t('sourcePorts.fields.id.label')}
-        disabled={props.sourcePort.id !== ''}
-        InputProps={{
-          startAdornment: (
-            <InputAdornment position="start">
-              <Edit />
-            </InputAdornment>
-          ),
-        }}
-      />
+      <Stack spacing={2} direction="row">
+        <ReactHookFormTextField
+          name="id"
+          label={t('sourcePorts.fields.id.label')}
+          disabled={props.sourcePort.id !== ''}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <Edit />
+              </InputAdornment>
+            ),
+          }}
+        />
+
+        <ReactHookFormTextField
+          name="known_source_port_id"
+          label="Type"
+          select
+          sx={{ flex: '0 0 200px' }}
+          helperText={
+            <>
+              <Link
+                onClick={() => {
+                  dispatch(
+                    actions.setSelectedKnownSourcePort({
+                      ids: [knownSourcePortId],
+                      mode: 'exclusive',
+                    }),
+                  )
+                  dispatch(actions.toggleKnownSourcePortsDialog())
+                }}
+              >
+                More Info
+              </Link>
+            </>
+          }
+        >
+          {knownSourcePorts.map((sourcePort) => {
+            return (
+              <MenuItem key={sourcePort.id} value={sourcePort.id}>
+                {sourcePort.name}
+              </MenuItem>
+            )
+          })}
+        </ReactHookFormTextField>
+      </Stack>
+
       <ReactHookFormTextField
         name="command"
         label={t('sourcePorts.fields.command.label')}

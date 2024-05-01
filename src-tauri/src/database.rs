@@ -277,6 +277,7 @@ pub struct DbPlaySessionEntry {
 pub struct DbSourcePort {
   pub id: Option<String>,
   pub command: Option<Vec<String>>,
+  pub known_source_port_id: Option<String>,
 }
 
 fn recurse_disk_entry(dir: DiskEntry, files: &mut Vec<String>) {
@@ -298,6 +299,10 @@ impl DbSourcePort {
     SourcePort {
       id: self.id.clone().unwrap(),
       command: self.command.clone().unwrap_or_default(),
+      known_source_port_id: self
+        .known_source_port_id
+        .clone()
+        .unwrap_or("gzdoom".to_string()),
       is_default: false,
     }
   }

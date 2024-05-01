@@ -27,8 +27,19 @@ function useAllSourcePorts() {
     [data.getSourcePorts, defaultSourcePort],
   )
 
+  const sortedKnownSourcePorts = useMemo(() => {
+    const sortedKnownSourcePorts = [...data.getKnownSourcePorts]
+
+    sortedKnownSourcePorts.sort((a, b) => {
+      return a.name.localeCompare(b.name)
+    })
+
+    return sortedKnownSourcePorts
+  }, [data.getKnownSourcePorts])
+
   return {
     sourcePorts: sortedSourcePorts,
+    knownSourcePorts: sortedKnownSourcePorts,
     defaultSourcePort,
     findSourcePortById,
     refetch,
