@@ -19,7 +19,6 @@ import I18nLoader from './i18n/I18nLoader'
 import { ConfirmDialog, ConfirmDialogProvider } from './lib/ConfirmDialog'
 import NotistackMuiAlert from './mui/NotistackMuiAlert'
 import createRootStore from './redux/createRootStore'
-import { SourcePortsProvider } from './sourcePorts/sourcePortsContext'
 
 const App = lazy(() => import('./app/App'))
 
@@ -57,12 +56,10 @@ createRoot(rootElement).render(
                 }
               >
                 <I18nLoader>
-                  <SourcePortsProvider>
-                    <ConfirmDialogProvider>
-                      <App />
-                      <ConfirmDialog />
-                    </ConfirmDialogProvider>
-                  </SourcePortsProvider>
+                  <ConfirmDialogProvider>
+                    <App />
+                    <ConfirmDialog />
+                  </ConfirmDialogProvider>
                 </I18nLoader>
               </Suspense>
             </CssBaseline>

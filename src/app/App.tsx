@@ -9,6 +9,7 @@ import { InitializeAppDocument } from '#src/graphql/operations'
 import type { SuspenseWrappedPromise } from '#src/lib/wrapPromiseForSuspense'
 import { wrapPromiseForSuspense } from '#src/lib/wrapPromiseForSuspense'
 import KnownSourcePortsDialog from '#src/sourcePorts/KnownSourcePortsDialog'
+import { SourcePortsProvider } from '#src/sourcePorts/sourcePortsContext'
 import SourcePortsDialog from '#src/sourcePorts/SourcePortsDialog'
 
 import AppCogMenu from './AppCogMenu'
@@ -19,30 +20,32 @@ import UpdateNotifier from './UpdateNotifier'
 function App() {
   return (
     <Initializer>
-      <ImportDropZone>
-        <AppToolbarProvider>
-          <AppBar position="sticky">
-            <Toolbar sx={{ gap: 2 }}>
-              <AppToolbarSlot />
+      <SourcePortsProvider>
+        <ImportDropZone>
+          <AppToolbarProvider>
+            <AppBar position="sticky">
+              <Toolbar sx={{ gap: 2 }}>
+                <AppToolbarSlot />
 
-              <Box flexGrow="1" />
+                <Box flexGrow="1" />
 
-              <AppCogMenu />
-            </Toolbar>
-          </AppBar>
+                <AppCogMenu />
+              </Toolbar>
+            </AppBar>
 
-          <OnboardingAlerts />
+            <OnboardingAlerts />
 
-          <GameList />
-        </AppToolbarProvider>
-      </ImportDropZone>
+            <GameList />
+          </AppToolbarProvider>
+        </ImportDropZone>
 
-      <GameDialogSuspense />
+        <GameDialogSuspense />
 
-      <SourcePortsDialog />
-      <KnownSourcePortsDialog />
+        <SourcePortsDialog />
+        <KnownSourcePortsDialog />
 
-      <UpdateNotifier />
+        <UpdateNotifier />
+      </SourcePortsProvider>
     </Initializer>
   )
 }
