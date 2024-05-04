@@ -14,10 +14,6 @@
 
   "tauri": {
     "allowlist": {
-      "shell": {
-        "sidecar": true,
-        "open": ".*"
-      },
       "process": {
         "relaunch": true,
         "exit": true
@@ -33,7 +29,7 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
-      "externalBin": ["./sidecar/7zip/7za", "./sidecar/7zip/7z.dll"]
+      "resources": ["./resources-arch-specific/*"]
     },
 
     "updater": {

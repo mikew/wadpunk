@@ -5,3 +5,8 @@ pnpm install
 
 GRAPHQL_CODEGEN_MODE=server ./node_modules/.bin/graphql-codegen
 GRAPHQL_CODEGEN_MODE=client ./node_modules/.bin/graphql-codegen
+
+if [ ! -e ./src-tauri/resources-arch-specific ]; then
+  RUST_TRIPLET=$(rustc -vV | grep ^host: | cut -d ' ' -f 2)
+  ln -s "${PWD}/src-tauri/resources-arch-specific-source/${RUST_TRIPLET}" ./src-tauri/resources-arch-specific
+fi

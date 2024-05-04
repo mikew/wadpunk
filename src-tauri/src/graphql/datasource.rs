@@ -476,11 +476,28 @@ impl DataSource {
   pub async fn Mutation_importFile(
     &self,
     _root: &Mutation,
-    _ctx: &Context<'_>,
+    ctx: &Context<'_>,
     file_path: String,
   ) -> GraphQLResult<bool> {
-    importer::import_file(&file_path);
+    let app_handle = ctx.data_unchecked::<AppHandle>();
+
+    let seven_zip_path = app_handle
+      .path_resolver()
+      .resolve_resource(add_exe_on_windows("resources-arch-specific/7za"))
+      .unwrap();
+
+    let seven_zip_path_str = seven_zip_path.to_str().unwrap();
+
+    importer::import_file(&file_path, seven_zip_path_str);
 
     Ok(true)
+  }
+}
+
+pub fn add_exe_on_windows(exe: &str) -> String {
+  if cfg!(target_os = "windows") {
+    format!("{}.exe", exe)
+  } else {
+    exe.to_string()
   }
 }

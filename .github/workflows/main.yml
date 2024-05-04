@@ -71,7 +71,7 @@ jobs:
             ~/.cargo/git/db/
             src-tauri/target/
             !src-tauri/target/release/bundle/
-          key: cargo-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('src-tauri/Cargo.lock') }}
+          key: cargo-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('src-tauri/Cargo.lock', 'src-tauri/tauri.conf.json') }}
           restore-keys: |
             cargo-${{ runner.os }}-${{ runner.arch }}-
 
