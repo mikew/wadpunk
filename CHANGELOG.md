@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## 1.6.1 (2024-05-04)
+
+
+### Bug Fixes
+
+* Ordering issue with source ports at launch ([#77](https://github.com/mikew/wadpunk/issues/77)) ([4990e6a](https://github.com/mikew/wadpunk/commit/4990e6a65c155f57a8fc6e30a1ec6feca4934467))
+
 ## 1.6.0 (2024-05-01)
 
 

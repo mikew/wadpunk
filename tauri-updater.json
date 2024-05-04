@@ -1,23 +1,23 @@
 {
-  "version": "v1.6.0",
-  "notes": "## What's Changed\n* feat: Better support for other Source Ports by @mikew in https://github.com/mikew/wadpunk/pull/75\n\n\n**Full Changelog**: https://github.com/mikew/wadpunk/compare/v1.5.0...v1.6.0",
-  "pub_date": "2024-05-01T22:25:00Z",
+  "version": "v1.6.1",
+  "notes": "## What's Changed\n* fix: Ordering issue with source ports at launch by @mikew in https://github.com/mikew/wadpunk/pull/77\n\n\n**Full Changelog**: https://github.com/mikew/wadpunk/compare/v1.6.0...v1.6.1",
+  "pub_date": "2024-05-04T03:39:59Z",
   "platforms": {
     "darwin-aarch64": {
-      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVTQ2xsSnhnNTNwTzM5ckd2RSt0UFhXQzgvQ2dlWGVCQmJKMHoxeElsSGpqVy9sYklsZFExUzNmQ0ttZW13WlQyekdMNWN0UzZGRjdacmNpcVozNVN0QWtKSTR3QlcvU2dRPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzE0NjAyNDQ2CWZpbGU6V0FEUHVuay5hcHAudGFyLmd6CkI1dUY5NVdOd3Rqam4xQkV3aE9PNEV2KzB3c3czeUJoTjQ0T0tmMG43UnJQa2IrdFFiV280dWFYdEFUWGlRbktoeDJDRTZtTWJ0ckhLam5ROVhFRkJnPT0K",
-      "url": "https://github.com/mikew/wadpunk/releases/download/v1.6.0/WADPunk-aarch64.app.tar.gz"
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVTQ2xsSnhnNTNwTzJMT3lHZlJxNkdSdWNTbUd5Ynl4YkVOZGd6UWwrZFUyRythNjBNWmJCSDVaUERtdkZaQjJta1dudHpLeUhjL0xSRDkzKzJndk9OMC95YW5PVDJ6bFFZPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzE0Nzk0MjIxCWZpbGU6V0FEUHVuay5hcHAudGFyLmd6CllvOXEzamcyd3BvRFpyMXZDb0NuRTNaVU55OE83K05YcWJnVGgwU042b2t4ckRIVnpWS3RlbkMyNWxFdSsyTkJnaDdGZmhuejhnTkJzN0FOcGdVZURBPT0K",
+      "url": "https://github.com/mikew/wadpunk/releases/download/v1.6.1/WADPunk-aarch64.app.tar.gz"
     },
     "darwin-x86_64": {
-      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVTQ2xsSnhnNTNwT3pMYWRLSzcxVENLd2U5VUNLeEZHemFmaGY4UkZkUGxWMU1TNjZPbHg1eXU2OURjVFVNY2IxOTEvNWJqd0NXRkMzR0dCcDg5ZWd1QTdOUExreTVPdXdRPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzE0NjAyNjU5CWZpbGU6V0FEUHVuay5hcHAudGFyLmd6Cm9oUllpdzlMdWViVytQWjRuS0dPbm1CSFNFVmJ2TzQ5RnlzSHdEOEJ6LzY2dmY0WVlxalBIUU9tOWpYcjhKK1JManAyWkJtQ0FzTTZGMExabFdzUkFnPT0K",
-      "url": "https://github.com/mikew/wadpunk/releases/download/v1.6.0/WADPunk-x86_64.app.tar.gz"
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVTQ2xsSnhnNTNwTzFrMHRoQUpqc1R4ZS9vakpVYkxhWVNNU3VIbkRmOVJhRUt2OER0Ykl6YzZaZWZxQ25tVUl6N20rUGZQNWlNWXovT3VTbUd1ZHlKQlNJbVVwKzRnTmdVPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzE0Nzk0NTM1CWZpbGU6V0FEUHVuay5hcHAudGFyLmd6CnF1cE40akxEbUJlWU9CKzkya0lKU2dsdmJRR2kybXY3ZTk3TE05U05PVUpLRThXeDhDUFJzb0t1dWpCbHQ5UUx6Qm5DbXd5bWNYNys1eXg4cWJOa0NRPT0K",
+      "url": "https://github.com/mikew/wadpunk/releases/download/v1.6.1/WADPunk-x86_64.app.tar.gz"
     },
     "linux-x86_64": {
-      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVTQ2xsSnhnNTNwTy8yQkYzRGI4QkdIQXplYzB4b3l6Z1lBVmF6WTRKT2pxc25RdDFteUx3MHJvaHJTcHEwWS93VWN3T3ZteEZqKzBtOUEvYkw4M2NlSkhXeFV5YmpPWFFzPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzE0NjAyNjM2CWZpbGU6d2FkLXB1bmtfMS42LjBfYW1kNjQuQXBwSW1hZ2UudGFyLmd6CmpmNHFQRHdCM3MvUERqdE5uY3B4WU9HUnAzdm1sYnFPalM5MWx6SGpWa0lReVB2eEZXdWE2bEpRQ2llRXVtbHk0K0FKV1FUd3o2aXpFMUlLREEvNENBPT0K",
-      "url": "https://github.com/mikew/wadpunk/releases/download/v1.6.0/WADPunk_1.6.0_amd64.AppImage.tar.gz"
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVTQ2xsSnhnNTNwTzVWVzhCYU5jOVJISGxuNUxUeEhFTHNwWno5ZXRqTTVadS92RGRTanlmakE5ajdrcnB1eEk4bk1VRm1RR0Rkanh4dGl6TktRNmNrZmNkZzFmWGduTEFzPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzE0Nzk0Mzk5CWZpbGU6d2FkLXB1bmtfMS42LjFfYW1kNjQuQXBwSW1hZ2UudGFyLmd6CjRxdTcxNmVpdXE2UzFmRGxTaU44NFI3V0QyRTh0NERQNHoxcEVDVE9uYmRaK0VKMHdoTjJ4Ymh4SDM3L3FlbExvK2RkU3lvUGxGNStoWSt4VkhRK0JnPT0K",
+      "url": "https://github.com/mikew/wadpunk/releases/download/v1.6.1/WADPunk_1.6.1_amd64.AppImage.tar.gz"
     },
     "windows-x86_64": {
-      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVTQ2xsSnhnNTNwT3crTHFzL2RhZFIraVVhVG9aVzlQY1BGTE5XdUpSM01iaStVY2RtWUNzRzI3bmtXTElEL2d5VFhSWm1adzY5VUd6dEIxK29Ick5wamlXOHdhUWxIZmdNPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzE0NjAyNzk2CWZpbGU6V0FEUHVua18xLjYuMF94NjQtc2V0dXAubnNpcy56aXAKRktzdGRzbFdyS1c0c0lPYXhTbnB1T3pFR00xVW5tbkNWMTMwSXN6RUdCYVdzTGVocE5WamszMUJQbzFlR0h5cmNzUHEzOXFRV2dFRHgxandGUkl5Q0E9PQo=",
-      "url": "https://github.com/mikew/wadpunk/releases/download/v1.6.0/WADPunk_1.6.0_x64-setup.nsis.zip"
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVTQ2xsSnhnNTNwTysvTFFpaXpYNXcxMVBSUXdKUHIzVDI1RitHL3h4ZzBEd3lQWEpZVXAzdmlmdEg1TXIwejlZZ25LN0lseDNkWXZwcVlHNTdnSWJ0RkFyZmtWcHVJTUFnPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzE0Nzk0NzY1CWZpbGU6V0FEUHVua18xLjYuMV94NjQtc2V0dXAubnNpcy56aXAKZ3pSMStaTWxXdHBwRmhNWEFHcU9UdzY2bE9RcnRqamFrRTRmUFdLTGNFUVZqa01XSTNYOXluUWdBN3BPSGhIaWpSN2FnZXVDOElGN0tqc3JVR0N0QlE9PQo=",
+      "url": "https://github.com/mikew/wadpunk/releases/download/v1.6.1/WADPunk_1.6.1_x64-setup.nsis.zip"
     }
   }
 }
