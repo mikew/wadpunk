@@ -33,7 +33,7 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
-      "externalBin": ["./sidecar/7zip/7za"]
+      "externalBin": ["./sidecar/7zip/7za", "./sidecar/7zip/7z.dll"]
     },
 
     "updater": {
