@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## 1.7.0 (2024-05-04)
+
+
+### Features
+
+* Support more archive formats ([#76](https://github.com/mikew/wadpunk/issues/76)) ([615851a](https://github.com/mikew/wadpunk/commit/615851acb133a20d4d891a0ef96228594b81105b))
+
 ## 1.6.1 (2024-05-04)
 
 
