@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+set -ex
+
+SOURCE="$1"
+
+# https://stackoverflow.com/a/40928328
+root="${SOURCE%.*}"
+ext="${SOURCE#"$root"}"
+
+OUTPUT="${root}-downsampled${ext}"
+
+SCALE="${2:-16}"
+
+DOWNSAMPLE_FACTOR=$(echo "100 / $SCALE" | bc -l)
+UPSAMPLE_FACTOR=$(echo "100 * $SCALE" | bc -l)
+
+temp_downsampled_file="$(mktemp -u test.XXXXXXXX).png"
+
+# `-resize` is blurry
+# `-resize` on downscale and upscale with nearest neighbor is just a touch too
+# noisy in the end.
+# `-adaptive-resize` is blurry
+# `-interpolate integer -filter point` looks identical to `-scale`
+
+convert "$SOURCE" -scale "${DOWNSAMPLE_FACTOR}%" "$temp_downsampled_file"
+convert "$temp_downsampled_file" -scale "${UPSAMPLE_FACTOR}%" "$OUTPUT"
+rm "$temp_downsampled_file"

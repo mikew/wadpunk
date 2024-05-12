@@ -10,3 +10,17 @@ if [ ! -e ./src-tauri/resources-arch-specific ]; then
   RUST_TRIPLET=$(rustc -vV | grep ^host: | cut -d ' ' -f 2)
   ln -s "${PWD}/src-tauri/resources-arch-specific-source/${RUST_TRIPLET}" ./src-tauri/resources-arch-specific
 fi
+
+./node_modules/.bin/tauri icon app-icon/icon-macos.png --output ./src-tauri/icons-macos
+./node_modules/.bin/tauri icon app-icon/icon-linux.png --output ./src-tauri/icons-linux
+
+mv \
+  ./src-tauri/icons-linux/*.png \
+  ./src-tauri/icons-linux/icon.ico \
+  ./src-tauri/icons/
+
+mv \
+  ./src-tauri/icons-macos/*.icns \
+  ./src-tauri/icons/
+
+rm -rf ./src-tauri/icons-linux ./src-tauri/icons-macos

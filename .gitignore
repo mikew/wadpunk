@@ -31,5 +31,6 @@ dist-ssr
 /src/graphql/operations.ts
 /graphql-schema.json
 *.rs.temp
-.eslintcache
-src-tauri/resources-arch-specific
+/.eslintcache
+/src-tauri/resources-arch-specific
+/src-tauri/icons
