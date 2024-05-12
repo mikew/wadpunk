@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## 1.8.0 (2024-05-12)
+
+
+### Features
+
+* New icon ([#78](https://github.com/mikew/wadpunk/issues/78)) ([dbde636](https://github.com/mikew/wadpunk/commit/dbde63662ebb48b835311d9f893d8ee7b40f6d13))
+
 ## 1.7.0 (2024-05-04)
 
 
