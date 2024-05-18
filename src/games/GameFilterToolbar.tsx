@@ -134,7 +134,7 @@ const GameFilterToolbar: React.FC<{
         </EasyMenu>
 
         <StarRating
-          value={filterApi.debouncedFilterInfo.filter.rating}
+          value={filterApi.filterInfo.filter.rating}
           onChange={(value) => {
             filterApi.updateFilter({ rating: value }, true)
           }}
@@ -147,7 +147,7 @@ const GameFilterToolbar: React.FC<{
         margin="none"
         variant="standard"
         label={t('games.filter.fields.sort.label')}
-        value={filterApi.debouncedFilterInfo.sort}
+        value={filterApi.filterInfo.sort}
         onChange={(event) => {
           filterApi.setSort(event.target.value, true)
         }}
