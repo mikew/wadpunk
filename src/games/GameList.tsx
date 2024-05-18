@@ -41,6 +41,7 @@ const GameList: React.FC = () => {
         name: '',
         rating: 0,
         starRatingMode: 'at_least',
+        tags: [],
       },
       sort: 'name:asc',
     },
@@ -73,6 +74,19 @@ const GameList: React.FC = () => {
             shouldInclude &&= x.rating >= debouncedFilterInfo.filter.rating
             break
         }
+      }
+
+      if (debouncedFilterInfo.filter.tags.length) {
+        let doesMatchTags = true
+
+        for (const tag of debouncedFilterInfo.filter.tags) {
+          if (!x.tags.includes(tag)) {
+            doesMatchTags = false
+            break
+          }
+        }
+
+        shouldInclude &&= doesMatchTags
       }
 
       return shouldInclude
@@ -130,6 +144,7 @@ const GameList: React.FC = () => {
     debouncedFilterInfo.filter.name,
     debouncedFilterInfo.filter.rating,
     debouncedFilterInfo.filter.starRatingMode,
+    debouncedFilterInfo.filter.tags,
     debouncedFilterInfo.sort,
   ])
 

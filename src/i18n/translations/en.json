@@ -43,6 +43,9 @@
             "rating": "Rating",
             "popularity": "Popularity"
           }
+        },
+        "tags": {
+          "label": "Tags ..."
         }
       }
     },
