@@ -1,6 +1,7 @@
-import { ArrowDropDown, Search } from '@mui/icons-material'
+import { ArrowDropDown, Clear, Search } from '@mui/icons-material'
 import {
   Button,
+  IconButton,
   InputAdornment,
   ListItemIcon,
   MenuItem,
@@ -14,16 +15,20 @@ import { useI18nContext } from '#src/i18n/lib/i18nContext'
 import StarRating from '#src/lib/StarRating'
 import { EasyMenu, EasyMenuItem } from '#src/mui/EasyMenu'
 
+import useAllTags from './useAllTags'
+
 export interface GameListFilter {
   name: string
   rating: number
   starRatingMode: 'at_least' | 'equal' | 'at_most'
+  tags: string[]
 }
 
 const GameFilterToolbar: React.FC<{
   filterApi: SimpleFilterApi<GameListFilter>
 }> = ({ filterApi }) => {
   const { t } = useI18nContext()
+  const tags = useAllTags(true)
 
   return (
     <>
@@ -144,6 +149,55 @@ const GameFilterToolbar: React.FC<{
         <MenuItem value="installedAt:desc">
           {t('games.fields.installed_at.label')}
         </MenuItem>
+      </TextField>
+
+      <TextField
+        select
+        SelectProps={{
+          multiple: true,
+        }}
+        size="small"
+        margin="none"
+        variant="standard"
+        label={t('games.filter.fields.tags.label')}
+        value={filterApi.filterInfo.filter.tags}
+        InputProps={{
+          endAdornment: filterApi.filterInfo.filter.tags.length ? (
+            <InputAdornment position="end" sx={{ marginRight: 3 }}>
+              <IconButton
+                size="small"
+                onClick={() => {
+                  filterApi.updateFilter(
+                    {
+                      tags: [],
+                    },
+                    true,
+                  )
+                }}
+              >
+                <Clear fontSize="inherit" />
+              </IconButton>
+            </InputAdornment>
+          ) : undefined,
+        }}
+        onChange={(event) => {
+          if (!Array.isArray(event.target.value)) {
+            return
+          }
+
+          filterApi.updateFilter({
+            tags: event.target.value,
+          })
+        }}
+        sx={{ flex: '0 0 200px' }}
+      >
+        {tags.map((x) => {
+          return (
+            <MenuItem key={x} value={x}>
+              {x}
+            </MenuItem>
+          )
+        })}
       </TextField>
 
       <div>
