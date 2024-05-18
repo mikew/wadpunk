@@ -47,6 +47,23 @@ const GameFilterToolbar: React.FC<{
               <Search />
             </InputAdornment>
           ),
+          endAdornment: filterApi.filterInfo.filter.name ? (
+            <InputAdornment position="end">
+              <IconButton
+                size="small"
+                onClick={() => {
+                  filterApi.updateFilter(
+                    {
+                      name: '',
+                    },
+                    true,
+                  )
+                }}
+              >
+                <Clear fontSize="inherit" />
+              </IconButton>
+            </InputAdornment>
+          ) : undefined,
         }}
         sx={{ flex: '0 0 200px' }}
       />
