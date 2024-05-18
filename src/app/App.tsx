@@ -1,5 +1,5 @@
 import { useMutation } from '@apollo/client'
-import { AppBar, Box, Toolbar } from '@mui/material'
+import { AppBar, Box, Stack, Toolbar } from '@mui/material'
 import { memo, useEffect, useState } from 'react'
 
 import { GameDialogSuspense } from '#src/games/GameDialog'
@@ -25,7 +25,18 @@ function App() {
           <AppToolbarProvider>
             <AppBar position="sticky">
               <Toolbar sx={{ gap: 2 }}>
-                <AppToolbarSlot />
+                <AppToolbarSlot
+                  renderSlot={(props) => {
+                    return (
+                      <Stack
+                        alignItems="center"
+                        spacing={2}
+                        direction="row"
+                        ref={props.ref}
+                      />
+                    )
+                  }}
+                />
 
                 <Box flexGrow="1" />
 
