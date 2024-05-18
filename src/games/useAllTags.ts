@@ -4,7 +4,7 @@ import { useMemo } from 'react'
 import { GetGameListQueryDocument } from '#src/graphql/operations'
 import type { Game } from '#src/graphql/types'
 
-const defaultTags = ['iwad', 'tc', 'mod']
+const defaultTags = ['iwad', 'tc', 'mod', 'playing']
 
 function useAllTags(suspense = false) {
   // This won't change at runtime, and if it does, an error will be thrown
