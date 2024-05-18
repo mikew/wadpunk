@@ -1,5 +1,5 @@
-import { Box } from '@mui/material'
-import { createContext, useContext, useMemo, useState } from 'react'
+import { Stack } from '@mui/material'
+import { createContext, memo, useContext, useMemo, useState } from 'react'
 import { createPortal } from 'react-dom'
 
 export const {
@@ -10,10 +10,7 @@ export const {
 } = createSlotPortal({
   renderSlot(props) {
     return (
-      <Box
-        sx={{ display: 'flex', alignItems: 'center', gap: 2 }}
-        ref={props.ref}
-      />
+      <Stack alignItems="center" spacing={2} direction="row" ref={props.ref} />
     )
   },
 })
@@ -76,8 +73,8 @@ function createSlotPortal<T extends HTMLElement = HTMLElement>(opts: {
 
   return {
     reactContext,
-    SlotComponent,
-    PortalComponent,
-    PortalProvider,
+    SlotComponent: memo(SlotComponent),
+    PortalComponent: memo(PortalComponent),
+    PortalProvider: memo(PortalProvider),
   }
 }
