@@ -33,12 +33,6 @@ import {
 } from 'react-hook-form'
 
 import { invalidateApolloQuery } from '#src/graphql/graphqlClient'
-import type { GetGameDialogFieldsQuery } from '#src/graphql/operations'
-import {
-  GetGameDialogFieldsDocument,
-  StartGameDocument,
-  UpdateGameDocument,
-} from '#src/graphql/operations'
 import type { Game } from '#src/graphql/types'
 import { useI18nContext } from '#src/i18n/lib/i18nContext'
 import pathWithoutExtension from '#src/lib/pathWithoutExtension'
@@ -58,6 +52,12 @@ import {
   useGameFileListContext,
 } from './GameFileListContext'
 import isIwad from './isIwad'
+import type { GetGameDialogFieldsQuery } from './operations.generated'
+import {
+  GetGameDialogFieldsDocument,
+  StartGameDocument,
+  UpdateGameDocument,
+} from './operations.generated'
 import { actions } from './redux'
 import type { GameDialogGame, GameListGame } from './types'
 import useAllTags from './useAllTags'

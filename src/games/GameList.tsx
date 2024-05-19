@@ -14,10 +14,6 @@ import { useMemo, useState } from 'react'
 
 import { AppToolbarPortal } from '#src/app/AppToolbarArea'
 import * as games from '#src/games/redux'
-import {
-  GetGameListQueryDocument,
-  SetRatingDocument,
-} from '#src/graphql/operations'
 import pathWithoutExtension from '#src/lib/pathWithoutExtension'
 import StarRating from '#src/lib/StarRating'
 import VirtualizedList from '#src/lib/VirtualizedList'
@@ -26,6 +22,10 @@ import { useRootDispatch } from '#src/redux/helpers'
 import calculateGamePlayTime from './calculateGamePlayTime'
 import type { GameListFilter } from './GameFilterToolbar'
 import GameFilterToolbar from './GameFilterToolbar'
+import {
+  GetGameListQueryDocument,
+  SetRatingDocument,
+} from './operations.generated'
 import useOpenGamesFolder from './useOpenGamesFolder'
 
 const GameList: React.FC = () => {

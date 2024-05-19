@@ -1,8 +1,9 @@
 import { useQuery, useSuspenseQuery } from '@apollo/client'
 import { useMemo } from 'react'
 
-import { GetGameListQueryDocument } from '#src/graphql/operations'
 import type { Game } from '#src/graphql/types'
+
+import { GetGameListQueryDocument } from './operations.generated'
 
 const defaultTags = ['iwad', 'tc', 'mod', 'playing']
 

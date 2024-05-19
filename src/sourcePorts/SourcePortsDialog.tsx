@@ -17,11 +17,6 @@ import { useMemo, useRef } from 'react'
 import type { UseFormReturn } from 'react-hook-form'
 
 import { invalidateApolloQuery } from '#src/graphql/graphqlClient'
-import {
-  CreateSourcePortDocument,
-  DeleteSourcePortDocument,
-  UpdateSourcePortDocument,
-} from '#src/graphql/operations'
 import { useI18nContext } from '#src/i18n/lib/i18nContext'
 import basename from '#src/lib/basename'
 import { useConfirmDialog } from '#src/lib/ConfirmDialog'
@@ -32,6 +27,11 @@ import { useRootDispatch, useRootSelector } from '#src/redux/helpers'
 import useTauriFileDrop from '#src/tauri/useTauriFileDrop'
 
 import actions from './actions'
+import {
+  CreateSourcePortDocument,
+  DeleteSourcePortDocument,
+  UpdateSourcePortDocument,
+} from './operations.generated'
 import type { AddSourcePortFormValues } from './SourcePortForm'
 import SourcePortForm from './SourcePortForm'
 import { useSourcePortsContext } from './sourcePortsContext'

@@ -11,12 +11,13 @@ import { process } from '@tauri-apps/api'
 
 import useOpenGamesFolder from '#src/games/useOpenGamesFolder'
 import { invalidateApolloCache } from '#src/graphql/graphqlClient'
-import { GetAppInfoDocument } from '#src/graphql/operations'
 import ChangeLanguage from '#src/i18n/ChangeLanguage'
 import { useI18nContext } from '#src/i18n/lib/i18nContext'
 import { EasyMenu, EasyMenuItem } from '#src/mui/EasyMenu'
 import { useRootDispatch } from '#src/redux/helpers'
 import actions from '#src/sourcePorts/actions'
+
+import { GetAppInfoDocument } from './operations.generated'
 
 const AppCogMenu: React.FC = () => {
   const { openGamesFolder } = useOpenGamesFolder()

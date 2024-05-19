@@ -28,7 +28,7 @@ dist-ssr
 /src-tauri/src/graphql/generated.rs
 /src-tauri/src/graphql/datasource_impl.rs
 /src/graphql/types.d.ts
-/src/graphql/operations.ts
+*.generated.ts
 /graphql-schema.json
 *.rs.temp
 /.eslintcache

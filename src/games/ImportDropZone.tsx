@@ -9,8 +9,8 @@ import {
 } from '@mui/material'
 import { useState } from 'react'
 
+import { ImportFileDocument } from '#src/app/operations.generated'
 import { invalidateApolloQuery } from '#src/graphql/graphqlClient'
-import { ImportFileDocument } from '#src/graphql/operations'
 import { useI18nContext } from '#src/i18n/lib/i18nContext'
 import basename from '#src/lib/basename'
 import { useRootSelector } from '#src/redux/helpers'
