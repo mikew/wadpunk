@@ -157,7 +157,7 @@ pub fn find_game_by_id(id: &str) -> Option<DbGameMeta> {
 
 pub fn save_game(db_game: DbGameMeta) {
   let json_meta_path = get_meta_directory()
-    .join(db_game.name.clone().unwrap())
+    .join(normalize_name_from_id(&db_game.id.clone().unwrap()))
     .join("meta.json");
 
   let json_str = serde_json::to_string(&db_game).unwrap();

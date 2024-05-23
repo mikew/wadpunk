@@ -13,6 +13,7 @@ use plist;
 use tauri::AppHandle;
 
 use crate::database;
+use crate::database::normalize_name_from_id;
 use crate::database::DbPlaySession;
 use crate::database::DbPlaySessionEntry;
 use crate::database::DbPreviousFileStateItem;
@@ -48,7 +49,7 @@ impl DataSource {
     let mut gql_play_sessions: Vec<PlaySession> = vec![];
 
     let meta_path = database::get_meta_directory()
-      .join(&root.name)
+      .join(normalize_name_from_id(&root.id))
       .join("playSessions.json");
     let json_contents = fs::read_to_string(meta_path).unwrap_or("{}".to_string());
     let play_session_meta = serde_json::from_str::<DbPlaySession>(&json_contents).unwrap();
