@@ -101,7 +101,7 @@ impl DataSource {
     _ctx: &Context<'_>,
     id: String,
   ) -> GraphQLResult<Game> {
-    Ok(database::load_game_with_meta(&id).to_game())
+    Ok(database::load_game_meta(&id).to_game())
   }
 
   pub async fn Query_getAppSettings(
