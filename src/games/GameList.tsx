@@ -200,35 +200,34 @@ const GameList: React.FC = () => {
                     }
                     secondaryTypographyProps={{ noWrap: true }}
                   />
-                </ListItemButton>
 
-                <Stack direction="row" spacing={1} alignItems="center">
-                  <Stack direction="row" spacing={1}>
-                    {x.tags.map((tag) => {
-                      return (
-                        <Chip
-                          variant="outlined"
-                          size="small"
-                          key={tag}
-                          label={tag}
-                        />
-                      )
-                    })}
-                  </Stack>
+                  <Stack direction="row" spacing={1} alignItems="center">
+                    <Stack direction="row" spacing={1}>
+                      {x.tags.map((tag) => {
+                        return (
+                          <Chip
+                            variant="outlined"
+                            size="small"
+                            key={tag}
+                            label={tag}
+                          />
+                        )
+                      })}
+                    </Stack>
 
-                  <StarRating
-                    value={x.rating}
-                    onChange={(value) => {
-                      setRating({
-                        variables: {
-                          game_id: x.id,
-                          rating: value,
-                        },
-                      })
-                    }}
-                  />
+                    <StarRating
+                      value={x.rating}
+                      onChange={(value) => {
+                        setRating({
+                          variables: {
+                            game_id: x.id,
+                            rating: value,
+                          },
+                        })
+                      }}
+                    />
 
-                  {/* <IconButton
+                    {/* <IconButton
                   onClick={() => {
                     startGame(x)
                   }}
@@ -237,15 +236,17 @@ const GameList: React.FC = () => {
                   <PlayArrow />
                 </IconButton> */}
 
-                  <IconButton
-                    onClick={() => {
-                      openGamesFolder(x.id)
-                    }}
-                    size="small"
-                  >
-                    <FolderOpen fontSize="small" />
-                  </IconButton>
-                </Stack>
+                    <IconButton
+                      onClick={(event) => {
+                        event.stopPropagation()
+                        openGamesFolder(x.id)
+                      }}
+                      size="small"
+                    >
+                      <FolderOpen fontSize="small" />
+                    </IconButton>
+                  </Stack>
+                </ListItemButton>
               </ListItem>
             )
           }}
