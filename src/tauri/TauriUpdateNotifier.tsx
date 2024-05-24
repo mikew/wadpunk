@@ -1,6 +1,7 @@
 import { Update } from '@mui/icons-material'
 import {
   Alert,
+  Box,
   Button,
   CircularProgress,
   Dialog,
@@ -9,6 +10,7 @@ import {
   Snackbar,
   Stack,
 } from '@mui/material'
+import getTextDecoration from '@mui/material/Link/getTextDecoration'
 import { relaunch } from '@tauri-apps/api/process'
 import type { UpdateResult } from '@tauri-apps/api/updater'
 import { checkUpdate, installUpdate } from '@tauri-apps/api/updater'
@@ -125,6 +127,7 @@ const TauriUpdateNotifier: React.FC = () => {
 
       <Dialog
         open={isReleaseNotesDialogVisible}
+        fullWidth
         onClose={() => {
           setIsReleaseNotesDialogVisible(false)
         }}
@@ -136,10 +139,23 @@ const TauriUpdateNotifier: React.FC = () => {
         </DialogTitle>
 
         <DialogContent>
-          <div
-            // eslint-disable-next-line react/no-danger -- need to render markdown.
+          <Box
+            sx={(theme) => ({
+              // Adapted from https://github.com/mui/material-ui/blob/v5.x/packages/mui-material/src/Link/Link.js
+              '& a': {
+                'color': 'primary.main',
+                'textDecoration': 'underline',
+                'textDecorationColor': getTextDecoration({
+                  theme,
+                  ownerState: { color: 'primary' },
+                }),
+                '&:hover': {
+                  textDecorationColor: 'inherit',
+                },
+              },
+            })}
             dangerouslySetInnerHTML={{
-              __html: parse(updateManifest?.body ?? ''),
+              __html: parse(tauriUpdateResult?.manifest?.body ?? ''),
             }}
           />
         </DialogContent>
