@@ -10,7 +10,7 @@ import {
   Stack,
 } from '@mui/material'
 import { relaunch } from '@tauri-apps/api/process'
-import type { UpdateManifest } from '@tauri-apps/api/updater'
+import type { UpdateResult } from '@tauri-apps/api/updater'
 import { checkUpdate, installUpdate } from '@tauri-apps/api/updater'
 import { parse } from 'marked'
 import { enqueueSnackbar } from 'notistack'
@@ -19,86 +19,98 @@ import { useEffect, useState } from 'react'
 import { useI18nContext } from '#src/i18n/lib/i18nContext'
 
 const TauriUpdateNotifier: React.FC = () => {
-  const [shouldUpdate, setShouldUpdate] = useState(false)
-  const [needsRestart, setNeedsRestart] = useState(false)
-  const [updateManifest, setUpdateManifest] = useState<
-    UpdateManifest | undefined
-  >(undefined)
   const [isReleaseNotesDialogVisible, setIsReleaseNotesDialogVisible] =
     useState(false)
-  const [isUpdating, setIsUpdating] = useState(false)
   const { t } = useI18nContext()
+  const [status, setStatus] = useState<
+    'INITIAL' | 'UPDATE_AVAILABLE' | 'UPDATING' | 'RESTART_REQUIRED'
+  >('INITIAL')
+  const [tauriUpdateResult, setTauriUpdateResult] =
+    useState<UpdateResult | null>(null)
 
   useEffect(() => {
     async function run() {
       if (process.env.NODE_ENV === 'production') {
-        const updateStatus = await checkUpdate()
+        const updateResult = await checkUpdate()
 
-        setShouldUpdate(updateStatus.shouldUpdate)
-        setUpdateManifest(updateStatus.manifest)
+        if (updateResult.shouldUpdate) {
+          setStatus('UPDATE_AVAILABLE')
+          setTauriUpdateResult(updateResult)
+        }
       }
     }
 
     run()
   }, [])
 
-  const action = isUpdating ? (
-    <CircularProgress size={32} color="inherit" />
-  ) : needsRestart ? (
-    <Button
-      color="inherit"
-      size="small"
-      onClick={async () => {
-        await relaunch()
-      }}
-    >
-      {t('updateNotifier.actions.relaunch')}
-    </Button>
-  ) : (
+  const action = (
     <Stack direction="row" spacing={1}>
-      <Button
-        color="inherit"
-        size="small"
-        onClick={async () => {
-          try {
-            setIsUpdating(true)
-            await installUpdate()
-            setNeedsRestart(true)
-            // await relaunch()
-          } catch (err) {
-            console.error(err)
-            enqueueSnackbar(
-              t('updateNotifier.notifications.errorInstalling', {
-                error: String(err),
-              }),
-              {
-                variant: 'error',
-              },
-            )
-          }
+      {status === 'UPDATING' ? (
+        <CircularProgress size={32} color="inherit" />
+      ) : undefined}
 
-          setIsUpdating(false)
-        }}
-      >
-        {t('updateNotifier.actions.install')}
-      </Button>
+      {status === 'RESTART_REQUIRED' ? (
+        <Button
+          color="inherit"
+          size="small"
+          onClick={async () => {
+            await relaunch()
+          }}
+        >
+          {t('updateNotifier.actions.relaunch')}
+        </Button>
+      ) : undefined}
 
-      <Button
-        size="small"
-        color="inherit"
-        onClick={() => {
-          setIsReleaseNotesDialogVisible(true)
-        }}
-      >
-        {t('updateNotifier.actions.viewNotes')}
-      </Button>
+      {status === 'UPDATE_AVAILABLE' ? (
+        <Button
+          color="inherit"
+          size="small"
+          onClick={async () => {
+            try {
+              setStatus('UPDATING')
+              await installUpdate()
+              setStatus('RESTART_REQUIRED')
+            } catch (err) {
+              console.error(err)
+              enqueueSnackbar(
+                t('updateNotifier.notifications.errorInstalling', {
+                  error: String(err),
+                }),
+                {
+                  variant: 'error',
+                },
+              )
+            }
+
+            setStatus('UPDATE_AVAILABLE')
+          }}
+        >
+          {t('updateNotifier.actions.install')}
+        </Button>
+      ) : undefined}
+
+      {status === 'UPDATE_AVAILABLE' ? (
+        <Button
+          size="small"
+          color="inherit"
+          onClick={() => {
+            setIsReleaseNotesDialogVisible(true)
+          }}
+        >
+          {t('updateNotifier.actions.viewNotes')}
+        </Button>
+      ) : undefined}
     </Stack>
   )
 
   return (
     <>
       <Snackbar
-        open={shouldUpdate}
+        open={
+          status === 'UPDATE_AVAILABLE' ||
+          status === 'UPDATING' ||
+          status === 'RESTART_REQUIRED'
+        }
         anchorOrigin={{
           vertical: 'bottom',
           horizontal: 'center',
@@ -106,7 +118,7 @@ const TauriUpdateNotifier: React.FC = () => {
       >
         <Alert severity="success" action={action} icon={<Update />}>
           {t('updateNotifier.notifications.updateAvailable', {
-            version: updateManifest?.version,
+            version: tauriUpdateResult?.manifest?.version,
           })}
         </Alert>
       </Snackbar>
@@ -119,7 +131,7 @@ const TauriUpdateNotifier: React.FC = () => {
       >
         <DialogTitle>
           {t('updateNotifier.releaseNotes.title', {
-            version: updateManifest?.version,
+            version: tauriUpdateResult?.manifest?.version,
           })}
         </DialogTitle>
 
