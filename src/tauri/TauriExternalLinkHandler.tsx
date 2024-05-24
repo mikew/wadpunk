@@ -3,22 +3,37 @@ import { useEffect } from 'react'
 
 const TauriExternalLinkHandler: React.FC = () => {
   useEffect(() => {
-    document.documentElement.addEventListener('click', (event) => {
+    function handleClick(event: MouseEvent) {
       const target = event.target
 
-      if (!(target instanceof HTMLElement)) {
+      if (!(target instanceof Element)) {
         return
       }
 
-      if (target.tagName === 'A') {
-        const href = target.getAttribute('href')
+      const closestLink = target.closest('a')
 
-        if (href?.startsWith('http')) {
-          event.preventDefault()
-          shell.open(href)
-        }
+      if (!closestLink) {
+        return
       }
-    })
+
+      const href = closestLink.getAttribute('href')
+
+      if (
+        href &&
+        ['http://', 'https://', 'mailto:', 'tel:'].some((v) =>
+          href.startsWith(v),
+        )
+      ) {
+        event.preventDefault()
+        shell.open(href)
+      }
+    }
+
+    document.documentElement.addEventListener('click', handleClick, true)
+
+    return () => {
+      document.documentElement.removeEventListener('click', handleClick, true)
+    }
   }, [])
 
   return null
