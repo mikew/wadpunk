@@ -147,7 +147,6 @@ const KnownSourcePortCard: React.FC<KnownSourcePortCardProps> = (props) => {
       <AccordionActions>
         <Button
           href={props.sourcePort.home_page_url}
-          target="_blank"
           startIcon={<OpenInNew />}
           size="small"
         >
@@ -156,7 +155,6 @@ const KnownSourcePortCard: React.FC<KnownSourcePortCardProps> = (props) => {
 
         <Button
           href={props.sourcePort.download_page_url}
-          target="_blank"
           startIcon={<Download />}
           size="small"
         >
