@@ -91,7 +91,7 @@ const TauriUpdateNotifier: React.FC = () => {
         </Button>
       ) : undefined}
 
-      {status === 'UPDATE_AVAILABLE' ? (
+      {status === 'UPDATE_AVAILABLE' || status === 'RESTART_REQUIRED' ? (
         <Button
           size="small"
           color="inherit"
