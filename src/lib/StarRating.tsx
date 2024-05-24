@@ -47,7 +47,6 @@ const StarRating: React.FC<{
           }
 
           const sharedProps: SvgIconProps = {
-            key: x,
             fontSize: 'inherit',
             onClick: handleClick,
             sx: {
@@ -61,14 +60,14 @@ const StarRating: React.FC<{
 
           return hoverIndex != null ? (
             hoverIndex >= x ? (
-              <Star {...sharedProps} />
+              <Star key={x} {...sharedProps} />
             ) : (
-              <StarBorder {...sharedProps} />
+              <StarBorder key={x} {...sharedProps} />
             )
           ) : props.value >= x ? (
-            <Star {...sharedProps} />
+            <Star key={x} {...sharedProps} />
           ) : (
-            <StarBorder {...sharedProps} />
+            <StarBorder key={x} {...sharedProps} />
           )
         })}
       </Stack>
