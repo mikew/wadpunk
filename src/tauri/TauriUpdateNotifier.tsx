@@ -18,7 +18,7 @@ import { useEffect, useState } from 'react'
 
 import { useI18nContext } from '#src/i18n/lib/i18nContext'
 
-const UpdateNotifier: React.FC = () => {
+const TauriUpdateNotifier: React.FC = () => {
   const [shouldUpdate, setShouldUpdate] = useState(false)
   const [needsRestart, setNeedsRestart] = useState(false)
   const [updateManifest, setUpdateManifest] = useState<
@@ -33,6 +33,7 @@ const UpdateNotifier: React.FC = () => {
     async function run() {
       if (process.env.NODE_ENV === 'production') {
         const updateStatus = await checkUpdate()
+
         setShouldUpdate(updateStatus.shouldUpdate)
         setUpdateManifest(updateStatus.manifest)
       }
@@ -135,4 +136,4 @@ const UpdateNotifier: React.FC = () => {
   )
 }
 
-export default UpdateNotifier
+export default TauriUpdateNotifier

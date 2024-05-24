@@ -14,13 +14,13 @@ import { createRoot } from 'react-dom/client'
 import { Provider } from 'react-redux'
 
 import theme from './app/theme'
-import UpdateNotifier from './app/UpdateNotifier'
 import graphqlClient from './graphql/graphqlClient'
 import I18nLoader from './i18n/I18nLoader'
 import { ConfirmDialog, ConfirmDialogProvider } from './lib/ConfirmDialog'
 import NotistackMuiAlert from './mui/NotistackMuiAlert'
 import createRootStore from './redux/createRootStore'
 import TauriExternalLinkHandler from './tauri/TauriExternalLinkHandler'
+import TauriUpdateNotifier from './tauri/TauriUpdateNotifier'
 
 const App = lazy(() => import('./app/App'))
 
@@ -60,8 +60,11 @@ createRoot(rootElement).render(
                 <I18nLoader>
                   <ConfirmDialogProvider>
                     <App />
+
                     <ConfirmDialog />
-                    <UpdateNotifier />
+
+                    <TauriUpdateNotifier />
+
                     <TauriExternalLinkHandler />
                   </ConfirmDialogProvider>
                 </I18nLoader>
