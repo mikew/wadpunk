@@ -19,6 +19,7 @@ import I18nLoader from './i18n/I18nLoader'
 import { ConfirmDialog, ConfirmDialogProvider } from './lib/ConfirmDialog'
 import NotistackMuiAlert from './mui/NotistackMuiAlert'
 import createRootStore from './redux/createRootStore'
+import TauriExternalLinkHandler from './tauri/TauriExternalLinkHandler'
 
 const App = lazy(() => import('./app/App'))
 
@@ -59,6 +60,7 @@ createRoot(rootElement).render(
                   <ConfirmDialogProvider>
                     <App />
                     <ConfirmDialog />
+                    <TauriExternalLinkHandler />
                   </ConfirmDialogProvider>
                 </I18nLoader>
               </Suspense>
