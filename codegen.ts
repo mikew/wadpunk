@@ -63,16 +63,17 @@ const config: CodegenConfig = {
       ? {
           // Pre-parsed Documents, variables, and return types for client-side
           // operations.
-          './src/graphql/operations.ts': {
+          './src': {
             plugins: ['typescript-operations', 'typed-document-node'],
             config: {
               useTypeImports: true,
               enumsAsTypes: true,
             },
 
-            preset: 'import-types',
+            preset: 'near-operation-file',
             presetConfig: {
-              typesPath: '#src/graphql/types',
+              extension: '.generated.ts',
+              baseTypesPath: '~#src/graphql/types',
             },
           },
         }

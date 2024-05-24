@@ -22,7 +22,8 @@ const StarRating: React.FC<{
               size="small"
               variant="text"
               fullWidth
-              onClick={() => {
+              onClick={(event) => {
+                event.stopPropagation()
                 props.onChange(0)
               }}
             >
@@ -40,7 +41,8 @@ const StarRating: React.FC<{
         }}
       >
         {[1, 2, 3, 4, 5].map((x) => {
-          const handleClick = () => {
+          const handleClick: SvgIconProps['onClick'] = (event) => {
+            event.stopPropagation()
             props.onChange(x)
           }
 

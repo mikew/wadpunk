@@ -2,8 +2,9 @@ import { useMutation } from '@apollo/client'
 import { enqueueSnackbar } from 'notistack'
 import { useCallback } from 'react'
 
-import { OpenGamesFolderDocument } from '#src/graphql/operations'
 import { useI18nContext } from '#src/i18n/lib/i18nContext'
+
+import { OpenGamesFolderDocument } from './operations.generated'
 
 function useOpenGamesFolder() {
   const [openGamesFolderMutation] = useMutation(OpenGamesFolderDocument)

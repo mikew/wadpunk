@@ -1,4 +1,4 @@
-import type { GetAllSourcePortsQuery } from '#src/graphql/operations'
+import type { GetAllSourcePortsQuery } from './operations.generated'
 
 export type SourcePortListSourcePort = ArrayItemType<
   GetAllSourcePortsQuery['getSourcePorts']

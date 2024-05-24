@@ -43,20 +43,19 @@ pub fn find_all_games() -> Vec<DbGameMeta> {
   let paths = read_dir(get_games_directory(), false).unwrap();
 
   for game_disk_entry in paths {
-    let name_string = game_disk_entry.name.unwrap();
-    let name = name_string.as_str();
+    let file_name = game_disk_entry.name.unwrap();
 
-    if name.starts_with(".") {
+    if file_name.starts_with(".") {
       continue;
     }
 
     let game_id = if game_disk_entry.children.is_some() {
-      format!("{}/", name)
+      format!("{}/", file_name)
     } else {
-      name.to_string()
+      file_name
     };
 
-    db_games.push(load_game_with_meta(&game_id))
+    db_games.push(load_game_meta(&game_id))
   }
 
   db_games
@@ -68,20 +67,6 @@ pub fn normalize_name_from_id(id: &str) -> &str {
   } else {
     &id
   }
-}
-
-pub fn load_game_with_meta(id: &str) -> DbGameMeta {
-  let mut game_meta = load_game_meta(id);
-
-  if game_meta.id.is_none() {
-    game_meta.id = Some(id.to_string());
-  }
-
-  if game_meta.name.is_none() {
-    game_meta.name = Some(normalize_name_from_id(id).to_string());
-  }
-
-  game_meta
 }
 
 pub fn load_game_meta(game_id: &str) -> DbGameMeta {
@@ -109,7 +94,17 @@ pub fn load_game_meta(game_id: &str) -> DbGameMeta {
 
   let json_contents = fs::read_to_string(json_meta_path).unwrap_or("{}".to_string());
 
-  serde_json::from_str::<DbGameMeta>(&json_contents).unwrap()
+  let mut db_game_meta = serde_json::from_str::<DbGameMeta>(&json_contents).unwrap();
+
+  // Intentionally never use the id from the file, use whatever is being passed
+  // around.
+  db_game_meta.id = Some(game_id.to_string());
+
+  if db_game_meta.name.is_none() {
+    db_game_meta.name = Some(normalize_name_from_id(game_id).to_string());
+  }
+
+  db_game_meta
 }
 
 pub fn load_game_play_sessions(game_id: &str) -> DbPlaySession {
@@ -156,13 +151,13 @@ pub fn find_all_game_files(game_id: &str) -> Vec<String> {
 }
 
 pub fn find_game_by_id(id: &str) -> Option<DbGameMeta> {
-  let db_game = load_game_with_meta(id);
+  let db_game = load_game_meta(id);
   return Some(db_game);
 }
 
 pub fn save_game(db_game: DbGameMeta) {
   let json_meta_path = get_meta_directory()
-    .join(db_game.name.clone().unwrap())
+    .join(normalize_name_from_id(&db_game.id.clone().unwrap()))
     .join("meta.json");
 
   let json_str = serde_json::to_string(&db_game).unwrap();

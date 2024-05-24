@@ -2,13 +2,13 @@ import { useSuspenseQuery } from '@apollo/client'
 import type { RefetchFunction } from '@apollo/client/react/hooks/useSuspenseQuery'
 import { createContext, memo, useContext, useMemo } from 'react'
 
+import type { SourcePort } from '#src/graphql/types'
+
 import type {
   GetAllSourcePortsQuery,
   GetAllSourcePortsQueryVariables,
-} from '#src/graphql/operations'
-import { GetAllSourcePortsDocument } from '#src/graphql/operations'
-import type { SourcePort } from '#src/graphql/types'
-
+} from './operations.generated'
+import { GetAllSourcePortsDocument } from './operations.generated'
 import type { KnownSourcePortListItem, SourcePortListSourcePort } from './types'
 
 interface SourcePortsContextType {

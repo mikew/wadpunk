@@ -2,7 +2,7 @@ import { useSuspenseQuery } from '@apollo/client'
 import { Add, Download } from '@mui/icons-material'
 import { Alert, AlertTitle, Button } from '@mui/material'
 
-import { GetGameListQueryDocument } from '#src/graphql/operations'
+import { GetGameListQueryDocument } from '#src/games/operations.generated'
 import { useI18nContext } from '#src/i18n/lib/i18nContext'
 import { useRootDispatch } from '#src/redux/helpers'
 import actions from '#src/sourcePorts/actions'

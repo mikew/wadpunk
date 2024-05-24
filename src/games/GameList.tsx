@@ -14,10 +14,6 @@ import { useMemo, useState } from 'react'
 
 import { AppToolbarPortal } from '#src/app/AppToolbarArea'
 import * as games from '#src/games/redux'
-import {
-  GetGameListQueryDocument,
-  SetRatingDocument,
-} from '#src/graphql/operations'
 import pathWithoutExtension from '#src/lib/pathWithoutExtension'
 import StarRating from '#src/lib/StarRating'
 import VirtualizedList from '#src/lib/VirtualizedList'
@@ -26,6 +22,10 @@ import { useRootDispatch } from '#src/redux/helpers'
 import calculateGamePlayTime from './calculateGamePlayTime'
 import type { GameListFilter } from './GameFilterToolbar'
 import GameFilterToolbar from './GameFilterToolbar'
+import {
+  GetGameListQueryDocument,
+  SetRatingDocument,
+} from './operations.generated'
 import useOpenGamesFolder from './useOpenGamesFolder'
 
 const GameList: React.FC = () => {
@@ -200,35 +200,34 @@ const GameList: React.FC = () => {
                     }
                     secondaryTypographyProps={{ noWrap: true }}
                   />
-                </ListItemButton>
 
-                <Stack direction="row" spacing={1} alignItems="center">
-                  <Stack direction="row" spacing={1}>
-                    {x.tags.map((tag) => {
-                      return (
-                        <Chip
-                          variant="outlined"
-                          size="small"
-                          key={tag}
-                          label={tag}
-                        />
-                      )
-                    })}
-                  </Stack>
+                  <Stack direction="row" spacing={1} alignItems="center">
+                    <Stack direction="row" spacing={1}>
+                      {x.tags.map((tag) => {
+                        return (
+                          <Chip
+                            variant="outlined"
+                            size="small"
+                            key={tag}
+                            label={tag}
+                          />
+                        )
+                      })}
+                    </Stack>
 
-                  <StarRating
-                    value={x.rating}
-                    onChange={(value) => {
-                      setRating({
-                        variables: {
-                          game_id: x.id,
-                          rating: value,
-                        },
-                      })
-                    }}
-                  />
+                    <StarRating
+                      value={x.rating}
+                      onChange={(value) => {
+                        setRating({
+                          variables: {
+                            game_id: x.id,
+                            rating: value,
+                          },
+                        })
+                      }}
+                    />
 
-                  {/* <IconButton
+                    {/* <IconButton
                   onClick={() => {
                     startGame(x)
                   }}
@@ -237,15 +236,17 @@ const GameList: React.FC = () => {
                   <PlayArrow />
                 </IconButton> */}
 
-                  <IconButton
-                    onClick={() => {
-                      openGamesFolder(x.id)
-                    }}
-                    size="small"
-                  >
-                    <FolderOpen fontSize="small" />
-                  </IconButton>
-                </Stack>
+                    <IconButton
+                      onClick={(event) => {
+                        event.stopPropagation()
+                        openGamesFolder(x.id)
+                      }}
+                      size="small"
+                    >
+                      <FolderOpen fontSize="small" />
+                    </IconButton>
+                  </Stack>
+                </ListItemButton>
               </ListItem>
             )
           }}

@@ -30,14 +30,14 @@ import type { SwitchBaseProps } from '@mui/material/internal/SwitchBase'
 import { useEffect } from 'react'
 import { useWatch } from 'react-hook-form'
 
-import type { GetGameDialogFieldsQuery } from '#src/graphql/operations'
-import { GetGameFilesDocument } from '#src/graphql/operations'
 import { useI18nContext } from '#src/i18n/lib/i18nContext'
 
 import type { GameDialogFormValues } from './GameDialog'
 import type { FileEntry } from './GameFileListContext'
 import { useGameFileListContext } from './GameFileListContext'
 import isIwad from './isIwad'
+import type { GetGameDialogFieldsQuery } from './operations.generated'
+import { GetGameFilesDocument } from './operations.generated'
 
 interface GameDialogFileListProps {
   previousFileState: GetGameDialogFieldsQuery['getGame']['previous_file_state']
