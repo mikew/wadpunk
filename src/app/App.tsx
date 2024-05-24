@@ -15,7 +15,6 @@ import AppCogMenu from './AppCogMenu'
 import { AppToolbarProvider, AppToolbarSlot } from './AppToolbarArea'
 import OnboardingAlerts from './OnboardingAlerts'
 import { InitializeAppDocument } from './operations.generated'
-import UpdateNotifier from './UpdateNotifier'
 
 function App() {
   return (
@@ -54,8 +53,6 @@ function App() {
 
         <SourcePortsDialog />
         <KnownSourcePortsDialog />
-
-        <UpdateNotifier />
       </SourcePortsProvider>
     </Initializer>
   )

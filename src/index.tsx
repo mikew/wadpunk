@@ -14,6 +14,7 @@ import { createRoot } from 'react-dom/client'
 import { Provider } from 'react-redux'
 
 import theme from './app/theme'
+import UpdateNotifier from './app/UpdateNotifier'
 import graphqlClient from './graphql/graphqlClient'
 import I18nLoader from './i18n/I18nLoader'
 import { ConfirmDialog, ConfirmDialogProvider } from './lib/ConfirmDialog'
@@ -60,6 +61,7 @@ createRoot(rootElement).render(
                   <ConfirmDialogProvider>
                     <App />
                     <ConfirmDialog />
+                    <UpdateNotifier />
                     <TauriExternalLinkHandler />
                   </ConfirmDialogProvider>
                 </I18nLoader>
