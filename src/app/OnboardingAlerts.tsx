@@ -52,7 +52,6 @@ const OnboardingAlerts: React.FC = () => {
                 size="small"
                 startIcon={<Download />}
                 href="https://freedoom.github.io/download.html"
-                target="_blank"
               >
                 {t('games.onboarding.noGames.downloadFreedoom')}
               </Button>
