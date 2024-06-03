@@ -82,9 +82,9 @@ const TauriUpdateNotifier: React.FC = () => {
                   variant: 'error',
                 },
               )
-            }
 
-            setStatus('UPDATE_AVAILABLE')
+              setStatus('UPDATE_AVAILABLE')
+            }
           }}
         >
           {t('updateNotifier.actions.install')}
