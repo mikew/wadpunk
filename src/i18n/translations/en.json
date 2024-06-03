@@ -135,6 +135,10 @@
       },
       "command": {
         "label": "Command"
+      },
+      "is_default": {
+        "label": "Use as default",
+        "helperText": "This Source Port will be used in Games by default."
       }
     },
 
