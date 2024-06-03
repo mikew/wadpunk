@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## 1.10.0 (2024-06-03)
+
+
+### Features
+
+* Set default source port ([#85](https://github.com/mikew/wadpunk/issues/85)) ([12accfe](https://github.com/mikew/wadpunk/commit/12accfedfacc49e4bff59553a933d5370e82f869))
+
 ## 1.9.2 (2024-05-24)
 
 
