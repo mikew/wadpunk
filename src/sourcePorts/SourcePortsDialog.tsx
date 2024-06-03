@@ -37,7 +37,8 @@ import SourcePortForm from './SourcePortForm'
 import { useSourcePortsContext } from './sourcePortsContext'
 
 const SourcePortsDialog: React.FC = () => {
-  const { sourcePorts, knownSourcePorts } = useSourcePortsContext()
+  const { sourcePorts, knownSourcePorts, defaultSourcePort } =
+    useSourcePortsContext()
   const isOpen = useRootSelector((state) => state.sourcePorts.isDialogOpen)
   const dispatch = useRootDispatch()
   const [createSourcePort] = useMutation(CreateSourcePortDocument)
@@ -121,7 +122,7 @@ const SourcePortsDialog: React.FC = () => {
                           }}
                         />
 
-                        {x.is_default ? (
+                        {x.id === defaultSourcePort?.id ? (
                           <Star color="action" fontSize="small" />
                         ) : undefined}
                       </ListItemButton>
