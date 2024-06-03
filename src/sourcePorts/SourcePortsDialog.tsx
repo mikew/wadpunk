@@ -1,5 +1,5 @@
 import { useMutation } from '@apollo/client'
-import { Add, Download } from '@mui/icons-material'
+import { Add, Download, Star } from '@mui/icons-material'
 import {
   Box,
   Button,
@@ -120,6 +120,10 @@ const SourcePortsDialog: React.FC = () => {
                             sx: { wordWrap: 'break-word' },
                           }}
                         />
+
+                        {x.is_default ? (
+                          <Star color="action" fontSize="small" />
+                        ) : undefined}
                       </ListItemButton>
                     </ListItem>
                   )
@@ -171,11 +175,13 @@ const SourcePortsDialog: React.FC = () => {
                     ? {
                         ...selectedSourcePort,
                         command: selectedSourcePort.command[0] || '',
+                        is_default: selectedSourcePort.is_default,
                       }
                     : {
                         id: '',
                         known_source_port_id: 'gzdoom',
                         command: '',
+                        is_default: false,
                       }
                 }
                 onClickSave={async (values, formApi) => {
@@ -188,6 +194,7 @@ const SourcePortsDialog: React.FC = () => {
                           // TODO This is a hack because I don't want to deal with the
                           // array-ness of the command in the UI yet.
                           command: values.command ? [values.command] : [],
+                          is_default: values.is_default,
                         },
                       },
                     })
@@ -204,6 +211,7 @@ const SourcePortsDialog: React.FC = () => {
                           id: selectedId,
                           known_source_port_id: values.known_source_port_id,
                           command: values.command ? [values.command] : [],
+                          is_default: values.is_default,
                         },
                       },
                     })

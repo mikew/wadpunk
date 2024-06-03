@@ -201,7 +201,7 @@ impl DataSource {
     source_port: String,
     use_custom_config: Option<bool>,
   ) -> GraphQLResult<bool> {
-    let db_source_port = database::find_source_port_by_id(source_port);
+    let db_source_port = database::find_source_port_by_id(&source_port);
     let db_source_port_command = db_source_port.command.unwrap();
     let main_exe = db_source_port_command.first().unwrap().clone();
     let base_args = &db_source_port_command[1..];
@@ -437,12 +437,14 @@ impl DataSource {
     source_port: CreateSourcePortInput,
   ) -> GraphQLResult<SourcePort> {
     let db_source_port = DbSourcePort {
-      id: Some(source_port.id),
+      id: Some(source_port.id.clone()),
       command: Some(source_port.command),
       known_source_port_id: Some(source_port.known_source_port_id),
+      is_default: source_port.is_default,
     };
 
     database::save_source_port(db_source_port.clone());
+    database::set_default_source_port(&source_port.id, source_port.is_default);
 
     Ok(db_source_port.to_source_port())
   }
@@ -453,12 +455,14 @@ impl DataSource {
     _ctx: &Context<'_>,
     source_port: UpdateSourcePortInput,
   ) -> GraphQLResult<SourcePort> {
-    let mut db_source_port = database::find_source_port_by_id(source_port.id);
+    let mut db_source_port = database::find_source_port_by_id(&source_port.id);
 
     db_source_port.command = Some(source_port.command);
     db_source_port.known_source_port_id = Some(source_port.known_source_port_id);
+    db_source_port.is_default = source_port.is_default;
 
     database::save_source_port(db_source_port.clone());
+    database::set_default_source_port(&source_port.id, source_port.is_default);
 
     Ok(db_source_port.to_source_port())
   }

@@ -183,13 +183,13 @@ pub fn find_all_source_ports() -> Vec<DbSourcePort> {
     }
 
     let source_port_id = name.strip_suffix(".json").unwrap().to_string();
-    db_source_ports.push(find_source_port_by_id(source_port_id))
+    db_source_ports.push(find_source_port_by_id(&source_port_id))
   }
 
   db_source_ports
 }
 
-pub fn find_source_port_by_id(source_port_id: String) -> DbSourcePort {
+pub fn find_source_port_by_id(source_port_id: &str) -> DbSourcePort {
   let json_path = get_source_ports_directory().join(format!("{}.json", source_port_id));
   let json_contents = fs::read_to_string(json_path).unwrap_or("{}".to_string());
 
@@ -207,6 +207,24 @@ pub fn save_source_port(db_source_port: DbSourcePort) {
 pub fn delete_source_port(id: &str) {
   let json_path = get_source_ports_directory().join(format!("{}.json", id));
   fs::remove_file(json_path).unwrap();
+}
+
+pub fn set_default_source_port(id: &str, is_default: Option<bool>) {
+  if let Some(is_default) = is_default {
+    if is_default {
+      let all_source_ports = find_all_source_ports();
+
+      for mut source_port in all_source_ports {
+        if source_port.id == Some(id.to_string()) {
+          source_port.is_default = Some(true);
+        } else {
+          source_port.is_default = Some(false);
+        }
+
+        save_source_port(source_port);
+      }
+    }
+  }
 }
 
 #[derive(Serialize, Deserialize, Debug, Default, Clone)]
@@ -273,6 +291,7 @@ pub struct DbSourcePort {
   pub id: Option<String>,
   pub command: Option<Vec<String>>,
   pub known_source_port_id: Option<String>,
+  pub is_default: Option<bool>,
 }
 
 fn recurse_disk_entry(dir: DiskEntry, files: &mut Vec<String>) {
@@ -298,7 +317,7 @@ impl DbSourcePort {
         .known_source_port_id
         .clone()
         .unwrap_or("gzdoom".to_string()),
-      is_default: false,
+      is_default: self.is_default.unwrap_or_default(),
     }
   }
 }
