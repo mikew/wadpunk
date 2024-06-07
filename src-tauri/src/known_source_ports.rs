@@ -14,6 +14,7 @@ pub enum DbKnownSourcePort {
   ChocolateDoom,
   DSDA,
   Woof,
+  Zandronum,
 }
 
 impl DbKnownSourcePort {
@@ -24,6 +25,7 @@ impl DbKnownSourcePort {
       Self::ChocolateDoom => "chocolate-doom".to_string(),
       Self::DSDA => "dsda".to_string(),
       Self::Woof => "woof".to_string(),
+      Self::Zandronum => "zandronum".to_string(),
     }
   }
 
@@ -34,6 +36,7 @@ impl DbKnownSourcePort {
       Self::ChocolateDoom => "Chocolate Doom".to_string(),
       Self::DSDA => "DSDA".to_string(),
       Self::Woof => "Woof".to_string(),
+      Self::Zandronum => "Zandronum".to_string(),
     }
   }
 
@@ -44,6 +47,7 @@ impl DbKnownSourcePort {
       Self::ChocolateDoom => true,
       Self::DSDA => true,
       Self::Woof => true,
+      Self::Zandronum => true,
     }
   }
 
@@ -54,6 +58,7 @@ impl DbKnownSourcePort {
       Self::ChocolateDoom => true,
       Self::DSDA => true,
       Self::Woof => true,
+      Self::Zandronum => true,
     }
   }
 
@@ -64,6 +69,7 @@ impl DbKnownSourcePort {
       Self::ChocolateDoom => "https://www.chocolate-doom.org/".to_string(),
       Self::DSDA => "https://github.com/kraflab/dsda-doom".to_string(),
       Self::Woof => "https://github.com/fabiangreffrath/woof".to_string(),
+      Self::Zandronum => "https://zandronum.com/".to_string(),
     }
   }
 
@@ -79,6 +85,7 @@ impl DbKnownSourcePort {
           .to_string()
       }
       Self::Woof => "https://github.com/fabiangreffrath/woof/releases/latest".to_string(),
+      Self::Zandronum => "https://zandronum.com/download".to_string(),
     }
   }
 
@@ -93,7 +100,12 @@ impl DbKnownSourcePort {
       example_command: self.build_command(&BuildCommandArgs {
         executable: self.id().to_string(),
         iwad: "doom2.iwad".to_string(),
-        files: vec!["example1.wad".to_string(), "example2.wad".to_string()],
+        files: vec![
+          "example1.wad".to_string(),
+          "example2.wad".to_string(),
+          "myfile.deh".to_string(),
+          "myfile.bex".to_string(),
+        ],
         use_custom_config: true,
         game_id: "doom2".to_string(),
       }),
@@ -112,7 +124,12 @@ impl DbKnownSourcePort {
         .to_string();
 
       match self {
-        Self::GZDoom | Self::EternityEngine | Self::ChocolateDoom | Self::DSDA | Self::Woof => {
+        Self::GZDoom
+        | Self::EternityEngine
+        | Self::ChocolateDoom
+        | Self::DSDA
+        | Self::Woof
+        | Self::Zandronum => {
           command.push("-config".to_string());
           command.push(config_path);
         }
@@ -126,7 +143,7 @@ impl DbKnownSourcePort {
       .unwrap()
       .to_string();
     match self {
-      Self::GZDoom | Self::ChocolateDoom => {
+      Self::GZDoom | Self::ChocolateDoom | Self::Zandronum => {
         command.push("-savedir".to_string());
         command.push(save_dir);
       }
@@ -144,21 +161,31 @@ impl DbKnownSourcePort {
       // .bex, add `-bex <file>`, otherwise just add `-file <file>`
       if file.ends_with(".deh") {
         match self {
-          Self::GZDoom | Self::EternityEngine | Self::ChocolateDoom | Self::DSDA | Self::Woof => {
+          Self::GZDoom
+          | Self::EternityEngine
+          | Self::ChocolateDoom
+          | Self::DSDA
+          | Self::Woof
+          | Self::Zandronum => {
             command.push("-deh".to_string());
             command.push(file.clone());
           }
         }
       } else if file.ends_with(".bex") {
         match self {
-          Self::GZDoom | Self::EternityEngine | Self::ChocolateDoom | Self::DSDA | Self::Woof => {
+          Self::GZDoom
+          | Self::EternityEngine
+          | Self::ChocolateDoom
+          | Self::DSDA
+          | Self::Woof
+          | Self::Zandronum => {
             command.push("-deh".to_string());
             command.push(file.clone());
           }
         }
       } else {
         match self {
-          Self::GZDoom | Self::EternityEngine | Self::DSDA | Self::Woof => {
+          Self::GZDoom | Self::EternityEngine | Self::DSDA | Self::Woof | Self::Zandronum => {
             command.push("-file".to_string());
             command.push(file.clone());
           }
@@ -181,6 +208,7 @@ pub fn get_all_known_source_ports() -> Vec<DbKnownSourcePort> {
     DbKnownSourcePort::ChocolateDoom,
     DbKnownSourcePort::DSDA,
     DbKnownSourcePort::Woof,
+    DbKnownSourcePort::Zandronum,
   ]
 }
 
