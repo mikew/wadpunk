@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## 1.11.0 (2024-06-07)
+
+
+### Features
+
+* Add Zandronum ([#87](https://github.com/mikew/wadpunk/issues/87)) ([bf5176e](https://github.com/mikew/wadpunk/commit/bf5176ee9592867a67ccf89def1ab6b870616c68))
+
 ## 1.10.1 (2024-06-03)
 
 
