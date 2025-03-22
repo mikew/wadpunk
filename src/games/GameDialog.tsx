@@ -5,6 +5,7 @@ import {
   Label,
   SportsEsports,
   Terminal,
+  Folder,
 } from '@mui/icons-material'
 import {
   Button,
@@ -61,6 +62,7 @@ import {
 import { actions } from './redux'
 import type { GameDialogGame, GameListGame } from './types'
 import useAllTags from './useAllTags'
+import useOpenGamesFolder from './useOpenGamesFolder'
 
 export interface GameDialogFormValues {
   id: Game['id']
@@ -489,9 +491,19 @@ const GameDialogActions: React.FC<{
   const formState = useFormState()
   const { findSourcePortById } = useSourcePortsContext()
   const { t } = useI18nContext()
+  const { openGamesFolder } = useOpenGamesFolder()
 
   return (
     <>
+      <Button
+        startIcon={<Folder />}
+        onClick={() => {
+          openGamesFolder(props.game.id)
+        }}
+      >
+        {t('games.actions.openFolder')}
+      </Button>
+
       <Button
         color="warning"
         onClick={() => {
