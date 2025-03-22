@@ -55,20 +55,8 @@ mutation openGamesFolder($game_id: ID) {
   openGamesFolder(game_id: $game_id)
 }
 
-mutation startGame(
-  $game_id: ID!
-  $iwad: String
-  $files: [String!]
-  $source_port: String!
-  $use_custom_config: Boolean
-) {
-  startGame(
-    game_id: $game_id
-    iwad: $iwad
-    files: $files
-    source_port: $source_port
-    use_custom_config: $use_custom_config
-  )
+mutation startGame($game_id: ID!) {
+  startGame(game_id: $game_id)
 }
 
 mutation updateGame($game: GameInput!) {

@@ -195,12 +195,22 @@ impl DataSource {
     &self,
     _root: &Mutation,
     _ctx: &Context<'_>,
-    files: Option<Vec<String>>,
     game_id: String,
-    iwad: Option<String>,
-    source_port: String,
-    use_custom_config: Option<bool>,
   ) -> GraphQLResult<bool> {
+    // Get game configuration from database
+    let game = database::find_game_by_id(&game_id).ok_or_else(|| Error {
+      message: format!("game {} not found", game_id),
+      source: None,
+      extensions: None,
+    })?;
+
+    // Get source port configuration
+    let source_port = game.source_port.ok_or_else(|| Error {
+      message: format!("game {} has no source port configured", game_id),
+      source: None,
+      extensions: None,
+    })?;
+
     let db_source_port = database::find_source_port_by_id(&source_port);
     let db_source_port_command = db_source_port.command.unwrap();
     let main_exe = db_source_port_command.first().unwrap().clone();
@@ -242,12 +252,29 @@ impl DataSource {
         .unwrap_or("gzdoom".to_string()),
     );
 
+    // Get IWAD and files from game configuration
+    let iwad = game.iwad_id.ok_or_else(|| Error {
+      message: format!("game {} has no IWAD configured", game_id),
+      source: None,
+      extensions: None,
+    })?;
+
+    // Build list of files from previous_file_state, only including enabled files
+    let files = game.previous_file_state
+        .map(|state| state.into_iter()
+            .filter(|item| item.is_enabled)
+            .map(|item| item.absolute)
+            .collect())
+        .unwrap_or_default();
+
+    let use_custom_config = game.use_custom_config.unwrap_or_default();
+
     let args = source_port_definition.build_command(&BuildCommandArgs {
       executable: main_exe,
       game_id: game_id.clone(),
-      iwad: iwad.unwrap(),
-      files: files.unwrap_or_default(),
-      use_custom_config: use_custom_config.unwrap_or_default(),
+      iwad,
+      files,
+      use_custom_config,
     });
 
     let mut command = Command::new(&args[0]);

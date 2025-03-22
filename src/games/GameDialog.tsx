@@ -556,10 +556,6 @@ const GameDialogActions: React.FC<{
             const startGameResponse = await startGameMutation({
               variables: {
                 game_id: props.game.id,
-                source_port: sourcePort.id,
-                iwad,
-                files,
-                use_custom_config: props.game.use_custom_config,
               },
             })
 

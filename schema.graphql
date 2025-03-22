@@ -120,13 +120,7 @@ input UpdateSourcePortInput {
 type Mutation {
   initializeApp: Boolean!
 
-  startGame(
-    game_id: ID!
-    iwad: String
-    files: [String!]
-    source_port: String!
-    use_custom_config: Boolean
-  ): Boolean!
+  startGame(game_id: ID!): Boolean!
 
   updateGame(game: GameInput!): Game!
 
