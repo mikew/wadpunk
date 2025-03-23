@@ -259,18 +259,19 @@ const GameList: React.FC = () => {
                           invalidateApolloQuery(['getGames'])
 
                           if (!startGameResponse.data?.startGame) {
-                            enqueueSnackbar(
-                              t('games.notifications.startError'),
-                              {
-                                variant: 'error',
-                              },
-                            )
+                            throw new Error('Error while running game')
                           }
                         } catch (err) {
                           console.error('Failed to start game:', err)
-                          enqueueSnackbar(t('games.notifications.startError'), {
-                            variant: 'error',
-                          })
+
+                          const message =
+                            err instanceof Error ? err.message : 'Unknown error'
+                          enqueueSnackbar(
+                            `${t('games.notifications.startError')}: ${message}`,
+                            {
+                              variant: 'error',
+                            },
+                          )
                         }
                       }}
                       size="small"

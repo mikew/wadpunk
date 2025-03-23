@@ -562,12 +562,18 @@ const GameDialogActions: React.FC<{
             invalidateApolloQuery(['getGames'])
 
             if (!startGameResponse.data?.startGame) {
-              enqueueSnackbar(t('games.notifications.startError'), {
-                variant: 'error',
-              })
+              throw new Error('Error while running game')
             }
           } catch (err) {
-            console.error(err)
+            console.error('Failed to start game:', err)
+
+            const message = err instanceof Error ? err.message : 'Unknown error'
+            enqueueSnackbar(
+              `${t('games.notifications.startError')}: ${message}`,
+              {
+                variant: 'error',
+              },
+            )
           }
         }}
         disabled={formState.isSubmitting || !formState.isValid}
