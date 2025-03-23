@@ -245,6 +245,7 @@ const GameList: React.FC = () => {
                     </IconButton>
 
                     <IconButton
+                      disabled={x.previous_file_state.length === 0}
                       onClick={async (event) => {
                         try {
                           event.stopPropagation()
