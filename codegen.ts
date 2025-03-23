@@ -431,8 +431,8 @@ pub async fn ${field.name}(&self, ctx: &Context<'_>, ${rustArgs.join(
     ', ',
   )}) -> GraphQLResult<${graphqlTypeToRustType(field.type)}> {
     ctx.data_unchecked::<DataSource>().${baseName}_${
-    field.name
-  }(self, ctx, ${argNames.join(', ')}).await
+      field.name
+    }(self, ctx, ${argNames.join(', ')}).await
 }
   `
 }

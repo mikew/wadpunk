@@ -206,28 +206,28 @@ impl DataSource {
 
     // Get source port configuration
     let db_source_port = if game.source_port.as_deref() == Some("-1") {
-        // Find the default source port or fall back to first one
-        let all_source_ports = database::find_all_source_ports();
-        if all_source_ports.is_empty() {
-            return Err(Error {
-                message: "No source ports configured".to_string(),
-                source: None,
-                extensions: None,
-            });
-        }
-        all_source_ports
-            .clone()
-            .into_iter()
-            .find(|sp| sp.is_default.unwrap_or(false))
-            .unwrap_or_else(|| all_source_ports.into_iter().next().unwrap())
+      // Find the default source port or fall back to first one
+      let all_source_ports = database::find_all_source_ports();
+      if all_source_ports.is_empty() {
+        return Err(Error {
+          message: "No source ports configured".to_string(),
+          source: None,
+          extensions: None,
+        });
+      }
+      all_source_ports
+        .clone()
+        .into_iter()
+        .find(|sp| sp.is_default.unwrap_or(false))
+        .unwrap_or_else(|| all_source_ports.into_iter().next().unwrap())
     } else {
-        // Use the specified source port
-        let source_port = game.source_port.ok_or_else(|| Error {
-            message: format!("game {} has no source port configured", game_id),
-            source: None,
-            extensions: None,
-        })?;
-        database::find_source_port_by_id(&source_port)
+      // Use the specified source port
+      let source_port = game.source_port.ok_or_else(|| Error {
+        message: format!("game {} has no source port configured", game_id),
+        source: None,
+        extensions: None,
+      })?;
+      database::find_source_port_by_id(&source_port)
     };
 
     let db_source_port_command = db_source_port.command.unwrap();
@@ -271,20 +271,22 @@ impl DataSource {
     );
 
     // Check if this game is tagged as an IWAD
-    let is_game_iwad = game.tags
-        .iter()
-        .flat_map(|tags| tags.iter())
-        .any(|tag| tag.to_lowercase() == "iwad");
+    let is_game_iwad = game
+      .tags
+      .iter()
+      .flat_map(|tags| tags.iter())
+      .any(|tag| tag.to_lowercase() == "iwad");
 
-    // Get the IWAD ID - if game is tagged as IWAD, use its own ID, otherwise use configured IWAD
+    // Get the IWAD ID - if game is tagged as IWAD, use its own ID,
+    // otherwise use configured IWAD
     let iwad_id = if is_game_iwad {
-        game_id.clone()
+      game_id.clone()
     } else {
-        game.iwad_id.ok_or_else(|| Error {
-            message: format!("game {} has no IWAD configured", game_id),
-            source: None,
-            extensions: None,
-        })?
+      game.iwad_id.ok_or_else(|| Error {
+        message: format!("game {} has no IWAD configured", game_id),
+        source: None,
+        extensions: None,
+      })?
     };
 
     // Process enabled files from previous_file_state
@@ -292,21 +294,22 @@ impl DataSource {
     let mut iwad = None;
 
     if let Some(state) = game.previous_file_state {
-        for file in state.into_iter().filter(|item| item.is_enabled) {
-            // If this file's relative path starts with the iwad_id and we haven't found an IWAD yet
-            if file.relative.starts_with(&iwad_id) && iwad.is_none() {
-                iwad = Some(file.absolute.clone());
-            }
-            // Add all files to the files list, including IWAD files
-            files.push(file.absolute);
+      for file in state.into_iter().filter(|item| item.is_enabled) {
+        // If this file's relative path starts with the iwad_id and we haven't
+        // found an IWAD yet
+        if file.relative.starts_with(&iwad_id) && iwad.is_none() {
+          iwad = Some(file.absolute.clone());
         }
+        // Add all files to the files list, including IWAD files
+        files.push(file.absolute);
+      }
     }
 
     // Ensure we found an IWAD
     let iwad = iwad.ok_or_else(|| Error {
-        message: format!("game {} has no enabled IWAD files", game_id),
-        source: None,
-        extensions: None,
+      message: format!("game {} has no enabled IWAD files", game_id),
+      source: None,
+      extensions: None,
     })?;
 
     let use_custom_config = game.use_custom_config.unwrap_or_default();
