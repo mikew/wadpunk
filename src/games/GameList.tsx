@@ -176,8 +176,8 @@ const GameList: React.FC = () => {
               playTime === 0
                 ? 'Never played'
                 : `${new Date(playTime * 1000)
-                    .toISOString()
-                    .substring(11, 19)} played`
+                  .toISOString()
+                  .substring(11, 19)} played`
 
             return (
               <ListItem
@@ -234,28 +234,33 @@ const GameList: React.FC = () => {
                     <IconButton
                       onClick={(event) => {
                         event.stopPropagation()
-                        startGame({
-                          variables: {
-                            game_id: x.id,
-                          },
-                        }).catch((err) => {
-                          console.error('Failed to start game:', err)
-                          enqueueSnackbar('Failed to start game', { variant: 'error' })
-                        })
-                      }}
-                      size="small"
-                    >
-                      <PlayArrow fontSize="small" />
-                    </IconButton>
-
-                    <IconButton
-                      onClick={(event) => {
-                        event.stopPropagation()
                         openGamesFolder(x.id)
                       }}
                       size="small"
                     >
                       <FolderOpen fontSize="small" />
+                    </IconButton>
+
+                    <IconButton
+                      onClick={async (event) => {
+                        try {
+                          event.stopPropagation()
+
+                          startGame({
+                            variables: {
+                              game_id: x.id,
+                            },
+                          })
+                        } catch (err) {
+                          console.error('Failed to start game:', err)
+                          enqueueSnackbar('Failed to start game', {
+                            variant: 'error',
+                          })
+                        }
+                      }}
+                      size="small"
+                    >
+                      <PlayArrow fontSize="small" />
                     </IconButton>
                   </Stack>
                 </ListItemButton>
