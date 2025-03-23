@@ -19,7 +19,7 @@ jobs:
       matrix:
         platform:
           # macos-x64
-          - macos-12
+          - macos-13
           # macos-aarch64
           - macos-14
           # linux-x64
@@ -137,7 +137,7 @@ jobs:
       - run: |
           mkdir -p src-tauri/target/release/bundle
           cp -rl wadpunk-windows-2019-X64/* src-tauri/target/release/bundle
-          cp -rl wadpunk-macos-12-X64/* src-tauri/target/release/bundle
+          cp -rl wadpunk-macos-13-X64/* src-tauri/target/release/bundle
           cp -rl wadpunk-macos-14-ARM64/* src-tauri/target/release/bundle
           cp -rl wadpunk-ubuntu-20.04-X64/* src-tauri/target/release/bundle
         shell: bash
