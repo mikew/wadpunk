@@ -268,20 +268,34 @@ impl DataSource {
         .unwrap_or("gzdoom".to_string()),
     );
 
-    // Get IWAD and files from game configuration
-    let iwad = game.iwad_id.ok_or_else(|| Error {
-      message: format!("game {} has no IWAD configured", game_id),
-      source: None,
-      extensions: None,
+    // Get the IWAD ID we'll use to identify IWAD files
+    let iwad_id = game.iwad_id.ok_or_else(|| Error {
+        message: format!("game {} has no IWAD configured", game_id),
+        source: None,
+        extensions: None,
     })?;
 
-    // Build list of files from previous_file_state, only including enabled files
-    let files = game.previous_file_state
-        .map(|state| state.into_iter()
-            .filter(|item| item.is_enabled)
-            .map(|item| item.absolute)
-            .collect())
-        .unwrap_or_default();
+    // Process enabled files from previous_file_state
+    let mut files = Vec::new();
+    let mut iwad = None;
+
+    if let Some(state) = game.previous_file_state {
+        for file in state.into_iter().filter(|item| item.is_enabled) {
+            // If this file's relative path starts with the iwad_id and we haven't found an IWAD yet
+            if file.relative.starts_with(&iwad_id) && iwad.is_none() {
+                iwad = Some(file.absolute.clone());
+            }
+            // Add all files to the files list, including IWAD files
+            files.push(file.absolute);
+        }
+    }
+
+    // Ensure we found an IWAD
+    let iwad = iwad.ok_or_else(|| Error {
+        message: format!("game {} has no enabled IWAD files", game_id),
+        source: None,
+        extensions: None,
+    })?;
 
     let use_custom_config = game.use_custom_config.unwrap_or_default();
 
