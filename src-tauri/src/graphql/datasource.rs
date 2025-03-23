@@ -206,16 +206,19 @@ impl DataSource {
 
     // Get source port configuration
     let db_source_port = if game.source_port.as_deref() == Some("-1") {
-        // Find the default source port
+        // Find the default source port or fall back to first one
         let all_source_ports = database::find_all_source_ports();
+        if all_source_ports.is_empty() {
+            return Err(Error {
+                message: "No source ports configured".to_string(),
+                source: None,
+                extensions: None,
+            });
+        }
         all_source_ports
             .into_iter()
             .find(|sp| sp.is_default.unwrap_or(false))
-            .ok_or_else(|| Error {
-                message: "No default source port configured".to_string(),
-                source: None,
-                extensions: None,
-            })?
+            .unwrap_or_else(|| all_source_ports.into_iter().next().unwrap())
     } else {
         // Use the specified source port
         let source_port = game.source_port.ok_or_else(|| Error {
