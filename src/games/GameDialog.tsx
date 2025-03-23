@@ -381,9 +381,9 @@ const GameDialog: React.FC<{
                                 alignSelf: 'flex-start',
                               },
                               '& .MuiInputAdornment-positionStart .MuiSvgIcon-root':
-                                {
-                                  marginLeft: '4px',
-                                },
+                              {
+                                marginLeft: '4px',
+                              },
                             }}
                           />
                         )}
@@ -501,7 +501,7 @@ const GameDialogActions: React.FC<{
           openGamesFolder(props.game.id)
         }}
       >
-        {t('games.actions.openFolder')}
+        {t('games.actions.openGameFolder')}
       </Button>
 
       <Button
