@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## 1.11.1 (2025-03-23)
+
+
+### Bug Fixes
+
+* Deploy CI ([#89](https://github.com/mikew/wadpunk/issues/89)) ([e005df5](https://github.com/mikew/wadpunk/commit/e005df554bfcb79fe54e87c85565702f8d3f7481))
+
 ## 1.11.0 (2024-06-07)
 
 
