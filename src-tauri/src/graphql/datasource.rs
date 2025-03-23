@@ -204,21 +204,26 @@ impl DataSource {
       extensions: None,
     })?;
 
-    // Get source port configuration - either from game config or find the default
-    let db_source_port = match game.source_port {
-        Some(source_port) => database::find_source_port_by_id(&source_port),
-        None => {
-            // Find the default source port
-            let all_source_ports = database::find_all_source_ports();
-            all_source_ports
-                .into_iter()
-                .find(|sp| sp.is_default.unwrap_or(false))
-                .ok_or_else(|| Error {
-                    message: "No default source port configured".to_string(),
-                    source: None,
-                    extensions: None,
-                })?
-        }
+    // Get source port configuration
+    let db_source_port = if game.source_port.as_deref() == Some("-1") {
+        // Find the default source port
+        let all_source_ports = database::find_all_source_ports();
+        all_source_ports
+            .into_iter()
+            .find(|sp| sp.is_default.unwrap_or(false))
+            .ok_or_else(|| Error {
+                message: "No default source port configured".to_string(),
+                source: None,
+                extensions: None,
+            })?
+    } else {
+        // Use the specified source port
+        let source_port = game.source_port.ok_or_else(|| Error {
+            message: format!("game {} has no source port configured", game_id),
+            source: None,
+            extensions: None,
+        })?;
+        database::find_source_port_by_id(&source_port)
     };
     let db_source_port_command = db_source_port.command.unwrap();
     let main_exe = db_source_port_command.first().unwrap().clone();
