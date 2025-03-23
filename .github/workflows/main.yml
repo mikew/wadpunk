@@ -32,11 +32,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # prepare-env: Setup node / pnpm.
-      - uses: pnpm/action-setup@v3
-        with:
-          version: 8
-          run_install: false
+      - uses: jdx/mise-action@v2
+
+      # # prepare-env: Setup node / pnpm.
+      # - uses: pnpm/action-setup@v3
+      #   with:
+      #     version: 8
+      #     run_install: false
 
       - name: Get pnpm store directory
         shell: bash
@@ -53,7 +55,7 @@ jobs:
             pnpm-store-${{ runner.os }}-${{ runner.arch }}-
 
       # prepare-env: Setup rust.
-      - uses: dtolnay/rust-toolchain@stable
+      # - uses: dtolnay/rust-toolchain@stable
 
       # prepare-env: Tauri deps for linux.
       - if: matrix.platform == 'ubuntu-20.04'
