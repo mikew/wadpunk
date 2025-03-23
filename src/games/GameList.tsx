@@ -1,5 +1,6 @@
 import { useMutation, useSuspenseQuery } from '@apollo/client'
 import FolderOpen from '@mui/icons-material/FolderOpen'
+import PlayArrow from '@mui/icons-material/PlayArrow'
 import {
   Chip,
   IconButton,
@@ -10,6 +11,7 @@ import {
   Stack,
 } from '@mui/material'
 import useSimpleFilter from '@promoboxx/use-filter/dist/useSimpleFilter'
+import { enqueueSnackbar } from 'notistack'
 import { useMemo, useState } from 'react'
 
 import { AppToolbarPortal } from '#src/app/AppToolbarArea'
@@ -25,6 +27,7 @@ import GameFilterToolbar from './GameFilterToolbar'
 import {
   GetGameListQueryDocument,
   SetRatingDocument,
+  StartGameDocument,
 } from './operations.generated'
 import useOpenGamesFolder from './useOpenGamesFolder'
 
@@ -33,6 +36,7 @@ const GameList: React.FC = () => {
   const dispatch = useRootDispatch()
 
   const [setRating] = useMutation(SetRatingDocument)
+  const [startGame] = useMutation(StartGameDocument)
   const { openGamesFolder } = useOpenGamesFolder()
 
   const filterApi = useSimpleFilter<GameListFilter>('GameList', {
@@ -227,14 +231,22 @@ const GameList: React.FC = () => {
                       }}
                     />
 
-                    {/* <IconButton
-                  onClick={() => {
-                    startGame(x)
-                  }}
-                  size="small"
-                >
-                  <PlayArrow />
-                </IconButton> */}
+                    <IconButton
+                      onClick={(event) => {
+                        event.stopPropagation()
+                        startGame({
+                          variables: {
+                            game_id: x.id,
+                          },
+                        }).catch((err) => {
+                          console.error('Failed to start game:', err)
+                          enqueueSnackbar('Failed to start game', { variant: 'error' })
+                        })
+                      }}
+                      size="small"
+                    >
+                      <PlayArrow fontSize="small" />
+                    </IconButton>
 
                     <IconButton
                       onClick={(event) => {
