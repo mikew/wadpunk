@@ -269,12 +269,21 @@ impl DataSource {
         .unwrap_or("gzdoom".to_string()),
     );
 
-    // Get the IWAD ID we'll use to identify IWAD files
-    let iwad_id = game.iwad_id.ok_or_else(|| Error {
-        message: format!("game {} has no IWAD configured", game_id),
-        source: None,
-        extensions: None,
-    })?;
+    // Check if this game is tagged as an IWAD
+    let is_game_iwad = game.tags
+        .iter()
+        .any(|tag| tag.to_lowercase() == "iwad");
+
+    // Get the IWAD ID - if game is tagged as IWAD, use its own ID, otherwise use configured IWAD
+    let iwad_id = if is_game_iwad {
+        game_id.clone()
+    } else {
+        game.iwad_id.ok_or_else(|| Error {
+            message: format!("game {} has no IWAD configured", game_id),
+            source: None,
+            extensions: None,
+        })?
+    };
 
     // Process enabled files from previous_file_state
     let mut files = Vec::new();
