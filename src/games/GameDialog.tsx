@@ -5,6 +5,7 @@ import {
   Label,
   SportsEsports,
   Terminal,
+  Folder,
 } from '@mui/icons-material'
 import {
   Button,
@@ -61,6 +62,7 @@ import {
 import { actions } from './redux'
 import type { GameDialogGame, GameListGame } from './types'
 import useAllTags from './useAllTags'
+import useOpenGamesFolder from './useOpenGamesFolder'
 
 export interface GameDialogFormValues {
   id: Game['id']
@@ -489,9 +491,19 @@ const GameDialogActions: React.FC<{
   const formState = useFormState()
   const { findSourcePortById } = useSourcePortsContext()
   const { t } = useI18nContext()
+  const { openGamesFolder } = useOpenGamesFolder()
 
   return (
     <>
+      <Button
+        startIcon={<Folder />}
+        onClick={() => {
+          openGamesFolder(props.game.id)
+        }}
+      >
+        {t('games.actions.openGameFolder')}
+      </Button>
+
       <Button
         color="warning"
         onClick={() => {
@@ -544,22 +556,24 @@ const GameDialogActions: React.FC<{
             const startGameResponse = await startGameMutation({
               variables: {
                 game_id: props.game.id,
-                source_port: sourcePort.id,
-                iwad,
-                files,
-                use_custom_config: props.game.use_custom_config,
               },
             })
 
             invalidateApolloQuery(['getGames'])
 
             if (!startGameResponse.data?.startGame) {
-              enqueueSnackbar(t('games.notifications.startError'), {
-                variant: 'error',
-              })
+              throw new Error('Error while running game')
             }
           } catch (err) {
-            console.error(err)
+            console.error('Failed to start game:', err)
+
+            const message = err instanceof Error ? err.message : 'Unknown error'
+            enqueueSnackbar(
+              `${t('games.notifications.startError')}: ${message}`,
+              {
+                variant: 'error',
+              },
+            )
           }
         }}
         disabled={formState.isSubmitting || !formState.isValid}

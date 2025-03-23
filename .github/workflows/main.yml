@@ -19,11 +19,13 @@ jobs:
       matrix:
         platform:
           # macos-x64
-          - macos-12
+          - macos-13
           # macos-aarch64
           - macos-14
           # linux-x64
           - ubuntu-20.04
+          # linux-aarch64
+          - ubuntu-22.04-arm
           # windows-x64
           - windows-2019
 
@@ -32,11 +34,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # prepare-env: Setup node / pnpm.
-      - uses: pnpm/action-setup@v3
-        with:
-          version: 8
-          run_install: false
+      - uses: jdx/mise-action@v2
+
+      # # prepare-env: Setup node / pnpm.
+      # - uses: pnpm/action-setup@v3
+      #   with:
+      #     version: 8
+      #     run_install: false
 
       - name: Get pnpm store directory
         shell: bash
@@ -53,10 +57,10 @@ jobs:
             pnpm-store-${{ runner.os }}-${{ runner.arch }}-
 
       # prepare-env: Setup rust.
-      - uses: dtolnay/rust-toolchain@stable
+      # - uses: dtolnay/rust-toolchain@stable
 
       # prepare-env: Tauri deps for linux.
-      - if: matrix.platform == 'ubuntu-20.04'
+      - if: matrix.platform == 'ubuntu-20.04' || matrix.platform == 'ubuntu-22.04-arm'
         run: |
           sudo apt-get update
           sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.0-dev libappindicator3-dev librsvg2-dev patchelf
@@ -135,9 +139,10 @@ jobs:
       - run: |
           mkdir -p src-tauri/target/release/bundle
           cp -rl wadpunk-windows-2019-X64/* src-tauri/target/release/bundle
-          cp -rl wadpunk-macos-12-X64/* src-tauri/target/release/bundle
+          cp -rl wadpunk-macos-13-X64/* src-tauri/target/release/bundle
           cp -rl wadpunk-macos-14-ARM64/* src-tauri/target/release/bundle
           cp -rl wadpunk-ubuntu-20.04-X64/* src-tauri/target/release/bundle
+          cp -rl wadpunk-ubuntu-22.04-ARM64/* src-tauri/target/release/bundle
         shell: bash
         if: endsWith(github.ref, '/main')
 

@@ -74,8 +74,8 @@ const ImportDropZone: React.FC<React.PropsWithChildren> = (props) => {
     currentImportStatus?.status === 'importing'
       ? `Importing ${currentIndex + 1}/${currentLength}: ${currentFileName}`
       : currentImportStatus?.status === 'done'
-      ? 'Done!'
-      : undefined
+        ? 'Done!'
+        : undefined
 
   return (
     <div>

@@ -1,5 +1,6 @@
 import { useMutation, useSuspenseQuery } from '@apollo/client'
 import FolderOpen from '@mui/icons-material/FolderOpen'
+import PlayArrow from '@mui/icons-material/PlayArrow'
 import {
   Chip,
   IconButton,
@@ -10,10 +11,13 @@ import {
   Stack,
 } from '@mui/material'
 import useSimpleFilter from '@promoboxx/use-filter/dist/useSimpleFilter'
+import { enqueueSnackbar } from 'notistack'
 import { useMemo, useState } from 'react'
 
 import { AppToolbarPortal } from '#src/app/AppToolbarArea'
 import * as games from '#src/games/redux'
+import { invalidateApolloQuery } from '#src/graphql/graphqlClient'
+import { useI18nContext } from '#src/i18n/lib/i18nContext'
 import pathWithoutExtension from '#src/lib/pathWithoutExtension'
 import StarRating from '#src/lib/StarRating'
 import VirtualizedList from '#src/lib/VirtualizedList'
@@ -25,6 +29,7 @@ import GameFilterToolbar from './GameFilterToolbar'
 import {
   GetGameListQueryDocument,
   SetRatingDocument,
+  StartGameDocument,
 } from './operations.generated'
 import useOpenGamesFolder from './useOpenGamesFolder'
 
@@ -33,7 +38,9 @@ const GameList: React.FC = () => {
   const dispatch = useRootDispatch()
 
   const [setRating] = useMutation(SetRatingDocument)
+  const [startGame] = useMutation(StartGameDocument)
   const { openGamesFolder } = useOpenGamesFolder()
+  const { t } = useI18nContext()
 
   const filterApi = useSimpleFilter<GameListFilter>('GameList', {
     defaultFilterInfo: {
@@ -227,15 +234,6 @@ const GameList: React.FC = () => {
                       }}
                     />
 
-                    {/* <IconButton
-                  onClick={() => {
-                    startGame(x)
-                  }}
-                  size="small"
-                >
-                  <PlayArrow />
-                </IconButton> */}
-
                     <IconButton
                       onClick={(event) => {
                         event.stopPropagation()
@@ -244,6 +242,41 @@ const GameList: React.FC = () => {
                       size="small"
                     >
                       <FolderOpen fontSize="small" />
+                    </IconButton>
+
+                    <IconButton
+                      disabled={x.previous_file_state.length === 0}
+                      onClick={async (event) => {
+                        try {
+                          event.stopPropagation()
+
+                          const startGameResponse = await startGame({
+                            variables: {
+                              game_id: x.id,
+                            },
+                          })
+
+                          invalidateApolloQuery(['getGames'])
+
+                          if (!startGameResponse.data?.startGame) {
+                            throw new Error('Error while running game')
+                          }
+                        } catch (err) {
+                          console.error('Failed to start game:', err)
+
+                          const message =
+                            err instanceof Error ? err.message : 'Unknown error'
+                          enqueueSnackbar(
+                            `${t('games.notifications.startError')}: ${message}`,
+                            {
+                              variant: 'error',
+                            },
+                          )
+                        }
+                      }}
+                      size="small"
+                    >
+                      <PlayArrow fontSize="small" />
                     </IconButton>
                   </Stack>
                 </ListItemButton>

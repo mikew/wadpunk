@@ -73,8 +73,8 @@ function VirtualizedList<T>(props: VirtualizedListProps<T>) {
         props.scrollElement === window
           ? props.scrollElement.scrollY
           : props.scrollElement instanceof HTMLElement
-          ? props.scrollElement.scrollTop
-          : undefined
+            ? props.scrollElement.scrollTop
+            : undefined
 
       if (scrollTop != null) {
         setScrollTop(scrollTop)
@@ -94,10 +94,10 @@ function VirtualizedList<T>(props: VirtualizedListProps<T>) {
       const height = getViewportHeightRef.current
         ? getViewportHeightRef.current()
         : props.scrollElement instanceof HTMLElement
-        ? props.scrollElement.scrollHeight
-        : props.scrollElement === window
-        ? window.innerHeight
-        : undefined
+          ? props.scrollElement.scrollHeight
+          : props.scrollElement === window
+            ? window.innerHeight
+            : undefined
 
       if (height != null) {
         setViewportHeight(height)
