@@ -229,6 +229,7 @@ impl DataSource {
         })?;
         database::find_source_port_by_id(&source_port)
     };
+
     let db_source_port_command = db_source_port.command.unwrap();
     let main_exe = db_source_port_command.first().unwrap().clone();
     let base_args = &db_source_port_command[1..];
@@ -272,6 +273,7 @@ impl DataSource {
     // Check if this game is tagged as an IWAD
     let is_game_iwad = game.tags
         .iter()
+        .flat_map(|tags| tags.iter())
         .any(|tag| tag.to_lowercase() == "iwad");
 
     // Get the IWAD ID - if game is tagged as IWAD, use its own ID, otherwise use configured IWAD
