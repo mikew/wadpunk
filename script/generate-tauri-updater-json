@@ -34,7 +34,7 @@ function generateTauriUpdaterPlatform(
   platform,
   /** @type {(signaturePath: string) => boolean} */
   signatureFinder,
-  /** @type {(asset: {}) => boolean} */
+  /** @type {(asset: { name: string }) => boolean} */
   assetFinder,
 ) {
   const asset = releaseData.assets.find(assetFinder)
@@ -69,11 +69,11 @@ const updaterData = {
     ),
 
     // TODO Support linux-aarch64.
-    // ...generateTauriUpdaterPlatform(
-    //   'linux-aarch64',
-    //   (signaturePath) => signaturePath.endsWith('_aarch64.AppImage.tar.gz.sig'),
-    //   (asset) => asset.name.endsWith('_aarch64.AppImage.tar.gz'),
-    // ),
+    ...generateTauriUpdaterPlatform(
+      'linux-aarch64',
+      (signaturePath) => signaturePath.endsWith('_aarch64.AppImage.tar.gz.sig'),
+      (asset) => asset.name.endsWith('_aarch64.AppImage.tar.gz'),
+    ),
     ...generateTauriUpdaterPlatform(
       'linux-x86_64',
       (signaturePath) => signaturePath.endsWith('_amd64.AppImage.tar.gz.sig'),
