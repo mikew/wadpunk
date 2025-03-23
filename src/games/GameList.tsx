@@ -16,6 +16,8 @@ import { useMemo, useState } from 'react'
 
 import { AppToolbarPortal } from '#src/app/AppToolbarArea'
 import * as games from '#src/games/redux'
+import { invalidateApolloQuery } from '#src/graphql/graphqlClient'
+import { useI18nContext } from '#src/i18n/lib/i18nContext'
 import pathWithoutExtension from '#src/lib/pathWithoutExtension'
 import StarRating from '#src/lib/StarRating'
 import VirtualizedList from '#src/lib/VirtualizedList'
@@ -38,6 +40,7 @@ const GameList: React.FC = () => {
   const [setRating] = useMutation(SetRatingDocument)
   const [startGame] = useMutation(StartGameDocument)
   const { openGamesFolder } = useOpenGamesFolder()
+  const { t } = useI18nContext()
 
   const filterApi = useSimpleFilter<GameListFilter>('GameList', {
     defaultFilterInfo: {
@@ -176,8 +179,8 @@ const GameList: React.FC = () => {
               playTime === 0
                 ? 'Never played'
                 : `${new Date(playTime * 1000)
-                  .toISOString()
-                  .substring(11, 19)} played`
+                    .toISOString()
+                    .substring(11, 19)} played`
 
             return (
               <ListItem
@@ -246,14 +249,25 @@ const GameList: React.FC = () => {
                         try {
                           event.stopPropagation()
 
-                          startGame({
+                          const startGameResponse = await startGame({
                             variables: {
                               game_id: x.id,
                             },
                           })
+
+                          invalidateApolloQuery(['getGames'])
+
+                          if (!startGameResponse.data?.startGame) {
+                            enqueueSnackbar(
+                              t('games.notifications.startError'),
+                              {
+                                variant: 'error',
+                              },
+                            )
+                          }
                         } catch (err) {
                           console.error('Failed to start game:', err)
-                          enqueueSnackbar('Failed to start game', {
+                          enqueueSnackbar(t('games.notifications.startError'), {
                             variant: 'error',
                           })
                         }
