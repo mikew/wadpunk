@@ -216,6 +216,7 @@ impl DataSource {
             });
         }
         all_source_ports
+            .clone()
             .into_iter()
             .find(|sp| sp.is_default.unwrap_or(false))
             .unwrap_or_else(|| all_source_ports.into_iter().next().unwrap())
