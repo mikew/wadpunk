@@ -23,7 +23,7 @@ jobs:
           # macos-aarch64
           - macos-14
           # linux-x64
-          - ubuntu-20.04
+          - ubuntu-22.04
           # linux-aarch64
           - ubuntu-22.04-arm
           # windows-x64
@@ -60,7 +60,7 @@ jobs:
       # - uses: dtolnay/rust-toolchain@stable
 
       # prepare-env: Tauri deps for linux.
-      - if: matrix.platform == 'ubuntu-20.04' || matrix.platform == 'ubuntu-22.04-arm'
+      - if: matrix.platform == 'ubuntu-22.04' || matrix.platform == 'ubuntu-22.04-arm'
         run: |
           sudo apt-get update
           sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.0-dev libappindicator3-dev librsvg2-dev patchelf
@@ -116,7 +116,7 @@ jobs:
     needs:
       - build
 
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
@@ -141,7 +141,7 @@ jobs:
           cp -rl wadpunk-windows-2019-X64/* src-tauri/target/release/bundle
           cp -rl wadpunk-macos-13-X64/* src-tauri/target/release/bundle
           cp -rl wadpunk-macos-14-ARM64/* src-tauri/target/release/bundle
-          cp -rl wadpunk-ubuntu-20.04-X64/* src-tauri/target/release/bundle
+          cp -rl wadpunk-ubuntu-22.04-X64/* src-tauri/target/release/bundle
           cp -rl wadpunk-ubuntu-22.04-arm-ARM64/* src-tauri/target/release/bundle
         shell: bash
         if: endsWith(github.ref, '/main')

@@ -28,7 +28,7 @@ if [ "$(uname -s)" = Darwin ]; then
   done
 fi
 
-# .AppImage for some reason lowercases and hypenates the name.
+# .AppImage for some reason lowercases and hyphenates the name.
 if [ "$(uname -s)" = Linux ]; then
   for f in src-tauri/target/release/bundle/appimage/wad-punk*; do
     mv "${f}" "${f/wad-punk/WADPunk}"
