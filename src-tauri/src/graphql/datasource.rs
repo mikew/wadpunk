@@ -282,7 +282,7 @@ impl DataSource {
     let iwad_id = if is_game_iwad {
       game_id.clone()
     } else {
-      game.iwad_id.ok_or_else(|| Error {
+      game.iwad_id.clone().ok_or_else(|| Error {
         message: format!("game {} has no IWAD configured", game_id),
         source: None,
         extensions: None,
