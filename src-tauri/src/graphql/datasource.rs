@@ -282,7 +282,7 @@ impl DataSource {
     let iwad_id = if is_game_iwad {
       game_id.clone()
     } else {
-      game.iwad_id.ok_or_else(|| Error {
+      game.iwad_id.clone().ok_or_else(|| Error {
         message: format!("game {} has no IWAD configured", game_id),
         source: None,
         extensions: None,
@@ -335,7 +335,17 @@ impl DataSource {
 
     play_session.ended_at = Some(Utc::now().to_rfc3339());
 
-    database::record_game_play_session(&game_id, play_session);
+    database::record_game_play_session(&game_id, play_session.clone());
+
+    if let Some(iwad_id) = &game.iwad_id {
+        database::record_game_play_session(iwad_id, play_session.clone());
+    }
+
+    if let Some(extra_mod_ids) = &game.extra_mod_ids {
+        for mod_id in extra_mod_ids {
+            database::record_game_play_session(mod_id, play_session.clone());
+        }
+    }
 
     Ok(exit_status.success())
   }
