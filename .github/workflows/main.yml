@@ -12,7 +12,30 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
 jobs:
+  release_please:
+    runs-on: ubuntu-latest
+
+    outputs:
+      release_please_version: ${{ steps.release_please.outputs.version }}
+      release_please_tag_name: ${{ steps.release_please.outputs.tag_name }}
+      release_please_release_created: ${{ steps.release_please.outputs.release_created }}
+
+    steps:
+      # Probably not needed?
+      - uses: actions/checkout@v4
+
+      - uses: googleapis/release-please-action@v4
+        id: release_please
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          release-type: node
+
   build:
     strategy:
       fail-fast: false
@@ -36,12 +59,6 @@ jobs:
 
       - uses: jdx/mise-action@v2
 
-      # # prepare-env: Setup node / pnpm.
-      # - uses: pnpm/action-setup@v3
-      #   with:
-      #     version: 8
-      #     run_install: false
-
       - name: Get pnpm store directory
         shell: bash
         run: |
@@ -55,9 +72,6 @@ jobs:
           key: pnpm-store-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('pnpm-lock.yaml') }}
           restore-keys: |
             pnpm-store-${{ runner.os }}-${{ runner.arch }}-
-
-      # prepare-env: Setup rust.
-      # - uses: dtolnay/rust-toolchain@stable
 
       # prepare-env: Tauri deps for linux.
       - if: matrix.platform == 'ubuntu-22.04' || matrix.platform == 'ubuntu-22.04-arm'
@@ -78,14 +92,6 @@ jobs:
           key: cargo-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('src-tauri/Cargo.lock', 'src-tauri/tauri.conf.json') }}
           restore-keys: |
             cargo-${{ runner.os }}-${{ runner.arch }}-
-
-      # Bumping the version in each build is easier than setting up a new job
-      # and transferring over artifacts.
-      # We do it again in the deploy job and then commit that along with other
-      # files generated during that phase.
-      - run: npx commit-and-tag-version --skip.commit --skip.tag
-        shell: bash
-        if: endsWith(github.ref, '/main')
 
       - run: ./script/prepare-env
         shell: bash
@@ -114,13 +120,14 @@ jobs:
 
   deploy:
     needs:
+      - release_please
       - build
 
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
-        if: endsWith(github.ref, '/main')
+        if: ${{ needs.release_please.outputs.release_please_release_created == 'true' }}
 
       # prepare-env: Push as github bot.
       # https://github.community/t/github-actions-bot-email-address/17204/5
@@ -129,10 +136,10 @@ jobs:
           git config --local user.name "github-actions[bot]"
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
         shell: bash
-        if: endsWith(github.ref, '/main')
+        if: ${{ needs.release_please.outputs.release_please_release_created == 'true' }}
 
       - uses: actions/download-artifact@v4
-        if: endsWith(github.ref, '/main')
+        if: ${{ needs.release_please.outputs.release_please_release_created == 'true' }}
 
       # This is CI specific, artifacts don't seem to be stored with a helpful
       # path.
@@ -144,10 +151,10 @@ jobs:
           cp -rl wadpunk-ubuntu-22.04-X64/* src-tauri/target/release/bundle
           cp -rl wadpunk-ubuntu-22.04-arm-ARM64/* src-tauri/target/release/bundle
         shell: bash
-        if: endsWith(github.ref, '/main')
+        if: ${{ needs.release_please.outputs.release_please_release_created == 'true' }}
 
-      - run: ./script/deploy
+      - run: ./script/deploy "${{ needs.release_please.outputs.release_please_version }}" "${{ needs.release_please.outputs.release_please_tag_name }}"
         shell: bash
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        if: endsWith(github.ref, '/main')
+        if: ${{ needs.release_please.outputs.release_please_release_created == 'true' }}
