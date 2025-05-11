@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [1.12.0](https://github.com/mikew/wadpunk/compare/v1.11.2...v1.12.0) (2025-05-11)
+
+
+### Features
+
+* Track playtime for iwads and mods ([#92](https://github.com/mikew/wadpunk/issues/92)) ([dfed128](https://github.com/mikew/wadpunk/commit/dfed1281c1b4a481de1f3ccf488b15e014def7ff)), closes [#91](https://github.com/mikew/wadpunk/issues/91)
+
 ## 1.11.2 (2025-03-31)
 
 ## 1.11.1 (2025-03-23)
