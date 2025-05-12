@@ -6,6 +6,7 @@ import {
   SportsEsports,
   Terminal,
   Folder,
+  Info,
 } from '@mui/icons-material'
 import {
   Button,
@@ -23,8 +24,8 @@ import {
   FormControlLabel,
   Checkbox,
   FormHelperText,
+  Stack,
 } from '@mui/material'
-import { enqueueSnackbar } from 'notistack'
 import { Suspense, useMemo } from 'react'
 import {
   Controller,
@@ -33,7 +34,6 @@ import {
   useFormState,
 } from 'react-hook-form'
 
-import { invalidateApolloQuery } from '#src/graphql/graphqlClient'
 import type { Game } from '#src/graphql/types'
 import { useI18nContext } from '#src/i18n/lib/i18nContext'
 import pathWithoutExtension from '#src/lib/pathWithoutExtension'
@@ -50,19 +50,18 @@ import GameDialogFileList from './GameDialogFileList'
 import {
   GameFileListContext,
   GameFileListProvider,
-  useGameFileListContext,
 } from './GameFileListContext'
 import isIwad from './isIwad'
 import type { GetGameDialogFieldsQuery } from './operations.generated'
 import {
   GetGameDialogFieldsDocument,
-  StartGameDocument,
   UpdateGameDocument,
 } from './operations.generated'
 import { actions } from './redux'
 import type { GameDialogGame, GameListGame } from './types'
 import useAllTags from './useAllTags'
 import useOpenGamesFolder from './useOpenGamesFolder'
+import useStartGame from './useStartGame'
 
 export interface GameDialogFormValues {
   id: Game['id']
@@ -485,16 +484,21 @@ const GameDialogActions: React.FC<{
   resetForm: () => void
   submitForm: (event: React.BaseSyntheticEvent) => Promise<void>
 }> = (props) => {
-  const [startGameMutation] = useMutation(StartGameDocument)
-  const { files: allFiles } = useGameFileListContext()
+  const { startGame } = useStartGame()
   const triggerClose = useDelayedOnCloseDialogTriggerClose()
   const formState = useFormState()
-  const { findSourcePortById } = useSourcePortsContext()
   const { t } = useI18nContext()
   const { openGamesFolder } = useOpenGamesFolder()
 
   return (
     <>
+      <Typography variant="caption" color="text.secondary">
+        <Stack direction="row" spacing={1} alignItems="center">
+          <Info fontSize="inherit" color="inherit" />
+          Launch with <code>WADPunk launch_game "{props.game.id}"</code>
+        </Stack>
+      </Typography>
+
       <Button
         startIcon={<Folder />}
         onClick={() => {
@@ -525,56 +529,8 @@ const GameDialogActions: React.FC<{
       <Button
         variant="contained"
         onClick={async (event) => {
-          try {
-            await props.submitForm(event)
-
-            const sourcePort = findSourcePortById(props.game.source_port)
-
-            if (!sourcePort) {
-              enqueueSnackbar(
-                `Could not find source port with id "${props.game.source_port}"`,
-                { variant: 'error' },
-              )
-              return
-            }
-
-            const files: string[] = []
-            let iwad: string | undefined = undefined
-
-            for (const fileEntry of allFiles) {
-              if (!fileEntry.selected) {
-                continue
-              }
-
-              if (fileEntry.isIwad && !iwad) {
-                iwad = fileEntry.absolute
-              } else {
-                files.push(fileEntry.absolute)
-              }
-            }
-
-            const startGameResponse = await startGameMutation({
-              variables: {
-                game_id: props.game.id,
-              },
-            })
-
-            invalidateApolloQuery(['getGames'])
-
-            if (!startGameResponse.data?.startGame) {
-              throw new Error('Error while running game')
-            }
-          } catch (err) {
-            console.error('Failed to start game:', err)
-
-            const message = err instanceof Error ? err.message : 'Unknown error'
-            enqueueSnackbar(
-              `${t('games.notifications.startError')}: ${message}`,
-              {
-                variant: 'error',
-              },
-            )
-          }
+          await props.submitForm(event)
+          await startGame(props.game.id)
         }}
         disabled={formState.isSubmitting || !formState.isValid}
       >
