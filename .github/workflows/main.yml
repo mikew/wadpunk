@@ -18,24 +18,6 @@ permissions:
   issues: write
 
 jobs:
-  release_please:
-    runs-on: ubuntu-latest
-
-    outputs:
-      release_please_version: ${{ steps.release_please.outputs.version }}
-      release_please_tag_name: ${{ steps.release_please.outputs.tag_name }}
-      release_please_release_created: ${{ steps.release_please.outputs.release_created }}
-
-    steps:
-      # Probably not needed?
-      - uses: actions/checkout@v4
-
-      - uses: googleapis/release-please-action@v4
-        id: release_please
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          release-type: node
-
   build:
     strategy:
       fail-fast: false
@@ -118,10 +100,29 @@ jobs:
             src-tauri/target/release/bundle/appimage/*.AppImage.tar.gz
             src-tauri/target/release/bundle/appimage/*.AppImage.tar.gz.sig
 
+  release_please:
+    needs:
+      - build
+
+    runs-on: ubuntu-latest
+
+    outputs:
+      release_please_version: ${{ steps.release_please.outputs.version }}
+      release_please_tag_name: ${{ steps.release_please.outputs.tag_name }}
+      release_please_release_created: ${{ steps.release_please.outputs.release_created }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: googleapis/release-please-action@v4
+        id: release_please
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          release-type: node
+
   deploy:
     needs:
       - release_please
-      - build
 
     runs-on: ubuntu-latest
 
