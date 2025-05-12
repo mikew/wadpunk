@@ -61,6 +61,27 @@
         "width": 800,
         "height": 600
       }
-    ]
+    ],
+
+    "cli": {
+      "description": "",
+      "longDescription": "",
+      "beforeHelp": "",
+      "afterHelp": "",
+
+      "args": [],
+
+      "subcommands": {
+        "launch-game": {
+          "args": [
+            {
+              "name": "game-id",
+              "index": 1,
+              "takesValue": true
+            }
+          ]
+        }
+      }
+    }
   }
 }
