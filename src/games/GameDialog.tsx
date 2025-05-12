@@ -495,7 +495,7 @@ const GameDialogActions: React.FC<{
       <Typography variant="caption" color="text.secondary">
         <Stack direction="row" spacing={1} alignItems="center">
           <Info fontSize="inherit" color="inherit" />
-          Launch with <code>WADPunk launch_game "{props.game.id}"</code>
+          Launch with <code>WADPunk launch-game "{props.game.id}"</code>
         </Stack>
       </Typography>
 
