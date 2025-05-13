@@ -10,6 +10,7 @@ import { wrapPromiseForSuspense } from '#src/lib/wrapPromiseForSuspense'
 import KnownSourcePortsDialog from '#src/sourcePorts/KnownSourcePortsDialog'
 import { SourcePortsProvider } from '#src/sourcePorts/sourcePortsContext'
 import SourcePortsDialog from '#src/sourcePorts/SourcePortsDialog'
+import TauriCliHandler from '#src/tauri/TauriCliHandler'
 
 import AppCogMenu from './AppCogMenu'
 import { AppToolbarProvider, AppToolbarSlot } from './AppToolbarArea'
@@ -53,6 +54,12 @@ function App() {
 
         <SourcePortsDialog />
         <KnownSourcePortsDialog />
+
+        {/*
+          Since some of the CLI args require the initializeApp mutation to be
+          called, put this handler here instead of index.tsx.
+        */}
+        <TauriCliHandler />
       </SourcePortsProvider>
     </Initializer>
   )
