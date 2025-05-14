@@ -66,6 +66,9 @@ jobs:
           mkdir -p /tmp/ubuntu-packages
           cd /tmp/ubuntu-packages
           wget http://launchpadlibrarian.net/663254796/libwebkit2gtk-4.0-37_2.38.6-0ubuntu0.20.04.1_amd64.deb
+          wget http://launchpadlibrarian.net/663254793/libjavascriptcoregtk-4.0-18_2.38.6-0ubuntu0.20.04.1_amd64.deb
+          wget http://launchpadlibrarian.net/687104015/libwebp6_0.6.1-2ubuntu0.20.04.3_amd64.deb
+          wget http://launchpadlibrarian.net/570430457/libicu66_66.1-2ubuntu2.1_amd64.deb
           sudo apt-get install -y /tmp/ubuntu-packages/*.deb
         shell: bash
 
