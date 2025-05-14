@@ -323,6 +323,14 @@ impl DataSource {
     });
 
     let mut command = Command::new(&args[0]);
+
+    // Set LD_LIBRARY_PATH for Linux / AppImage.
+    if cfg!(target_os = "linux") {
+        let ld_library_path = std::env::var("LD_LIBRARY_PATH").unwrap_or_default();
+        let new_ld_library_path = format!("/usr/lib:{}", ld_library_path);
+        command.env("LD_LIBRARY_PATH", new_ld_library_path);
+    }
+
     command.args(base_args);
     command.args(&args[1..]);
 
