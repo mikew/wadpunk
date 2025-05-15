@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [1.13.0](https://github.com/mikew/wadpunk/compare/v1.12.0...v1.13.0) (2025-05-15)
+
+
+### Features
+
+* Launch game from CLI ([#96](https://github.com/mikew/wadpunk/issues/96)) ([0f94561](https://github.com/mikew/wadpunk/commit/0f94561a06ae257f3f8dd28377c7a4e217e5b307))
+
+
+### Bug Fixes
+
+* Linux AppImage ([#99](https://github.com/mikew/wadpunk/issues/99)) ([19a9144](https://github.com/mikew/wadpunk/commit/19a9144433596f289ca3fd03f18fd37393e1c2bc))
+
 ## [1.12.0](https://github.com/mikew/wadpunk/compare/v1.11.2...v1.12.0) (2025-05-11)
 
 
