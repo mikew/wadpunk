@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [1.13.1](https://github.com/mikew/wadpunk/compare/v1.13.0...v1.13.1) (2025-06-11)
+
+
+### Bug Fixes
+
+* Window flicker on startup ([#100](https://github.com/mikew/wadpunk/issues/100)) ([eb48e49](https://github.com/mikew/wadpunk/commit/eb48e4905c463e383a207c866fafe92daa4a78b4))
+
 ## [1.13.0](https://github.com/mikew/wadpunk/compare/v1.12.0...v1.13.0) (2025-05-15)
 
 
