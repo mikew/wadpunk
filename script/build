@@ -3,7 +3,9 @@ set -ex
 
 rm -rf src-tauri/target/release/bundle
 
-./script/prepare-env
+if [ -z "$CI" ]; then
+  ./script/prepare-env
+fi
 
 ./node_modules/.bin/vite build
 ./node_modules/.bin/tauri build
