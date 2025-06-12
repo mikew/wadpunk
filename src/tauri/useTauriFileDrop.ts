@@ -10,7 +10,8 @@ function useTauriFileDrop(callback: (event: Event<string[]>) => void) {
 
   useEffect(() => {
     const stopListeningHover = listen<string[]>(
-      TauriEvent.WINDOW_FILE_DROP_HOVER,
+      // TODO Or DRAG_ENTER????
+      TauriEvent.DRAG_OVER,
       (event) => {
         if (event.payload.length === 0) {
           return
@@ -20,15 +21,12 @@ function useTauriFileDrop(callback: (event: Event<string[]>) => void) {
       },
     )
 
-    const stopListeningCancelled = listen(
-      TauriEvent.WINDOW_FILE_DROP_CANCELLED,
-      () => {
-        setIsDraggingOver(false)
-      },
-    )
+    const stopListeningCancelled = listen(TauriEvent.DRAG_LEAVE, () => {
+      setIsDraggingOver(false)
+    })
 
     const stopListeningDrop = listen<string[]>(
-      TauriEvent.WINDOW_FILE_DROP,
+      TauriEvent.DRAG_DROP,
       (event) => {
         setIsDraggingOver(false)
 
