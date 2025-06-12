@@ -1,5 +1,5 @@
-import type { InvokeArgs } from '@tauri-apps/api/tauri'
-import { invoke } from '@tauri-apps/api/tauri'
+import type { InvokeArgs } from '@tauri-apps/api/core'
+import { invoke } from '@tauri-apps/api/core'
 
 interface CustomTauriCommands {
   greet: {

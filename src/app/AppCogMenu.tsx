@@ -7,7 +7,7 @@ import {
   Terminal,
 } from '@mui/icons-material'
 import { Divider, IconButton, ListItemIcon, Typography } from '@mui/material'
-import { process } from '@tauri-apps/api'
+import {  } from '@tauri-apps/api'
 
 import useOpenGamesFolder from '#src/games/useOpenGamesFolder'
 import { invalidateApolloCache } from '#src/graphql/graphqlClient'
@@ -18,6 +18,7 @@ import { useRootDispatch } from '#src/redux/helpers'
 import actions from '#src/sourcePorts/actions'
 
 import { GetAppInfoDocument } from './operations.generated'
+import * as process from "@tauri-apps/plugin-process"
 
 const AppCogMenu: React.FC = () => {
   const { openGamesFolder } = useOpenGamesFolder()

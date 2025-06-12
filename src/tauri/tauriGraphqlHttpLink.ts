@@ -1,5 +1,5 @@
 import { createHttpLink } from '@apollo/client'
-import { invoke } from '@tauri-apps/api/tauri'
+import { invoke } from '@tauri-apps/api/core'
 
 const tauriGraphqlHttpLink = createHttpLink({
   fetch: async (_input, init) => {

@@ -1,5 +1,6 @@
-import { shell } from '@tauri-apps/api'
+import {  } from '@tauri-apps/api'
 import { useEffect } from 'react'
+import * as shell from "@tauri-apps/plugin-shell"
 
 const TauriExternalLinkHandler: React.FC = () => {
   useEffect(() => {

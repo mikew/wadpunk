@@ -11,9 +11,9 @@ import {
   Stack,
 } from '@mui/material'
 import getTextDecoration from '@mui/material/Link/getTextDecoration'
-import { relaunch } from '@tauri-apps/api/process'
-import type { UpdateResult } from '@tauri-apps/api/updater'
-import { checkUpdate, installUpdate } from '@tauri-apps/api/updater'
+import { relaunch } from '@tauri-apps/plugin-process'
+import type { UpdateResult } from '@tauri-apps/plugin-updater'
+import { checkUpdate, installUpdate } from '@tauri-apps/plugin-updater'
 import { parse } from 'marked'
 import { enqueueSnackbar } from 'notistack'
 import { useEffect, useState } from 'react'
