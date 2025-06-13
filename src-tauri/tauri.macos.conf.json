@@ -2,6 +2,6 @@
   "bundle": {
     "active": true,
     "targets": ["app"],
-    "createUpdaterArtifacts": true
+    "createUpdaterArtifacts": "v1Compatible"
   }
 }
