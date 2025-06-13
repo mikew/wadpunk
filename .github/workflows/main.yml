@@ -107,6 +107,7 @@ jobs:
             ~/.cargo/registry/index/
             ~/.cargo/registry/cache/
             ~/.cargo/git/db/
+            ~/.cargo/git/checkouts/
             src-tauri/target/
             !src-tauri/target/release/bundle/
           key: cargo-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('src-tauri/Cargo.lock', 'src-tauri/tauri.conf.json') }}
