@@ -1,0 +1,10 @@
+{
+  "identifier": "tauri-plugin-graphql",
+  "description": "Allow GraphQL in all windows",
+  "windows": [
+    "main"
+  ],
+  "permissions": [
+    "graphql:allow-graphql"
+  ]
+}

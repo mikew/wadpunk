@@ -1,17 +1,69 @@
 use std::fs;
+use std::path::PathBuf;
 use std::vec;
 
 use chrono::TimeZone;
 use chrono::Utc;
 use serde::{Deserialize, Serialize};
-use tauri::api::dir::DiskEntry;
-use tauri::api::{
-  dir::read_dir,
-  path::{document_dir, home_dir},
-};
 
 use crate::graphql::generated::Game;
 use crate::graphql::generated::SourcePort;
+
+fn home_dir() -> Option<std::path::PathBuf> {
+  return Some(PathBuf::from("/Users/mike").into());
+}
+
+fn document_dir() -> Option<std::path::PathBuf> {
+  return Some(PathBuf::from("/Users/mike/Documents/").into());
+}
+
+#[derive(Debug)]
+pub struct DiskEntry {
+  pub name: Option<String>,
+  pub path: PathBuf,
+  pub is_directory: bool,
+  pub is_file: bool,
+  pub is_symlink: bool,
+  pub children: Option<Vec<DiskEntry>>,
+}
+
+fn read_dir(path: PathBuf, recursive: bool) -> Option<Vec<DiskEntry>> {
+  let mut entries: Vec<DiskEntry> = vec![];
+
+  if let Ok(dir_entries) = fs::read_dir(path) {
+    for entry in dir_entries {
+      if let Ok(entry) = entry {
+        let path = entry.path();
+        let mut name = entry.file_name().into_string().unwrap();
+        let is_directory = path.is_dir();
+        let is_file = path.is_file();
+        let is_symlink = path.is_symlink();
+
+        if is_directory {
+          name = format!("{}/", name);
+        }
+
+        let mut children: Option<Vec<DiskEntry>> = None;
+        if recursive && is_directory {
+          if let Some(child_entries) = read_dir(path.clone(), true) {
+            children = Some(child_entries);
+          }
+        }
+
+        entries.push(DiskEntry {
+          name: Some(name),
+          path,
+          is_directory,
+          is_file,
+          is_symlink,
+          children,
+        });
+      }
+    }
+  }
+
+  return Some(entries);
+}
 
 pub fn get_data_directory() -> std::path::PathBuf {
   let fallback_documents_directory = home_dir().unwrap().join("Documents");

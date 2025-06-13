@@ -1,8 +1,7 @@
 {
-  "tauri": {
-    "bundle": {
-      "active": true,
-      "targets": ["nsis", "updater"]
-    }
+  "bundle": {
+    "active": true,
+    "targets": ["nsis"],
+    "createUpdaterArtifacts": true
   }
 }

@@ -326,9 +326,9 @@ impl DataSource {
 
     // Set LD_LIBRARY_PATH for Linux / AppImage.
     if cfg!(target_os = "linux") {
-        let ld_library_path = std::env::var("LD_LIBRARY_PATH").unwrap_or_default();
-        let new_ld_library_path = format!("/usr/lib:{}", ld_library_path);
-        command.env("LD_LIBRARY_PATH", new_ld_library_path);
+      let ld_library_path = std::env::var("LD_LIBRARY_PATH").unwrap_or_default();
+      let new_ld_library_path = format!("/usr/lib:{}", ld_library_path);
+      command.env("LD_LIBRARY_PATH", new_ld_library_path);
     }
 
     command.args(base_args);
@@ -346,13 +346,13 @@ impl DataSource {
     database::record_game_play_session(&game_id, play_session.clone());
 
     if let Some(iwad_id) = &game.iwad_id {
-        database::record_game_play_session(iwad_id, play_session.clone());
+      database::record_game_play_session(iwad_id, play_session.clone());
     }
 
     if let Some(extra_mod_ids) = &game.extra_mod_ids {
-        for mod_id in extra_mod_ids {
-            database::record_game_play_session(mod_id, play_session.clone());
-        }
+      for mod_id in extra_mod_ids {
+        database::record_game_play_session(mod_id, play_session.clone());
+      }
     }
 
     Ok(exit_status.success())
@@ -576,14 +576,15 @@ impl DataSource {
   ) -> GraphQLResult<bool> {
     let app_handle = ctx.data_unchecked::<AppHandle>();
 
-    let seven_zip_path = app_handle
-      .path_resolver()
-      .resolve_resource(add_exe_on_windows("resources-arch-specific/7za"))
-      .unwrap();
+    // let seven_zip_path = app_handle
+    //   .path_resolver()
+    //   .resolve_resource(add_exe_on_windows("resources-arch-specific/7za"))
+    //   .unwrap();
 
-    let seven_zip_path_str = seven_zip_path.to_str().unwrap();
+    // let seven_zip_path_str = seven_zip_path.to_str().unwrap();
+    let seven_zip_path_str = add_exe_on_windows("resources-arch-specific/7za");
 
-    importer::import_file(&file_path, seven_zip_path_str);
+    importer::import_file(&file_path, &seven_zip_path_str);
 
     Ok(true)
   }

@@ -1,8 +1,7 @@
 {
-  "tauri": {
-    "bundle": {
-      "active": true,
-      "targets": ["app", "updater"]
-    }
+  "bundle": {
+    "active": true,
+    "targets": ["app"],
+    "createUpdaterArtifacts": true
   }
 }

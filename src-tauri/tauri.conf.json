@@ -23,6 +23,11 @@
   "version": "../package.json",
   "identifier": "com.mikewhy.wadpunk",
   "plugins": {
+    "fs": {
+      "scope": [
+        "$HOME/**"
+      ]
+    },
     "cli": {
       "description": "",
       "longDescription": "",
@@ -65,7 +70,7 @@
         "width": 800,
         "height": 600,
         "visible": false,
-        "useHttpsScheme": true
+        "useHttpsScheme": false
       }
     ]
   }
