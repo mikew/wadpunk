@@ -63,42 +63,42 @@ jobs:
         shell: bash
 
       # prepare-env: Tauri deps for linux.
-      - if: matrix.platform == 'ubuntu-22.04'
-        run: |
-          sudo apt-cache madison libwebkit2gtk-4.1-dev
+      # - if: matrix.platform == 'ubuntu-22.04'
+      #   run: |
+      #     sudo apt-cache madison libwebkit2gtk-4.1-dev
 
-          # download old versions because of EGL issues, see https://github.com/h3poteto/fedistar/issues/1717
-          mkdir -p /tmp/ubuntu-packages
-          cd /tmp/ubuntu-packages
-          wget http://launchpadlibrarian.net/663254796/libwebkit2gtk-4.0-37_2.38.6-0ubuntu0.20.04.1_amd64.deb
-          wget http://launchpadlibrarian.net/663254788/libwebkit2gtk-4.0-dev_2.38.6-0ubuntu0.20.04.1_amd64.deb
-          wget http://launchpadlibrarian.net/663254793/libjavascriptcoregtk-4.0-18_2.38.6-0ubuntu0.20.04.1_amd64.deb
-          wget http://launchpadlibrarian.net/663254785/libjavascriptcoregtk-4.0-dev_2.38.6-0ubuntu0.20.04.1_amd64.deb
-          wget http://launchpadlibrarian.net/687104015/libwebp6_0.6.1-2ubuntu0.20.04.3_amd64.deb
-          wget http://launchpadlibrarian.net/570430457/libicu66_66.1-2ubuntu2.1_amd64.deb
-          wget http://launchpadlibrarian.net/663254780/gir1.2-javascriptcoregtk-4.0_2.38.6-0ubuntu0.20.04.1_amd64.deb
-          wget http://launchpadlibrarian.net/663254782/gir1.2-webkit2-4.0_2.38.6-0ubuntu0.20.04.1_amd64.deb
-          sudo apt-get install -y /tmp/ubuntu-packages/*.deb
-        shell: bash
+      #     # download old versions because of EGL issues, see https://github.com/h3poteto/fedistar/issues/1717
+      #     mkdir -p /tmp/ubuntu-packages
+      #     cd /tmp/ubuntu-packages
+      #     wget http://launchpadlibrarian.net/663254796/libwebkit2gtk-4.0-37_2.38.6-0ubuntu0.20.04.1_amd64.deb
+      #     wget http://launchpadlibrarian.net/663254788/libwebkit2gtk-4.0-dev_2.38.6-0ubuntu0.20.04.1_amd64.deb
+      #     wget http://launchpadlibrarian.net/663254793/libjavascriptcoregtk-4.0-18_2.38.6-0ubuntu0.20.04.1_amd64.deb
+      #     wget http://launchpadlibrarian.net/663254785/libjavascriptcoregtk-4.0-dev_2.38.6-0ubuntu0.20.04.1_amd64.deb
+      #     wget http://launchpadlibrarian.net/687104015/libwebp6_0.6.1-2ubuntu0.20.04.3_amd64.deb
+      #     wget http://launchpadlibrarian.net/570430457/libicu66_66.1-2ubuntu2.1_amd64.deb
+      #     wget http://launchpadlibrarian.net/663254780/gir1.2-javascriptcoregtk-4.0_2.38.6-0ubuntu0.20.04.1_amd64.deb
+      #     wget http://launchpadlibrarian.net/663254782/gir1.2-webkit2-4.0_2.38.6-0ubuntu0.20.04.1_amd64.deb
+      #     sudo apt-get install -y /tmp/ubuntu-packages/*.deb
+      #   shell: bash
 
-      # prepare-env: Tauri deps for linux.
-      - if: matrix.platform == 'ubuntu-22.04-arm'
-        run: |
-          sudo apt-cache madison libwebkit2gtk-4.1-dev
+      # # prepare-env: Tauri deps for linux.
+      # - if: matrix.platform == 'ubuntu-22.04-arm'
+      #   run: |
+      #     sudo apt-cache madison libwebkit2gtk-4.1-dev
 
-          # download old versions because of EGL issues, see https://github.com/h3poteto/fedistar/issues/1717
-          mkdir -p /tmp/ubuntu-packages
-          cd /tmp/ubuntu-packages
-          wget http://launchpadlibrarian.net/663288580/libwebkit2gtk-4.0-37_2.38.6-0ubuntu0.20.04.1_arm64.deb
-          wget http://launchpadlibrarian.net/663288575/libwebkit2gtk-4.0-dev_2.38.6-0ubuntu0.20.04.1_arm64.deb
-          wget http://launchpadlibrarian.net/663288577/libjavascriptcoregtk-4.0-18_2.38.6-0ubuntu0.20.04.1_arm64.deb
-          wget http://launchpadlibrarian.net/663288572/libjavascriptcoregtk-4.0-dev_2.38.6-0ubuntu0.20.04.1_arm64.deb
-          wget http://launchpadlibrarian.net/687104098/libwebp6_0.6.1-2ubuntu0.20.04.3_arm64.deb
-          wget http://launchpadlibrarian.net/570432260/libicu66_66.1-2ubuntu2.1_arm64.deb
-          wget http://launchpadlibrarian.net/663288567/gir1.2-javascriptcoregtk-4.0_2.38.6-0ubuntu0.20.04.1_arm64.deb
-          wget http://launchpadlibrarian.net/663288569/gir1.2-webkit2-4.0_2.38.6-0ubuntu0.20.04.1_arm64.deb
-          sudo apt-get install -y /tmp/ubuntu-packages/*.deb
-        shell: bash
+      #     # download old versions because of EGL issues, see https://github.com/h3poteto/fedistar/issues/1717
+      #     mkdir -p /tmp/ubuntu-packages
+      #     cd /tmp/ubuntu-packages
+      #     wget http://launchpadlibrarian.net/663288580/libwebkit2gtk-4.0-37_2.38.6-0ubuntu0.20.04.1_arm64.deb
+      #     wget http://launchpadlibrarian.net/663288575/libwebkit2gtk-4.0-dev_2.38.6-0ubuntu0.20.04.1_arm64.deb
+      #     wget http://launchpadlibrarian.net/663288577/libjavascriptcoregtk-4.0-18_2.38.6-0ubuntu0.20.04.1_arm64.deb
+      #     wget http://launchpadlibrarian.net/663288572/libjavascriptcoregtk-4.0-dev_2.38.6-0ubuntu0.20.04.1_arm64.deb
+      #     wget http://launchpadlibrarian.net/687104098/libwebp6_0.6.1-2ubuntu0.20.04.3_arm64.deb
+      #     wget http://launchpadlibrarian.net/570432260/libicu66_66.1-2ubuntu2.1_arm64.deb
+      #     wget http://launchpadlibrarian.net/663288567/gir1.2-javascriptcoregtk-4.0_2.38.6-0ubuntu0.20.04.1_arm64.deb
+      #     wget http://launchpadlibrarian.net/663288569/gir1.2-webkit2-4.0_2.38.6-0ubuntu0.20.04.1_arm64.deb
+      #     sudo apt-get install -y /tmp/ubuntu-packages/*.deb
+      #   shell: bash
 
       - uses: actions/cache@v4
         with:
