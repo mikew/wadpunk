@@ -4566,6 +4566,7 @@ dependencies = [
  "async-graphql",
  "chrono",
  "fs_extra",
+ "once_cell",
  "plist",
  "serde",
  "serde_json",
