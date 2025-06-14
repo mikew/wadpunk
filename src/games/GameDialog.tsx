@@ -204,7 +204,12 @@ const GameDialog: React.FC<{
 
           <DialogContent>
             <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 6,
+                }}
+              >
                 <Typography>{fullGame.description}</Typography>
 
                 <ReactHookFormTextField
@@ -380,9 +385,9 @@ const GameDialog: React.FC<{
                                 alignSelf: 'flex-start',
                               },
                               '& .MuiInputAdornment-positionStart .MuiSvgIcon-root':
-                                {
-                                  marginLeft: '4px',
-                                },
+                              {
+                                marginLeft: '4px',
+                              },
                             }}
                           />
                         )}
@@ -419,7 +424,12 @@ const GameDialog: React.FC<{
                 />
               </Grid>
 
-              <Grid item xs={12} sm={6}>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 6,
+                }}
+              >
                 <Suspense fallback={<CircularProgress />}>
                   <GameDialogFileList
                     previousFileState={fullGame.previous_file_state}

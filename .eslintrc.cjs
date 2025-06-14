@@ -13,7 +13,7 @@ module.exports = {
   ],
   parserOptions: {
     // If the project uses graphql, set the path/url to your schema below.
-    // skipGraphQLConfig: true,
+    skipGraphQLConfig: true,
     schema: './graphql-schema.json',
   },
 }

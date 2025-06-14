@@ -10,7 +10,6 @@ import {
   Snackbar,
   Stack,
 } from '@mui/material'
-import getTextDecoration from '@mui/material/Link/getTextDecoration'
 import { relaunch } from '@tauri-apps/plugin-process'
 import { type Update, check } from '@tauri-apps/plugin-updater'
 import { parse } from 'marked'
@@ -18,6 +17,7 @@ import { enqueueSnackbar } from 'notistack'
 import { useEffect, useState } from 'react'
 
 import { useI18nContext } from '#src/i18n/lib/i18nContext'
+import getTextDecoration from '#src/mui/getTextDecoration'
 
 const TauriUpdateNotifier: React.FC = () => {
   const [isReleaseNotesDialogVisible, setIsReleaseNotesDialogVisible] =
