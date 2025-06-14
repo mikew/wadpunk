@@ -1,4 +1,4 @@
-import { Update } from '@mui/icons-material'
+import { Update as UpdateIcon } from '@mui/icons-material'
 import {
   Alert,
   Box,
@@ -11,9 +11,8 @@ import {
   Stack,
 } from '@mui/material'
 import getTextDecoration from '@mui/material/Link/getTextDecoration'
-import { relaunch } from '@tauri-apps/api/process'
-import type { UpdateResult } from '@tauri-apps/api/updater'
-import { checkUpdate, installUpdate } from '@tauri-apps/api/updater'
+import { relaunch } from '@tauri-apps/plugin-process'
+import { type Update, check } from '@tauri-apps/plugin-updater'
 import { parse } from 'marked'
 import { enqueueSnackbar } from 'notistack'
 import { useEffect, useState } from 'react'
@@ -27,15 +26,16 @@ const TauriUpdateNotifier: React.FC = () => {
   const [status, setStatus] = useState<
     'INITIAL' | 'UPDATE_AVAILABLE' | 'UPDATING' | 'RESTART_REQUIRED'
   >('INITIAL')
-  const [tauriUpdateResult, setTauriUpdateResult] =
-    useState<UpdateResult | null>(null)
+  const [tauriUpdateResult, setTauriUpdateResult] = useState<Update | null>(
+    null,
+  )
 
   useEffect(() => {
     async function run() {
       if (process.env.NODE_ENV === 'production') {
-        const updateResult = await checkUpdate()
+        const updateResult = await check()
 
-        if (updateResult.shouldUpdate) {
+        if (updateResult) {
           setStatus('UPDATE_AVAILABLE')
           setTauriUpdateResult(updateResult)
         }
@@ -70,7 +70,7 @@ const TauriUpdateNotifier: React.FC = () => {
           onClick={async () => {
             try {
               setStatus('UPDATING')
-              await installUpdate()
+              await tauriUpdateResult?.downloadAndInstall()
               setStatus('RESTART_REQUIRED')
             } catch (err) {
               console.error(err)
@@ -118,9 +118,9 @@ const TauriUpdateNotifier: React.FC = () => {
           horizontal: 'center',
         }}
       >
-        <Alert severity="success" action={action} icon={<Update />}>
+        <Alert severity="success" action={action} icon={<UpdateIcon />}>
           {t('updateNotifier.notifications.updateAvailable', {
-            version: tauriUpdateResult?.manifest?.version,
+            version: tauriUpdateResult?.version,
           })}
         </Alert>
       </Snackbar>
@@ -134,7 +134,7 @@ const TauriUpdateNotifier: React.FC = () => {
       >
         <DialogTitle>
           {t('updateNotifier.releaseNotes.title', {
-            version: tauriUpdateResult?.manifest?.version,
+            version: tauriUpdateResult?.version,
           })}
         </DialogTitle>
 
@@ -155,7 +155,7 @@ const TauriUpdateNotifier: React.FC = () => {
               },
             })}
             dangerouslySetInnerHTML={{
-              __html: parse(tauriUpdateResult?.manifest?.body ?? ''),
+              __html: parse(tauriUpdateResult?.version ?? ''),
             }}
           />
         </DialogContent>

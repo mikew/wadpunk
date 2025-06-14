@@ -7,7 +7,7 @@ import {
   Terminal,
 } from '@mui/icons-material'
 import { Divider, IconButton, ListItemIcon, Typography } from '@mui/material'
-import { process } from '@tauri-apps/api'
+import * as process from '@tauri-apps/plugin-process'
 
 import useOpenGamesFolder from '#src/games/useOpenGamesFolder'
 import { invalidateApolloCache } from '#src/graphql/graphqlClient'

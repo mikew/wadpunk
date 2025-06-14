@@ -1,5 +1,5 @@
 import { ApolloLink, fromPromise } from '@apollo/client'
-import { invoke } from '@tauri-apps/api/tauri'
+import { invoke } from '@tauri-apps/api/core'
 import { GraphQLError, print } from 'graphql'
 
 const tauriGraphqlApolloLink = new ApolloLink((operation) => {

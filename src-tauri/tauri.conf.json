@@ -1,77 +1,39 @@
 {
-  "package": {
-    "productName": "WADPunk",
-    "version": "../package.json"
+  "bundle": {
+    "resources": [
+      "./resources-arch-specific/*"
+    ],
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "createUpdaterArtifacts": "v1Compatible"
   },
-
   "build": {
     "beforeDevCommand": "",
     "beforeBuildCommand": "",
-    "devPath": "http://localhost:3000",
-    "distDir": "../build",
-    "withGlobalTauri": false
+    "frontendDist": "../build",
+    "devUrl": "http://localhost:3000"
   },
-
-  "tauri": {
-    "allowlist": {
-      "shell": {
-        "open": ".*"
-      },
-      "process": {
-        "relaunch": true,
-        "exit": true
-      }
+  "productName": "WADPunk",
+  "mainBinaryName": "WADPunk",
+  "version": "../package.json",
+  "identifier": "com.mikewhy.wadpunk",
+  "plugins": {
+    "fs": {
+      "scope": [
+        "$HOME/**"
+      ]
     },
-
-    "bundle": {
-      "identifier": "com.mikewhy.wadpunk",
-      "icon": [
-        "icons/32x32.png",
-        "icons/128x128.png",
-        "icons/128x128@2x.png",
-        "icons/icon.icns",
-        "icons/icon.ico"
-      ],
-      "resources": ["./resources-arch-specific/*"]
-    },
-
-    "updater": {
-      "active": true,
-      "endpoints": [
-        "https://raw.githubusercontent.com/mikew/wadpunk/main/tauri-updater.json"
-      ],
-      "dialog": false,
-      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDNCRTk5RDgzNzE1Mjk2ODIKUldTQ2xsSnhnNTNwTzNyaEM4Ym91a2ZIZDN6dTExenJCblJvSVhERk0za1JKdXJQOUZzTy9aVHUK",
-
-      "windows": {
-        "installMode": "passive"
-      }
-    },
-
-    "security": {
-      "csp": null
-    },
-
-    "windows": [
-      {
-        "fullscreen": false,
-        "resizable": true,
-        "title": "WADPunk",
-        "theme": "Dark",
-        "width": 800,
-        "height": 600,
-        "visible": false
-      }
-    ],
-
     "cli": {
       "description": "",
       "longDescription": "",
       "beforeHelp": "",
       "afterHelp": "",
-
       "args": [],
-
       "subcommands": {
         "launch-game": {
           "args": [
@@ -83,6 +45,33 @@
           ]
         }
       }
+    },
+    "updater": {
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDNCRTk5RDgzNzE1Mjk2ODIKUldTQ2xsSnhnNTNwTzNyaEM4Ym91a2ZIZDN6dTExenJCblJvSVhERk0za1JKdXJQOUZzTy9aVHUK",
+      "endpoints": [
+        "https://raw.githubusercontent.com/mikew/wadpunk/main/tauri-updater.json"
+      ],
+      "windows": {
+        "installMode": "passive"
+      }
     }
+  },
+  "app": {
+    "withGlobalTauri": false,
+    "security": {
+      "csp": null
+    },
+    "windows": [
+      {
+        "fullscreen": false,
+        "resizable": true,
+        "title": "WADPunk",
+        "theme": "Dark",
+        "width": 800,
+        "height": 600,
+        "visible": false,
+        "useHttpsScheme": false
+      }
+    ]
   }
 }

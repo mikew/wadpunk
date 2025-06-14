@@ -1,8 +1,7 @@
 {
-  "tauri": {
-    "bundle": {
-      "active": true,
-      "targets": ["appimage", "updater"]
-    }
+  "bundle": {
+    "active": true,
+    "targets": ["appimage"],
+    "createUpdaterArtifacts": "v1Compatible"
   }
 }

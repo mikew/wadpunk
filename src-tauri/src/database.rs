@@ -4,14 +4,10 @@ use std::vec;
 use chrono::TimeZone;
 use chrono::Utc;
 use serde::{Deserialize, Serialize};
-use tauri::api::dir::DiskEntry;
-use tauri::api::{
-  dir::read_dir,
-  path::{document_dir, home_dir},
-};
 
 use crate::graphql::generated::Game;
 use crate::graphql::generated::SourcePort;
+use crate::tauri_legacy::{document_dir, home_dir, read_dir, DiskEntry};
 
 pub fn get_data_directory() -> std::path::PathBuf {
   let fallback_documents_directory = home_dir().unwrap().join("Documents");

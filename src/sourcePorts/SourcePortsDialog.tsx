@@ -66,10 +66,10 @@ const SourcePortsDialog: React.FC = () => {
     }
 
     if (isAddingNew) {
-      formRef.current?.setValue('id', basename(event.payload[0] || ''))
+      formRef.current?.setValue('id', basename(event.paths[0] || ''))
     }
 
-    formRef.current?.setValue('command', event.payload[0] || '')
+    formRef.current?.setValue('command', event.paths[0] || '')
   })
 
   return (
