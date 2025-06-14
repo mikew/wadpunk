@@ -7,6 +7,8 @@
   ],
   "permissions": [
     "core:default",
-    "cli:allow-cli-matches"
+    "cli:allow-cli-matches",
+    "process:default",
+    "shell:default"
   ]
 }
