@@ -585,7 +585,7 @@ impl DataSource {
 
     let seven_zip_path_str = seven_zip_path.to_str().unwrap();
 
-    importer::import_file(&file_path, &seven_zip_path_str);
+    importer::import_file(&file_path, seven_zip_path_str);
 
     Ok(true)
   }
