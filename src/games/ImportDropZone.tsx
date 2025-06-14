@@ -39,11 +39,11 @@ const ImportDropZone: React.FC<React.PropsWithChildren> = (props) => {
     }
 
     let i = 0
-    for (const file of event.payload) {
+    for (const file of event.paths) {
       setCurrentImportStatus({
         currentFilePath: file,
         index: i,
-        length: event.payload.length,
+        length: event.paths.length,
         status: 'importing',
       })
 

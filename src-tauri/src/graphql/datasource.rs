@@ -11,6 +11,7 @@ use chrono::Utc;
 
 use plist;
 use tauri::AppHandle;
+use tauri::Manager;
 
 use crate::database;
 use crate::database::normalize_name_from_id;
@@ -576,13 +577,13 @@ impl DataSource {
   ) -> GraphQLResult<bool> {
     let app_handle = ctx.data_unchecked::<AppHandle>();
 
-    // let seven_zip_path = app_handle
-    //   .path_resolver()
-    //   .resolve_resource(add_exe_on_windows("resources-arch-specific/7za"))
-    //   .unwrap();
+    let seven_zip_path = app_handle
+      .path()
+      .resource_dir()
+      .unwrap()
+      .join(add_exe_on_windows("resources-arch-specific/7za"));
 
-    // let seven_zip_path_str = seven_zip_path.to_str().unwrap();
-    let seven_zip_path_str = add_exe_on_windows("resources-arch-specific/7za");
+    let seven_zip_path_str = seven_zip_path.to_str().unwrap();
 
     importer::import_file(&file_path, &seven_zip_path_str);
 
