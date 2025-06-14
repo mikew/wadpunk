@@ -15,7 +15,7 @@ const I18nLoader: React.FC<React.PropsWithChildren> = (props) => {
   const i18nRef = useRef<{
     currentLocale: string
     translations: I18nTranslations
-  }>()
+  } | null>(null)
   const [wrappedPromise, setWrappedPromise] =
     useState<SuspenseWrappedPromise<unknown>>()
 

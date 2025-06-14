@@ -26,7 +26,6 @@ import {
   ListItemText,
   useTheme,
 } from '@mui/material'
-import type { SwitchBaseProps } from '@mui/material/internal/SwitchBase'
 import { useEffect } from 'react'
 import { useWatch } from 'react-hook-form'
 
@@ -216,7 +215,10 @@ const GameDialogFileList: React.FC<GameDialogFileListProps> = (props) => {
 
 interface SortableItemProps {
   file: FileEntry
-  onCheckboxChange: SwitchBaseProps['onChange']
+  onCheckboxChange: (
+    event: React.ChangeEvent<HTMLInputElement>,
+    checked: boolean,
+  ) => void
 }
 
 const SortableItem: React.FC<SortableItemProps> = (props) => {
