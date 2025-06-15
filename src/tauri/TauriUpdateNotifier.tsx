@@ -56,7 +56,7 @@ const TauriUpdateNotifier: React.FC = () => {
     }
 
     run()
-  }, [])
+  }, [t])
 
   const action = (
     <Stack direction="row" spacing={1}>

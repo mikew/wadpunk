@@ -10,7 +10,7 @@ pushd ./test-updater
     ln -sf "$file" ./
   done
 
-  echo "Set `plugins.updater.endpoints` to:"
-  echo "http://localhost:11346/tauri-updater.json"
+  echo "Set plugins.updater.endpoints to: http://localhost:11346/tauri-updater.json"
+  echo "Set plugins.updater.dangerousInsecureTransportProtocol to: true"
   npx serve -p 11346 --symlinks
 popd
