@@ -9,23 +9,35 @@ import * as path from 'path'
 /** @typedef {('x86_64' | 'aarch64')} TauriArch  */
 /** @typedef {(`${TauriPlatform}-${TauriArch}`)} TauriUpdaterPlatformName */
 
-const releaseData = JSON.parse(
-  getProcessOutput('gh', [
-    'release',
-    'view',
-    '--json',
-    'assets,body,createdAt',
-    process.argv[2],
-  ]),
-)
-
-// console.log(releaseData)
+const versionArg = process.argv[2]
+const isTest = versionArg === 'test'
 
 const files = fs
   .readdirSync('src-tauri/target/release/bundle', {
     recursive: true,
   })
   .map((x) => path.join('src-tauri/target/release/bundle', x))
+
+const releaseData = isTest
+  ? {
+      assets: files.map((file) => ({
+        name: path.basename(file),
+        url: `http://localhost:11346/${path.basename(file)}`,
+      })),
+      body: 'Test release notes',
+      createdAt: new Date().toISOString(),
+    }
+  : JSON.parse(
+      getProcessOutput('gh', [
+        'release',
+        'view',
+        '--json',
+        'assets,body,createdAt',
+        process.argv[2],
+      ]),
+    )
+
+// console.log(releaseData)
 
 // console.log(files)
 
@@ -53,7 +65,7 @@ function generateTauriUpdaterPlatform(
 }
 
 const updaterData = {
-  version: process.argv[2],
+  version: isTest ? 'v666.0.0' : process.argv[2],
   notes: releaseData.body,
   pub_date: releaseData.createdAt,
   platforms: {
@@ -68,7 +80,6 @@ const updaterData = {
       (asset) => asset.name.endsWith('-x86_64.app.tar.gz'),
     ),
 
-    // TODO Support linux-aarch64.
     ...generateTauriUpdaterPlatform(
       'linux-aarch64',
       (signaturePath) => signaturePath.endsWith('_aarch64.AppImage.tar.gz.sig'),

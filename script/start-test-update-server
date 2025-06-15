@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -ex
+
+mkdir -p ./test-updater
+
+./script/generate-tauri-updater-json "test" > ./test-updater/tauri-updater.json
+
+pushd ./test-updater
+  find ../src-tauri/target/release/bundle/ -maxdepth 2 -type f | while read -r file; do
+    ln -sf "$file" ./
+  done
+
+  npx serve -p 11346 --symlinks
+popd
