@@ -34,3 +34,5 @@ dist-ssr
 /.eslintcache
 /src-tauri/resources-arch-specific
 /src-tauri/icons
+/test-updater
+/src-tauri/gen

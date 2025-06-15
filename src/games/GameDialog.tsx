@@ -374,7 +374,7 @@ const GameDialog: React.FC<{
                               startAdornment: (
                                 <>
                                   <InputAdornment position="start">
-                                    <Label />
+                                    <Label sx={{ marginTop: -2 }} />
                                   </InputAdornment>
                                   {props.InputProps.startAdornment}
                                 </>
@@ -412,7 +412,7 @@ const GameDialog: React.FC<{
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
-                        <Edit sx={{ verticalAlign: 'middle' }} />
+                        <Edit sx={{ marginTop: -3 }} />
                       </InputAdornment>
                     ),
                   }}

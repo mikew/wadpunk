@@ -33,17 +33,30 @@ const TauriUpdateNotifier: React.FC = () => {
   useEffect(() => {
     async function run() {
       if (process.env.NODE_ENV === 'production') {
-        const updateResult = await check()
+        try {
+          const updateResult = await check()
 
-        if (updateResult) {
-          setStatus('UPDATE_AVAILABLE')
-          setTauriUpdateResult(updateResult)
+          if (updateResult) {
+            setStatus('UPDATE_AVAILABLE')
+            setTauriUpdateResult(updateResult)
+          }
+        } catch (err) {
+          console.error(err)
+
+          enqueueSnackbar(
+            t('updateNotifier.notifications.errorChecking', {
+              error: String(err),
+            }),
+            {
+              variant: 'error',
+            },
+          )
         }
       }
     }
 
     run()
-  }, [])
+  }, [t])
 
   const action = (
     <Stack direction="row" spacing={1}>
@@ -155,7 +168,7 @@ const TauriUpdateNotifier: React.FC = () => {
               },
             })}
             dangerouslySetInnerHTML={{
-              __html: parse(tauriUpdateResult?.version ?? ''),
+              __html: parse(tauriUpdateResult?.body ?? ''),
             }}
           />
         </DialogContent>
