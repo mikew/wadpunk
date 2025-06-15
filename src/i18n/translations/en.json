@@ -178,6 +178,7 @@
 
     "notifications": {
       "errorInstalling": "Error while installing update: {{error}}",
+      "errorChecking": "Error while checking for update: {{error}}",
       "updateAvailable": "Update available: v{{version}}"
     },
 
