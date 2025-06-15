@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [1.14.0](https://github.com/mikew/wadpunk/compare/v1.13.1...v1.14.0) (2025-06-15)
+
+
+### Features
+
+* Tauri v2 ([#102](https://github.com/mikew/wadpunk/issues/102)) ([82466ec](https://github.com/mikew/wadpunk/commit/82466eca4634e8d2a064c43417ee13d58322188a))
+* Update ui deps (sans react) ([#104](https://github.com/mikew/wadpunk/issues/104)) ([85082d9](https://github.com/mikew/wadpunk/commit/85082d99e9672dd8577762395e973cfcb883acfa))
+
+
+### Bug Fixes
+
+* Update fixes ([#105](https://github.com/mikew/wadpunk/issues/105)) ([e4d1a71](https://github.com/mikew/wadpunk/commit/e4d1a71adc91c20e3bc9ff498a02a5cff8ad50d2))
+
 ## [1.13.1](https://github.com/mikew/wadpunk/compare/v1.13.0...v1.13.1) (2025-06-11)
 
 
