@@ -9,6 +9,7 @@
     "core:default",
     "cli:allow-cli-matches",
     "process:default",
-    "shell:default"
+    "shell:default",
+    "updater:default"
   ]
 }
