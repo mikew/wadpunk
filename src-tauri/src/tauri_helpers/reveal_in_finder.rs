@@ -1,8 +1,4 @@
-#[cfg(target_os = "windows")]
-use std::os::windows::process::CommandExt;
-#[cfg(target_os = "linux")]
-use std::path::Path;
-use std::{fs::metadata, process::Command};
+use std::fs::metadata;
 
 use tauri_plugin_opener::OpenerExt;
 
