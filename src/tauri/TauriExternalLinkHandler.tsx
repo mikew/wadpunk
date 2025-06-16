@@ -1,4 +1,4 @@
-import * as shell from '@tauri-apps/plugin-shell'
+import { openUrl } from '@tauri-apps/plugin-opener'
 import { useEffect } from 'react'
 
 const TauriExternalLinkHandler: React.FC = () => {
@@ -25,7 +25,7 @@ const TauriExternalLinkHandler: React.FC = () => {
         )
       ) {
         event.preventDefault()
-        shell.open(href)
+        openUrl(href)
       }
     }
 
