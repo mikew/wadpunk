@@ -1,69 +1,19 @@
-#[cfg(target_os = "windows")]
-use std::os::windows::process::CommandExt;
-#[cfg(target_os = "linux")]
-use std::path::Path;
-use std::{fs::metadata, process::Command};
+use std::fs::metadata;
+
+use tauri_plugin_opener::OpenerExt;
+
+use crate::tauri_legacy::get_app_handle;
 
 // https://github.com/tauri-apps/tauri/issues/4062#issuecomment-1338048169
 pub fn reveal_file(path: &str) {
-  #[cfg(target_os = "windows")]
-  {
-    // TODO Try to use `raw_arg` instead of `arg` and `args` to avoid issues.
-    // https://doc.rust-lang.org/std/os/windows/process/trait.CommandExt.html#tymethod.raw_arg
-    Command::new("explorer.exe")
-        // The comma after select is not a typo
-        .raw_arg(format!("/select,{path}").as_str())
-        .spawn()
-        .unwrap();
-  }
-
-  #[cfg(target_os = "linux")]
-  {
-    // You cannot use dbus-send to "reveal" a file whose path contains a
-    // comma.
-    // https://gitlab.freedesktop.org/dbus/dbus/-/issues/76
-    if path.contains(",") {
-      reveal_folder(Path::new(path).parent().unwrap().to_str().unwrap());
-    } else {
-      Command::new("dbus-send")
-        .args([
-          // This --print-reply seems ... vital? Without it nothing happens.
-          "--print-reply",
-          "--dest=org.freedesktop.FileManager1",
-          "/org/freedesktop/FileManager1",
-          "org.freedesktop.FileManager1.ShowItems",
-          format!("array:string:{path}").as_str(),
-          "string:",
-        ])
-        .spawn()
-        .unwrap();
-    }
-  }
-
-  #[cfg(target_os = "macos")]
-  {
-    Command::new("open")
-      .args(["--reveal", "--", path])
-      .spawn()
-      .unwrap();
-  }
+  get_app_handle().opener().reveal_item_in_dir(path).unwrap();
 }
 
 pub fn reveal_folder(path: &str) {
-  #[cfg(target_os = "windows")]
-  {
-    Command::new("explorer").arg(path).spawn().unwrap();
-  }
-
-  #[cfg(target_os = "linux")]
-  {
-    Command::new("xdg-open").arg(path).spawn().unwrap();
-  }
-
-  #[cfg(target_os = "macos")]
-  {
-    Command::new("open").arg(path).spawn().unwrap();
-  }
+  get_app_handle()
+    .opener()
+    .open_path(path, None::<&str>)
+    .unwrap();
 }
 
 pub fn reveal_file_or_folder(path: &str) {

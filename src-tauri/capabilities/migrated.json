@@ -10,6 +10,7 @@
     "cli:allow-cli-matches",
     "process:default",
     "shell:default",
-    "updater:default"
+    "updater:default",
+    "opener:default"
   ]
 }
