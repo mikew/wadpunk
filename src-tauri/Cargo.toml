@@ -27,6 +27,7 @@ once_cell = "1.21.3"
 tauri-plugin-process = "2.2.1"
 tauri-plugin-shell = "2.2.1"
 tauri-plugin-opener = "2.2.7"
+tauri-plugin-single-instance = "2.2.4"
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem
