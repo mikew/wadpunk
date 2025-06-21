@@ -1,7 +1,15 @@
 {
   "bundle": {
     "active": true,
-    "targets": ["appimage"],
-    "createUpdaterArtifacts": "v1Compatible"
+    "targets": ["appimage", "deb"],
+    "createUpdaterArtifacts": "v1Compatible",
+    "linux": {
+      "appimage": {
+        "bundleMediaFramework": false
+      },
+      "deb": {
+        "section": "Game"
+      }
+    }
   }
 }

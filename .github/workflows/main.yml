@@ -98,6 +98,8 @@ jobs:
             src-tauri/target/release/bundle/macos/*.app.tar.gz.sig
             src-tauri/target/release/bundle/appimage/*.AppImage.tar.gz
             src-tauri/target/release/bundle/appimage/*.AppImage.tar.gz.sig
+            src-tauri/target/release/bundle/deb/*.deb
+            src-tauri/target/release/bundle/deb/*.deb.sig
 
   release_please:
     needs:
