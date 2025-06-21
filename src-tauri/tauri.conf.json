@@ -67,8 +67,8 @@
         "resizable": true,
         "title": "WADPunk",
         "theme": "Dark",
-        "width": 800,
-        "height": 600,
+        "width": 1024,
+        "height": 768,
         "visible": false,
         "useHttpsScheme": false
       }
