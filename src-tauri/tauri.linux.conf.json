@@ -4,7 +4,9 @@
     "targets": ["appimage", "deb"],
     "createUpdaterArtifacts": "v1Compatible",
     "linux": {
-      "category": "Game"
+      "deb": {
+        "category": "Game"
+      }
     }
   }
 }
