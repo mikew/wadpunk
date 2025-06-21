@@ -1,3 +1,5 @@
+import { listen } from '@tauri-apps/api/event'
+import type { CliMatches } from '@tauri-apps/plugin-cli'
 import { getMatches } from '@tauri-apps/plugin-cli'
 import { useEffect } from 'react'
 
@@ -11,7 +13,8 @@ function TauriCliHandler() {
 
   useEffect(() => {
     async function run() {
-      const gameId = await getLaunchGameIdFromCli()
+      const matches = await getMatches()
+      const gameId = getLaunchGameIdFromCli(matches)
 
       if (!gameId) {
         return
@@ -24,11 +27,35 @@ function TauriCliHandler() {
     run()
   }, [dispatch, startGame])
 
+  useEffect(() => {
+    let unlisten: () => void = () => { }
+
+    async function run() {
+      unlisten = await listen<string>('cli', async (event) => {
+        const matches: CliMatches = JSON.parse(event.payload)
+
+        const gameId = getLaunchGameIdFromCli(matches)
+
+        if (!gameId) {
+          return
+        }
+
+        dispatch(actions.setSelectedId(gameId))
+        await startGame(gameId)
+      })
+    }
+
+    run()
+
+    return () => {
+      unlisten()
+    }
+  }, [dispatch, startGame])
+
   return null
 }
 
-async function getLaunchGameIdFromCli() {
-  const matches = await getMatches()
+function getLaunchGameIdFromCli(matches: CliMatches) {
   const launchGameCommand =
     matches.subcommand?.name === 'launch-game' ? matches.subcommand : null
 
