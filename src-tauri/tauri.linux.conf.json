@@ -1,7 +1,7 @@
 {
   "bundle": {
     "active": true,
-    "targets": ["appimage", "debian"],
+    "targets": ["appimage", "deb"],
     "createUpdaterArtifacts": "v1Compatible"
   }
 }
