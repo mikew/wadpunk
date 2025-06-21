@@ -22,7 +22,9 @@ chrono = "0.4.41"
 plist = "1.7.2"
 tauri-plugin-window-state = "2"
 fs_extra = "1.3.0"
-tauri-plugin-cli = "2.2.0"
+# tauri-plugin-cli = "2.2.0"
+tauri-plugin-cli = { git = "https://github.com/mikew/plugins-workspace", branch = "cli-optional-args" }
+# tauri-plugin-cli = { path = "/Users/mike/Work/plugins-workspace/plugins/cli" }
 once_cell = "1.21.3"
 tauri-plugin-process = "2.2.1"
 tauri-plugin-shell = "2.2.1"
