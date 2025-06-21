@@ -5,7 +5,7 @@
     "createUpdaterArtifacts": "v1Compatible",
     "linux": {
       "deb": {
-        "category": "Game"
+        "section": "Game"
       }
     }
   }
