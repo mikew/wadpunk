@@ -27,9 +27,9 @@ pub fn document_dir() -> Result<std::path::PathBuf, Error> {
 pub struct DiskEntry {
   pub name: Option<String>,
   pub path: PathBuf,
-  pub is_directory: bool,
-  pub is_file: bool,
-  pub is_symlink: bool,
+  // pub is_directory: bool,
+  // pub is_file: bool,
+  // pub is_symlink: bool,
   pub children: Option<Vec<DiskEntry>>,
 }
 
@@ -42,8 +42,8 @@ pub fn read_dir(path: PathBuf, recursive: bool) -> Option<Vec<DiskEntry>> {
         let path = entry.path();
         let mut name = entry.file_name().into_string().unwrap();
         let is_directory = path.is_dir();
-        let is_file = path.is_file();
-        let is_symlink = path.is_symlink();
+        // let is_file = path.is_file();
+        // let is_symlink = path.is_symlink();
 
         if is_directory {
           name = format!("{}/", name);
@@ -59,9 +59,9 @@ pub fn read_dir(path: PathBuf, recursive: bool) -> Option<Vec<DiskEntry>> {
         entries.push(DiskEntry {
           name: Some(name),
           path,
-          is_directory,
-          is_file,
-          is_symlink,
+          // is_directory,
+          // is_file,
+          // is_symlink,
           children,
         });
       }

@@ -4230,7 +4230,7 @@ dependencies = [
 [[package]]
 name = "tauri-plugin-cli"
 version = "2.2.1"
-source = "git+https://github.com/mikew/plugins-workspace?branch=cli-optional-args#8408ffb0372431624f2f163ba7ce57d9e6603d11"
+source = "git+https://github.com/mikew/plugins-workspace?branch=cli-optional-args#9763dc236617339cd9c4e99dcf2b11cb92c837af"
 dependencies = [
  "clap",
  "log",

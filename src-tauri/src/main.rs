@@ -37,12 +37,10 @@ fn main() {
           .expect("no main window")
           .set_focus();
 
-        let matches = app.cli().matches(Some(args));
+        let matches = app.cli().matches_from(args);
         match matches {
           Ok(matches) => {
-            // TODO How to do this without serializing?
-            let serialized = serde_json::to_string(&matches).unwrap();
-            let _ = app.emit_to("main", "cli", serialized);
+            let _ = app.emit_to("main", "cli", matches);
           }
           Err(e) => {
             eprintln!("Error parsing CLI arguments: {}", e);

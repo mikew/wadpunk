@@ -31,10 +31,8 @@ function TauriCliHandler() {
     let unlisten: () => void = () => { }
 
     async function run() {
-      unlisten = await listen<string>('cli', async (event) => {
-        const matches: CliMatches = JSON.parse(event.payload)
-
-        const gameId = getLaunchGameIdFromCli(matches)
+      unlisten = await listen<CliMatches>('cli', async (event) => {
+        const gameId = getLaunchGameIdFromCli(event.payload)
 
         if (!gameId) {
           return
