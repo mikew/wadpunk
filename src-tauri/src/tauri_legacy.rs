@@ -42,8 +42,8 @@ pub fn read_dir(path: PathBuf, recursive: bool) -> Option<Vec<DiskEntry>> {
         let path = entry.path();
         let mut name = entry.file_name().into_string().unwrap();
         let is_directory = path.is_dir();
-        let is_file = path.is_file();
-        let is_symlink = path.is_symlink();
+        // let is_file = path.is_file();
+        // let is_symlink = path.is_symlink();
 
         if is_directory {
           name = format!("{}/", name);
