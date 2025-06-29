@@ -22,7 +22,7 @@ if compgen -G "src-tauri/target/release/bundle/appimage/*.AppImage.tar.gz" > /de
   gh release upload "${RELEASE_TAG}" src-tauri/target/release/bundle/appimage/*.AppImage.tar.gz.sig
 fi
 
-if compgen -G "src-tauri/target/release/bundle/appimage/*.deb" > /dev/null; then
+if compgen -G "src-tauri/target/release/bundle/deb/*.deb" > /dev/null; then
   gh release upload "${RELEASE_TAG}" src-tauri/target/release/bundle/deb/*.deb
   gh release upload "${RELEASE_TAG}" src-tauri/target/release/bundle/deb/*.deb.sig
 fi
