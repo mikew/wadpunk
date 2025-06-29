@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [1.15.1](https://github.com/mikew/wadpunk/compare/v1.15.0...v1.15.1) (2025-06-29)
+
+
+### Bug Fixes
+
+* really publish .deb files ([#115](https://github.com/mikew/wadpunk/issues/115)) ([445880a](https://github.com/mikew/wadpunk/commit/445880a5e6917cec2be5f84d9d3350d9bc555226))
+
 ## [1.15.0](https://github.com/mikew/wadpunk/compare/v1.14.0...v1.15.0) (2025-06-29)
 
 
