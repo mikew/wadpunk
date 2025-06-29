@@ -1,7 +1,7 @@
 import { listen } from '@tauri-apps/api/event'
 import type { CliMatches } from '@tauri-apps/plugin-cli'
 import { getMatches } from '@tauri-apps/plugin-cli'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 
 import { actions } from '#src/games/redux'
 import useStartGame from '#src/games/useStartGame'
@@ -10,9 +10,16 @@ import { useRootDispatch } from '#src/redux/helpers'
 function TauriCliHandler() {
   const { startGame } = useStartGame()
   const dispatch = useRootDispatch()
+  const didRun = useRef(false)
 
   useEffect(() => {
     async function run() {
+      if (didRun.current) {
+        return
+      }
+
+      didRun.current = true
+
       const matches = await getMatches()
       const gameId = getLaunchGameIdFromCli(matches)
 
@@ -25,13 +32,21 @@ function TauriCliHandler() {
     }
 
     run()
+
+    return () => {
+      didRun.current = true
+    }
   }, [dispatch, startGame])
 
   useEffect(() => {
-    let unlisten: () => void = () => { }
+    let listening = true
 
     async function run() {
-      unlisten = await listen<CliMatches>('cli', async (event) => {
+      await listen<CliMatches>('cli', async (event) => {
+        if (!listening) {
+          return
+        }
+
         const gameId = getLaunchGameIdFromCli(event.payload)
 
         if (!gameId) {
@@ -46,7 +61,7 @@ function TauriCliHandler() {
     run()
 
     return () => {
-      unlisten()
+      listening = false
     }
   }, [dispatch, startGame])
 
