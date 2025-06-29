@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [1.15.0](https://github.com/mikew/wadpunk/compare/v1.14.0...v1.15.0) (2025-06-29)
+
+
+### Features
+
+* Add Helion source port ([#109](https://github.com/mikew/wadpunk/issues/109)) ([4593571](https://github.com/mikew/wadpunk/commit/459357138b26e44a0ee18958884ce92866b41486))
+* Publish .deb ([#110](https://github.com/mikew/wadpunk/issues/110)) ([8599eaf](https://github.com/mikew/wadpunk/commit/8599eaf49816ad3e3082abd4fb042ab7e6cdf1b1))
+* Single instance ([#107](https://github.com/mikew/wadpunk/issues/107)) ([11488c0](https://github.com/mikew/wadpunk/commit/11488c00498b60a98ab473e053fcbbd9074848ce))
+
+
+### Bug Fixes
+
+* Change default window size ([#111](https://github.com/mikew/wadpunk/issues/111)) ([5ad9967](https://github.com/mikew/wadpunk/commit/5ad996744793ecadf89234059723da177e7af27d))
+* CLI matches small refactor ([#112](https://github.com/mikew/wadpunk/issues/112)) ([834980a](https://github.com/mikew/wadpunk/commit/834980a77e811a028afb74dd1e4ca6440b7c4a39))
+* QA ([#114](https://github.com/mikew/wadpunk/issues/114)) ([0618ea3](https://github.com/mikew/wadpunk/commit/0618ea3b07d7f5a828b3d8a49e8eee79562d5dfd))
+* Switch to tauri-plugin-opener ([#106](https://github.com/mikew/wadpunk/issues/106)) ([4ef2203](https://github.com/mikew/wadpunk/commit/4ef2203bbd779fbb64a7ccedc4a8783d02189bf6))
+
 ## [1.14.0](https://github.com/mikew/wadpunk/compare/v1.13.1...v1.14.0) (2025-06-15)
 
 
