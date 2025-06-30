@@ -2,12 +2,9 @@
   "identifier": "migrated",
   "description": "permissions that were migrated from v1",
   "local": true,
-  "windows": [
-    "main"
-  ],
+  "windows": ["main"],
   "permissions": [
     "core:default",
-    "cli:allow-cli-matches",
     "process:default",
     "shell:default",
     "updater:default",
