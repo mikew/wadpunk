@@ -30,7 +30,13 @@
       "longDescription": "",
       "beforeHelp": "",
       "afterHelp": "",
-      "args": [],
+      "args": [
+        {
+          "name": "potential-url",
+          "index": 1,
+          "takesValue": true
+        }
+      ],
       "subcommands": {
         "launch-game": {
           "args": [
