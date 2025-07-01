@@ -1,6 +1,8 @@
 {
   "bundle": {
-    "resources": ["./resources-arch-specific/*"],
+    "resources": [
+      "./resources-arch-specific/*"
+    ],
     "icon": [
       "icons/32x32.png",
       "icons/128x128.png",
@@ -23,7 +25,9 @@
   "identifier": "com.mikewhy.wadpunk",
   "plugins": {
     "fs": {
-      "scope": ["$HOME/**"]
+      "scope": [
+        "$HOME/**"
+      ]
     },
     "cli": {
       "description": "",
