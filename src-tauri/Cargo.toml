@@ -29,6 +29,7 @@ tauri-plugin-process = "2.2.1"
 tauri-plugin-shell = "2.2.1"
 tauri-plugin-opener = "2.2.7"
 tauri-plugin-single-instance = "2.2.4"
+tauri-plugin-deep-link = "2.4.0"
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem

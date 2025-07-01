@@ -1,60 +1,72 @@
 import { listen } from '@tauri-apps/api/event'
 import type { CliMatches } from '@tauri-apps/plugin-cli'
 import { getMatches } from '@tauri-apps/plugin-cli'
+import { onOpenUrl } from '@tauri-apps/plugin-deep-link'
 import { useEffect, useRef } from 'react'
 
 import { actions } from '#src/games/redux'
 import useStartGame from '#src/games/useStartGame'
+import useLatest from '#src/lib/useLatest'
 import { useRootDispatch } from '#src/redux/helpers'
+
+import type { WadpunkCliCommand } from './parseCli'
+import { parseCliMatchesToCommand, parseUrlToCommand } from './parseCli'
 
 function TauriCliHandler() {
   const { startGame } = useStartGame()
   const dispatch = useRootDispatch()
-  const didRun = useRef(false)
+  const didHandleBoot = useRef(false)
+
+  const handleCommand = useLatest((command: WadpunkCliCommand | undefined) => {
+    if (!command) {
+      return
+    }
+
+    switch (command.command) {
+      case 'launch-game': {
+        dispatch(actions.setSelectedId(command.gameId))
+        startGame(command.gameId)
+
+        break
+      }
+
+      default:
+        console.warn('Unknown command:', command)
+    }
+  })
 
   useEffect(() => {
     async function run() {
-      if (didRun.current) {
+      if (didHandleBoot.current) {
         return
       }
 
-      didRun.current = true
+      didHandleBoot.current = true
 
       const matches = await getMatches()
-      const gameId = getLaunchGameIdFromCli(matches)
-
-      if (!gameId) {
-        return
-      }
-
-      dispatch(actions.setSelectedId(gameId))
-      await startGame(gameId)
+      const command = parseCliMatchesToCommand(matches, true)
+      handleCommand.current(command)
     }
 
     run()
 
     return () => {
-      didRun.current = true
+      didHandleBoot.current = true
     }
-  }, [dispatch, startGame])
+  }, [dispatch, handleCommand, startGame])
 
   useEffect(() => {
     let listening = true
+    let unlisten: (() => void) | undefined = undefined
 
     async function run() {
-      await listen<CliMatches>('cli', async (event) => {
+      unlisten = await listen<CliMatches>('cli', async (event) => {
         if (!listening) {
           return
         }
 
-        const gameId = getLaunchGameIdFromCli(event.payload)
-
-        if (!gameId) {
-          return
-        }
-
-        dispatch(actions.setSelectedId(gameId))
-        await startGame(gameId)
+        const command = parseCliMatchesToCommand(event.payload, true)
+        handleCommand.current(command)
       })
     }
 
@@ -62,21 +74,36 @@ function TauriCliHandler() {
 
     return () => {
       listening = false
+      unlisten?.()
     }
-  }, [dispatch, startGame])
+  }, [dispatch, handleCommand, startGame])
+
+  useEffect(() => {
+    let listening = true
+    let unlisten: (() => void) | undefined = undefined
+
+    async function run() {
+      unlisten = await onOpenUrl(async (urls) => {
+        if (!listening) {
+          return
+        }
+
+        for (const url of urls) {
+          const command = parseUrlToCommand(url)
+          handleCommand.current(command)
+        }
+      })
+    }
+
+    run()
+
+    return () => {
+      listening = false
+      unlisten?.()
+    }
+  }, [dispatch, handleCommand, startGame])
 
   return null
-}
-
-function getLaunchGameIdFromCli(matches: CliMatches) {
-  const launchGameCommand =
-    matches.subcommand?.name === 'launch-game' ? matches.subcommand : null
-
-  const gameId = launchGameCommand?.matches.args['game-id']?.value
-
-  if (typeof gameId === 'string') {
-    return gameId
-  }
 }
 
 export default TauriCliHandler
