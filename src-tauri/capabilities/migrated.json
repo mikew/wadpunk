@@ -5,6 +5,7 @@
   "windows": ["main"],
   "permissions": [
     "core:default",
+    "cli:allow-cli-matches",
     "process:default",
     "shell:default",
     "updater:default",

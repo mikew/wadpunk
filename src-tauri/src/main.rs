@@ -4,7 +4,7 @@
 
 use tauri::Emitter;
 use tauri::Manager;
-// use tauri_plugin_cli::CliExt;
+use tauri_plugin_cli::CliExt;
 
 use graphql::datasource::DataSource;
 
@@ -42,15 +42,15 @@ let _ = app.deep_link().register_all();
           .expect("no main window")
           .set_focus();
 
-        // let matches = app.cli().matches_from(args);
-        // match matches {
-        //   Ok(matches) => {
-        //     let _ = app.emit_to("main", "cli", matches);
-        //   }
-        //   Err(e) => {
-        //     eprintln!("Error parsing CLI arguments: {}", e);
-        //   }
-        // }
+        let matches = app.cli().matches_from(args);
+        match matches {
+          Ok(matches) => {
+            let _ = app.emit_to("main", "cli", matches);
+          }
+          Err(e) => {
+            eprintln!("Error parsing CLI arguments: {}", e);
+          }
+        }
       }
     }))
     // break
@@ -62,7 +62,7 @@ let _ = app.deep_link().register_all();
     .plugin(tauri_plugin_process::init())
     .plugin(tauri_plugin_shell::init())
     .plugin(tauri_plugin_deep_link::init())
-    // .plugin(tauri_plugin_cli::init())
+    .plugin(tauri_plugin_cli::init())
     // break
     .run(tauri::generate_context!())
     .expect("error while running tauri application");
