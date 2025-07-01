@@ -27,11 +27,11 @@ fn main() {
   tauri::Builder::default()
     .setup(|app| {
       crate::tauri_legacy::set_app_handle(app.handle().clone());
-			#[cfg(any(windows, target_os="linux"))]
-{
-use tauri_plugin_deep_link::DeepLinkExt;
-let _ = app.deep_link().register_all();
-}
+      #[cfg(any(windows, target_os="linux"))]
+      {
+        use tauri_plugin_deep_link::DeepLinkExt;
+        let _ = app.deep_link().register_all();
+      }
       Ok(())
     })
     .plugin(tauri_plugin_single_instance::init(|app, args, _cwd| {
