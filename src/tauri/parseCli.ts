@@ -53,8 +53,7 @@ export function parseUrlToCommand(url: string) {
 
   switch (parsed.host) {
     case 'launch-game': {
-      const args = parsed.pathname.split('/').slice(1)
-      const gameId = args[0]
+      const gameId = parsed.pathname.slice(1)
 
       if (!gameId) {
         return
