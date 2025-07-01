@@ -66,7 +66,7 @@ function TauriCliHandler() {
         }
 
         // TODO Explain why we don't want url parsing here.
-        const command = parseCliMatchesToCommand(event.payload, false)
+        const command = parseCliMatchesToCommand(event.payload, true)
         handleCommand.current(command)
       })
     }
