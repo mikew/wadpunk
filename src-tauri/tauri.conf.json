@@ -38,7 +38,8 @@
         {
           "name": "potential-url",
           "index": 1,
-          "takesValue": true
+          "takesValue": true,
+          "required": false
         }
       ],
       "subcommands": {
@@ -47,7 +48,24 @@
             {
               "name": "game-id",
               "index": 1,
-              "takesValue": true
+              "takesValue": true,
+              "required": true
+            }
+          ]
+        },
+        "download-game": {
+          "args": [
+            {
+              "name": "host",
+              "index": 1,
+              "takesValue": true,
+              "required": true
+            },
+            {
+              "name": "hint",
+              "index": 2,
+              "takesValue": true,
+              "required": false
             }
           ]
         }
