@@ -13,8 +13,10 @@ import { ImportFileDocument } from '#src/app/operations.generated'
 import { invalidateApolloQuery } from '#src/graphql/graphqlClient'
 import { useI18nContext } from '#src/i18n/lib/i18nContext'
 import basename from '#src/lib/basename'
-import { useRootSelector } from '#src/redux/helpers'
+import { useRootDispatch, useRootSelector } from '#src/redux/helpers'
 import useTauriFileDrop from '#src/tauri/useTauriFileDrop'
+
+import { actions } from './redux'
 
 interface ImportStatus {
   currentFilePath: string
@@ -32,11 +34,14 @@ const ImportDropZone: React.FC<React.PropsWithChildren> = (props) => {
     (state) => state.sourcePorts.isDialogOpen,
   )
   const { t } = useI18nContext()
+  const dispatch = useRootDispatch()
 
   const tauriFileDrop = useTauriFileDrop(async (event) => {
     if (isSourcePortsDialogOpen) {
       return
     }
+
+    let lastImportedGameId: string | null | undefined
 
     let i = 0
     for (const file of event.paths) {
@@ -47,7 +52,8 @@ const ImportDropZone: React.FC<React.PropsWithChildren> = (props) => {
         status: 'importing',
       })
 
-      await importFile({ variables: { file_path: file } })
+      const { data } = await importFile({ variables: { file_path: file } })
+      lastImportedGameId = data?.importFile?.game_id
 
       i++
     }
@@ -62,6 +68,10 @@ const ImportDropZone: React.FC<React.PropsWithChildren> = (props) => {
     })
     setTimeout(() => {
       setCurrentImportStatus(undefined)
+
+      if (lastImportedGameId) {
+        dispatch(actions.setSelectedId(lastImportedGameId))
+      }
     }, 3_000)
   })
 
