@@ -82,7 +82,7 @@
     },
     "deep-link": {
       "desktop": {
-        "schemes": ["wadpunk"]
+        "schemes": ["wadpunk", "idgames"]
       }
     }
   },
