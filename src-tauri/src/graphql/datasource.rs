@@ -20,6 +20,7 @@ use crate::database::DbPlaySessionEntry;
 use crate::database::DbPreviousFileStateItem;
 use crate::database::DbSourcePort;
 use crate::graphql::generated::AppInfo;
+use crate::graphql::generated::ImportFileResponse;
 use crate::importer;
 use crate::known_source_ports;
 use crate::known_source_ports::find_known_source_port_from_id;
@@ -576,7 +577,7 @@ impl DataSource {
     _root: &Mutation,
     ctx: &Context<'_>,
     file_path: String,
-  ) -> GraphQLResult<bool> {
+  ) -> GraphQLResult<ImportFileResponse> {
     let app_handle = ctx.data_unchecked::<AppHandle>();
 
     let seven_zip_path = app_handle
@@ -587,9 +588,13 @@ impl DataSource {
 
     let seven_zip_path_str = seven_zip_path.to_str().unwrap();
 
-    importer::import_file(&file_path, seven_zip_path_str);
+    let game_id = importer::import_file(&file_path, seven_zip_path_str);
 
-    Ok(true)
+    Ok(ImportFileResponse {
+      success: true,
+      message: Some(format!("Game imported with ID: {}", game_id)),
+      game_id: Some(game_id),
+    })
   }
 
   pub async fn Mutation_downloadGame(

@@ -10,5 +10,8 @@ query getAppInfo {
 }
 
 mutation importFile($file_path: String!) {
-  importFile(file_path: $file_path)
+  importFile(file_path: $file_path) {
+    success
+    game_id
+  }
 }
