@@ -24,10 +24,12 @@ use crate::importer;
 use crate::known_source_ports;
 use crate::known_source_ports::find_known_source_port_from_id;
 use crate::known_source_ports::BuildCommandArgs;
+use crate::tauri_download::download;
 use crate::tauri_helpers::reveal_in_finder::reveal_file_or_folder;
 
 use super::generated::AppSettings;
 use super::generated::CreateSourcePortInput;
+use super::generated::DownloadGameResponse;
 use super::generated::Game;
 use super::generated::GameFileEntry;
 use super::generated::GameInput;
@@ -588,6 +590,109 @@ impl DataSource {
     importer::import_file(&file_path, seven_zip_path_str);
 
     Ok(true)
+  }
+
+  pub async fn Mutation_downloadGame(
+    &self,
+    _root: &Mutation,
+    _ctx: &Context<'_>,
+    hint: Option<String>,
+    host: String,
+  ) -> GraphQLResult<DownloadGameResponse> {
+    if host == "idgames" {
+      if let Some(hint) = hint {
+        // Get the details from `https://www.doomworld.com/idgames/api/api.php?action=get&id=<id>`
+        let url = format!(
+          "https://www.doomworld.com/idgames/api/api.php?action=get&id={}",
+          hint
+        );
+        let response = reqwest::get(&url).await.map_err(|e| Error {
+          message: e.to_string(),
+          source: None,
+          extensions: None,
+        })?;
+        if !response.status().is_success() {
+          return Err(Error {
+            message: format!("Failed to fetch game details: {}", response.status()),
+            source: None,
+            extensions: None,
+          });
+        }
+
+        // They're XML, and we need to get `idgames-response.content.dir` and
+        // `idgames-response.content.file`.
+        let xml_content = response.text().await.map_err(|e| Error {
+          message: e.to_string(),
+          source: None,
+          extensions: None,
+        })?;
+        let doc = roxmltree::Document::parse(&xml_content).map_err(|e| Error {
+          message: e.to_string(),
+          source: None,
+          extensions: None,
+        })?;
+        let dir = doc
+          .descendants()
+          .find(|n| n.has_tag_name("dir"))
+          .and_then(|n| n.text())
+          .ok_or_else(|| Error {
+            message: "Failed to find 'dir' in XML response".to_string(),
+            source: None,
+            extensions: None,
+          })?;
+        let file = doc
+          .descendants()
+          .find(|n| n.has_tag_name("filename"))
+          .and_then(|n| n.text())
+          .ok_or_else(|| Error {
+            message: "Failed to find 'filename' in XML response".to_string(),
+            source: None,
+            extensions: None,
+          })?;
+
+        // The download URL is `https://youfailit.net/pub/idgames/<dir>/<file>`
+        let download_url = format!("https://youfailit.net/pub/idgames/{}/{}", dir, file);
+
+        // use mktemp to create a temporary directory
+        let temp_dir = mktemp::Temp::new_dir().map_err(|e| Error {
+          message: e.to_string(),
+          source: None,
+          extensions: None,
+        })?;
+
+        // Create a path for the downloaded file
+        let download_path = temp_dir.release().join(file);
+        let headers = std::collections::HashMap::new();
+        let body = None;
+        download(
+          &download_url,
+          download_path.to_str().unwrap(),
+          headers,
+          body,
+        )
+        .await
+        .map_err(|e| Error {
+          message: e.to_string(),
+          source: None,
+          extensions: None,
+        })?;
+
+        return Ok(DownloadGameResponse {
+          success: true,
+          message: Some(format!(
+            "Game downloaded successfully to {}",
+            download_path.to_str().unwrap()
+          )),
+          temp_path: Some(download_path.to_str().unwrap().to_string()),
+        });
+      }
+    }
+
+    return Ok(DownloadGameResponse {
+      success: false,
+      message: None,
+      temp_path: None,
+    });
   }
 }
 
