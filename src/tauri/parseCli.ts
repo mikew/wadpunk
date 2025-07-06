@@ -61,8 +61,6 @@ export function parseCliMatchesToCommand(
 }
 
 export function parseUrlToCommand(url: string) {
-  console.log(url)
-
   let parsed: URL
 
   try {

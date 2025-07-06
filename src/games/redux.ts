@@ -35,12 +35,10 @@ export const initialState: State = {
 }
 
 export const reducer = createReducer(initialState, (builder) => {
-  builder.addHandler(actions.setSelectedId, (state, action) => {
-    return {
-      ...state,
-      selectedId: action.payload.id,
-    }
-  })
+  builder.addHandler(actions.setSelectedId, (state, action) => ({
+    ...state,
+    selectedId: action.payload.id,
+  }))
 
   builder.addHandler(actions.addToImportQueue, (state, action) => {
     const nextState = { ...state }

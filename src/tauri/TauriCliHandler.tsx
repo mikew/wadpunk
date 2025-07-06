@@ -17,39 +17,37 @@ function TauriCliHandler() {
   const dispatch = useRootDispatch()
   const didHandleBoot = useRef(false)
 
-  const handleCommand = useLatest(
-    async (command: WadpunkCliCommand | undefined) => {
-      if (!command) {
-        return
+  const handleCommand = useLatest((command: WadpunkCliCommand | undefined) => {
+    if (!command) {
+      return
+    }
+
+    switch (command.command) {
+      case 'launch-game': {
+        dispatch(actions.setSelectedId(command.gameId))
+        startGame(command.gameId)
+
+        break
       }
 
-      switch (command.command) {
-        case 'launch-game': {
-          dispatch(actions.setSelectedId(command.gameId))
-          startGame(command.gameId)
+      case 'download-game': {
+        dispatch(
+          actions.addToImportQueue([
+            {
+              action: 'download',
+              host: command.host,
+              hint: command.hint,
+            },
+          ]),
+        )
 
-          break
-        }
-
-        case 'download-game': {
-          dispatch(
-            actions.addToImportQueue([
-              {
-                action: 'download',
-                host: command.host,
-                hint: command.hint,
-              },
-            ]),
-          )
-
-          break
-        }
-
-        default:
-          console.warn('Unknown command:', command)
+        break
       }
-    },
-  )
+
+      default:
+        console.warn('Unknown command:', command)
+    }
+  })
 
   useEffect(() => {
     async function run() {
