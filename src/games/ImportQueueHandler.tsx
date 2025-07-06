@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from 'react'
 
 import { ImportFileDocument } from '#src/app/operations.generated'
 import { invalidateApolloQuery } from '#src/graphql/graphqlClient'
+import basename from '#src/lib/basename'
 import useLatest from '#src/lib/useLatest'
 import { useRootDispatch, useRootSelector } from '#src/redux/helpers'
 
@@ -15,6 +16,9 @@ import { actions } from './redux'
 const ImportQueueHandler: React.FC = () => {
   const [isProcessing, setIsProcessing] = useState(false)
   const [open, setOpen] = useState(false)
+  const [currentImportItem, setCurrentImportItem] = useState<
+    ImportQueueItem | 'DONE'
+  >('DONE')
 
   const lastGameIdRef = useRef<string | null | undefined>(null)
 
@@ -88,12 +92,14 @@ const ImportQueueHandler: React.FC = () => {
         const item = importQueue[0]
         invariant(item, 'Expected importQueue to have at least one item')
 
+        setCurrentImportItem(item)
         await processItem.current(item)
 
         dispatch(actions.removeImportQueueItem())
         // setProcessedCount((count) => count + 1)
         setIsProcessing(false)
       } else {
+        setCurrentImportItem('DONE')
         invalidateApolloQuery(['getGames'])
 
         if (lastGameIdRef.current) {
@@ -121,31 +127,40 @@ const ImportQueueHandler: React.FC = () => {
       ? 0
       : Math.round((currentBatchProcessed / currentBatchTotal) * 100)
 
-  // const message =
-  //   currentImportStatus?.status === 'importing'
-  //     ? `Importing ${currentIndex + 1}/${currentLength}: ${currentFileName}`
-  //     : currentImportStatus?.status === 'done'
-  //       ? 'Done!'
-  //       : undefined
+  const progressBufferPercent =
+    currentBatchTotal === 0
+      ? 0
+      : Math.round(((currentBatchProcessed + 1) / currentBatchTotal) * 100)
 
-  const message = `Importing ${currentBatchProcessed + 1}/${currentBatchTotal}: ${importQueue[0]?.filePath || ''}`
+  let currentImportHint: string = ''
+  if (currentImportItem !== 'DONE') {
+    switch (currentImportItem.action) {
+      case 'import':
+        currentImportHint = basename(currentImportItem.filePath)
+        break
+
+      case 'download':
+        currentImportHint = currentImportItem.host
+        if (currentImportItem.hint) {
+          currentImportHint += ` (${currentImportItem.hint})`
+        }
+        break
+    }
+  }
+  const message =
+    currentImportItem === 'DONE'
+      ? 'Done!'
+      : `Importing ${currentBatchProcessed + 1}/${currentBatchTotal}: ${currentImportHint}`
 
   return (
     <Snackbar
-      // open={!!currentImportStatus}
       open={open}
       anchorOrigin={{
         vertical: 'bottom',
         horizontal: 'center',
       }}
     >
-      <Alert
-        severity={
-          // currentImportStatus?.status === 'importing' ? 'info' : 'success'
-          'info'
-        }
-      >
-        {JSON.stringify(importQueue)}
+      <Alert severity={currentImportItem === 'DONE' ? 'success' : 'info'}>
         <Stack width={300} direction="column" spacing={1}>
           <div>{message}</div>
 
@@ -153,8 +168,7 @@ const ImportQueueHandler: React.FC = () => {
             variant="buffer"
             color="inherit"
             value={progressPercent}
-          // value={(currentIndex / currentLength) * 100}
-          // valueBuffer={((currentIndex + 1) / currentLength) * 100}
+            valueBuffer={progressBufferPercent}
           />
         </Stack>
       </Alert>
