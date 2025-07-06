@@ -16,6 +16,7 @@ import basename from '#src/lib/basename'
 import { useRootDispatch, useRootSelector } from '#src/redux/helpers'
 import useTauriFileDrop from '#src/tauri/useTauriFileDrop'
 
+import type { ImportQueueItem } from './redux'
 import { actions } from './redux'
 
 interface ImportStatus {
@@ -43,36 +44,47 @@ const ImportDropZone: React.FC<React.PropsWithChildren> = (props) => {
 
     let lastImportedGameId: string | null | undefined
 
-    let i = 0
-    for (const file of event.paths) {
-      setCurrentImportStatus({
-        currentFilePath: file,
-        index: i,
-        length: event.paths.length,
-        status: 'importing',
-      })
-
-      const { data } = await importFile({ variables: { file_path: file } })
-      lastImportedGameId = data?.importFile?.game_id
-
-      i++
-    }
-
-    invalidateApolloQuery(['getGames'])
-
-    setCurrentImportStatus({
-      currentFilePath: '',
-      index: 0,
-      length: 0,
-      status: 'done',
-    })
-    setTimeout(() => {
-      setCurrentImportStatus(undefined)
-
-      if (lastImportedGameId) {
-        dispatch(actions.setSelectedId(lastImportedGameId))
+    const importQueueItems = event.paths.map((filePath) => {
+      const item: ImportQueueItem = {
+        action: 'import',
+        filePath,
       }
-    }, 3_000)
+
+      return item
+    })
+
+    dispatch(actions.addToImportQueue(importQueueItems))
+
+    let i = 0
+    // for (const file of event.paths) {
+    //   setCurrentImportStatus({
+    //     currentFilePath: file,
+    //     index: i,
+    //     length: event.paths.length,
+    //     status: 'importing',
+    //   })
+
+    //   const { data } = await importFile({ variables: { file_path: file } })
+    //   lastImportedGameId = data?.importFile?.game_id
+
+    //   i++
+    // }
+
+    // invalidateApolloQuery(['getGames'])
+
+    // setCurrentImportStatus({
+    //   currentFilePath: '',
+    //   index: 0,
+    //   length: 0,
+    //   status: 'done',
+    // })
+    // setTimeout(() => {
+    //   setCurrentImportStatus(undefined)
+
+    //   if (lastImportedGameId) {
+    //     dispatch(actions.setSelectedId(lastImportedGameId))
+    //   }
+    // }, 3_000)
   })
 
   const currentIndex = currentImportStatus?.index || 0
@@ -80,41 +92,9 @@ const ImportDropZone: React.FC<React.PropsWithChildren> = (props) => {
 
   const currentFileName = basename(currentImportStatus?.currentFilePath || '')
 
-  const message =
-    currentImportStatus?.status === 'importing'
-      ? `Importing ${currentIndex + 1}/${currentLength}: ${currentFileName}`
-      : currentImportStatus?.status === 'done'
-        ? 'Done!'
-        : undefined
-
   return (
     <div>
       {props.children}
-
-      <Snackbar
-        open={!!currentImportStatus}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'center',
-        }}
-      >
-        <Alert
-          severity={
-            currentImportStatus?.status === 'importing' ? 'info' : 'success'
-          }
-        >
-          <Stack width={300} direction="column" spacing={1}>
-            <div>{message}</div>
-
-            <LinearProgress
-              variant="buffer"
-              color="inherit"
-              value={(currentIndex / currentLength) * 100}
-              valueBuffer={((currentIndex + 1) / currentLength) * 100}
-            />
-          </Stack>
-        </Alert>
-      </Snackbar>
 
       <Dialog
         open={Boolean(!isSourcePortsDialogOpen && tauriFileDrop.isDraggingOver)}
