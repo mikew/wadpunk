@@ -4,9 +4,11 @@ import { Alert, LinearProgress, Snackbar, Stack } from '@mui/material'
 import { useEffect, useRef, useState } from 'react'
 
 import { ImportFileDocument } from '#src/app/operations.generated'
+import { invalidateApolloQuery } from '#src/graphql/graphqlClient'
 import useLatest from '#src/lib/useLatest'
 import { useRootDispatch, useRootSelector } from '#src/redux/helpers'
 
+import { DownloadGameDocument } from './operations.generated'
 import type { ImportQueueItem } from './redux'
 import { actions } from './redux'
 
@@ -26,6 +28,7 @@ const ImportQueueHandler: React.FC = () => {
   const importQueue = useRootSelector((state) => state.games.importQueue)
 
   const [importFile] = useMutation(ImportFileDocument)
+  const [downloadGame] = useMutation(DownloadGameDocument)
 
   const processItem = useLatest(async (item: ImportQueueItem) => {
     switch (item.action) {
@@ -41,8 +44,32 @@ const ImportQueueHandler: React.FC = () => {
         break
       }
 
+      case 'download': {
+        const { data: downloadGameData } = await downloadGame({
+          variables: {
+            host: item.host,
+            hint: item.hint,
+          },
+        })
+
+        if (!downloadGameData?.downloadGame?.temp_path) {
+          console.error('No temp_path returned from downloadGame mutation')
+          break
+        }
+
+        const { data: importFileData } = await importFile({
+          variables: {
+            file_path: downloadGameData.downloadGame.temp_path,
+          },
+        })
+
+        lastGameIdRef.current = importFileData?.importFile.game_id
+
+        break
+      }
+
       default:
-        console.error(`Unknown action: ${item.action}`)
+        console.error(`Unknown action: ${item}`)
     }
   })
 
@@ -67,14 +94,16 @@ const ImportQueueHandler: React.FC = () => {
         // setProcessedCount((count) => count + 1)
         setIsProcessing(false)
       } else {
+        invalidateApolloQuery(['getGames'])
+
+        if (lastGameIdRef.current) {
+          dispatch(actions.setSelectedId(lastGameIdRef.current))
+          lastGameIdRef.current = null
+        }
+
         timeoutId = setTimeout(() => {
           setOpen(false)
-
-          if (lastGameIdRef.current) {
-            dispatch(actions.setSelectedId(lastGameIdRef.current))
-            lastGameIdRef.current = null
-          }
-        }, 1_000)
+        }, 3_000)
       }
     }
 
@@ -99,6 +128,8 @@ const ImportQueueHandler: React.FC = () => {
   //       ? 'Done!'
   //       : undefined
 
+  const message = `Importing ${currentBatchProcessed + 1}/${currentBatchTotal}: ${importQueue[0]?.filePath || ''}`
+
   return (
     <Snackbar
       // open={!!currentImportStatus}
@@ -116,7 +147,7 @@ const ImportQueueHandler: React.FC = () => {
       >
         {JSON.stringify(importQueue)}
         <Stack width={300} direction="column" spacing={1}>
-          {/*<div>{message}</div>*/}
+          <div>{message}</div>
 
           <LinearProgress
             variant="buffer"

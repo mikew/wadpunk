@@ -1,15 +1,11 @@
-import { useMutation } from '@apollo/client'
 import { listen } from '@tauri-apps/api/event'
 import type { CliMatches } from '@tauri-apps/plugin-cli'
 import { getMatches } from '@tauri-apps/plugin-cli'
 import { onOpenUrl } from '@tauri-apps/plugin-deep-link'
 import { useEffect, useRef } from 'react'
 
-import { ImportFileDocument } from '#src/app/operations.generated'
-import { DownloadGameDocument } from '#src/games/operations.generated'
 import { actions } from '#src/games/redux'
 import useStartGame from '#src/games/useStartGame'
-import { invalidateApolloQuery } from '#src/graphql/graphqlClient'
 import useLatest from '#src/lib/useLatest'
 import { useRootDispatch } from '#src/redux/helpers'
 
@@ -20,8 +16,6 @@ function TauriCliHandler() {
   const { startGame } = useStartGame()
   const dispatch = useRootDispatch()
   const didHandleBoot = useRef(false)
-  const [lol] = useMutation(DownloadGameDocument)
-  const [importFile] = useMutation(ImportFileDocument)
 
   const handleCommand = useLatest(
     async (command: WadpunkCliCommand | undefined) => {
@@ -38,21 +32,15 @@ function TauriCliHandler() {
         }
 
         case 'download-game': {
-          console.log('Download game command received:', command)
-          const { data } = await lol({
-            variables: {
-              host: command.host,
-              hint: command.hint,
-            },
-          })
-
-          await importFile({
-            variables: {
-              file_path: data?.downloadGame.temp_path,
-            },
-          })
-
-          invalidateApolloQuery(['getGames'])
+          dispatch(
+            actions.addToImportQueue([
+              {
+                action: 'download',
+                host: command.host,
+                hint: command.hint,
+              },
+            ]),
+          )
 
           break
         }

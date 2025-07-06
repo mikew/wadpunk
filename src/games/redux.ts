@@ -10,7 +10,7 @@ export type ImportQueueItem =
   | {
     action: 'download'
     host: string
-    hint: string
+    hint?: string | null
   }
 
 export const actions = createActions('games', {
@@ -58,14 +58,14 @@ export const reducer = createReducer(initialState, (builder) => {
   builder.addHandler(actions.removeImportQueueItem, (state) => {
     const nextState = { ...state }
 
+    nextState.importQueue = state.importQueue.slice(1)
+
     nextState.currentBatchProcessed += 1
 
     if (nextState.importQueue.length === 0) {
       nextState.currentBatchTotal = 0
       nextState.currentBatchProcessed = 0
     }
-
-    nextState.importQueue = state.importQueue.slice(1)
 
     return nextState
   })
