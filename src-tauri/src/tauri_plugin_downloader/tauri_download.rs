@@ -68,7 +68,7 @@ pub async fn download(
       response.text().await.unwrap_or_default(),
     ));
   }
-  let total = response.content_length().unwrap_or(0);
+  // let total = response.content_length().unwrap_or(0);
 
   let mut file = BufWriter::new(File::create(file_path).await?);
   let mut stream = response.bytes_stream();
