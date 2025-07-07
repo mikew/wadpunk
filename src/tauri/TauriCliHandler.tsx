@@ -58,6 +58,7 @@ function TauriCliHandler() {
       didHandleBoot.current = true
 
       const matches = await getMatches()
+      console.info('on launch matches:', matches)
       const command = parseCliMatchesToCommand(matches, true)
       handleCommand.current(command)
     }
@@ -79,6 +80,7 @@ function TauriCliHandler() {
           return
         }
 
+        console.info('cli while running:', event.payload)
         const command = parseCliMatchesToCommand(event.payload, true)
         handleCommand.current(command)
       })
@@ -101,6 +103,8 @@ function TauriCliHandler() {
         if (!listening) {
           return
         }
+
+        console.info('onOpenUrl', urls)
 
         for (const url of urls) {
           const command = parseUrlToCommand(url)
