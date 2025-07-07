@@ -29,13 +29,16 @@ fn main() {
   tauri::Builder::default()
     .setup(|app| {
       crate::tauri_legacy::set_app_handle(app.handle().clone());
-      #[cfg(any(windows, target_os="linux"))]
+      #[cfg(any(windows, target_os = "linux"))]
       {
         use tauri_plugin_deep_link::DeepLinkExt;
         let _ = app.deep_link().register_all();
       }
       Ok(())
     })
+
+    // The order of plugins is kind of important:
+    // - Tauri recommends single instance plugin being first ...
     .plugin(tauri_plugin_single_instance::init(|app, args, _cwd| {
       #[cfg(desktop)]
       {
@@ -56,15 +59,17 @@ fn main() {
       }
     }))
 
+    // - ... Then it's things that deal with the rust side
+    .plugin(tauri_plugin_cli::init())
     .plugin(tauri_plugin_window_state::Builder::default().build())
+    .plugin(tauri_plugin_deep_link::init())
+
+    // - ... Then it's things that deal with the webview side
     .plugin(tauri_plugin_graphql::init(schema))
     .plugin(tauri_plugin_updater::Builder::new().build())
-
     .plugin(tauri_plugin_opener::init())
     .plugin(tauri_plugin_process::init())
     .plugin(tauri_plugin_shell::init())
-    .plugin(tauri_plugin_deep_link::init())
-    .plugin(tauri_plugin_cli::init())
 
     .run(tauri::generate_context!())
     .expect("error while running tauri application");
