@@ -1,14 +1,14 @@
-use crate::tauri_transfer_stats::TransferStats;
-
 use futures_util::TryStreamExt;
 use serde::{ser::Serializer, Serialize};
-use tauri::ipc::Channel;
+// use tauri::ipc::Channel;
 use tokio::{
   fs::File,
   io::{AsyncWriteExt, BufWriter},
 };
 
 use std::collections::HashMap;
+
+use super::tauri_transfer_stats::TransferStats;
 
 type Result<T> = std::result::Result<T, Error>;
 

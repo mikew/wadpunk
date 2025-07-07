@@ -25,8 +25,8 @@ use crate::importer;
 use crate::known_source_ports;
 use crate::known_source_ports::find_known_source_port_from_id;
 use crate::known_source_ports::BuildCommandArgs;
-use crate::tauri_download::download;
 use crate::tauri_helpers::reveal_in_finder::reveal_file_or_folder;
+use crate::tauri_plugin_downloader::tauri_download::download;
 
 use super::generated::AppSettings;
 use super::generated::CreateSourcePortInput;

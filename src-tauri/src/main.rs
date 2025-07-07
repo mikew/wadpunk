@@ -12,10 +12,9 @@ mod database;
 mod graphql;
 mod importer;
 mod known_source_ports;
-mod tauri_download;
 mod tauri_helpers;
 mod tauri_legacy;
-mod tauri_transfer_stats;
+mod tauri_plugin_downloader;
 
 fn main() {
   let schema = async_graphql::Schema::build(
