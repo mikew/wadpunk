@@ -123,14 +123,18 @@ const ImportQueueHandler: React.FC = () => {
   }, [importQueue, isProcessing, dispatch, processItem])
 
   const progressPercent =
-    currentBatchTotal === 0
-      ? 0
-      : Math.round((currentBatchProcessed / currentBatchTotal) * 100)
+    currentImportItem === 'DONE'
+      ? 100
+      : currentBatchTotal === 0
+        ? 0
+        : (currentBatchProcessed / currentBatchTotal) * 100
 
   const progressBufferPercent =
-    currentBatchTotal === 0
-      ? 0
-      : Math.round(((currentBatchProcessed + 1) / currentBatchTotal) * 100)
+    currentImportItem === 'DONE'
+      ? 100
+      : currentBatchTotal === 0
+        ? 0
+        : ((currentBatchProcessed + 1) / currentBatchTotal) * 100
 
   let currentImportHint: string = ''
   if (currentImportItem !== 'DONE') {
