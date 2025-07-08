@@ -4,7 +4,7 @@ use fs_extra::{copy_items, dir::CopyOptions};
 
 use crate::database;
 
-pub fn import_file(file: &str, seven_zip_path: &str) {
+pub fn import_file(file: &str, seven_zip_path: &str) -> String {
   let lowercase = file.to_lowercase();
 
   if lowercase.ends_with(".zip")
@@ -16,11 +16,21 @@ pub fn import_file(file: &str, seven_zip_path: &str) {
     || lowercase.ends_with(".zst")
   {
     extract_archive_to_games_directory(file, seven_zip_path);
+
+    let basename = Path::new(file).file_stem().unwrap().to_str().unwrap();
+    format!("{}/", basename)
   } else {
     let mut copy_options = CopyOptions::new();
     copy_options.overwrite = true;
 
     copy_items(&[file], database::get_games_directory(), &copy_options).unwrap();
+
+    Path::new(file)
+      .file_name()
+      .unwrap()
+      .to_str()
+      .unwrap()
+      .to_string()
   }
 }
 

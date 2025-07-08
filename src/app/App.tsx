@@ -5,6 +5,7 @@ import { memo, useEffect, useState } from 'react'
 import { GameDialogSuspense } from '#src/games/GameDialog'
 import GameList from '#src/games/GameList'
 import ImportDropZone from '#src/games/ImportDropZone'
+import ImportQueueHandler from '#src/games/ImportQueueHandler'
 import type { SuspenseWrappedPromise } from '#src/lib/wrapPromiseForSuspense'
 import { wrapPromiseForSuspense } from '#src/lib/wrapPromiseForSuspense'
 import KnownSourcePortsDialog from '#src/sourcePorts/KnownSourcePortsDialog'
@@ -54,6 +55,7 @@ function App() {
 
         <SourcePortsDialog />
         <KnownSourcePortsDialog />
+        <ImportQueueHandler />
 
         {/*
           Since some of the CLI args require the initializeApp mutation to be

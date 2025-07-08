@@ -104,3 +104,11 @@ mutation setTags($game_id: ID!, $tags: [String!]!) {
     tags
   }
 }
+
+mutation downloadGame($host: String!, $hint: String) {
+  downloadGame(host: $host, hint: $hint) {
+    success
+    message
+    temp_path
+  }
+}

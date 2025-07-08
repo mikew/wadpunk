@@ -117,6 +117,18 @@ input UpdateSourcePortInput {
   is_default: Boolean
 }
 
+type ImportFileResponse {
+  success: Boolean!
+  message: String
+  game_id: ID
+}
+
+type DownloadGameResponse {
+  success: Boolean!
+  message: String
+  temp_path: String
+}
+
 type Mutation {
   initializeApp: Boolean!
 
@@ -135,5 +147,7 @@ type Mutation {
   updateSourcePort(source_port: UpdateSourcePortInput!): SourcePort!
   deleteSourcePort(id: ID!): Boolean!
 
-  importFile(file_path: String!): Boolean!
+  importFile(file_path: String!): ImportFileResponse!
+
+  downloadGame(host: String!, hint: String): DownloadGameResponse!
 }

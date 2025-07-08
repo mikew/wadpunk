@@ -1,7 +1,8 @@
 import { listen } from '@tauri-apps/api/event'
 import type { CliMatches } from '@tauri-apps/plugin-cli'
 import { getMatches } from '@tauri-apps/plugin-cli'
-import { onOpenUrl } from '@tauri-apps/plugin-deep-link'
+import { onOpenUrl, getCurrent } from '@tauri-apps/plugin-deep-link'
+import { type } from '@tauri-apps/plugin-os'
 import { useEffect, useRef } from 'react'
 
 import { actions } from '#src/games/redux'
@@ -30,37 +31,48 @@ function TauriCliHandler() {
         break
       }
 
+      case 'download-game': {
+        dispatch(
+          actions.addToImportQueue([
+            {
+              action: 'download',
+              host: command.host,
+              hint: command.hint,
+            },
+          ]),
+        )
+
+        break
+      }
+
       default:
         console.warn('Unknown command:', command)
     }
   })
 
   useEffect(() => {
-    async function run() {
-      if (didHandleBoot.current) {
-        return
-      }
-
-      didHandleBoot.current = true
-
-      const matches = await getMatches()
-      const command = parseCliMatchesToCommand(matches, true)
-      handleCommand.current(command)
-    }
-
-    run()
-
-    return () => {
-      didHandleBoot.current = true
-    }
-  }, [dispatch, handleCommand, startGame])
-
-  useEffect(() => {
     let listening = true
-    let unlisten: (() => void) | undefined = undefined
+    let unlistenCli: (() => void) | undefined = undefined
+    let unlistenUrl: (() => void) | undefined = undefined
 
     async function run() {
-      unlisten = await listen<CliMatches>('cli', async (event) => {
+      if (!didHandleBoot.current) {
+        const matches = await getMatches()
+        const command = parseCliMatchesToCommand(matches, true)
+        handleCommand.current(command)
+
+        if (type() === 'macos') {
+          const urls = (await getCurrent()) || []
+
+          for (const url of urls) {
+            const command = parseUrlToCommand(url)
+            handleCommand.current(command)
+          }
+        }
+      }
+      didHandleBoot.current = true
+
+      unlistenCli = await listen<CliMatches>('cli', async (event) => {
         if (!listening) {
           return
         }
@@ -68,22 +80,8 @@ function TauriCliHandler() {
         const command = parseCliMatchesToCommand(event.payload, true)
         handleCommand.current(command)
       })
-    }
 
-    run()
-
-    return () => {
-      listening = false
-      unlisten?.()
-    }
-  }, [dispatch, handleCommand, startGame])
-
-  useEffect(() => {
-    let listening = true
-    let unlisten: (() => void) | undefined = undefined
-
-    async function run() {
-      unlisten = await onOpenUrl(async (urls) => {
+      unlistenUrl = await onOpenUrl(async (urls) => {
         if (!listening) {
           return
         }
@@ -98,10 +96,12 @@ function TauriCliHandler() {
     run()
 
     return () => {
+      didHandleBoot.current = true
       listening = false
-      unlisten?.()
+      unlistenCli?.()
+      unlistenUrl?.()
     }
-  }, [dispatch, handleCommand, startGame])
+  }, [handleCommand])
 
   return null
 }

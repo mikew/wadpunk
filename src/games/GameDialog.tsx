@@ -97,7 +97,12 @@ export const GameDialogSuspense: React.FC = () => {
       }
     >
       {selectedId ? (
-        <GameDialog open={isOpen} gameId={selectedId} onClose={onClose} />
+        <GameDialog
+          open={isOpen}
+          gameId={selectedId}
+          onClose={onClose}
+          key={selectedId}
+        />
       ) : undefined}
     </Suspense>
   )

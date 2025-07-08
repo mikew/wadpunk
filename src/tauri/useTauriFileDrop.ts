@@ -13,10 +13,15 @@ function useTauriFileDrop(
   const callbackRef = useLatest(callback)
 
   useEffect(() => {
+    let listening = true
     let unlisten: (() => void) | undefined
 
     async function run() {
       unlisten = await getCurrentWebview().onDragDropEvent((event) => {
+        if (!listening) {
+          return
+        }
+
         if (event.payload.type === 'enter') {
           if (event.payload.paths.length > 0) {
             setIsDraggingOver(true)
@@ -46,6 +51,7 @@ function useTauriFileDrop(
     run()
 
     return () => {
+      listening = false
       unlisten?.()
     }
   }, [callbackRef])
