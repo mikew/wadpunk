@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [1.16.0](https://github.com/mikew/wadpunk/compare/v1.15.1...v1.16.0) (2025-07-08)
+
+
+### Features
+
+* `idgames://` protocol support ([#120](https://github.com/mikew/wadpunk/issues/120)) ([c402ee2](https://github.com/mikew/wadpunk/commit/c402ee2e7d7e2610234dc246196dca1a9b035c0d))
+* URL Handler ([#117](https://github.com/mikew/wadpunk/issues/117)) ([b1c7e4e](https://github.com/mikew/wadpunk/commit/b1c7e4ef48304019256ccd441c25b9fc7768c0e1))
+
 ## [1.15.1](https://github.com/mikew/wadpunk/compare/v1.15.0...v1.15.1) (2025-06-29)
 
 
