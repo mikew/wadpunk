@@ -58,14 +58,11 @@ function TauriCliHandler() {
     async function run() {
       if (!didHandleBoot.current) {
         const matches = await getMatches()
-        console.info('on launch cli matches:', matches)
         const command = parseCliMatchesToCommand(matches, true)
         handleCommand.current(command)
 
         if (type() === 'macos') {
           const urls = (await getCurrent()) || []
-
-          console.info('on launch urls:', urls)
 
           for (const url of urls) {
             const command = parseUrlToCommand(url)
@@ -80,7 +77,6 @@ function TauriCliHandler() {
           return
         }
 
-        console.info('cli while running:', event.payload)
         const command = parseCliMatchesToCommand(event.payload, true)
         handleCommand.current(command)
       })
@@ -90,7 +86,6 @@ function TauriCliHandler() {
           return
         }
 
-        console.info('onOpenUrl', urls)
         for (const url of urls) {
           const command = parseUrlToCommand(url)
           handleCommand.current(command)
@@ -106,7 +101,7 @@ function TauriCliHandler() {
       unlistenCli?.()
       unlistenUrl?.()
     }
-  })
+  }, [handleCommand])
 
   return null
 }
