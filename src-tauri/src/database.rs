@@ -36,6 +36,25 @@ pub fn init_games() {
   fs::create_dir_all(get_source_ports_directory()).unwrap();
   fs::create_dir_all(get_meta_directory()).unwrap();
   fs::create_dir_all(get_filters_directory()).unwrap();
+  init_default_filters();
+}
+
+pub fn init_default_filters() {
+  let default_filters = vec![
+    ("default", ""),
+    ("iwads", r#"{ "tags": ["iwad"] }"#),
+    ("playing", r#"{ "sort": "lastPlayed:desc" }"#),
+    ("recently installed", r#"{ "sort": "installedAt:desc" }"#),
+  ];
+
+  for (name, contents) in default_filters {
+    let filter_path = get_filters_directory().join(format!("{}.json", name));
+    
+    // Only create the filter if it doesn't already exist
+    if !filter_path.exists() {
+      save_filter(name, contents);
+    }
+  }
 }
 
 pub fn find_all_games() -> Vec<DbGameMeta> {
