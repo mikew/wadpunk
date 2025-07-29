@@ -49,7 +49,7 @@ pub fn init_default_filters() {
 
   for (name, contents) in default_filters {
     let filter_path = get_filters_directory().join(format!("{}.json", name));
-    
+
     // Only create the filter if it doesn't already exist
     if !filter_path.exists() {
       save_filter(name, contents);
