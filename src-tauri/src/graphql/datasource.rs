@@ -699,6 +699,39 @@ impl DataSource {
       temp_path: None,
     });
   }
+
+  pub async fn Query_getFilters(
+    &self,
+    _root: &Query,
+    _ctx: &Context<'_>,
+  ) -> GraphQLResult<Vec<super::generated::Filter>> {
+    Ok(
+      database::find_all_filters()
+        .into_iter()
+        .map(|x| x.to_filter())
+        .collect(),
+    )
+  }
+
+  pub async fn Mutation_saveFilter(
+    &self,
+    _root: &Mutation,
+    _ctx: &Context<'_>,
+    name: String,
+    contents: String,
+  ) -> GraphQLResult<super::generated::Filter> {
+    let db_filter = database::save_filter(&name, &contents);
+    Ok(db_filter.to_filter())
+  }
+
+  pub async fn Mutation_deleteFilter(
+    &self,
+    _root: &Mutation,
+    _ctx: &Context<'_>,
+    name: String,
+  ) -> GraphQLResult<bool> {
+    Ok(database::delete_filter(&name))
+  }
 }
 
 pub fn add_exe_on_windows(exe: &str) -> String {

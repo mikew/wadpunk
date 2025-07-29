@@ -2,14 +2,14 @@ import type { CliMatches } from '@tauri-apps/plugin-cli'
 
 export type WadpunkCliCommand =
   | {
-    command: 'launch-game'
-    gameId: string
-  }
+      command: 'launch-game'
+      gameId: string
+    }
   | {
-    command: 'download-game'
-    host: 'idgames'
-    hint?: string | null
-  }
+      command: 'download-game'
+      host: 'idgames'
+      hint?: string | null
+    }
 
 export function parseCliMatchesToCommand(
   matches: CliMatches,

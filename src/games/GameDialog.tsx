@@ -390,9 +390,9 @@ const GameDialog: React.FC<{
                                 alignSelf: 'flex-start',
                               },
                               '& .MuiInputAdornment-positionStart .MuiSvgIcon-root':
-                              {
-                                marginLeft: '4px',
-                              },
+                                {
+                                  marginLeft: '4px',
+                                },
                             }}
                           />
                         )}

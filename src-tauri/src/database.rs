@@ -5,8 +5,7 @@ use chrono::TimeZone;
 use chrono::Utc;
 use serde::{Deserialize, Serialize};
 
-use crate::graphql::generated::Game;
-use crate::graphql::generated::SourcePort;
+use crate::graphql::generated::{Filter, Game, SourcePort};
 use crate::tauri_legacy::{document_dir, home_dir, read_dir, DiskEntry};
 
 pub fn get_data_directory() -> std::path::PathBuf {
@@ -28,10 +27,34 @@ pub fn get_meta_directory() -> std::path::PathBuf {
   get_data_directory().join("Meta")
 }
 
+pub fn get_filters_directory() -> std::path::PathBuf {
+  get_data_directory().join("Filters")
+}
+
 pub fn init_games() {
   fs::create_dir_all(get_games_directory()).unwrap();
   fs::create_dir_all(get_source_ports_directory()).unwrap();
   fs::create_dir_all(get_meta_directory()).unwrap();
+  fs::create_dir_all(get_filters_directory()).unwrap();
+  init_default_filters();
+}
+
+pub fn init_default_filters() {
+  let default_filters = vec![
+    ("default", ""),
+    ("iwads", r#"{ "tags": ["iwad"] }"#),
+    ("playing", r#"{ "sort": "lastPlayed:desc" }"#),
+    ("recently installed", r#"{ "sort": "installedAt:desc" }"#),
+  ];
+
+  for (name, contents) in default_filters {
+    let filter_path = get_filters_directory().join(format!("{}.json", name));
+
+    // Only create the filter if it doesn't already exist
+    if !filter_path.exists() {
+      save_filter(name, contents);
+    }
+  }
 }
 
 pub fn find_all_games() -> Vec<DbGameMeta> {
@@ -315,5 +338,71 @@ impl DbSourcePort {
         .unwrap_or("gzdoom".to_string()),
       is_default: self.is_default.unwrap_or_default(),
     }
+  }
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct DbFilter {
+  pub name: String,
+  pub contents: String,
+}
+
+impl DbFilter {
+  pub fn to_filter(&self) -> Filter {
+    Filter {
+      name: self.name.clone(),
+      contents: self.contents.clone(),
+    }
+  }
+}
+
+pub fn find_all_filters() -> Vec<DbFilter> {
+  let mut filters: Vec<DbFilter> = vec![];
+  let filters_dir = get_filters_directory();
+
+  if !filters_dir.exists() {
+    return filters;
+  }
+
+  let paths = read_dir(filters_dir, false).unwrap_or_default();
+
+  for filter_entry in paths {
+    let file_name = filter_entry.name.unwrap_or_default();
+
+    if !file_name.ends_with(".json") {
+      continue;
+    }
+
+    let filter_path = get_filters_directory().join(&file_name);
+    let json_contents = fs::read_to_string(filter_path).unwrap_or_default();
+
+    if let Ok(filter) = serde_json::from_str::<DbFilter>(&json_contents) {
+      filters.push(filter);
+    }
+  }
+
+  filters
+}
+
+pub fn save_filter(name: &str, contents: &str) -> DbFilter {
+  let filter = DbFilter {
+    name: name.to_string(),
+    contents: contents.to_string(),
+  };
+
+  let filter_path = get_filters_directory().join(format!("{}.json", name));
+  let json_contents = serde_json::to_string_pretty(&filter).unwrap();
+  fs::write(filter_path, json_contents).unwrap();
+
+  filter
+}
+
+pub fn delete_filter(name: &str) -> bool {
+  let filter_path = get_filters_directory().join(format!("{}.json", name));
+
+  if filter_path.exists() {
+    fs::remove_file(filter_path).is_ok()
+  } else {
+    false
   }
 }

@@ -1,0 +1,17 @@
+query getAllFilters {
+  getFilters {
+    name
+    contents
+  }
+}
+
+mutation saveFilter($name: String!, $contents: String!) {
+  saveFilter(name: $name, contents: $contents) {
+    name
+    contents
+  }
+}
+
+mutation deleteFilter($name: String!) {
+  deleteFilter(name: $name)
+}

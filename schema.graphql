@@ -61,6 +61,11 @@ type KnownSourcePort {
   download_page_url: String!
 }
 
+type Filter {
+  name: String!
+  contents: String!
+}
+
 type Query {
   getGames: [Game!]!
   getGame(id: ID!): Game!
@@ -73,6 +78,8 @@ type Query {
   getAppInfo: AppInfo!
 
   getKnownSourcePorts: [KnownSourcePort!]!
+
+  getFilters: [Filter!]!
 }
 
 input PreviousFileStateItemInput {
@@ -150,4 +157,7 @@ type Mutation {
   importFile(file_path: String!): ImportFileResponse!
 
   downloadGame(host: String!, hint: String): DownloadGameResponse!
+
+  saveFilter(name: String!, contents: String!): Filter!
+  deleteFilter(name: String!): Boolean!
 }
