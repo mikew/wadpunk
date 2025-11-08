@@ -1,4 +1,4 @@
-import { useQuery, useSuspenseQuery } from '@apollo/client'
+import { useQuery, useSuspenseQuery } from "@apollo/client/react";
 import { useMemo } from 'react'
 
 import type { Game } from '#src/graphql/types'
