@@ -54,10 +54,10 @@ const SourcePortsDialog: React.FC = () => {
   const { t } = useI18nContext()
   const isAddingNew = selectedId === '-1'
 
-  const gzdoom = knownSourcePorts.find((x) => x.id === 'gzdoom')
+  const starterSourcePort = knownSourcePorts.find((x) => x.id === 'uzdoom')
 
-  if (!gzdoom) {
-    throw new Error('gzdoom known source port not found')
+  if (!starterSourcePort) {
+    throw new Error('starter source port not found')
   }
 
   const tauriFileDrop = useTauriFileDrop(async (event) => {
@@ -148,14 +148,16 @@ const SourcePortsDialog: React.FC = () => {
                   onClick={() => {
                     dispatch(
                       actions.setSelectedKnownSourcePort({
-                        ids: ['gzdoom'],
+                        ids: ['uzdoom'],
                         mode: 'exclusive',
                       }),
                     )
                     dispatch(actions.toggleKnownSourcePortsDialog())
                   }}
                 >
-                  {t('sourcePorts.downloadWithLabel', { name: gzdoom.name })}
+                  {t('sourcePorts.downloadWithLabel', {
+                    name: starterSourcePort.name,
+                  })}
                 </Button>
               </Box>
             </Box>
@@ -180,7 +182,7 @@ const SourcePortsDialog: React.FC = () => {
                       }
                     : {
                         id: '',
-                        known_source_port_id: 'gzdoom',
+                        known_source_port_id: 'uzdoom',
                         command: '',
                         is_default: false,
                       }

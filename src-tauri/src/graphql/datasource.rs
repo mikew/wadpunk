@@ -271,7 +271,7 @@ impl DataSource {
     let source_port_definition = find_known_source_port_from_id(
       &db_source_port
         .known_source_port_id
-        .unwrap_or("gzdoom".to_string()),
+        .unwrap_or("".to_string()),
     );
 
     // Check if this game is tagged as an IWAD

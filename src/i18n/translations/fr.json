@@ -105,7 +105,6 @@
     "title": "Ports sources",
     "default": "Défaut ({{sourcePort}})",
     "addNew": "Ajouter un nouveau",
-    "downloadGZDoom": "Télécharger GZDoom",
 
     "onboarding": {
       "noSourcePorts": {

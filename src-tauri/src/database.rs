@@ -312,7 +312,7 @@ impl DbSourcePort {
       known_source_port_id: self
         .known_source_port_id
         .clone()
-        .unwrap_or("gzdoom".to_string()),
+        .unwrap_or("uzdoom".to_string()),
       is_default: self.is_default.unwrap_or_default(),
     }
   }

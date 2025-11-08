@@ -16,6 +16,7 @@ pub enum DbKnownSourcePort {
   Helion,
   Woof,
   Zandronum,
+  UZDoom,
 }
 
 impl DbKnownSourcePort {
@@ -28,6 +29,7 @@ impl DbKnownSourcePort {
       Self::Helion => "helion".to_string(),
       Self::Woof => "woof".to_string(),
       Self::Zandronum => "zandronum".to_string(),
+      Self::UZDoom => "uzdoom".to_string(),
     }
   }
 
@@ -40,6 +42,7 @@ impl DbKnownSourcePort {
       Self::Helion => "Helion".to_string(),
       Self::Woof => "Woof".to_string(),
       Self::Zandronum => "Zandronum".to_string(),
+      Self::UZDoom => "UZDoom".to_string(),
     }
   }
 
@@ -52,6 +55,7 @@ impl DbKnownSourcePort {
       Self::Helion => true,
       Self::Woof => true,
       Self::Zandronum => true,
+      Self::UZDoom => true,
     }
   }
 
@@ -64,6 +68,7 @@ impl DbKnownSourcePort {
       Self::Helion => true,
       Self::Woof => true,
       Self::Zandronum => true,
+      Self::UZDoom => true,
     }
   }
 
@@ -76,6 +81,7 @@ impl DbKnownSourcePort {
       Self::Helion => "https://github.com/Helion-Engine/Helion".to_string(),
       Self::Woof => "https://github.com/fabiangreffrath/woof".to_string(),
       Self::Zandronum => "https://zandronum.com/".to_string(),
+      Self::UZDoom => "https://github.com/UZDoom/UZDoom".to_string(),
     }
   }
 
@@ -93,6 +99,7 @@ impl DbKnownSourcePort {
       Self::Helion => "https://github.com/Helion-Engine/Helion/releases/latest".to_string(),
       Self::Woof => "https://github.com/fabiangreffrath/woof/releases/latest".to_string(),
       Self::Zandronum => "https://zandronum.com/download".to_string(),
+      Self::UZDoom => "https://github.com/UZDoom/UZDoom/releases/latest".to_string(),
     }
   }
 
@@ -137,7 +144,8 @@ impl DbKnownSourcePort {
         | Self::DSDA
         | Self::Helion
         | Self::Woof
-        | Self::Zandronum => {
+        | Self::Zandronum
+        | Self::UZDoom => {
           command.push("-config".to_string());
           command.push(config_path);
         }
@@ -151,7 +159,7 @@ impl DbKnownSourcePort {
       .unwrap()
       .to_string();
     match self {
-      Self::GZDoom | Self::ChocolateDoom | Self::Zandronum | Self::Helion => {
+      Self::GZDoom | Self::ChocolateDoom | Self::Zandronum | Self::Helion | Self::UZDoom => {
         command.push("-savedir".to_string());
         command.push(save_dir);
       }
@@ -175,7 +183,8 @@ impl DbKnownSourcePort {
           | Self::DSDA
           | Self::Helion
           | Self::Woof
-          | Self::Zandronum => {
+          | Self::Zandronum
+          | Self::UZDoom => {
             command.push("-deh".to_string());
             command.push(file.clone());
           }
@@ -188,7 +197,8 @@ impl DbKnownSourcePort {
           | Self::DSDA
           | Self::Helion
           | Self::Woof
-          | Self::Zandronum => {
+          | Self::Zandronum
+          | Self::UZDoom => {
             command.push("-deh".to_string());
             command.push(file.clone());
           }
@@ -200,7 +210,8 @@ impl DbKnownSourcePort {
           | Self::DSDA
           | Self::Helion
           | Self::Woof
-          | Self::Zandronum => {
+          | Self::Zandronum
+          | Self::UZDoom => {
             command.push("-file".to_string());
             command.push(file.clone());
           }
@@ -225,6 +236,7 @@ pub fn get_all_known_source_ports() -> Vec<DbKnownSourcePort> {
     DbKnownSourcePort::Helion,
     DbKnownSourcePort::Woof,
     DbKnownSourcePort::Zandronum,
+    DbKnownSourcePort::UZDoom,
   ]
 }
 
@@ -235,5 +247,5 @@ pub fn find_known_source_port_from_id(id: &str) -> DbKnownSourcePort {
     }
   }
 
-  DbKnownSourcePort::GZDoom
+  DbKnownSourcePort::UZDoom
 }

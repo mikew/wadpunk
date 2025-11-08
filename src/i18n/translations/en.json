@@ -114,7 +114,6 @@
     "title": "Source Ports",
     "default": "Default ({{sourcePort}})",
     "addNew": "Add New",
-    "downloadGZDoom": "Download GZDoom",
     "downloadWithLabel": "Download {{name}}",
 
     "onboarding": {
@@ -165,6 +164,15 @@
       },
       "woof": {
         "description": "Woof! is a continuation of the Boom/MBF bloodline of Doom source ports."
+      },
+      "helion": {
+        "description": "A modern Doom engine written from the ground up with a focus on performance."
+      },
+      "zandronum": {
+        "description": "Zandronum is a multiplayer oriented port, based off Skulltag, for Doom and Doom II by id Software."
+      },
+      "uzdoom": {
+        "description": "UZDoom is a feature centric port for all Doom engine games, based on GZDoom, adding an advanced renderer and powerful scripting capabilities"
       }
     }
   },

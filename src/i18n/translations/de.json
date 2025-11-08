@@ -105,7 +105,6 @@
     "title": "Quellports",
     "default": "Standard ({{sourcePort}})",
     "addNew": "Neuen hinzufügen",
-    "downloadGZDoom": "GZDoom herunterladen",
 
     "onboarding": {
       "noSourcePorts": {
