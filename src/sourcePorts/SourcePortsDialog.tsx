@@ -37,7 +37,7 @@ import SourcePortForm from './SourcePortForm'
 import { useSourcePortsContext } from './sourcePortsContext'
 
 const SourcePortsDialog: React.FC = () => {
-  const { sourcePorts, knownSourcePorts, defaultSourcePort } =
+  const { sourcePorts, defaultSourcePort, starterSourcePort } =
     useSourcePortsContext()
   const isOpen = useRootSelector((state) => state.sourcePorts.isDialogOpen)
   const dispatch = useRootDispatch()
@@ -53,12 +53,6 @@ const SourcePortsDialog: React.FC = () => {
 
   const { t } = useI18nContext()
   const isAddingNew = selectedId === '-1'
-
-  const starterSourcePort = knownSourcePorts.find((x) => x.id === 'uzdoom')
-
-  if (!starterSourcePort) {
-    throw new Error('starter source port not found')
-  }
 
   const tauriFileDrop = useTauriFileDrop(async (event) => {
     if (!isOpen) {
@@ -148,7 +142,7 @@ const SourcePortsDialog: React.FC = () => {
                   onClick={() => {
                     dispatch(
                       actions.setSelectedKnownSourcePort({
-                        ids: ['uzdoom'],
+                        ids: [starterSourcePort.id],
                         mode: 'exclusive',
                       }),
                     )
@@ -182,7 +176,7 @@ const SourcePortsDialog: React.FC = () => {
                       }
                     : {
                         id: '',
-                        known_source_port_id: 'uzdoom',
+                        known_source_port_id: starterSourcePort.id,
                         command: '',
                         is_default: false,
                       }

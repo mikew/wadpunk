@@ -7,6 +7,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::graphql::generated::Game;
 use crate::graphql::generated::SourcePort;
+use crate::known_source_ports;
 use crate::tauri_legacy::{document_dir, home_dir, read_dir, DiskEntry};
 
 pub fn get_data_directory() -> std::path::PathBuf {
@@ -309,10 +310,11 @@ impl DbSourcePort {
     SourcePort {
       id: self.id.clone().unwrap(),
       command: self.command.clone().unwrap_or_default(),
-      known_source_port_id: self
-        .known_source_port_id
-        .clone()
-        .unwrap_or("uzdoom".to_string()),
+      known_source_port_id: self.known_source_port_id.clone().unwrap_or(
+        known_source_ports::get_starter_source_port()
+          .id()
+          .to_string(),
+      ),
       is_default: self.is_default.unwrap_or_default(),
     }
   }

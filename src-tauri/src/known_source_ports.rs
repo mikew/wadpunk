@@ -247,5 +247,9 @@ pub fn find_known_source_port_from_id(id: &str) -> DbKnownSourcePort {
     }
   }
 
+  get_starter_source_port()
+}
+
+pub fn get_starter_source_port() -> DbKnownSourcePort {
   DbKnownSourcePort::UZDoom
 }

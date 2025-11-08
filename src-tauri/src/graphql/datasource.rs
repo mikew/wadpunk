@@ -172,6 +172,14 @@ impl DataSource {
     )
   }
 
+  pub async fn Query_getStarterSourcePort(
+    &self,
+    _root: &Query,
+    _ctx: &Context<'_>,
+  ) -> GraphQLResult<KnownSourcePort> {
+    Ok(known_source_ports::get_starter_source_port().to_known_source_port())
+  }
+
   pub async fn Query_getSourcePorts(
     &self,
     _root: &Query,
@@ -269,9 +277,11 @@ impl DataSource {
     };
 
     let source_port_definition = find_known_source_port_from_id(
-      &db_source_port
-        .known_source_port_id
-        .unwrap_or("".to_string()),
+      &db_source_port.known_source_port_id.unwrap_or(
+        known_source_ports::get_starter_source_port()
+          .id()
+          .to_string(),
+      ),
     );
 
     // Check if this game is tagged as an IWAD

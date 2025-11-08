@@ -15,6 +15,7 @@ interface SourcePortsContextType {
   sourcePorts: SourcePortListSourcePort[]
   knownSourcePorts: KnownSourcePortListItem[]
   defaultSourcePort?: SourcePortListSourcePort
+  starterSourcePort: KnownSourcePortListItem
   findSourcePortById: (
     id?: SourcePort['id'] | null,
   ) => SourcePortListSourcePort | undefined
@@ -58,6 +59,7 @@ export const SourcePortsProvider: React.FC<React.PropsWithChildren> = memo(
         sourcePorts: sortedSourcePorts,
         knownSourcePorts: sortedKnownSourcePorts,
         defaultSourcePort,
+        starterSourcePort: data.getStarterSourcePort,
         findSourcePortById,
         refetch,
       }
