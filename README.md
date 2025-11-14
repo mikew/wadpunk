@@ -3,7 +3,7 @@
 [Download the latest release](https://github.com/mikew/wadpunk/releases/latest).
 
 WADPunk is a cross-platform app to help you manage your WAD library and launch
-Source Ports like GZDoom.
+Source Ports like UZDoom.
 
 ![](https://raw.githubusercontent.com/mikew/wadpunk/readme-resources/src/game%20list.png)
 
