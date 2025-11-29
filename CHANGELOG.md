@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [1.17.0](https://github.com/mikew/wadpunk/compare/v1.16.0...v1.17.0) (2025-11-29)
+
+
+### Features
+
+* Add UZDoom and make it the default ([#123](https://github.com/mikew/wadpunk/issues/123)) ([bf705ba](https://github.com/mikew/wadpunk/commit/bf705ba836b6fb09780edc2750b95af87b998a67))
+
 ## [1.16.0](https://github.com/mikew/wadpunk/compare/v1.15.1...v1.16.0) (2025-07-08)
 
 
