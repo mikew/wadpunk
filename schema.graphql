@@ -73,6 +73,7 @@ type Query {
   getAppInfo: AppInfo!
 
   getKnownSourcePorts: [KnownSourcePort!]!
+  getStarterSourcePort: KnownSourcePort!
 }
 
 input PreviousFileStateItemInput {
