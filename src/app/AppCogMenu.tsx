@@ -1,4 +1,4 @@
-import { useSuspenseQuery } from '@apollo/client'
+import { useSuspenseQuery } from "@apollo/client/react";
 import {
   ExitToApp,
   FolderOpen,

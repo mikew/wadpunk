@@ -1,4 +1,4 @@
-import { useSuspenseQuery } from '@apollo/client'
+import { useSuspenseQuery } from "@apollo/client/react";
 import { Add, Download } from '@mui/icons-material'
 import { Alert, AlertTitle, Button } from '@mui/material'
 

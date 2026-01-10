@@ -1,4 +1,4 @@
-import { useMutation, useSuspenseQuery } from '@apollo/client'
+import { useMutation, useSuspenseQuery } from "@apollo/client/react";
 import {
   Edit,
   Extension,
