@@ -3,6 +3,7 @@ import { Add, Download, Star } from '@mui/icons-material'
 import {
   Box,
   Button,
+  CircularProgress,
   Dialog,
   DialogContent,
   Divider,
@@ -13,7 +14,7 @@ import {
   Stack,
   Typography,
 } from '@mui/material'
-import { useMemo, useRef } from 'react'
+import { useMemo, useRef, Suspense } from 'react'
 import type { UseFormReturn } from 'react-hook-form'
 
 import { invalidateApolloQuery } from '#src/graphql/graphqlClient'
@@ -157,65 +158,71 @@ const SourcePortsDialog: React.FC = () => {
             </Box>
 
             <Box flexGrow="1">
-              <SourcePortForm
-                // key is needed here for react-hook-form. Without it, even though
-                // new objects are passed to `defaultValues`, it never reflects
-                // them in the fields.
-                // We also can't just use `selectedId` because there's a period
-                // where that is set but `selectedSourcePort` is null because the
-                // query is still loading. This way ensures the key changes when
-                // `selectedSourcePort` does.
-                key={selectedSourcePort ? selectedSourcePort.id : '-1'}
-                ref={formRef}
-                sourcePort={
-                  selectedSourcePort
-                    ? {
-                        ...selectedSourcePort,
-                        command: selectedSourcePort.command[0] || '',
-                        is_default: selectedSourcePort.is_default,
-                      }
-                    : {
-                        id: '',
-                        known_source_port_id: starterSourcePort.id,
-                        command: '',
-                        is_default: false,
-                      }
-                }
-                onClickSave={async (values, formApi) => {
-                  if (isAddingNew) {
-                    await createSourcePort({
-                      variables: {
-                        source_port: {
-                          id: values.id,
-                          known_source_port_id: values.known_source_port_id,
-                          // TODO This is a hack because I don't want to deal with the
-                          // array-ness of the command in the UI yet.
-                          command: values.command ? [values.command] : [],
-                          is_default: values.is_default,
-                        },
-                      },
-                    })
-
-                    formApi.reset()
-
-                    invalidateApolloQuery(['getSourcePorts'])
-
-                    dispatch(actions.setSelectedId(values.id))
-                  } else {
-                    await updateSourcePort({
-                      variables: {
-                        source_port: {
-                          id: selectedId,
-                          known_source_port_id: values.known_source_port_id,
-                          command: values.command ? [values.command] : [],
-                          is_default: values.is_default,
-                        },
-                      },
-                    })
-
-                    invalidateApolloQuery(['getSourcePorts'])
+              <Suspense fallback={<CircularProgress />}>
+                <SourcePortForm
+                  // key is needed here for react-hook-form. Without it, even though
+                  // new objects are passed to `defaultValues`, it never reflects
+                  // them in the fields.
+                  // We also can't just use `selectedId` because there's a period
+                  // where that is set but `selectedSourcePort` is null because the
+                  // query is still loading. This way ensures the key changes when
+                  // `selectedSourcePort` does.
+                  key={selectedSourcePort ? selectedSourcePort.id : '-1'}
+                  ref={formRef}
+                  sourcePort={
+                    selectedSourcePort
+                      ? {
+                          ...selectedSourcePort,
+                          command: selectedSourcePort.command[0] || '',
+                          is_default: selectedSourcePort.is_default,
+                          default_mod_ids:
+                            selectedSourcePort.default_mod_ids || [],
+                        }
+                      : {
+                          id: '',
+                          known_source_port_id: starterSourcePort.id,
+                          command: '',
+                          is_default: false,
+                          default_mod_ids: [],
+                        }
                   }
-                }}
+                  onClickSave={async (values, formApi) => {
+                    if (isAddingNew) {
+                      await createSourcePort({
+                        variables: {
+                          source_port: {
+                            id: values.id,
+                            known_source_port_id: values.known_source_port_id,
+                            // TODO This is a hack because I don't want to deal with the
+                            // array-ness of the command in the UI yet.
+                            command: values.command ? [values.command] : [],
+                            is_default: values.is_default,
+                            default_mod_ids: values.default_mod_ids,
+                          },
+                        },
+                      })
+
+                      formApi.reset()
+
+                      invalidateApolloQuery(['getSourcePorts'])
+
+                      dispatch(actions.setSelectedId(values.id))
+                    } else {
+                      await updateSourcePort({
+                        variables: {
+                          source_port: {
+                            id: selectedId,
+                            known_source_port_id: values.known_source_port_id,
+                            command: values.command ? [values.command] : [],
+                            is_default: values.is_default,
+                            default_mod_ids: values.default_mod_ids,
+                          },
+                        },
+                      })
+
+                      invalidateApolloQuery(['getSourcePorts'])
+                    }
+                  }}
                 onDeleteClick={async () => {
                   if (
                     await confirm({
@@ -232,6 +239,7 @@ const SourcePortsDialog: React.FC = () => {
                   }
                 }}
               />
+              </Suspense>
             </Box>
           </Stack>
         </DialogContent>

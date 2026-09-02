@@ -18,7 +18,8 @@
   "games": {
     "actions": {
       "openGamesFolder": "Spieleordner öffnen",
-      "start": "Spielen"
+      "start": "Spielen",
+      "useDefaultMods": "Standard-Mods verwenden"
     },
 
     "filter": {
@@ -124,6 +125,9 @@
       },
       "command": {
         "label": "Befehl"
+      },
+      "default_mod_ids": {
+        "label": "Standard-Mods"
       }
     }
   },

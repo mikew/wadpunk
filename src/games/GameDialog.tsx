@@ -123,7 +123,8 @@ const GameDialog: React.FC<{
     },
   })
 
-  const { sourcePorts, defaultSourcePort } = useSourcePortsContext()
+  const { sourcePorts, defaultSourcePort, findSourcePortById } =
+    useSourcePortsContext()
 
   const [updateGame] = useMutation(UpdateGameDocument)
 
@@ -349,6 +350,25 @@ const GameDialog: React.FC<{
                     )
                   })}
                 </ReactHookFormTextField>
+
+                <Button
+                  onClick={() => {
+                    const sourcePort = formApi.getValues('sourcePort')
+                    const defaultModIds =
+                      findSourcePortById(sourcePort)?.default_mod_ids || []
+
+                    const currentExtraModIds = (
+                      formApi.getValues('extraGameIds') || []
+                    ).map((x) => (typeof x === 'string' ? x : x.id))
+
+                    formApi.setValue('extraGameIds', [
+                      ...new Set([...currentExtraModIds, ...defaultModIds]),
+                    ])
+                  }}
+                  size="small"
+                >
+                  {t('games.actions.useDefaultMods')}
+                </Button>
 
                 <Controller
                   name="tags"

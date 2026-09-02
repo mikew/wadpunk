@@ -4,6 +4,7 @@ query getAllSourcePorts {
     command
     known_source_port_id
     is_default
+    default_mod_ids
   }
 
   getKnownSourcePorts {
@@ -27,11 +28,19 @@ query getAllSourcePorts {
   }
 }
 
+query getSourcePortFormFields {
+  getGames {
+    id
+    name
+  }
+}
+
 mutation createSourcePort($source_port: CreateSourcePortInput!) {
   createSourcePort(source_port: $source_port) {
     id
     command
     is_default
+    default_mod_ids
   }
 }
 
@@ -40,6 +49,7 @@ mutation updateSourcePort($source_port: UpdateSourcePortInput!) {
     id
     command
     is_default
+    default_mod_ids
   }
 }
 
