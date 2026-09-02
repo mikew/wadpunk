@@ -24,6 +24,7 @@
       "openGamesFolder": "Open Games Folder",
       "openGameFolder": "Open Folder",
       "start": "Play",
+      "useDefaultMods": "Use default mods",
       "dropToImport": "Drop to import Games ..."
     },
 
@@ -139,6 +140,9 @@
       "is_default": {
         "label": "Use as default",
         "helperText": "This Source Port will be used in Games by default."
+      },
+      "default_mod_ids": {
+        "label": "Default Mods"
       }
     },
 
