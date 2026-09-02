@@ -44,6 +44,7 @@ type SourcePort {
   command: [String!]!
   known_source_port_id: ID!
   is_default: Boolean!
+  default_mod_ids: [String!]
 }
 
 type AppInfo {
@@ -106,6 +107,7 @@ input CreateSourcePortInput {
   # TODO Should this be a separate mutation? The field probably won't be in the
   # ui for editing source ports, will probably be in the list itself.
   is_default: Boolean
+  default_mod_ids: [String!]
 }
 
 input UpdateSourcePortInput {
@@ -116,6 +118,7 @@ input UpdateSourcePortInput {
   # TODO Should this be a separate mutation? The field probably won't be in the
   # ui for editing source ports, will probably be in the list itself.
   is_default: Boolean
+  default_mod_ids: [String!]
 }
 
 type ImportFileResponse {

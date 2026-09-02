@@ -545,6 +545,7 @@ impl DataSource {
       command: Some(source_port.command),
       known_source_port_id: Some(source_port.known_source_port_id),
       is_default: source_port.is_default,
+      default_mod_ids: source_port.default_mod_ids,
     };
 
     database::save_source_port(db_source_port.clone());
@@ -564,6 +565,7 @@ impl DataSource {
     db_source_port.command = Some(source_port.command);
     db_source_port.known_source_port_id = Some(source_port.known_source_port_id);
     db_source_port.is_default = source_port.is_default;
+    db_source_port.default_mod_ids = source_port.default_mod_ids;
 
     database::save_source_port(db_source_port.clone());
     database::set_default_source_port(&source_port.id, source_port.is_default);

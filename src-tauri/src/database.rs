@@ -289,6 +289,7 @@ pub struct DbSourcePort {
   pub command: Option<Vec<String>>,
   pub known_source_port_id: Option<String>,
   pub is_default: Option<bool>,
+  pub default_mod_ids: Option<Vec<String>>,
 }
 
 fn recurse_disk_entry(dir: DiskEntry, files: &mut Vec<String>) {
@@ -316,6 +317,7 @@ impl DbSourcePort {
           .to_string(),
       ),
       is_default: self.is_default.unwrap_or_default(),
+      default_mod_ids: self.default_mod_ids.clone(),
     }
   }
 }
