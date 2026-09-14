@@ -24,7 +24,6 @@
       "openGamesFolder": "Open Games Folder",
       "openGameFolder": "Open Folder",
       "start": "Play",
-      "useDefaultMods": "Use default mods",
       "dropToImport": "Drop to import Games ..."
     },
 
@@ -140,15 +139,31 @@
       "is_default": {
         "label": "Use as default",
         "helperText": "This Source Port will be used in Games by default."
-      },
-      "default_mod_ids": {
-        "label": "Default Mods"
       }
     },
 
     "confirmDelete": {
       "title": "Delete Source Port",
       "message": "Are you sure you want to delete this Source Port?"
+    }
+  },
+
+  "modSets": {
+    "title": "Mod Sets",
+    "addNew": "Add New",
+
+    "fields": {
+      "name": {
+        "label": "Name"
+      },
+      "mods": {
+        "label": "Mods"
+      }
+    },
+
+    "confirmDelete": {
+      "title": "Delete Mod Set",
+      "message": "Are you sure you want to delete this Mod Set?"
     }
   },
 

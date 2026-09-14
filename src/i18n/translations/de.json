@@ -18,8 +18,7 @@
   "games": {
     "actions": {
       "openGamesFolder": "Spieleordner öffnen",
-      "start": "Spielen",
-      "useDefaultMods": "Standard-Mods verwenden"
+      "start": "Spielen"
     },
 
     "filter": {
@@ -125,10 +124,26 @@
       },
       "command": {
         "label": "Befehl"
-      },
-      "default_mod_ids": {
-        "label": "Standard-Mods"
       }
+    }
+  },
+
+  "modSets": {
+    "title": "Mod-Sets",
+    "addNew": "Hinzufügen",
+
+    "fields": {
+      "name": {
+        "label": "Name"
+      },
+      "mods": {
+        "label": "Mods"
+      }
+    },
+
+    "confirmDelete": {
+      "title": "Mod-Set löschen",
+      "message": "Möchtest du dieses Mod-Set wirklich löschen?"
     }
   },
 
