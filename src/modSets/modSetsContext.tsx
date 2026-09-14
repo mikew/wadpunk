@@ -13,9 +13,7 @@ import type { ModSetListItem } from './types'
 
 interface ModSetsContextType {
   modSets: ModSetListItem[]
-  findModSetByName: (
-    name?: ModSet['name'] | null,
-  ) => ModSetListItem | undefined
+  findModSetByName: (name?: ModSet['name'] | null) => ModSetListItem | undefined
   refetch: RefetchFunction<GetAllModSetsQuery, GetAllModSetsQueryVariables>
 }
 

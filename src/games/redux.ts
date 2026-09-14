@@ -4,20 +4,20 @@ import type { Game } from '#src/graphql/types'
 
 export type ImportQueueItem =
   | {
-    action: 'import'
-    filePath: string
-  }
+      action: 'import'
+      filePath: string
+    }
   | {
-    action: 'download'
-    host: string
-    hint?: string | null
-  }
+      action: 'download'
+      host: string
+      hint?: string | null
+    }
 
 export const actions = createActions('games', {
   setSelectedId: (id: Game['id'] | undefined) => ({ id }),
 
   addToImportQueue: (items: ImportQueueItem[]) => ({ items }),
-  removeImportQueueItem: () => { },
+  removeImportQueueItem: () => {},
 })
 
 export interface State {

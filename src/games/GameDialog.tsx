@@ -361,15 +361,10 @@ const GameDialog: React.FC<{
                         onClick={() => {
                           const currentExtraModIds = (
                             formApi.getValues('extraGameIds') || []
-                          ).map((x) =>
-                            typeof x === 'string' ? x : x.id,
-                          )
+                          ).map((x) => (typeof x === 'string' ? x : x.id))
 
                           formApi.setValue('extraGameIds', [
-                            ...new Set([
-                              ...currentExtraModIds,
-                              ...modSet.mods,
-                            ]),
+                            ...new Set([...currentExtraModIds, ...modSet.mods]),
                           ])
                         }}
                       >
