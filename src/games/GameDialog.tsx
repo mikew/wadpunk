@@ -38,6 +38,7 @@ import type { Game } from '#src/graphql/types'
 import { useI18nContext } from '#src/i18n/lib/i18nContext'
 import pathWithoutExtension from '#src/lib/pathWithoutExtension'
 import StarRating from '#src/lib/StarRating'
+import { useModSetsContext } from '#src/modSets/modSetsContext'
 import DelayedOnCloseDialog, {
   DelayedOnCloseDialogTitleWithCloseIcon,
   useDelayedOnCloseDialogTriggerClose,
@@ -124,6 +125,7 @@ const GameDialog: React.FC<{
   })
 
   const { sourcePorts, defaultSourcePort } = useSourcePortsContext()
+  const { modSets } = useModSetsContext()
 
   const [updateGame] = useMutation(UpdateGameDocument)
 
@@ -350,6 +352,28 @@ const GameDialog: React.FC<{
                   })}
                 </ReactHookFormTextField>
 
+                <Stack direction="row" spacing={1} flexWrap="wrap">
+                  {modSets.map((modSet) => {
+                    return (
+                      <Button
+                        key={modSet.name}
+                        size="small"
+                        onClick={() => {
+                          const currentExtraModIds = (
+                            formApi.getValues('extraGameIds') || []
+                          ).map((x) => (typeof x === 'string' ? x : x.id))
+
+                          formApi.setValue('extraGameIds', [
+                            ...new Set([...currentExtraModIds, ...modSet.mods]),
+                          ])
+                        }}
+                      >
+                        {modSet.name}
+                      </Button>
+                    )
+                  })}
+                </Stack>
+
                 <Controller
                   name="tags"
                   render={({
@@ -390,9 +414,9 @@ const GameDialog: React.FC<{
                                 alignSelf: 'flex-start',
                               },
                               '& .MuiInputAdornment-positionStart .MuiSvgIcon-root':
-                              {
-                                marginLeft: '4px',
-                              },
+                                {
+                                  marginLeft: '4px',
+                                },
                             }}
                           />
                         )}

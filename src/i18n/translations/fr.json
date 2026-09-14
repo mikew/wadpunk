@@ -128,6 +128,25 @@
     }
   },
 
+  "modSets": {
+    "title": "Ensembles de mods",
+    "addNew": "Ajouter",
+
+    "fields": {
+      "name": {
+        "label": "Nom"
+      },
+      "mods": {
+        "label": "Mods"
+      }
+    },
+
+    "confirmDelete": {
+      "title": "Supprimer l'ensemble de mods",
+      "message": "Êtes-vous sûr de vouloir supprimer cet ensemble de mods ?"
+    }
+  },
+
   "updateNotifier": {
     "actions": {
       "relaunch": "Redémarrer",

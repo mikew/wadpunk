@@ -148,6 +148,25 @@
     }
   },
 
+  "modSets": {
+    "title": "Mod Sets",
+    "addNew": "Add New",
+
+    "fields": {
+      "name": {
+        "label": "Name"
+      },
+      "mods": {
+        "label": "Mods"
+      }
+    },
+
+    "confirmDelete": {
+      "title": "Delete Mod Set",
+      "message": "Are you sure you want to delete this Mod Set?"
+    }
+  },
+
   "knownSourcePorts": {
     "info": {
       "gzdoom": {

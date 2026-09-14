@@ -7,7 +7,9 @@ import { Controller } from 'react-hook-form'
 
 export interface ReactHookFormTextFieldProps<
   T extends FieldValues = FieldValues,
-> extends Omit<
+>
+  extends
+    Omit<
       TextFieldProps,
       'value' | 'defaultValue' | 'onChange' | 'onBlur' | 'name'
     >,

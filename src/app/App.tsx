@@ -8,6 +8,8 @@ import ImportDropZone from '#src/games/ImportDropZone'
 import ImportQueueHandler from '#src/games/ImportQueueHandler'
 import type { SuspenseWrappedPromise } from '#src/lib/wrapPromiseForSuspense'
 import { wrapPromiseForSuspense } from '#src/lib/wrapPromiseForSuspense'
+import ModSetDialog from '#src/modSets/ModSetDialog'
+import { ModSetsProvider } from '#src/modSets/modSetsContext'
 import KnownSourcePortsDialog from '#src/sourcePorts/KnownSourcePortsDialog'
 import { SourcePortsProvider } from '#src/sourcePorts/sourcePortsContext'
 import SourcePortsDialog from '#src/sourcePorts/SourcePortsDialog'
@@ -22,46 +24,49 @@ function App() {
   return (
     <Initializer>
       <SourcePortsProvider>
-        <ImportDropZone>
-          <AppToolbarProvider>
-            <AppBar position="sticky">
-              <Toolbar sx={{ gap: 2 }}>
-                <AppToolbarSlot
-                  renderSlot={(props) => {
-                    return (
-                      <Stack
-                        alignItems="center"
-                        spacing={2}
-                        direction="row"
-                        ref={props.ref}
-                      />
-                    )
-                  }}
-                />
+        <ModSetsProvider>
+          <ImportDropZone>
+            <AppToolbarProvider>
+              <AppBar position="sticky">
+                <Toolbar sx={{ gap: 2 }}>
+                  <AppToolbarSlot
+                    renderSlot={(props) => {
+                      return (
+                        <Stack
+                          alignItems="center"
+                          spacing={2}
+                          direction="row"
+                          ref={props.ref}
+                        />
+                      )
+                    }}
+                  />
 
-                <Box flexGrow="1" />
+                  <Box flexGrow="1" />
 
-                <AppCogMenu />
-              </Toolbar>
-            </AppBar>
+                  <AppCogMenu />
+                </Toolbar>
+              </AppBar>
 
-            <OnboardingAlerts />
+              <OnboardingAlerts />
 
-            <GameList />
-          </AppToolbarProvider>
-        </ImportDropZone>
+              <GameList />
+            </AppToolbarProvider>
+          </ImportDropZone>
 
-        <GameDialogSuspense />
+          <GameDialogSuspense />
 
-        <SourcePortsDialog />
-        <KnownSourcePortsDialog />
-        <ImportQueueHandler />
+          <SourcePortsDialog />
+          <KnownSourcePortsDialog />
+          <ModSetDialog />
+          <ImportQueueHandler />
 
-        {/*
-          Since some of the CLI args require the initializeApp mutation to be
-          called, put this handler here instead of index.tsx.
-        */}
-        <TauriCliHandler />
+          {/*
+            Since some of the CLI args require the initializeApp mutation to be
+            called, put this handler here instead of index.tsx.
+          */}
+          <TauriCliHandler />
+        </ModSetsProvider>
       </SourcePortsProvider>
     </Initializer>
   )

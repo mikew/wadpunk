@@ -1,22 +1,21 @@
 import type { Dict, I18n } from 'i18n-js'
 
-export interface I18nContextValue
-  extends Pick<
-    I18n,
-    // Intentionally not grabbing `locale`, as it's a getter/setter and we need
-    // our own setter for that.
-    | 't'
-    | 'l'
-    | 'p'
-    | 'numberToCurrency'
-    | 'numberToPercentage'
-    | 'numberToHumanSize'
-    | 'numberToHuman'
-    | 'numberToRounded'
-    | 'numberToDelimited'
-    | 'timeAgoInWords'
-    | 'formatNumber'
-  > {
+export interface I18nContextValue extends Pick<
+  I18n,
+  // Intentionally not grabbing `locale`, as it's a getter/setter and we need
+  // our own setter for that.
+  | 't'
+  | 'l'
+  | 'p'
+  | 'numberToCurrency'
+  | 'numberToPercentage'
+  | 'numberToHumanSize'
+  | 'numberToHuman'
+  | 'numberToRounded'
+  | 'numberToDelimited'
+  | 'timeAgoInWords'
+  | 'formatNumber'
+> {
   locale: string
   setLocale: (locale: string) => Promise<void>
 }
