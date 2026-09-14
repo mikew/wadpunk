@@ -1,5 +1,4 @@
-import { useSuspenseQuery } from '@apollo/client'
-import { Edit, Extension, Terminal } from '@mui/icons-material'
+import { Edit, Terminal } from '@mui/icons-material'
 import {
   Box,
   Button,
@@ -20,7 +19,6 @@ import ReactHookFormTextField from '#src/react-hook-form/ReactHookFormTextField'
 import { useRootDispatch } from '#src/redux/helpers'
 
 import actions from './actions'
-import { GetSourcePortFormFieldsDocument } from './operations.generated'
 import { useSourcePortsContext } from './sourcePortsContext'
 
 export interface AddSourcePortFormValues {
@@ -28,7 +26,6 @@ export interface AddSourcePortFormValues {
   command: string
   known_source_port_id: string
   is_default: boolean
-  default_mod_ids: string[]
 }
 
 const SourcePortForm = forwardRef<
@@ -50,9 +47,6 @@ const SourcePortForm = forwardRef<
   const { knownSourcePorts } = useSourcePortsContext()
   const dispatch = useRootDispatch()
   const knownSourcePortId = formApi.watch('known_source_port_id')
-  const {
-    data: { getGames: games },
-  } = useSuspenseQuery(GetSourcePortFormFieldsDocument)
 
   return (
     <FormProvider {...formApi}>
@@ -148,30 +142,6 @@ const SourcePortForm = forwardRef<
           ),
         }}
       />
-
-      <ReactHookFormTextField
-        name="default_mod_ids"
-        select
-        SelectProps={{
-          multiple: true,
-        }}
-        label={t('sourcePorts.fields.default_mod_ids.label')}
-        InputProps={{
-          startAdornment: (
-            <InputAdornment position="start">
-              <Extension />
-            </InputAdornment>
-          ),
-        }}
-      >
-        {games.map((game) => {
-          return (
-            <MenuItem key={game.id} value={game.id}>
-              {game.name}
-            </MenuItem>
-          )
-        })}
-      </ReactHookFormTextField>
 
       <Stack direction="row" spacing={1}>
         {props.sourcePort.id === '' ? undefined : (

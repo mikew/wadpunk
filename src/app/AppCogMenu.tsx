@@ -1,6 +1,7 @@
 import { useSuspenseQuery } from '@apollo/client'
 import {
   ExitToApp,
+  Extension,
   FolderOpen,
   Refresh,
   Settings,
@@ -13,6 +14,7 @@ import useOpenGamesFolder from '#src/games/useOpenGamesFolder'
 import { invalidateApolloCache } from '#src/graphql/graphqlClient'
 import ChangeLanguage from '#src/i18n/ChangeLanguage'
 import { useI18nContext } from '#src/i18n/lib/i18nContext'
+import modSetsActions from '#src/modSets/actions'
 import { EasyMenu, EasyMenuItem } from '#src/mui/EasyMenu'
 import { useRootDispatch } from '#src/redux/helpers'
 import actions from '#src/sourcePorts/actions'
@@ -56,6 +58,17 @@ const AppCogMenu: React.FC = () => {
           <Terminal fontSize="small" />
         </ListItemIcon>
         {t('sourcePorts.title')}
+      </EasyMenuItem>
+
+      <EasyMenuItem
+        onClickDelayed={() => {
+          dispatch(modSetsActions.toggleDialog())
+        }}
+      >
+        <ListItemIcon>
+          <Extension fontSize="small" />
+        </ListItemIcon>
+        {t('modSets.title')}
       </EasyMenuItem>
 
       <EasyMenuItem
