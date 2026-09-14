@@ -1,6 +1,7 @@
-import { ApolloLink, fromPromise } from '@apollo/client'
+import { ApolloLink } from '@apollo/client'
 import { invoke } from '@tauri-apps/api/core'
 import { GraphQLError, print } from 'graphql'
+import { fromPromise } from 'rxjs/internal/observable/innerFrom'
 
 const tauriGraphqlApolloLink = new ApolloLink((operation) => {
   return fromPromise(
