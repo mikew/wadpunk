@@ -6,6 +6,7 @@ use chrono::Utc;
 use serde::{Deserialize, Serialize};
 
 use crate::graphql::generated::Game;
+use crate::graphql::generated::ModSet;
 use crate::graphql::generated::SourcePort;
 use crate::known_source_ports;
 use crate::tauri_legacy::{document_dir, home_dir, read_dir, DiskEntry};
@@ -29,10 +30,18 @@ pub fn get_meta_directory() -> std::path::PathBuf {
   get_data_directory().join("Meta")
 }
 
+pub fn get_mod_sets_file() -> std::path::PathBuf {
+  get_data_directory().join("mod_sets.json")
+}
+
 pub fn init_games() {
   fs::create_dir_all(get_games_directory()).unwrap();
   fs::create_dir_all(get_source_ports_directory()).unwrap();
   fs::create_dir_all(get_meta_directory()).unwrap();
+
+  if !get_mod_sets_file().exists() {
+    save_mod_sets(vec![]);
+  }
 }
 
 pub fn find_all_games() -> Vec<DbGameMeta> {
@@ -225,6 +234,49 @@ pub fn set_default_source_port(id: &str, is_default: Option<bool>) {
 }
 
 #[derive(Serialize, Deserialize, Debug, Default, Clone)]
+pub struct DbModSet {
+  pub name: Option<String>,
+  pub mods: Option<Vec<String>>,
+}
+
+impl DbModSet {
+  pub fn to_mod_set(&self) -> ModSet {
+    ModSet {
+      name: self.name.clone().unwrap_or_default(),
+      mods: self.mods.clone().unwrap_or_default(),
+    }
+  }
+}
+
+pub fn find_all_mod_sets() -> Vec<DbModSet> {
+  let json_contents = fs::read_to_string(get_mod_sets_file()).unwrap_or("[]".to_string());
+  serde_json::from_str::<Vec<DbModSet>>(&json_contents).unwrap()
+}
+
+pub fn save_mod_sets(mod_sets: Vec<DbModSet>) {
+  let json_str = serde_json::to_string(&mod_sets).unwrap();
+  fs::write(get_mod_sets_file(), json_str).unwrap();
+}
+
+pub fn save_mod_set(mod_set: DbModSet) {
+  let mut mod_sets = find_all_mod_sets();
+
+  if let Some(index) = mod_sets.iter().position(|x| x.name == mod_set.name) {
+    mod_sets[index] = mod_set;
+  } else {
+    mod_sets.push(mod_set);
+  }
+
+  save_mod_sets(mod_sets);
+}
+
+pub fn delete_mod_set(name: &str) {
+  let mut mod_sets = find_all_mod_sets();
+  mod_sets.retain(|x| x.name.as_deref() != Some(name));
+  save_mod_sets(mod_sets);
+}
+
+#[derive(Serialize, Deserialize, Debug, Default, Clone)]
 pub struct DbGameMeta {
   pub id: Option<String>,
   pub name: Option<String>,
@@ -289,21 +341,6 @@ pub struct DbSourcePort {
   pub command: Option<Vec<String>>,
   pub known_source_port_id: Option<String>,
   pub is_default: Option<bool>,
-  pub default_mod_ids: Option<Vec<String>>,
-}
-
-fn recurse_disk_entry(dir: DiskEntry, files: &mut Vec<String>) {
-  if let Some(children) = dir.children {
-    for d in children {
-      recurse_disk_entry(d, files);
-    }
-  } else {
-    if dir.name.unwrap().starts_with(".") {
-      return;
-    }
-
-    files.push(dir.path.to_str().unwrap().to_string());
-  }
 }
 
 impl DbSourcePort {
@@ -317,7 +354,20 @@ impl DbSourcePort {
           .to_string(),
       ),
       is_default: self.is_default.unwrap_or_default(),
-      default_mod_ids: self.default_mod_ids.clone(),
     }
+  }
+}
+
+fn recurse_disk_entry(dir: DiskEntry, files: &mut Vec<String>) {
+  if let Some(children) = dir.children {
+    for d in children {
+      recurse_disk_entry(d, files);
+    }
+  } else {
+    if dir.name.unwrap().starts_with(".") {
+      return;
+    }
+
+    files.push(dir.path.to_str().unwrap().to_string());
   }
 }

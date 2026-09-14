@@ -44,7 +44,6 @@ type SourcePort {
   command: [String!]!
   known_source_port_id: ID!
   is_default: Boolean!
-  default_mod_ids: [String!]
 }
 
 type AppInfo {
@@ -62,12 +61,19 @@ type KnownSourcePort {
   download_page_url: String!
 }
 
+type ModSet {
+  name: ID!
+  mods: [String!]!
+}
+
 type Query {
   getGames: [Game!]!
   getGame(id: ID!): Game!
   getGameFiles(game_ids: [ID!]!): [GameFileEntry!]!
 
   getSourcePorts: [SourcePort!]!
+
+  getModSets: [ModSet!]!
 
   getAppSettings: AppSettings!
 
@@ -107,7 +113,6 @@ input CreateSourcePortInput {
   # TODO Should this be a separate mutation? The field probably won't be in the
   # ui for editing source ports, will probably be in the list itself.
   is_default: Boolean
-  default_mod_ids: [String!]
 }
 
 input UpdateSourcePortInput {
@@ -118,7 +123,16 @@ input UpdateSourcePortInput {
   # TODO Should this be a separate mutation? The field probably won't be in the
   # ui for editing source ports, will probably be in the list itself.
   is_default: Boolean
-  default_mod_ids: [String!]
+}
+
+input CreateModSetInput {
+  name: ID!
+  mods: [String!]!
+}
+
+input UpdateModSetInput {
+  name: ID!
+  mods: [String!]!
 }
 
 type ImportFileResponse {
@@ -150,6 +164,10 @@ type Mutation {
   createSourcePort(source_port: CreateSourcePortInput!): SourcePort!
   updateSourcePort(source_port: UpdateSourcePortInput!): SourcePort!
   deleteSourcePort(id: ID!): Boolean!
+
+  createModSet(mod_set: CreateModSetInput!): ModSet!
+  updateModSet(mod_set: UpdateModSetInput!): ModSet!
+  deleteModSet(name: ID!): Boolean!
 
   importFile(file_path: String!): ImportFileResponse!
 

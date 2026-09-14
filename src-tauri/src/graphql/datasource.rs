@@ -15,6 +15,7 @@ use tauri::Manager;
 
 use crate::database;
 use crate::database::normalize_name_from_id;
+use crate::database::DbModSet;
 use crate::database::DbPlaySession;
 use crate::database::DbPlaySessionEntry;
 use crate::database::DbPreviousFileStateItem;
@@ -29,17 +30,20 @@ use crate::tauri_helpers::reveal_in_finder::reveal_file_or_folder;
 use crate::tauri_plugin_downloader::tauri_download::download;
 
 use super::generated::AppSettings;
+use super::generated::CreateModSetInput;
 use super::generated::CreateSourcePortInput;
 use super::generated::DownloadGameResponse;
 use super::generated::Game;
 use super::generated::GameFileEntry;
 use super::generated::GameInput;
 use super::generated::KnownSourcePort;
+use super::generated::ModSet;
 use super::generated::Mutation;
 use super::generated::PlaySession;
 use super::generated::PreviousFileStateItem;
 use super::generated::Query;
 use super::generated::SourcePort;
+use super::generated::UpdateModSetInput;
 use super::generated::UpdateSourcePortInput;
 
 pub struct DataSource;
@@ -189,6 +193,19 @@ impl DataSource {
       database::find_all_source_ports()
         .into_iter()
         .map(|x| x.to_source_port())
+        .collect(),
+    )
+  }
+
+  pub async fn Query_getModSets(
+    &self,
+    _root: &Query,
+    _ctx: &Context<'_>,
+  ) -> GraphQLResult<Vec<ModSet>> {
+    Ok(
+      database::find_all_mod_sets()
+        .into_iter()
+        .map(|x| x.to_mod_set())
         .collect(),
     )
   }
@@ -545,7 +562,6 @@ impl DataSource {
       command: Some(source_port.command),
       known_source_port_id: Some(source_port.known_source_port_id),
       is_default: source_port.is_default,
-      default_mod_ids: source_port.default_mod_ids,
     };
 
     database::save_source_port(db_source_port.clone());
@@ -565,7 +581,6 @@ impl DataSource {
     db_source_port.command = Some(source_port.command);
     db_source_port.known_source_port_id = Some(source_port.known_source_port_id);
     db_source_port.is_default = source_port.is_default;
-    db_source_port.default_mod_ids = source_port.default_mod_ids;
 
     database::save_source_port(db_source_port.clone());
     database::set_default_source_port(&source_port.id, source_port.is_default);
@@ -580,6 +595,49 @@ impl DataSource {
     id: String,
   ) -> GraphQLResult<bool> {
     database::delete_source_port(&id);
+
+    Ok(true)
+  }
+
+  pub async fn Mutation_createModSet(
+    &self,
+    _root: &Mutation,
+    _ctx: &Context<'_>,
+    mod_set: CreateModSetInput,
+  ) -> GraphQLResult<ModSet> {
+    let db_mod_set = DbModSet {
+      name: Some(mod_set.name.clone()),
+      mods: Some(mod_set.mods),
+    };
+
+    database::save_mod_set(db_mod_set.clone());
+
+    Ok(db_mod_set.to_mod_set())
+  }
+
+  pub async fn Mutation_updateModSet(
+    &self,
+    _root: &Mutation,
+    _ctx: &Context<'_>,
+    mod_set: UpdateModSetInput,
+  ) -> GraphQLResult<ModSet> {
+    let db_mod_set = DbModSet {
+      name: Some(mod_set.name.clone()),
+      mods: Some(mod_set.mods),
+    };
+
+    database::save_mod_set(db_mod_set.clone());
+
+    Ok(db_mod_set.to_mod_set())
+  }
+
+  pub async fn Mutation_deleteModSet(
+    &self,
+    _root: &Mutation,
+    _ctx: &Context<'_>,
+    name: String,
+  ) -> GraphQLResult<bool> {
+    database::delete_mod_set(&name);
 
     Ok(true)
   }
