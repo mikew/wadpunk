@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [1.18.0](https://github.com/mikew/wadpunk/compare/v1.17.0...v1.18.0) (2026-09-14)
+
+
+### Features
+
+* "Mod Sets" ([#126](https://github.com/mikew/wadpunk/issues/126)) ([5b7bafd](https://github.com/mikew/wadpunk/commit/5b7bafd8f755621e98878d4eabd712dd748bb1f2))
+
 ## [1.17.0](https://github.com/mikew/wadpunk/compare/v1.16.0...v1.17.0) (2025-11-29)
 
 
