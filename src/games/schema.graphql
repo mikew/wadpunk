@@ -1,0 +1,95 @@
+type Game {
+  id: ID!
+  name: String!
+
+  rating: Int!
+  description: String!
+  notes: String!
+  tags: [String!]!
+
+  source_port: String
+  iwad_id: String
+  extra_mod_ids: [String!]
+  previous_file_state: [PreviousFileStateItem!]!
+
+  play_sessions: [PlaySession!]!
+
+  use_custom_config: Boolean!
+  installed_at: String!
+}
+
+# eslint-disable-next-line @graphql-eslint/strict-id-in-types
+type GameFileEntry {
+  relative: String!
+  absolute: String!
+}
+
+# eslint-disable-next-line @graphql-eslint/strict-id-in-types
+type PreviousFileStateItem {
+  absolute: String!
+  relative: String!
+  is_enabled: Boolean!
+}
+
+# eslint-disable-next-line @graphql-eslint/strict-id-in-types
+type PlaySession {
+  started_at: String!
+  ended_at: String!
+  duration: Int!
+}
+
+type Query {
+  getGames: [Game!]!
+  getGame(id: ID!): Game!
+  getGameFiles(game_ids: [ID!]!): [GameFileEntry!]!
+}
+
+input PreviousFileStateItemInput {
+  absolute: String!
+  relative: String!
+  is_enabled: Boolean!
+}
+
+input GameInput {
+  id: ID!
+
+  rating: Int
+  description: String
+  notes: String
+  tags: [String!]
+
+  source_port: String
+  iwad_id: String
+  extra_mod_ids: [String!]
+  previous_file_state: [PreviousFileStateItemInput!]
+
+  use_custom_config: Boolean
+}
+
+# eslint-disable-next-line @graphql-eslint/strict-id-in-types
+type ImportFileResponse {
+  success: Boolean!
+  message: String
+  game_id: ID
+}
+
+# eslint-disable-next-line @graphql-eslint/strict-id-in-types
+type DownloadGameResponse {
+  success: Boolean!
+  message: String
+  temp_path: String
+}
+
+type Mutation {
+  startGame(game_id: ID!): Boolean!
+
+  updateGame(game: GameInput!): Game!
+
+  updateNotes(game_id: ID!, notes: String!): Game!
+  updateRating(game_id: ID!, rating: Int!): Game!
+  updateTags(game_id: ID!, tags: [String!]!): Game!
+
+  importFile(file_path: String!): ImportFileResponse!
+
+  downloadGame(host: String!, hint: String): DownloadGameResponse!
+}

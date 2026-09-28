@@ -4,7 +4,7 @@ set -ex
 ./script/prepare-env
 
 pnpm exec ./node_modules/.bin/concurrently \
-  'GRAPHQL_CODEGEN_MODE=server ./node_modules/.bin/nodemon --watch ./schema --exec ./node_modules/.bin/graphql-codegen' \
-  'GRAPHQL_CODEGEN_MODE=client ./node_modules/.bin/nodemon --watch ./src --ext graphql --exec ./node_modules/.bin/graphql-codegen' \
+  'GRAPHQL_CODEGEN_MODE=server ./node_modules/.bin/nodemon --watch ./src --ext graphql --ignore "operations.graphql" --ignore "*.operations.graphql" --exec ./node_modules/.bin/graphql-codegen' \
+  'GRAPHQL_CODEGEN_MODE=client ./node_modules/.bin/nodemon --watch ./src --ext graphql --ignore "schema.graphql" --ignore "*.schema.graphql" --exec ./node_modules/.bin/graphql-codegen' \
   './node_modules/.bin/react-scripts-vite start' \
   './node_modules/.bin/tauri dev'

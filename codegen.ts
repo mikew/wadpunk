@@ -31,9 +31,11 @@ const GRAPHQL_CODEGEN_MODE: 'client' | 'server' =
   process.env.GRAPHQL_CODEGEN_MODE || 'server'
 
 const config: CodegenConfig = {
-  schema: './schema.graphql',
+  schema: ['./src/**/*.schema.graphql', './src/**/schema.graphql'],
   documents:
-    GRAPHQL_CODEGEN_MODE === 'client' ? './src/**/*.graphql' : undefined,
+    GRAPHQL_CODEGEN_MODE === 'client'
+      ? ['./src/**/*.operations.graphql', './src/**/operations.graphql']
+      : undefined,
 
   generates: {
     ...(GRAPHQL_CODEGEN_MODE === 'server'
