@@ -6,8 +6,8 @@ import {
   Slide,
   ThemeProvider,
 } from '@mui/material'
-import { setFilterStore } from '@promoboxx/use-filter/dist/store'
-import localStorageStore from '@promoboxx/use-filter/dist/store/localStorageStore'
+import { setFilterStore } from '@promoboxx/use-filter/store'
+import localStorageStore from '@promoboxx/use-filter/store/localStorageStore'
 import { SnackbarProvider } from 'notistack'
 import { StrictMode, Suspense, lazy } from 'react'
 import { createRoot } from 'react-dom/client'

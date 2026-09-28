@@ -10,7 +10,7 @@ import {
   ListItemText,
   Stack,
 } from '@mui/material'
-import useSimpleFilter from '@promoboxx/use-filter/dist/useSimpleFilter'
+import useSimpleFilter from '@promoboxx/use-filter/useSimpleFilter'
 import { useMemo, useState } from 'react'
 
 import { AppToolbarPortal } from '#src/app/AppToolbarArea'
