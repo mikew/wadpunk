@@ -44,7 +44,7 @@
     "react-redux": "^9.3.0",
     "redux": "^5.0.1",
     "redux-easy-mode": "^1.5.0",
-    "typescript": "^5.8.3"
+    "typescript": "^6.0.3"
   },
   "resolutions~": {
     "eslint-plugin-import": "2.27.5"
