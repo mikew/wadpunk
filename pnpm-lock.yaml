@@ -51,14 +51,14 @@ importers:
         specifier: ^7.1.1
         version: 7.3.11(@emotion/react@11.14.0(@types/react@18.3.31)(react@18.3.1)(supports-color@5.5.0))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@18.3.31)(react@18.3.1)(supports-color@5.5.0))(@types/react@18.3.31)(react@18.3.1)(supports-color@5.5.0))(@types/react@18.3.31)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@promoboxx/eslint-config':
-        specifier: file:../promoboxx/eslint-config
-        version: file:../promoboxx/eslint-config(@types/node@22.20.4)(@typescript-eslint/eslint-plugin@8.70.1(@typescript-eslint/parser@8.70.1(eslint@9.39.5(jiti@2.7.0)(supports-color@5.5.0))(supports-color@5.5.0)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@5.5.0))(supports-color@5.5.0)(typescript@6.0.3))(@typescript-eslint/parser@8.70.1(eslint@9.39.5(jiti@2.7.0)(supports-color@5.5.0))(supports-color@5.5.0)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@5.5.0))(graphql@16.14.2)(supports-color@5.5.0)(typescript@6.0.3)(vitest@4.1.11(@types/node@22.20.4)(jsdom@29.1.1)(vite@8.3.1(@types/node@22.20.4)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1)))
+        specifier: ^5.0.0
+        version: 5.0.0(@types/node@22.20.4)(@typescript-eslint/eslint-plugin@8.70.1(@typescript-eslint/parser@8.70.1(eslint@9.39.5(jiti@2.7.0)(supports-color@5.5.0))(supports-color@5.5.0)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@5.5.0))(supports-color@5.5.0)(typescript@6.0.3))(@typescript-eslint/parser@8.70.1(eslint@9.39.5(jiti@2.7.0)(supports-color@5.5.0))(supports-color@5.5.0)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@5.5.0))(graphql@16.14.2)(supports-color@5.5.0)(typescript@6.0.3)(vitest@4.1.11(@types/node@22.20.4)(jsdom@29.1.1)(vite@8.3.1(@types/node@22.20.4)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1)))
       '@promoboxx/react-scripts-vite':
         specifier: ^0.2.10
         version: 0.2.10(@svgr/core@8.1.0(supports-color@5.5.0)(typescript@6.0.3))(@types/node@22.20.4)(jiti@2.7.0)(optionator@0.9.4)(rollup@4.63.5)(supports-color@5.5.0)(terser@5.51.2)(typescript@6.0.3)(workbox-build@7.4.1(supports-color@5.5.0))(workbox-window@7.4.1)(yaml@2.9.1)
       '@promoboxx/use-filter':
-        specifier: file:../promoboxx/use-filter
-        version: file:../promoboxx/use-filter(react@18.3.1)
+        specifier: ^2.2.1
+        version: 2.2.1(react@18.3.1)
       '@tauri-apps/api':
         specifier: ^2.12.0
         version: 2.12.0
@@ -1463,15 +1463,15 @@ packages:
   '@popperjs/core@2.11.8':
     resolution: {integrity: sha512-P1st0aksCrn9sGZhp8GMYwBnQsbvAWsZAX44oXNNvLHGqAOcoVxmjZiohstwQ7SqKnbR47akdNi+uleWD8+g6A==}
 
-  '@promoboxx/eslint-config@file:../promoboxx/eslint-config':
-    resolution: {directory: ../promoboxx/eslint-config, type: directory}
+  '@promoboxx/eslint-config@5.0.0':
+    resolution: {integrity: sha512-QKbBmwOs8iRQadjvaOj72TDyOd9Yn+RisAMQmlN3pthwMOzzxbvCjt7QY4H8FNr0rg7XZ3iMNfzWX/8zbhE6wA==}
 
   '@promoboxx/react-scripts-vite@0.2.10':
     resolution: {integrity: sha512-+JDHJ7U7TNL4Omvrb4mfAG2asT49iTTdV2EQS56rPilRuQYW5RpEsHaHp+CIhBrWjFV2T/3T7QYCYHOAF9+uMg==}
     hasBin: true
 
-  '@promoboxx/use-filter@file:../promoboxx/use-filter':
-    resolution: {directory: ../promoboxx/use-filter, type: directory}
+  '@promoboxx/use-filter@2.2.1':
+    resolution: {integrity: sha512-U0tuXCAOociSxK1G5QET+D00z5iU+jgU+YKCIuW2Wmn7ta9dlrtL4TdC4qCgjyEZdj2w0ghHpLP9jwEhdBqDvg==}
     peerDependencies:
       react: '>=16.8.0'
 
@@ -6403,7 +6403,7 @@ snapshots:
 
   '@popperjs/core@2.11.8': {}
 
-  '@promoboxx/eslint-config@file:../promoboxx/eslint-config(@types/node@22.20.4)(@typescript-eslint/eslint-plugin@8.70.1(@typescript-eslint/parser@8.70.1(eslint@9.39.5(jiti@2.7.0)(supports-color@5.5.0))(supports-color@5.5.0)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@5.5.0))(supports-color@5.5.0)(typescript@6.0.3))(@typescript-eslint/parser@8.70.1(eslint@9.39.5(jiti@2.7.0)(supports-color@5.5.0))(supports-color@5.5.0)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@5.5.0))(graphql@16.14.2)(supports-color@5.5.0)(typescript@6.0.3)(vitest@4.1.11(@types/node@22.20.4)(jsdom@29.1.1)(vite@8.3.1(@types/node@22.20.4)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1)))':
+  '@promoboxx/eslint-config@5.0.0(@types/node@22.20.4)(@typescript-eslint/eslint-plugin@8.70.1(@typescript-eslint/parser@8.70.1(eslint@9.39.5(jiti@2.7.0)(supports-color@5.5.0))(supports-color@5.5.0)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@5.5.0))(supports-color@5.5.0)(typescript@6.0.3))(@typescript-eslint/parser@8.70.1(eslint@9.39.5(jiti@2.7.0)(supports-color@5.5.0))(supports-color@5.5.0)(typescript@6.0.3))(eslint@9.39.5(jiti@2.7.0)(supports-color@5.5.0))(graphql@16.14.2)(supports-color@5.5.0)(typescript@6.0.3)(vitest@4.1.11(@types/node@22.20.4)(jsdom@29.1.1)(vite@8.3.1(@types/node@22.20.4)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1)))':
     dependencies:
       '@eslint-community/eslint-plugin-eslint-comments': 4.8.1(eslint@9.39.5(jiti@2.7.0)(supports-color@5.5.0))
       '@graphql-eslint/eslint-plugin': 4.4.1(@types/node@22.20.4)(eslint@9.39.5(jiti@2.7.0)(supports-color@5.5.0))(graphql@16.14.2)(supports-color@5.5.0)(typescript@6.0.3)
@@ -6492,7 +6492,7 @@ snapshots:
       - workbox-window
       - yaml
 
-  '@promoboxx/use-filter@file:../promoboxx/use-filter(react@18.3.1)':
+  '@promoboxx/use-filter@2.2.1(react@18.3.1)':
     dependencies:
       qs: 6.16.0
       react: 18.3.1
