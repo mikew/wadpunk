@@ -57,8 +57,8 @@ const GameList: React.FC = () => {
       let shouldInclude = true
 
       if (
-        debouncedFilterInfo.filter.name &&
-        !x.name
+        debouncedFilterInfo.filter.name
+        && !x.name
           .toLowerCase()
           .includes(debouncedFilterInfo.filter.name.toLowerCase())
       ) {
@@ -122,8 +122,8 @@ const GameList: React.FC = () => {
 
       if (sortKey === 'playTime') {
         return (
-          calculateGamePlayTime(a.play_sessions) -
-          calculateGamePlayTime(b.play_sessions)
+          calculateGamePlayTime(a.play_sessions)
+          - calculateGamePlayTime(b.play_sessions)
         )
       }
 

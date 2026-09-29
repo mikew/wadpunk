@@ -19,8 +19,8 @@ const TauriExternalLinkHandler: React.FC = () => {
       const href = closestLink.getAttribute('href')
 
       if (
-        href &&
-        ['http://', 'https://', 'mailto:', 'tel:'].some((v) =>
+        href
+        && ['http://', 'https://', 'mailto:', 'tel:'].some((v) =>
           href.startsWith(v),
         )
       ) {

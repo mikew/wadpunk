@@ -21,8 +21,8 @@ function htmlDirAttribute(locale: string) {
   const fallbackLocale = locale.toLowerCase().split('-')[0] || ''
 
   if (
-    RTL_LOCALES.includes(locale.toLowerCase()) ||
-    RTL_LOCALES.includes(fallbackLocale)
+    RTL_LOCALES.includes(locale.toLowerCase())
+    || RTL_LOCALES.includes(fallbackLocale)
   ) {
     return 'rtl'
   }

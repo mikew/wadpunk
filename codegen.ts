@@ -119,10 +119,10 @@ const asyncGraphqlPlugin: CodegenPlugin<AsyncGraphqlPluginOptions> = {
 
     for (const typeName in typeMap) {
       if (
-        typeName.startsWith('_') ||
-        typeName === 'Query' ||
-        typeName === 'Mutation' ||
-        typeName === 'Subscription'
+        typeName.startsWith('_')
+        || typeName === 'Query'
+        || typeName === 'Mutation'
+        || typeName === 'Subscription'
       ) {
         continue
       }
@@ -184,8 +184,8 @@ pub struct ${inputType.name} {
 
       for (const objectField of Object.values(objectType.getFields())) {
         if (
-          objectField.type instanceof GraphQLUnionType ||
-          objectField.type instanceof GraphQLInterfaceType
+          objectField.type instanceof GraphQLUnionType
+          || objectField.type instanceof GraphQLInterfaceType
         ) {
           continue
         }
@@ -193,8 +193,8 @@ pub struct ${inputType.name} {
         const reducedFieldType = reduceGraphqlType(objectField.type)
 
         if (
-          reducedFieldType instanceof GraphQLScalarType ||
-          reducedFieldType instanceof GraphQLEnumType
+          reducedFieldType instanceof GraphQLScalarType
+          || reducedFieldType instanceof GraphQLEnumType
         ) {
           codegenContext.hasSimpleObjects = true
 
@@ -245,8 +245,8 @@ impl ${query.name} {
   ${Object.values(query.getFields())
     .map((x) => {
       if (
-        x.type instanceof GraphQLUnionType ||
-        x.type instanceof GraphQLInterfaceType
+        x.type instanceof GraphQLUnionType
+        || x.type instanceof GraphQLInterfaceType
       ) {
         return ''
       }
@@ -271,8 +271,8 @@ impl ${mutation.name} {
   ${Object.values(mutation.getFields())
     .map((x) => {
       if (
-        x.type instanceof GraphQLUnionType ||
-        x.type instanceof GraphQLInterfaceType
+        x.type instanceof GraphQLUnionType
+        || x.type instanceof GraphQLInterfaceType
       ) {
         return ''
       }
@@ -292,9 +292,9 @@ ${codegenContext.hasEnums ? 'use async_graphql::Enum;' : ''}
 ${codegenContext.hasInputObjects ? 'use async_graphql::InputObject;' : ''}
 ${codegenContext.hasSimpleObjects ? 'use async_graphql::Object;' : ''}
 ${
-  codegenContext.hasSimpleObjects ||
-  codegenContext.hasInputObjects ||
-  codegenContext.hasEnums
+  codegenContext.hasSimpleObjects
+  || codegenContext.hasInputObjects
+  || codegenContext.hasEnums
     ? 'use serde::{Deserialize, Serialize};'
     : ''
 }
@@ -402,8 +402,8 @@ function graphqlTypeToRustType(type: GraphQLInputType | GraphQLOutputType) {
   } else if (type instanceof GraphQLList) {
     rustType = `Vec<${graphqlTypeToRustType(type.ofType)}>`
   } else if (
-    type instanceof GraphQLInputObjectType ||
-    type instanceof GraphQLObjectType
+    type instanceof GraphQLInputObjectType
+    || type instanceof GraphQLObjectType
   ) {
     rustType = type.name
   }
