@@ -47,8 +47,7 @@ Communication between the UI and backend is done via GraphQL.
 
 #### Rust
 
-To add new types, queries, or mutations, edit `schema.graphql` and run
-`./script/prepare-env`.
+To add new types, queries, or mutations, edit a features `schema.graphql`.
 
 After adding new Queries / Mutations, or "complex" fields, you might need to
 implement the method in `./src-tauri/src/graphql/datasource.rs`. You can find a
