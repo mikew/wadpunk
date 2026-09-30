@@ -1,4 +1,4 @@
-import { useSuspenseQuery } from "@apollo/client/react";
+import { useSuspenseQuery } from '@apollo/client/react'
 import type { RefetchFunction } from '@apollo/client/react/internal'
 import { createContext, memo, useContext, useMemo } from 'react'
 

@@ -1,4 +1,4 @@
-import { useMutation, useSuspenseQuery } from "@apollo/client/react";
+import { useMutation, useSuspenseQuery } from '@apollo/client/react'
 import FolderOpen from '@mui/icons-material/FolderOpen'
 import PlayArrow from '@mui/icons-material/PlayArrow'
 import {

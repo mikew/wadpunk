@@ -1,4 +1,4 @@
-import { useMutation } from "@apollo/client/react";
+import { useMutation } from '@apollo/client/react'
 import { invariant } from '@apollo/client/utilities/invariant'
 import { Alert, LinearProgress, Snackbar, Stack } from '@mui/material'
 import { useEffect, useRef, useState } from 'react'
