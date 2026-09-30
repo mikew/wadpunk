@@ -122,9 +122,9 @@ const TauriUpdateNotifier: React.FC = () => {
     <>
       <Snackbar
         open={
-          status === 'UPDATE_AVAILABLE' ||
-          status === 'UPDATING' ||
-          status === 'RESTART_REQUIRED'
+          status === 'UPDATE_AVAILABLE'
+          || status === 'UPDATING'
+          || status === 'RESTART_REQUIRED'
         }
         anchorOrigin={{
           vertical: 'bottom',

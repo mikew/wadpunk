@@ -1,0 +1,25 @@
+# eslint-disable-next-line @graphql-eslint/strict-id-in-types
+type ModSet {
+  name: ID!
+  mods: [String!]!
+}
+
+type Query {
+  getModSets: [ModSet!]!
+}
+
+input CreateModSetInput {
+  name: ID!
+  mods: [String!]!
+}
+
+input UpdateModSetInput {
+  name: ID!
+  mods: [String!]!
+}
+
+type Mutation {
+  createModSet(mod_set: CreateModSetInput!): ModSet!
+  updateModSet(mod_set: UpdateModSetInput!): ModSet!
+  deleteModSet(name: ID!): Boolean!
+}

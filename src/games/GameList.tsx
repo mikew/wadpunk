@@ -10,7 +10,7 @@ import {
   ListItemText,
   Stack,
 } from '@mui/material'
-import useSimpleFilter from '@promoboxx/use-filter/dist/useSimpleFilter'
+import useSimpleFilter from '@promoboxx/use-filter/useSimpleFilter'
 import { useMemo, useState } from 'react'
 
 import { AppToolbarPortal } from '#src/app/AppToolbarArea'
@@ -57,8 +57,8 @@ const GameList: React.FC = () => {
       let shouldInclude = true
 
       if (
-        debouncedFilterInfo.filter.name &&
-        !x.name
+        debouncedFilterInfo.filter.name
+        && !x.name
           .toLowerCase()
           .includes(debouncedFilterInfo.filter.name.toLowerCase())
       ) {
@@ -122,8 +122,8 @@ const GameList: React.FC = () => {
 
       if (sortKey === 'playTime') {
         return (
-          calculateGamePlayTime(a.play_sessions) -
-          calculateGamePlayTime(b.play_sessions)
+          calculateGamePlayTime(a.play_sessions)
+          - calculateGamePlayTime(b.play_sessions)
         )
       }
 

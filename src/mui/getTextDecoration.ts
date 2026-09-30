@@ -13,9 +13,9 @@ const getTextDecoration = <T extends Theme>({
 }) => {
   const transformedColor = ownerState.color
   // check the `main` color first for a custom palette, then fallback to the color itself
-  const color = (getPath(theme, `palette.${transformedColor}.main`, false) ||
-    getPath(theme, `palette.${transformedColor}`, false) ||
-    ownerState.color) as string
+  const color = (getPath(theme, `palette.${transformedColor}.main`, false)
+    || getPath(theme, `palette.${transformedColor}`, false)
+    || ownerState.color) as string
   const channelColor = (getPath(
     theme,
     `palette.${transformedColor}.mainChannel`,

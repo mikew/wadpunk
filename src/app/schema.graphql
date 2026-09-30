@@ -1,0 +1,23 @@
+# eslint-disable-next-line @graphql-eslint/strict-id-in-types
+type AppSettings {
+  dataDirectory: String!
+}
+
+# eslint-disable-next-line @graphql-eslint/strict-id-in-types
+type AppInfo {
+  name: String!
+  version: String!
+}
+
+type Query {
+  getAppSettings: AppSettings!
+
+  getAppInfo: AppInfo!
+}
+
+type Mutation {
+  initializeApp: Boolean!
+
+  openGamesFolder(game_id: ID): Boolean!
+  openSourcePortsFolder(game_id: ID): Boolean!
+}

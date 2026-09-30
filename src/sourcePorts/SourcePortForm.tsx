@@ -74,8 +74,8 @@ const SourcePortForm = forwardRef<
             }) => {
               const isDisabled = formState.isSubmitting
               const errorMessage =
-                fieldState.error?.message ||
-                t('sourcePorts.fields.is_default.helperText')
+                fieldState.error?.message
+                || t('sourcePorts.fields.is_default.helperText')
 
               return (
                 <>

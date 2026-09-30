@@ -99,15 +99,15 @@ const GameDialogFileList: React.FC<GameDialogFileListProps> = (props) => {
           absolute: x.absolute,
           relative: x.relative,
           selected:
-            x.absolute.toLowerCase().endsWith('.wad') ||
-            x.absolute.toLowerCase().endsWith('.iwad') ||
-            x.absolute.toLowerCase().endsWith('.pwad') ||
-            x.absolute.toLowerCase().endsWith('.pk3') ||
-            x.absolute.toLowerCase().endsWith('.ipk3') ||
-            x.absolute.toLowerCase().endsWith('.pk7') ||
-            x.absolute.toLowerCase().endsWith('.pke') ||
-            x.absolute.toLowerCase().endsWith('.deh') ||
-            x.absolute.toLowerCase().endsWith('.bex'),
+            x.absolute.toLowerCase().endsWith('.wad')
+            || x.absolute.toLowerCase().endsWith('.iwad')
+            || x.absolute.toLowerCase().endsWith('.pwad')
+            || x.absolute.toLowerCase().endsWith('.pk3')
+            || x.absolute.toLowerCase().endsWith('.ipk3')
+            || x.absolute.toLowerCase().endsWith('.pk7')
+            || x.absolute.toLowerCase().endsWith('.pke')
+            || x.absolute.toLowerCase().endsWith('.deh')
+            || x.absolute.toLowerCase().endsWith('.bex'),
         }
 
         return entry
@@ -125,15 +125,15 @@ const GameDialogFileList: React.FC<GameDialogFileListProps> = (props) => {
 
         if (isSelected == null) {
           isSelected =
-            x.absolute.toLowerCase().endsWith('.wad') ||
-            x.absolute.toLowerCase().endsWith('.iwad') ||
-            x.absolute.toLowerCase().endsWith('.pwad') ||
-            x.absolute.toLowerCase().endsWith('.pk3') ||
-            x.absolute.toLowerCase().endsWith('.ipk3') ||
-            x.absolute.toLowerCase().endsWith('.pk7') ||
-            x.absolute.toLowerCase().endsWith('.pke') ||
-            x.absolute.toLowerCase().endsWith('.deh') ||
-            x.absolute.toLowerCase().endsWith('.bex')
+            x.absolute.toLowerCase().endsWith('.wad')
+            || x.absolute.toLowerCase().endsWith('.iwad')
+            || x.absolute.toLowerCase().endsWith('.pwad')
+            || x.absolute.toLowerCase().endsWith('.pk3')
+            || x.absolute.toLowerCase().endsWith('.ipk3')
+            || x.absolute.toLowerCase().endsWith('.pk7')
+            || x.absolute.toLowerCase().endsWith('.pke')
+            || x.absolute.toLowerCase().endsWith('.deh')
+            || x.absolute.toLowerCase().endsWith('.bex')
         }
 
         const entry: FileEntry = {

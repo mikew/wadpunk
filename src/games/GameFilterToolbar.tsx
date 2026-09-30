@@ -9,7 +9,7 @@ import {
   TextField,
   Typography,
 } from '@mui/material'
-import type { SimpleFilterApi } from '@promoboxx/use-filter/dist/useSimpleFilter'
+import type { SimpleFilterApi } from '@promoboxx/use-filter/useSimpleFilter'
 
 import { useI18nContext } from '#src/i18n/lib/i18nContext'
 import StarRating from '#src/lib/StarRating'

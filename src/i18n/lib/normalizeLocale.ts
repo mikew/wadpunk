@@ -2,8 +2,8 @@ import i18nConfig from '../config'
 
 function normalizeLocale(locale: string | null | undefined) {
   if (
-    i18nConfig.supportedLocales == null ||
-    i18nConfig.supportedLocales.length === 0
+    i18nConfig.supportedLocales == null
+    || i18nConfig.supportedLocales.length === 0
   ) {
     throw new Error('i18nConfig.supportedLocales is empty')
   }
