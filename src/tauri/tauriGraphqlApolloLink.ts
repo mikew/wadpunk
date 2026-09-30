@@ -1,9 +1,10 @@
-import { ApolloLink, fromPromise } from '@apollo/client'
+import { ApolloLink } from '@apollo/client'
 import { invoke } from '@tauri-apps/api/core'
 import { GraphQLError, print } from 'graphql'
+import { from } from 'rxjs'
 
 const tauriGraphqlApolloLink = new ApolloLink((operation) => {
-  return fromPromise(
+  return from(
     invoke<[string, boolean]>('plugin:graphql|graphql', {
       query: print(operation.query),
       variables: operation.variables,
@@ -21,7 +22,6 @@ const tauriGraphqlApolloLink = new ApolloLink((operation) => {
 
         return {
           errors: [new GraphQLError(String(err))],
-          context: operation.getContext(),
         }
       }),
   )
