@@ -15,6 +15,7 @@ query getGameListQuery {
     play_sessions {
       duration
       ended_at
+      passive
     }
   }
 }

@@ -333,6 +333,7 @@ pub struct DbPlaySession {
 pub struct DbPlaySessionEntry {
   pub started_at: Option<String>,
   pub ended_at: Option<String>,
+  pub passive: Option<bool>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Default, Clone)]

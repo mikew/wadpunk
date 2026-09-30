@@ -76,6 +76,7 @@ impl DataSource {
               duration,
               ended_at,
               started_at,
+              passive: play_session.passive.unwrap_or(false),
             })
           }
         }
@@ -368,6 +369,7 @@ impl DataSource {
     let mut play_session = DbPlaySessionEntry {
       started_at: Some(Utc::now().to_rfc3339()),
       ended_at: None,
+      passive: Some(false),
     };
 
     let exit_status = command.status().unwrap();
@@ -376,13 +378,16 @@ impl DataSource {
 
     database::record_game_play_session(&game_id, play_session.clone());
 
+    let mut passive_play_session = play_session.clone();
+    passive_play_session.passive = Some(true);
+
     if let Some(iwad_id) = &game.iwad_id {
-      database::record_game_play_session(iwad_id, play_session.clone());
+      database::record_game_play_session(iwad_id, passive_play_session.clone());
     }
 
     if let Some(extra_mod_ids) = &game.extra_mod_ids {
       for mod_id in extra_mod_ids {
-        database::record_game_play_session(mod_id, play_session.clone());
+        database::record_game_play_session(mod_id, passive_play_session.clone());
       }
     }
 
