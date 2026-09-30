@@ -73,14 +73,14 @@ export const EasyMenu: React.FC<EasyMenuProps> = ({
               'aria-labelledby': `${MenuProps.id}-button`,
               'role': 'listbox',
               ...MenuProps.slotProps?.list,
-            }
+            },
           }}
         >
           {MenuProps.children}
         </Menu>
       </EasyMenuContext.Provider>
     </>
-  );
+  )
 }
 
 export type EasyMenuItemProps = MenuItemProps & {

@@ -113,7 +113,7 @@ export const ConfirmDialog: React.FC = memo(() => {
           onExited: () => {
             context.setUi({})
           },
-        }
+        },
       }}
     >
       <DialogTitle>{context.ui.title || t('confirm.defaultTitle')}</DialogTitle>
@@ -144,5 +144,5 @@ export const ConfirmDialog: React.FC = memo(() => {
         </Button>
       </DialogActions>
     </Dialog>
-  );
+  )
 })

@@ -165,9 +165,13 @@ const ImportQueueHandler: React.FC = () => {
       }}
     >
       <Alert severity={currentImportItem === 'DONE' ? 'success' : 'info'}>
-        <Stack direction="column" spacing={1} sx={{
-          width: 300
-        }}>
+        <Stack
+          direction="column"
+          spacing={1}
+          sx={{
+            width: 300,
+          }}
+        >
           <div>{message}</div>
 
           <LinearProgress
@@ -179,7 +183,7 @@ const ImportQueueHandler: React.FC = () => {
         </Stack>
       </Alert>
     </Snackbar>
-  );
+  )
 }
 
 export default ImportQueueHandler

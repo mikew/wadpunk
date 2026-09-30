@@ -51,9 +51,11 @@ const SourcePortForm = forwardRef<
   return (
     <FormProvider {...formApi}>
       <Stack spacing={2} direction="row">
-        <Box sx={{
-          flexGrow: "1"
-        }}>
+        <Box
+          sx={{
+            flexGrow: '1',
+          }}
+        >
           <ReactHookFormTextField
             name="id"
             label={t('sourcePorts.fields.id.label')}
@@ -160,9 +162,11 @@ const SourcePortForm = forwardRef<
           </Button>
         )}
 
-        <Box sx={{
-          flexGrow: 1
-        }} />
+        <Box
+          sx={{
+            flexGrow: 1,
+          }}
+        />
 
         <Button
           onClick={() => {
@@ -182,7 +186,7 @@ const SourcePortForm = forwardRef<
         </Button>
       </Stack>
     </FormProvider>
-  );
+  )
 })
 
 export default SourcePortForm

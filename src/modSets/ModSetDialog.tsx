@@ -97,19 +97,21 @@ const ModSetDialog: React.FC = () => {
                         slotProps={{
                           secondary: {
                             sx: { wordWrap: 'break-word' },
-                          }
+                          },
                         }}
                       />
                     </ListItemButton>
                   </ListItem>
-                );
+                )
               })}
             </List>
           </Box>
 
-          <Box sx={{
-            flexGrow: "1"
-          }}>
+          <Box
+            sx={{
+              flexGrow: '1',
+            }}
+          >
             <ModSetForm
               key={selectedModSet ? selectedModSet.name : '-1'}
               ref={formRef}
@@ -173,7 +175,7 @@ const ModSetDialog: React.FC = () => {
         </Stack>
       </DialogContent>
     </DelayedOnCloseDialog>
-  );
+  )
 }
 
 export default ModSetDialog

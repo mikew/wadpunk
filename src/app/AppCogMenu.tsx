@@ -115,16 +115,17 @@ const AppCogMenu: React.FC = () => {
       <Typography
         variant="body2"
         sx={{
-          color: "text.secondary",
-          textAlign: "center"
-        }}>
+          color: 'text.secondary',
+          textAlign: 'center',
+        }}
+      >
         {t('app.nameAndVersion', {
           name: appInfoData.getAppInfo.name,
           version: appInfoData.getAppInfo.version,
         })}
       </Typography>
     </EasyMenu>
-  );
+  )
 }
 
 export default AppCogMenu

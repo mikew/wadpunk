@@ -114,7 +114,7 @@ const SourcePortsDialog: React.FC = () => {
                           slotProps={{
                             secondary: {
                               sx: { wordWrap: 'break-word' },
-                            }
+                            },
                           }}
                         />
 
@@ -123,22 +123,25 @@ const SourcePortsDialog: React.FC = () => {
                         ) : undefined}
                       </ListItemButton>
                     </ListItem>
-                  );
+                  )
                 })}
               </List>
 
               <Divider />
 
-              <Box sx={{
-                textAlign: "center"
-              }}>
+              <Box
+                sx={{
+                  textAlign: 'center',
+                }}
+              >
                 <Typography
                   variant="body2"
                   sx={{
-                    color: "text.secondary",
+                    color: 'text.secondary',
                     marginTop: 1,
-                    marginBottom: "16px"
-                  }}>
+                    marginBottom: '16px',
+                  }}
+                >
                   Don't know where to get started?
                 </Typography>
 
@@ -161,9 +164,11 @@ const SourcePortsDialog: React.FC = () => {
               </Box>
             </Box>
 
-            <Box sx={{
-              flexGrow: "1"
-            }}>
+            <Box
+              sx={{
+                flexGrow: '1',
+              }}
+            >
               <SourcePortForm
                 // key is needed here for react-hook-form. Without it, even though
                 // new objects are passed to `defaultValues`, it never reflects
@@ -248,7 +253,7 @@ const SourcePortsDialog: React.FC = () => {
         <DialogContent>{t('sourcePorts.actions.dropToImport')}</DialogContent>
       </Dialog>
     </>
-  );
+  )
 }
 
 export default SourcePortsDialog

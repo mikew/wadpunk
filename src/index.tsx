@@ -55,8 +55,9 @@ createRoot(rootElement).render(
                   <Box
                     sx={{
                       padding: 4,
-                      justifyContent: "center"
-                    }}>
+                      justifyContent: 'center',
+                    }}
+                  >
                     <CircularProgress />
                   </Box>
                 }

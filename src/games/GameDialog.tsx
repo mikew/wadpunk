@@ -93,8 +93,9 @@ export const GameDialogSuspense: React.FC = () => {
             <Box
               sx={{
                 padding: 4,
-                justifyContent: "center"
-              }}>
+                justifyContent: 'center',
+              }}
+            >
               <CircularProgress />
             </Box>
           </DialogContent>
@@ -110,7 +111,7 @@ export const GameDialogSuspense: React.FC = () => {
         />
       ) : undefined}
     </Suspense>
-  );
+  )
 }
 
 const GameDialog: React.FC<{
@@ -319,7 +320,7 @@ const GameDialog: React.FC<{
                                 <SportsEsports />
                               </InputAdornment>
                             ),
-                          }
+                          },
                         }}
                       >
                         <MenuItem value="">{t('shared.none')}</MenuItem>
@@ -332,7 +333,7 @@ const GameDialog: React.FC<{
                           )
                         })}
                       </TextField>
-                    );
+                    )
                   }}
                 />
 
@@ -362,9 +363,13 @@ const GameDialog: React.FC<{
                   })}
                 </ReactHookFormTextField>
 
-                <Stack direction="row" spacing={1} sx={{
-                  flexWrap: "wrap"
-                }}>
+                <Stack
+                  direction="row"
+                  spacing={1}
+                  sx={{
+                    flexWrap: 'wrap',
+                  }}
+                >
                   {modSets.map((modSet) => {
                     return (
                       <Button
@@ -431,7 +436,7 @@ const GameDialog: React.FC<{
                                     {props.slotProps.input.startAdornment}
                                   </>
                                 ),
-                              }
+                              },
                             }}
                           />
                         )}
@@ -443,10 +448,10 @@ const GameDialog: React.FC<{
                         options={allTags}
                         multiple
                         slotProps={{
-                          chip: { size: 'small' }
+                          chip: { size: 'small' },
                         }}
                       />
-                    );
+                    )
                   }}
                 />
 
@@ -535,7 +540,7 @@ const GameDialog: React.FC<{
         </GameFileListProvider>
       </FormProvider>
     </DelayedOnCloseDialog>
-  );
+  )
 }
 
 const GameDialogActions: React.FC<{
@@ -551,12 +556,19 @@ const GameDialogActions: React.FC<{
 
   return (
     <>
-      <Typography variant="caption" sx={{
-        color: "text.secondary"
-      }}>
-        <Stack direction="row" spacing={1} sx={{
-          alignItems: "center"
-        }}>
+      <Typography
+        variant="caption"
+        sx={{
+          color: 'text.secondary',
+        }}
+      >
+        <Stack
+          direction="row"
+          spacing={1}
+          sx={{
+            alignItems: 'center',
+          }}
+        >
           <Info fontSize="inherit" color="inherit" />
           Launch with <code>WADPunk launch-game "{props.game.id}"</code>
         </Stack>
@@ -600,5 +612,5 @@ const GameDialogActions: React.FC<{
         {t('games.actions.start')}
       </Button>
     </>
-  );
+  )
 }

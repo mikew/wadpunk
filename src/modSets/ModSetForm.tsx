@@ -89,9 +89,11 @@ const ModSetForm = forwardRef<
           </Button>
         )}
 
-        <Box sx={{
-          flexGrow: 1
-        }} />
+        <Box
+          sx={{
+            flexGrow: 1,
+          }}
+        />
 
         <Button
           onClick={() => {
@@ -111,7 +113,7 @@ const ModSetForm = forwardRef<
         </Button>
       </Stack>
     </FormProvider>
-  );
+  )
 })
 
 export default ModSetForm

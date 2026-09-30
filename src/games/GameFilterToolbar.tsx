@@ -66,7 +66,7 @@ const GameFilterToolbar: React.FC<{
                 </IconButton>
               </InputAdornment>
             ) : undefined,
-          }
+          },
         }}
       />
 
@@ -79,16 +79,17 @@ const GameFilterToolbar: React.FC<{
                 {...props}
                 variant="overline"
                 sx={{
-                  color: "text.secondary",
+                  color: 'text.secondary',
                   cursor: 'pointer',
                   lineHeight: 'initial',
-                }}>
+                }}
+              >
                 {t(
                   `games.filter.fields.starRatingMode.${filterApi.filterInfo.filter.starRatingMode}`,
                 )}{' '}
                 <ArrowDropDown fontSize="inherit" />
               </Typography>
-            );
+            )
           }}
           slotProps={{
             list: { dense: true },
@@ -101,9 +102,12 @@ const GameFilterToolbar: React.FC<{
             }}
           >
             <ListItemIcon>
-              <Typography variant="body2" sx={{
-                color: "text.secondary"
-              }}>
+              <Typography
+                variant="body2"
+                sx={{
+                  color: 'text.secondary',
+                }}
+              >
                 &lt;=
               </Typography>
             </ListItemIcon>
@@ -117,9 +121,12 @@ const GameFilterToolbar: React.FC<{
             }}
           >
             <ListItemIcon>
-              <Typography variant="body2" sx={{
-                color: "text.secondary"
-              }}>
+              <Typography
+                variant="body2"
+                sx={{
+                  color: 'text.secondary',
+                }}
+              >
                 =
               </Typography>
             </ListItemIcon>
@@ -133,9 +140,12 @@ const GameFilterToolbar: React.FC<{
             }}
           >
             <ListItemIcon>
-              <Typography variant="body2" sx={{
-                color: "text.secondary"
-              }}>
+              <Typography
+                variant="body2"
+                sx={{
+                  color: 'text.secondary',
+                }}
+              >
                 &gt;=
               </Typography>
             </ListItemIcon>
@@ -218,8 +228,9 @@ const GameFilterToolbar: React.FC<{
 
           select: {
             multiple: true,
-          }
-        }}>
+          },
+        }}
+      >
         {tags.map((x) => {
           return (
             <MenuItem key={x} value={x}>
@@ -240,7 +251,7 @@ const GameFilterToolbar: React.FC<{
         </Button>
       </div>
     </>
-  );
+  )
 }
 
 export default GameFilterToolbar

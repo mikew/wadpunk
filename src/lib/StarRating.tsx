@@ -39,7 +39,7 @@ const StarRating: React.FC<{
           setHoverIndex(undefined)
         }}
         sx={{
-          alignItems: "center"
+          alignItems: 'center',
         }}
       >
         {[1, 2, 3, 4, 5].map((x) => {
@@ -74,7 +74,7 @@ const StarRating: React.FC<{
         })}
       </Stack>
     </Tooltip>
-  );
+  )
 }
 
 export default StarRating

@@ -102,11 +102,11 @@ const DelayedOnCloseDialog: React.FC<DelayedOnCloseDialogProps> = (props) => {
             onExited: () => {
               props.onClose?.({}, onCloseReasonRef.current)
             },
-          }
+          },
         }}
       />
     </DelayedOnCloseDialogTriggerCloseContext.Provider>
-  );
+  )
 }
 
 export type DelayedOnCloseDialogCloseIconProps = Omit<
@@ -160,9 +160,10 @@ export const DelayedOnCloseDialogTitleWithCloseIcon: React.FC<
       <Stack
         direction="row"
         sx={{
-          alignItems: "flex-start",
-          justifyContent: "space-between"
-        }}>
+          alignItems: 'flex-start',
+          justifyContent: 'space-between',
+        }}
+      >
         <div>{props.children}</div>
 
         <div>
@@ -170,7 +171,7 @@ export const DelayedOnCloseDialogTitleWithCloseIcon: React.FC<
         </div>
       </Stack>
     </DialogTitle>
-  );
+  )
 }
 
 export default DelayedOnCloseDialog

@@ -37,16 +37,18 @@ function App() {
                           direction="row"
                           ref={props.ref}
                           sx={{
-                            alignItems: "center"
+                            alignItems: 'center',
                           }}
                         />
-                      );
+                      )
                     }}
                   />
 
-                  <Box sx={{
-                    flexGrow: "1"
-                  }} />
+                  <Box
+                    sx={{
+                      flexGrow: '1',
+                    }}
+                  />
 
                   <AppCogMenu />
                 </Toolbar>
@@ -73,7 +75,7 @@ function App() {
         </ModSetsProvider>
       </SourcePortsProvider>
     </Initializer>
-  );
+  )
 }
 
 function Initializer(props: React.PropsWithChildren) {

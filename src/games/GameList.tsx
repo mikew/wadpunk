@@ -202,12 +202,17 @@ const GameList: React.FC = () => {
                     }
                     slotProps={{
                       primary: { noWrap: true },
-                      secondary: { noWrap: true }
-                    }} />
+                      secondary: { noWrap: true },
+                    }}
+                  />
 
-                  <Stack direction="row" spacing={1} sx={{
-                    alignItems: "center"
-                  }}>
+                  <Stack
+                    direction="row"
+                    spacing={1}
+                    sx={{
+                      alignItems: 'center',
+                    }}
+                  >
                     <Stack direction="row" spacing={1}>
                       {x.tags.map((tag) => {
                         return (
@@ -256,12 +261,12 @@ const GameList: React.FC = () => {
                   </Stack>
                 </ListItemButton>
               </ListItem>
-            );
+            )
           }}
         />
       </List>
     </>
-  );
+  )
 }
 
 export default GameList
