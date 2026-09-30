@@ -33,16 +33,20 @@ function App() {
                     renderSlot={(props) => {
                       return (
                         <Stack
-                          alignItems="center"
                           spacing={2}
                           direction="row"
                           ref={props.ref}
+                          sx={{
+                            alignItems: "center"
+                          }}
                         />
-                      )
+                      );
                     }}
                   />
 
-                  <Box flexGrow="1" />
+                  <Box sx={{
+                    flexGrow: "1"
+                  }} />
 
                   <AppCogMenu />
                 </Toolbar>
@@ -69,7 +73,7 @@ function App() {
         </ModSetsProvider>
       </SourcePortsProvider>
     </Initializer>
-  )
+  );
 }
 
 function Initializer(props: React.PropsWithChildren) {

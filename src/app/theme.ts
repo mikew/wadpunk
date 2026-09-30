@@ -45,7 +45,7 @@ const theme = createTheme({
             borderBottomWidth: 0,
           },
         },
-        container: {
+        root: {
           [`&:last-child .${listItemClasses.divider}`]: {
             borderBottomWidth: 0,
           },

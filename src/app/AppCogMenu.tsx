@@ -45,8 +45,8 @@ const AppCogMenu: React.FC = () => {
         horizontal: 'right',
         vertical: 'top',
       }}
-      MenuListProps={{
-        dense: true,
+      slotProps={{
+        list: { dense: true },
       }}
     >
       <EasyMenuItem
@@ -112,14 +112,19 @@ const AppCogMenu: React.FC = () => {
 
       <ChangeLanguage />
 
-      <Typography color="text.secondary" variant="body2" textAlign="center">
+      <Typography
+        variant="body2"
+        sx={{
+          color: "text.secondary",
+          textAlign: "center"
+        }}>
         {t('app.nameAndVersion', {
           name: appInfoData.getAppInfo.name,
           version: appInfoData.getAppInfo.version,
         })}
       </Typography>
     </EasyMenu>
-  )
+  );
 }
 
 export default AppCogMenu

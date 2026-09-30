@@ -195,16 +195,19 @@ const GameList: React.FC = () => {
                 >
                   <ListItemText
                     primary={x.name}
-                    primaryTypographyProps={{ noWrap: true }}
                     secondary={
                       <>
                         {playtimeMessage} / {x.notes}
                       </>
                     }
-                    secondaryTypographyProps={{ noWrap: true }}
-                  />
+                    slotProps={{
+                      primary: { noWrap: true },
+                      secondary: { noWrap: true }
+                    }} />
 
-                  <Stack direction="row" spacing={1} alignItems="center">
+                  <Stack direction="row" spacing={1} sx={{
+                    alignItems: "center"
+                  }}>
                     <Stack direction="row" spacing={1}>
                       {x.tags.map((tag) => {
                         return (
@@ -253,12 +256,12 @@ const GameList: React.FC = () => {
                   </Stack>
                 </ListItemButton>
               </ListItem>
-            )
+            );
           }}
         />
       </List>
     </>
-  )
+  );
 }
 
 export default GameList

@@ -67,17 +67,20 @@ export const EasyMenu: React.FC<EasyMenuProps> = ({
           anchorEl={anchorEl}
           open={open}
           onClose={closeImmediately}
-          MenuListProps={{
-            'aria-labelledby': `${MenuProps.id}-button`,
-            'role': 'listbox',
-            ...MenuProps.MenuListProps,
+          slotProps={{
+            ...MenuProps.slotProps,
+            list: {
+              'aria-labelledby': `${MenuProps.id}-button`,
+              'role': 'listbox',
+              ...MenuProps.slotProps?.list,
+            }
           }}
         >
           {MenuProps.children}
         </Menu>
       </EasyMenuContext.Provider>
     </>
-  )
+  );
 }
 
 export type EasyMenuItemProps = MenuItemProps & {

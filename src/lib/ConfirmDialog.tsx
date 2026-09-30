@@ -106,13 +106,15 @@ export const ConfirmDialog: React.FC = memo(() => {
         context.currentResolve.current(false)
         context.setIsOpen(false)
       }}
-      TransitionProps={{
-        onExited: () => {
-          context.setUi({})
-        },
-      }}
       maxWidth="xs"
       fullWidth
+      slotProps={{
+        transition: {
+          onExited: () => {
+            context.setUi({})
+          },
+        }
+      }}
     >
       <DialogTitle>{context.ui.title || t('confirm.defaultTitle')}</DialogTitle>
 
@@ -142,5 +144,5 @@ export const ConfirmDialog: React.FC = memo(() => {
         </Button>
       </DialogActions>
     </Dialog>
-  )
+  );
 })

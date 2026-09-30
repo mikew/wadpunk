@@ -52,7 +52,11 @@ createRoot(rootElement).render(
             <CssBaseline>
               <Suspense
                 fallback={
-                  <Box padding={4} justifyContent="center">
+                  <Box
+                    sx={{
+                      padding: 4,
+                      justifyContent: "center"
+                    }}>
                     <CircularProgress />
                   </Box>
                 }
