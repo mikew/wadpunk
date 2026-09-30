@@ -1,5 +1,5 @@
-import { useSuspenseQuery } from '@apollo/client'
-import type { RefetchFunction } from '@apollo/client/react/hooks/useSuspenseQuery'
+import { useSuspenseQuery } from "@apollo/client/react";
+import type { RefetchFunction } from '@apollo/client/react/internal'
 import { createContext, memo, useContext, useMemo } from 'react'
 
 import type { ModSet } from '#src/graphql/types'

@@ -1,4 +1,4 @@
-import { useSuspenseQuery } from '@apollo/client'
+import { useSuspenseQuery } from "@apollo/client/react";
 import { Edit, Extension } from '@mui/icons-material'
 import { Box, Button, InputAdornment, MenuItem, Stack } from '@mui/material'
 import { forwardRef, useImperativeHandle } from 'react'
