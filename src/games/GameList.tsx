@@ -110,11 +110,13 @@ const GameList: React.FC = () => {
       }
 
       if (sortKey === 'lastPlayed') {
+        const activeSessionsA = a.play_sessions.filter((s) => !s.passive)
+        const activeSessionsB = b.play_sessions.filter((s) => !s.passive)
         const lastPlayedA = new Date(
-          a.play_sessions[a.play_sessions.length - 1]?.ended_at || 0,
+          activeSessionsA[activeSessionsA.length - 1]?.ended_at || 0,
         )
         const lastPlayedB = new Date(
-          b.play_sessions[b.play_sessions.length - 1]?.ended_at || 0,
+          activeSessionsB[activeSessionsB.length - 1]?.ended_at || 0,
         )
 
         return lastPlayedA.valueOf() - lastPlayedB.valueOf()
