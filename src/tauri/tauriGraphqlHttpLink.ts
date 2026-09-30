@@ -1,7 +1,7 @@
-import { createHttpLink } from '@apollo/client'
+import { HttpLink } from '@apollo/client'
 import { invoke } from '@tauri-apps/api/core'
 
-const tauriGraphqlHttpLink = createHttpLink({
+const tauriGraphqlHttpLink = new HttpLink({
   fetch: async (_input, init) => {
     const [responseStr, isOk] = await invoke<[string, boolean]>(
       'plugin:graphql|graphql',
