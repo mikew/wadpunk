@@ -36,6 +36,7 @@ type PlaySession {
   started_at: String!
   ended_at: String!
   duration: Int!
+  passive: Boolean!
 }
 
 type Query {
