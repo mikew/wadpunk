@@ -90,7 +90,12 @@ export const GameDialogSuspense: React.FC = () => {
       fallback={
         <Dialog open={isOpen}>
           <DialogContent>
-            <Box padding={4} justifyContent="center">
+            <Box
+              sx={{
+                padding: 4,
+                justifyContent: 'center',
+              }}
+            >
               <CircularProgress />
             </Box>
           </DialogContent>
@@ -223,12 +228,14 @@ const GameDialog: React.FC<{
                   name="sourcePort"
                   label={t('games.fields.sourcePort.label')}
                   select
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <Terminal />
-                      </InputAdornment>
-                    ),
+                  slotProps={{
+                    input: {
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <Terminal />
+                        </InputAdornment>
+                      ),
+                    },
                   }}
                 >
                   <MenuItem value={'-1'}>
@@ -306,12 +313,14 @@ const GameDialog: React.FC<{
                         error={fieldState.invalid}
                         value={isGameIwad ? fullGame.id : field.value}
                         helperText={errorMessage || iwadFieldHelperText}
-                        InputProps={{
-                          startAdornment: (
-                            <InputAdornment position="start">
-                              <SportsEsports />
-                            </InputAdornment>
-                          ),
+                        slotProps={{
+                          input: {
+                            startAdornment: (
+                              <InputAdornment position="start">
+                                <SportsEsports />
+                              </InputAdornment>
+                            ),
+                          },
                         }}
                       >
                         <MenuItem value="">{t('shared.none')}</MenuItem>
@@ -331,16 +340,18 @@ const GameDialog: React.FC<{
                 <ReactHookFormTextField
                   name="extraGameIds"
                   select
-                  SelectProps={{
-                    multiple: true,
-                  }}
                   label={t('games.fields.extraGames.label')}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <Extension />
-                      </InputAdornment>
-                    ),
+                  slotProps={{
+                    select: {
+                      multiple: true,
+                    },
+                    input: {
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <Extension />
+                        </InputAdornment>
+                      ),
+                    },
                   }}
                 >
                   {others.map((x) => {
@@ -352,7 +363,13 @@ const GameDialog: React.FC<{
                   })}
                 </ReactHookFormTextField>
 
-                <Stack direction="row" spacing={1} flexWrap="wrap">
+                <Stack
+                  direction="row"
+                  spacing={1}
+                  sx={{
+                    flexWrap: 'wrap',
+                  }}
+                >
                   {modSets.map((modSet) => {
                     return (
                       <Button
@@ -388,7 +405,6 @@ const GameDialog: React.FC<{
                       <Autocomplete<string, true, undefined, true>
                         {...field}
                         openOnFocus
-                        ChipProps={{ size: 'small' }}
                         renderInput={(props) => (
                           <TextField
                             {...props}
@@ -398,17 +414,6 @@ const GameDialog: React.FC<{
                             helperText={
                               errorMessage || t('games.fields.tags.helperText')
                             }
-                            InputProps={{
-                              ...props.InputProps,
-                              startAdornment: (
-                                <>
-                                  <InputAdornment position="start">
-                                    <Label sx={{ marginTop: -2 }} />
-                                  </InputAdornment>
-                                  {props.InputProps.startAdornment}
-                                </>
-                              ),
-                            }}
                             sx={{
                               '& .MuiInputAdornment-positionStart': {
                                 alignSelf: 'flex-start',
@@ -417,6 +422,21 @@ const GameDialog: React.FC<{
                                 {
                                   marginLeft: '4px',
                                 },
+                            }}
+                            slotProps={{
+                              ...props.slotProps,
+
+                              input: {
+                                ...props.slotProps.input,
+                                startAdornment: (
+                                  <>
+                                    <InputAdornment position="start">
+                                      <Label sx={{ marginTop: -2 }} />
+                                    </InputAdornment>
+                                    {props.slotProps.input.startAdornment}
+                                  </>
+                                ),
+                              },
                             }}
                           />
                         )}
@@ -427,6 +447,9 @@ const GameDialog: React.FC<{
                         }}
                         options={allTags}
                         multiple
+                        slotProps={{
+                          chip: { size: 'small' },
+                        }}
                       />
                     )
                   }}
@@ -438,12 +461,14 @@ const GameDialog: React.FC<{
                   multiline
                   minRows={2}
                   maxRows={8}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <Edit sx={{ marginTop: -3 }} />
-                      </InputAdornment>
-                    ),
+                  slotProps={{
+                    input: {
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <Edit sx={{ marginTop: -3 }} />
+                        </InputAdornment>
+                      ),
+                    },
                   }}
                   sx={{
                     '& .MuiInputAdornment-positionStart': {
@@ -531,8 +556,19 @@ const GameDialogActions: React.FC<{
 
   return (
     <>
-      <Typography variant="caption" color="text.secondary">
-        <Stack direction="row" spacing={1} alignItems="center">
+      <Typography
+        variant="caption"
+        sx={{
+          color: 'text.secondary',
+        }}
+      >
+        <Stack
+          direction="row"
+          spacing={1}
+          sx={{
+            alignItems: 'center',
+          }}
+        >
           <Info fontSize="inherit" color="inherit" />
           Launch with <code>WADPunk launch-game "{props.game.id}"</code>
         </Stack>

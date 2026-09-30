@@ -104,13 +104,25 @@ const KnownSourcePortCard: React.FC<KnownSourcePortCardProps> = (props) => {
       </AccordionSummary>
 
       <AccordionDetails>
-        <Stack spacing={1} direction="row" alignItems="center">
+        <Stack
+          spacing={1}
+          direction="row"
+          sx={{
+            alignItems: 'center',
+          }}
+        >
           {props.sourcePort.supports_custom_config ? CHECK_MARK : WARNING_ICON}
 
           <span>Supports custom config</span>
         </Stack>
 
-        <Stack spacing={1} direction="row" alignItems="center">
+        <Stack
+          spacing={1}
+          direction="row"
+          sx={{
+            alignItems: 'center',
+          }}
+        >
           {props.sourcePort.supports_save_dir ? CHECK_MARK : WARNING_ICON}
 
           <span>Supports save directory</span>
@@ -119,8 +131,10 @@ const KnownSourcePortCard: React.FC<KnownSourcePortCardProps> = (props) => {
         {description ? (
           <Typography
             variant="body2"
-            color="text.secondary"
-            sx={{ marginY: 2 }}
+            sx={{
+              color: 'text.secondary',
+              marginY: 2,
+            }}
           >
             {description}
           </Typography>

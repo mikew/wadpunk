@@ -265,8 +265,10 @@ const SortableItem: React.FC<SortableItemProps> = (props) => {
       />
       <ListItemText
         primary={props.file.relative}
-        primaryTypographyProps={{
-          color: props.file.selected ? undefined : 'text.secondary',
+        slotProps={{
+          primary: {
+            color: props.file.selected ? undefined : 'text.secondary',
+          },
         }}
       />
     </ListItem>

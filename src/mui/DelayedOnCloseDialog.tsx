@@ -89,17 +89,20 @@ const DelayedOnCloseDialog: React.FC<DelayedOnCloseDialogProps> = (props) => {
     <DelayedOnCloseDialogTriggerCloseContext.Provider value={triggerClose}>
       <Dialog
         {...props}
-        TransitionProps={{
-          ...props.TransitionProps,
-          onExited: () => {
-            props.onClose?.({}, onCloseReasonRef.current)
-          },
-        }}
         open={isOpen}
         onClose={(_event, reason) => {
           onCloseReasonRef.current = reason
 
           triggerClose(reason)
+        }}
+        slotProps={{
+          ...props.slotProps,
+          transition: {
+            ...props.slotProps?.transition,
+            onExited: () => {
+              props.onClose?.({}, onCloseReasonRef.current)
+            },
+          },
         }}
       />
     </DelayedOnCloseDialogTriggerCloseContext.Provider>
@@ -156,8 +159,10 @@ export const DelayedOnCloseDialogTitleWithCloseIcon: React.FC<
     <DialogTitle {...props}>
       <Stack
         direction="row"
-        alignItems="flex-start"
-        justifyContent="space-between"
+        sx={{
+          alignItems: 'flex-start',
+          justifyContent: 'space-between',
+        }}
       >
         <div>{props.children}</div>
 

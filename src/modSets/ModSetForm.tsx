@@ -41,28 +41,32 @@ const ModSetForm = forwardRef<
         name="name"
         label={t('modSets.fields.name.label')}
         disabled={props.modSet.name !== ''}
-        InputProps={{
-          startAdornment: (
-            <InputAdornment position="start">
-              <Edit />
-            </InputAdornment>
-          ),
+        slotProps={{
+          input: {
+            startAdornment: (
+              <InputAdornment position="start">
+                <Edit />
+              </InputAdornment>
+            ),
+          },
         }}
       />
 
       <ReactHookFormTextField
         name="mods"
         select
-        SelectProps={{
-          multiple: true,
-        }}
         label={t('modSets.fields.mods.label')}
-        InputProps={{
-          startAdornment: (
-            <InputAdornment position="start">
-              <Extension />
-            </InputAdornment>
-          ),
+        slotProps={{
+          select: {
+            multiple: true,
+          },
+          input: {
+            startAdornment: (
+              <InputAdornment position="start">
+                <Extension />
+              </InputAdornment>
+            ),
+          },
         }}
       >
         {games.map((game) => {
@@ -85,7 +89,11 @@ const ModSetForm = forwardRef<
           </Button>
         )}
 
-        <Box flexGrow={1} />
+        <Box
+          sx={{
+            flexGrow: 1,
+          }}
+        />
 
         <Button
           onClick={() => {

@@ -41,31 +41,33 @@ const GameFilterToolbar: React.FC<{
         onChange={(event) => {
           filterApi.updateFilter({ name: event.target.value })
         }}
-        InputProps={{
-          startAdornment: (
-            <InputAdornment position="start">
-              <Search />
-            </InputAdornment>
-          ),
-          endAdornment: filterApi.filterInfo.filter.name ? (
-            <InputAdornment position="end">
-              <IconButton
-                size="small"
-                onClick={() => {
-                  filterApi.updateFilter(
-                    {
-                      name: '',
-                    },
-                    true,
-                  )
-                }}
-              >
-                <Clear fontSize="inherit" />
-              </IconButton>
-            </InputAdornment>
-          ) : undefined,
-        }}
         sx={{ flex: '0 0 200px' }}
+        slotProps={{
+          input: {
+            startAdornment: (
+              <InputAdornment position="start">
+                <Search />
+              </InputAdornment>
+            ),
+            endAdornment: filterApi.filterInfo.filter.name ? (
+              <InputAdornment position="end">
+                <IconButton
+                  size="small"
+                  onClick={() => {
+                    filterApi.updateFilter(
+                      {
+                        name: '',
+                      },
+                      true,
+                    )
+                  }}
+                >
+                  <Clear fontSize="inherit" />
+                </IconButton>
+              </InputAdornment>
+            ) : undefined,
+          },
+        }}
       />
 
       <Stack direction="column">
@@ -76,8 +78,11 @@ const GameFilterToolbar: React.FC<{
               <Typography
                 {...props}
                 variant="overline"
-                color="text.secondary"
-                sx={{ cursor: 'pointer', lineHeight: 'initial' }}
+                sx={{
+                  color: 'text.secondary',
+                  cursor: 'pointer',
+                  lineHeight: 'initial',
+                }}
               >
                 {t(
                   `games.filter.fields.starRatingMode.${filterApi.filterInfo.filter.starRatingMode}`,
@@ -86,8 +91,8 @@ const GameFilterToolbar: React.FC<{
               </Typography>
             )
           }}
-          MenuListProps={{
-            dense: true,
+          slotProps={{
+            list: { dense: true },
           }}
         >
           <EasyMenuItem
@@ -97,7 +102,12 @@ const GameFilterToolbar: React.FC<{
             }}
           >
             <ListItemIcon>
-              <Typography variant="body2" color="text.secondary">
+              <Typography
+                variant="body2"
+                sx={{
+                  color: 'text.secondary',
+                }}
+              >
                 &lt;=
               </Typography>
             </ListItemIcon>
@@ -111,7 +121,12 @@ const GameFilterToolbar: React.FC<{
             }}
           >
             <ListItemIcon>
-              <Typography variant="body2" color="text.secondary">
+              <Typography
+                variant="body2"
+                sx={{
+                  color: 'text.secondary',
+                }}
+              >
                 =
               </Typography>
             </ListItemIcon>
@@ -125,7 +140,12 @@ const GameFilterToolbar: React.FC<{
             }}
           >
             <ListItemIcon>
-              <Typography variant="body2" color="text.secondary">
+              <Typography
+                variant="body2"
+                sx={{
+                  color: 'text.secondary',
+                }}
+              >
                 &gt;=
               </Typography>
             </ListItemIcon>
@@ -170,33 +190,11 @@ const GameFilterToolbar: React.FC<{
 
       <TextField
         select
-        SelectProps={{
-          multiple: true,
-        }}
         size="small"
         margin="none"
         variant="standard"
         label={t('games.filter.fields.tags.label')}
         value={filterApi.filterInfo.filter.tags}
-        InputProps={{
-          endAdornment: filterApi.filterInfo.filter.tags.length ? (
-            <InputAdornment position="end" sx={{ marginRight: 3 }}>
-              <IconButton
-                size="small"
-                onClick={() => {
-                  filterApi.updateFilter(
-                    {
-                      tags: [],
-                    },
-                    true,
-                  )
-                }}
-              >
-                <Clear fontSize="inherit" />
-              </IconButton>
-            </InputAdornment>
-          ) : undefined,
-        }}
         onChange={(event) => {
           if (!Array.isArray(event.target.value)) {
             return
@@ -207,6 +205,31 @@ const GameFilterToolbar: React.FC<{
           })
         }}
         sx={{ flex: '0 0 200px' }}
+        slotProps={{
+          input: {
+            endAdornment: filterApi.filterInfo.filter.tags.length ? (
+              <InputAdornment position="end" sx={{ marginRight: 3 }}>
+                <IconButton
+                  size="small"
+                  onClick={() => {
+                    filterApi.updateFilter(
+                      {
+                        tags: [],
+                      },
+                      true,
+                    )
+                  }}
+                >
+                  <Clear fontSize="inherit" />
+                </IconButton>
+              </InputAdornment>
+            ) : undefined,
+          },
+
+          select: {
+            multiple: true,
+          },
+        }}
       >
         {tags.map((x) => {
           return (

@@ -111,8 +111,10 @@ const SourcePortsDialog: React.FC = () => {
                       >
                         <ListItemText
                           primary={x.id}
-                          secondaryTypographyProps={{
-                            sx: { wordWrap: 'break-word' },
+                          slotProps={{
+                            secondary: {
+                              sx: { wordWrap: 'break-word' },
+                            },
                           }}
                         />
 
@@ -127,12 +129,18 @@ const SourcePortsDialog: React.FC = () => {
 
               <Divider />
 
-              <Box textAlign="center">
+              <Box
+                sx={{
+                  textAlign: 'center',
+                }}
+              >
                 <Typography
                   variant="body2"
-                  color="text.secondary"
-                  paragraph
-                  sx={{ marginTop: 1 }}
+                  sx={{
+                    color: 'text.secondary',
+                    marginTop: 1,
+                    marginBottom: '16px',
+                  }}
                 >
                   Don't know where to get started?
                 </Typography>
@@ -156,7 +164,11 @@ const SourcePortsDialog: React.FC = () => {
               </Box>
             </Box>
 
-            <Box flexGrow="1">
+            <Box
+              sx={{
+                flexGrow: '1',
+              }}
+            >
               <SourcePortForm
                 // key is needed here for react-hook-form. Without it, even though
                 // new objects are passed to `defaultValues`, it never reflects

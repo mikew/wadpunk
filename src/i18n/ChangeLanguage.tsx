@@ -33,8 +33,8 @@ const ChangeLanguage: React.FC = () => {
         horizontal: 'left',
         vertical: 'top',
       }}
-      MenuListProps={{
-        dense: true,
+      slotProps={{
+        list: { dense: true },
       }}
     >
       {i18nConfig.supportedLocales?.map((x) => {
