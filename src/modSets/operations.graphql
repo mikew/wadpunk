@@ -1,28 +1,34 @@
+fragment ModSetDialogFields on ModSet {
+  name
+  mods
+}
+
+fragment ModSetFormFields on Game {
+  id
+  name
+}
+
 query getAllModSets {
   getModSets {
-    name
-    mods
+    ...ModSetDialogFields
   }
 }
 
 query getModSetsFormFields {
   getGames {
-    id
-    name
+    ...ModSetFormFields
   }
 }
 
 mutation createModSet($mod_set: CreateModSetInput!) {
   createModSet(mod_set: $mod_set) {
-    name
-    mods
+    ...ModSetDialogFields
   }
 }
 
 mutation updateModSet($mod_set: UpdateModSetInput!) {
   updateModSet(mod_set: $mod_set) {
-    name
-    mods
+    ...ModSetDialogFields
   }
 }
 

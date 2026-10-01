@@ -27,8 +27,8 @@ import DelayedOnCloseDialog, {
 import { useRootDispatch, useRootSelector } from '#src/redux/helpers'
 
 import actions from './actions'
+import type { KnownSourcePortCardFieldsFragment } from './operations.generated'
 import { useSourcePortsContext } from './sourcePortsContext'
-import type { KnownSourcePortListItem } from './types'
 
 const KnownSourcePortsDialog: React.FC = () => {
   const { knownSourcePorts } = useSourcePortsContext()
@@ -84,7 +84,7 @@ const CHECK_MARK = <Check color="success" fontSize="small" />
 const WARNING_ICON = <Cancel color="warning" fontSize="small" />
 
 interface KnownSourcePortCardProps extends Omit<AccordionProps, 'children'> {
-  sourcePort: KnownSourcePortListItem
+  sourcePort: KnownSourcePortCardFieldsFragment
 }
 
 const KnownSourcePortCard: React.FC<KnownSourcePortCardProps> = (props) => {
