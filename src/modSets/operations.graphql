@@ -16,6 +16,7 @@ query getAllModSets {
 
 query getModSetsFormFields {
   getGames {
+    id
     ...ModSetFormFields
   }
 }
