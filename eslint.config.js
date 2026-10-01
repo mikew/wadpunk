@@ -1,8 +1,8 @@
 import pbxxBase from '@promoboxx/eslint-config'
-import pbxxReact from '@promoboxx/eslint-config/react'
 import pbxxGraphqlOperations from '@promoboxx/eslint-config/graphql-operations'
 import pbxxGraphqlSchema from '@promoboxx/eslint-config/graphql-schema'
 import pbxxPrettier from '@promoboxx/eslint-config/prettier'
+import pbxxReact from '@promoboxx/eslint-config/react'
 import { defineConfig, globalIgnores } from 'eslint/config'
 
 const config = defineConfig([

@@ -1,11 +1,15 @@
+fragment AppCogMenuFields on AppInfo {
+  name
+  version
+}
+
 mutation initializeApp {
   initializeApp
 }
 
 query getAppInfo {
   getAppInfo {
-    name
-    version
+    ...AppCogMenuFields
   }
 }
 

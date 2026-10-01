@@ -7,13 +7,15 @@ import type { ModSet } from '#src/graphql/types'
 import type {
   GetAllModSetsQuery,
   GetAllModSetsQueryVariables,
+  ModSetDialogFieldsFragment,
 } from './operations.generated'
 import { GetAllModSetsDocument } from './operations.generated'
-import type { ModSetListItem } from './types'
 
 interface ModSetsContextType {
-  modSets: ModSetListItem[]
-  findModSetByName: (name?: ModSet['name'] | null) => ModSetListItem | undefined
+  modSets: ModSetDialogFieldsFragment[]
+  findModSetByName: (
+    name?: ModSet['name'] | null,
+  ) => ModSetDialogFieldsFragment | undefined
   refetch: RefetchFunction<GetAllModSetsQuery, GetAllModSetsQueryVariables>
 }
 
