@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [1.18.0](https://github.com/mikew/wadpunk/compare/v1.17.0...v1.18.0) (2026-10-03)
+
+
+### Features
+
+* "Mod Sets" ([#126](https://github.com/mikew/wadpunk/issues/126)) ([5b7bafd](https://github.com/mikew/wadpunk/commit/5b7bafd8f755621e98878d4eabd712dd748bb1f2))
+* Passive play sessions ([#133](https://github.com/mikew/wadpunk/issues/133)) ([48743e1](https://github.com/mikew/wadpunk/commit/48743e18aed482b4cede02f4bfe2049340f6911f)), closes [#125](https://github.com/mikew/wadpunk/issues/125)
+
+
+### Bug Fixes
+
+* housekeeping, split out schema.graphql into their own feature directories ([#128](https://github.com/mikew/wadpunk/issues/128)) ([e8bad98](https://github.com/mikew/wadpunk/commit/e8bad980cfca41dcfde6fc093782a099c721893f))
+* housekeeping: mui v9 ([#132](https://github.com/mikew/wadpunk/issues/132)) ([21879a1](https://github.com/mikew/wadpunk/commit/21879a19ff91f8b7ddcd5b581088efdc4443c00f)), closes [#130](https://github.com/mikew/wadpunk/issues/130)
+* housekeeping: upgrade apollo ([#131](https://github.com/mikew/wadpunk/issues/131)) ([7a204df](https://github.com/mikew/wadpunk/commit/7a204df16cd1493e8ae84fd2783fb7f7f10e1b3c)), closes [#129](https://github.com/mikew/wadpunk/issues/129)
+
 ## [1.17.0](https://github.com/mikew/wadpunk/compare/v1.16.0...v1.17.0) (2025-11-29)
 
 
