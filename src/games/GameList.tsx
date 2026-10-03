@@ -15,6 +15,7 @@ import { useMemo, useState } from 'react'
 
 import { AppToolbarPortal } from '#src/app/AppToolbarArea'
 import * as games from '#src/games/redux'
+import { useI18nContext } from '#src/i18n/lib/i18nContext'
 import pathWithoutExtension from '#src/lib/pathWithoutExtension'
 import StarRating from '#src/lib/StarRating'
 import VirtualizedList from '#src/lib/VirtualizedList'
@@ -31,6 +32,7 @@ import useOpenGamesFolder from './useOpenGamesFolder'
 import useStartGame from './useStartGame'
 
 const GameList: React.FC = () => {
+  const { t } = useI18nContext()
   const { data } = useSuspenseQuery(GetGameListQueryDocument)
   const dispatch = useRootDispatch()
 
@@ -175,10 +177,12 @@ const GameList: React.FC = () => {
 
             let playtimeMessage =
               playTime === 0
-                ? 'Never played'
-                : `${new Date(playTime * 1000)
-                    .toISOString()
-                    .substring(11, 19)} played`
+                ? t('games.list.neverPlayed')
+                : t('games.list.timePlayed', {
+                    time: new Date(playTime * 1000)
+                      .toISOString()
+                      .substring(11, 19),
+                  })
 
             return (
               <ListItem

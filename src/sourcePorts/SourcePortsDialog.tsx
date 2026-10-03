@@ -95,7 +95,7 @@ const SourcePortsDialog: React.FC = () => {
                     }}
                     selected={isAddingNew}
                   >
-                    <ListItemText primary={<strong>Add New</strong>} />
+                    <ListItemText primary={<strong>{t('sourcePorts.addNew')}</strong>} />
                     <Add />
                   </ListItemButton>
                 </ListItem>
