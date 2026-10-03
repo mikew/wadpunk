@@ -1,8 +1,9 @@
 import pbxxBase from '@promoboxx/eslint-config'
-import pbxxReact from '@promoboxx/eslint-config/react'
 import pbxxGraphqlOperations from '@promoboxx/eslint-config/graphql-operations'
 import pbxxGraphqlSchema from '@promoboxx/eslint-config/graphql-schema'
 import pbxxPrettier from '@promoboxx/eslint-config/prettier'
+import pbxxReact from '@promoboxx/eslint-config/react'
+import pbxxVitest from '@promoboxx/eslint-config/vitest'
 import { defineConfig, globalIgnores } from 'eslint/config'
 
 const config = defineConfig([
@@ -12,7 +13,7 @@ const config = defineConfig([
   ...pbxxBase,
 
   // If the project uses vitest:
-  // ...pbxxVitest,
+  ...pbxxVitest,
 
   // If the project uses react:
   ...pbxxReact,
