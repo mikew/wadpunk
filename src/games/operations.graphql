@@ -1,59 +1,79 @@
+fragment GameListFields on Game {
+  id
+  name
+  notes
+  tags
+  rating
+  installed_at
+
+  # Only used for a length / presence check.
+  previous_file_state {
+    __typename
+  }
+
+  play_sessions {
+    duration
+    ended_at
+    passive
+  }
+}
+
+fragment GameDialogFields on Game {
+  id
+  name
+
+  rating
+  description
+  notes
+  tags
+
+  source_port
+  iwad_id
+  extra_mod_ids
+
+  use_custom_config
+
+  previous_file_state {
+    ...GameDialogFileListPreviousFileStateFields
+  }
+}
+
+# Used in the iwad / mods fields.
+fragment GameDialogOptionFields on Game {
+  id
+  name
+  tags
+}
+
+fragment GameDialogFileListPreviousFileStateFields on PreviousFileStateItem {
+  is_enabled
+  relative
+}
+
+fragment GameDialogFileListFields on GameFileEntry {
+  absolute
+  relative
+}
+
 query getGameListQuery {
   getGames {
-    id
-    name
-    notes
-    tags
-    rating
-    installed_at
-
-    # Only used for a length / presence check.
-    previous_file_state {
-      __typename
-    }
-
-    play_sessions {
-      duration
-      ended_at
-      passive
-    }
+    ...GameListFields
   }
 }
 
 query getGameDialogFields($game_id: ID!) {
   getGame(id: $game_id) {
-    id
-    name
-
-    rating
-    description
-    notes
-    tags
-
-    source_port
-    iwad_id
-    extra_mod_ids
-
-    use_custom_config
-
-    previous_file_state {
-      is_enabled
-      relative
-    }
+    ...GameDialogFields
   }
 
-  # Used in the iwad / mods fields.
   getGames {
-    id
-    name
-    tags
+    ...GameDialogOptionFields
   }
 }
 
 query getGameFiles($game_ids: [ID!]!) {
   getGameFiles(game_ids: $game_ids) {
-    absolute
-    relative
+    ...GameDialogFileListFields
   }
 }
 
@@ -67,21 +87,7 @@ mutation startGame($game_id: ID!) {
 
 mutation updateGame($game: GameInput!) {
   updateGame(game: $game) {
-    id
-
-    rating
-    description
-    notes
-    tags
-
-    source_port
-    iwad_id
-    extra_mod_ids
-
-    previous_file_state {
-      is_enabled
-      relative
-    }
+    ...GameDialogFields
   }
 }
 

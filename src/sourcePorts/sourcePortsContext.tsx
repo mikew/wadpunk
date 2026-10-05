@@ -7,18 +7,19 @@ import type { SourcePort } from '#src/graphql/types'
 import type {
   GetAllSourcePortsQuery,
   GetAllSourcePortsQueryVariables,
+  KnownSourcePortCardFieldsFragment,
+  SourcePortsDialogFieldsFragment,
 } from './operations.generated'
 import { GetAllSourcePortsDocument } from './operations.generated'
-import type { KnownSourcePortListItem, SourcePortListSourcePort } from './types'
 
 interface SourcePortsContextType {
-  sourcePorts: SourcePortListSourcePort[]
-  knownSourcePorts: KnownSourcePortListItem[]
-  defaultSourcePort?: SourcePortListSourcePort
-  starterSourcePort: KnownSourcePortListItem
+  sourcePorts: SourcePortsDialogFieldsFragment[]
+  knownSourcePorts: KnownSourcePortCardFieldsFragment[]
+  defaultSourcePort?: SourcePortsDialogFieldsFragment
+  starterSourcePort: KnownSourcePortCardFieldsFragment
   findSourcePortById: (
     id?: SourcePort['id'] | null,
-  ) => SourcePortListSourcePort | undefined
+  ) => SourcePortsDialogFieldsFragment | undefined
   refetch: RefetchFunction<
     GetAllSourcePortsQuery,
     GetAllSourcePortsQueryVariables
