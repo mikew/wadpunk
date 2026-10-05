@@ -31,6 +31,7 @@ import { useSourcePortsContext } from './sourcePortsContext'
 import type { KnownSourcePortListItem } from './types'
 
 const KnownSourcePortsDialog: React.FC = () => {
+  const { t } = useI18nContext()
   const { knownSourcePorts } = useSourcePortsContext()
   const isOpen = useRootSelector(
     (state) => state.sourcePorts.isKnownSourcePortsDialogOpen,
@@ -48,12 +49,10 @@ const KnownSourcePortsDialog: React.FC = () => {
       }}
     >
       <DelayedOnCloseDialogTitleWithCloseIcon>
-        <span>Known Source Ports</span>
+        <span>{t('knownSourcePorts.title')}</span>
 
         <DialogContentText>
-          WADPunk supports a number of Source Ports. Even if your favorite isn't
-          listed, it might still work: check the Example Command, and if it
-          looks similar to what you use, give it a try!
+          {t('knownSourcePorts.intro')}
         </DialogContentText>
       </DelayedOnCloseDialogTitleWithCloseIcon>
 
@@ -113,7 +112,7 @@ const KnownSourcePortCard: React.FC<KnownSourcePortCardProps> = (props) => {
         >
           {props.sourcePort.supports_custom_config ? CHECK_MARK : WARNING_ICON}
 
-          <span>Supports custom config</span>
+          <span>{t('knownSourcePorts.supportsCustomConfig')}</span>
         </Stack>
 
         <Stack
@@ -125,7 +124,7 @@ const KnownSourcePortCard: React.FC<KnownSourcePortCardProps> = (props) => {
         >
           {props.sourcePort.supports_save_dir ? CHECK_MARK : WARNING_ICON}
 
-          <span>Supports save directory</span>
+          <span>{t('knownSourcePorts.supportsSaveDir')}</span>
         </Stack>
 
         {description ? (
@@ -149,7 +148,7 @@ const KnownSourcePortCard: React.FC<KnownSourcePortCardProps> = (props) => {
             setIsExampleCommandExpanded(!isExampleCommandExpanded)
           }}
         >
-          Example Command
+          {t('knownSourcePorts.exampleCommand')}
         </Button>
         <Collapse in={isExampleCommandExpanded}>
           <Typography variant="body2">
@@ -164,7 +163,7 @@ const KnownSourcePortCard: React.FC<KnownSourcePortCardProps> = (props) => {
           startIcon={<OpenInNew />}
           size="small"
         >
-          Home Page
+          {t('knownSourcePorts.homePage')}
         </Button>
 
         <Button
@@ -172,7 +171,7 @@ const KnownSourcePortCard: React.FC<KnownSourcePortCardProps> = (props) => {
           startIcon={<Download />}
           size="small"
         >
-          Download
+          {t('knownSourcePorts.download')}
         </Button>
       </AccordionActions>
     </Accordion>

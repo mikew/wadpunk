@@ -3,7 +3,12 @@
     "clear": "Löschen",
     "reset": "Zurücksetzen",
     "save": "Speichern",
-    "close": "Schließen"
+    "close": "Schließen",
+    "delete": "Löschen",
+    "yes": "Ja",
+    "no": "Nein",
+    "cancel": "Abbrechen",
+    "none": "Keine"
   },
 
   "app": {
@@ -18,7 +23,9 @@
   "games": {
     "actions": {
       "openGamesFolder": "Spieleordner öffnen",
-      "start": "Spielen"
+      "openGameFolder": "Ordner öffnen",
+      "start": "Spielen",
+      "dropToImport": "Hier ablegen, um Spiele zu importieren ..."
     },
 
     "filter": {
@@ -38,6 +45,9 @@
             "rating": "Bewertung",
             "popularity": "Beliebtheit"
           }
+        },
+        "tags": {
+          "label": "Tags ..."
         }
       }
     },
@@ -59,11 +69,11 @@
         "label": "Installationsdatum"
       },
       "sourcePort": {
-        "label": "Quellport"
+        "label": "Source Port"
       },
       "iwad": {
         "label": "IWAD",
-        "helperText": "Alle Spiele benötigen eine IWAD.",
+        "helperText": "Jedes Spiel braucht ein IWAD.",
         "helperTextWhenIwad": "Dieses Spiel wird als IWAD verwendet."
       },
       "extraGames": {
@@ -71,7 +81,7 @@
       },
       "tags": {
         "label": "Tags",
-        "helperText": "Markieren Sie ein Spiel mit \"iwad\", um es als IWAD zu kennzeichnen."
+        "helperText": "Versieh ein Spiel mit dem Tag \"iwad\", um es als IWAD zu markieren."
       },
       "notes": {
         "label": "Notizen"
@@ -84,38 +94,46 @@
       }
     },
 
+    "list": {
+      "neverPlayed": "Noch nie gespielt",
+      "timePlayed": "{{time}} gespielt"
+    },
+
     "onboarding": {
       "noGames": {
         "title": "Keine Spiele gefunden",
-        "message": "Sie müssen einige Spiele zu Ihrer Bibliothek hinzufügen, bevor Sie etwas starten können. Um schnell zu beginnen, können Sie:",
-        "step1": "Wenn Sie keinen Zugang zu Doom oder Doom II haben, können Sie Freedoom herunterladen, das alle Inhalte bereitstellt, die benötigt werden, um ein vollständiges Spiel für den Doom-Engine zu erstellen.",
-        "step2": "Extrahieren Sie Freedoom irgendwo.",
-        "step3": "Ziehen Sie \"freedoom1.wad\" und \"freedoom2.wad\" in dieses Fenster.",
-        "downloadFreedoom": "Laden Sie \"Freedoom: Phase 1+2\" herunter"
+        "message": "Du musst erst Spiele zu deiner Bibliothek hinzufügen, bevor du etwas starten kannst. Um schnell loszulegen, kannst du Folgendes tun:",
+        "step1": "Wenn du keinen Zugriff auf Doom oder Doom II hast, kannst du Freedoom herunterladen. Es bietet alle Inhalte, die für ein vollständiges Spiel für die Doom-Engine nötig sind.",
+        "step2": "Entpacke Freedoom an einen beliebigen Ort.",
+        "step3": "Ziehe \"freedoom1.wad\" und \"freedoom2.wad\" in dieses Fenster.",
+        "downloadFreedoom": "\"Freedoom: Phase 1+2\" herunterladen"
       }
     },
 
     "notifications": {
-      "startError": "Es sieht so aus, als wäre beim Ausführen etwas schiefgegangen",
+      "startError": "Beim Ausführen des Spiels ist etwas schiefgelaufen",
+      "unknownError": "Unbekannter Fehler",
       "openGamesFolderError": "Ordner konnte nicht geöffnet werden"
     }
   },
 
   "sourcePorts": {
-    "title": "Quellports",
+    "title": "Source Ports",
     "default": "Standard ({{sourcePort}})",
-    "addNew": "Neuen hinzufügen",
+    "addNew": "Hinzufügen",
+    "downloadWithLabel": "{{name}} herunterladen",
 
     "onboarding": {
       "noSourcePorts": {
-        "title": "Keine Quellports gefunden",
-        "message": "Quellports sind das, was WADPunk startet. Sie müssen einen hinzufügen, bevor Sie ein Spiel spielen können."
+        "title": "Keine Source Ports gefunden",
+        "message": "Source Ports sind das, was WADPunk startet. Du musst einen hinzufügen, bevor du ein Spiel spielen kannst."
       }
     },
 
     "actions": {
       "create": "Erstellen",
-      "addSourcePort": "Quellport hinzufügen"
+      "addSourcePort": "Source Port hinzufügen",
+      "dropToImport": "Hier ablegen, um einen Source Port zu importieren ..."
     },
 
     "fields": {
@@ -124,7 +142,20 @@
       },
       "command": {
         "label": "Befehl"
+      },
+      "type": {
+        "label": "Typ",
+        "moreInfo": "Mehr Infos"
+      },
+      "is_default": {
+        "label": "Als Standard verwenden",
+        "helperText": "Dieser Source Port wird standardmäßig für Spiele verwendet."
       }
+    },
+
+    "confirmDelete": {
+      "title": "Source Port löschen",
+      "message": "Möchtest du diesen Source Port wirklich löschen?"
     }
   },
 
@@ -147,6 +178,43 @@
     }
   },
 
+  "knownSourcePorts": {
+    "title": "Bekannte Source Ports",
+    "intro": "WADPunk unterstützt eine Reihe von Source Ports. Auch wenn dein Favorit nicht aufgelistet ist, könnte er trotzdem funktionieren: Sieh dir den Beispielbefehl an, und wenn er dem ähnelt, was du verwendest, probier es einfach aus!",
+    "supportsCustomConfig": "Unterstützt benutzerdefinierte Konfiguration",
+    "supportsSaveDir": "Unterstützt Speicherverzeichnis",
+    "exampleCommand": "Beispielbefehl",
+    "homePage": "Startseite",
+    "download": "Herunterladen",
+
+    "info": {
+      "gzdoom": {
+        "description": "GZDoom ist ein funktionsorientierter Port für alle Spiele der Doom-Engine. Er basiert auf ZDoom und bringt einen OpenGL-Renderer sowie leistungsstarke Skriptfunktionen mit."
+      },
+      "eternity": {
+        "description": "Die Eternity Engine ist der fortschrittliche Doom-Source-Port von Team Eternity. Sie soll ein vielseitiger Funktions-Port sein, der die Spielkompatibilität mit seinen Wurzeln bewahrt und sich gleichzeitig mit leistungsstarken Funktionen weiterentwickelt, etwa neuen Möglichkeiten beim Leveldesign und beim Modding."
+      },
+      "chocolate-doom": {
+        "description": "Chocolate Doom ist ein Doom-Source-Port, der das Spielerlebnis von Doom aus den 1990er-Jahren originalgetreu nachbildet."
+      },
+      "dsda": {
+        "description": "Dies ist der Nachfolger von prboom+, mit zusätzlichen Werkzeugen zum Aufnehmen und Abspielen von Demos, mit Fokus auf Speedrunning und Komfort."
+      },
+      "woof": {
+        "description": "Woof! ist die Fortsetzung der Boom/MBF-Linie der Doom-Source-Ports."
+      },
+      "helion": {
+        "description": "Eine moderne Doom-Engine, von Grund auf neu geschrieben, mit Fokus auf Leistung."
+      },
+      "zandronum": {
+        "description": "Zandronum ist ein auf Multiplayer ausgerichteter Port für Doom und Doom II von id Software, basierend auf Skulltag."
+      },
+      "uzdoom": {
+        "description": "UZDoom ist ein funktionsorientierter Port für alle Spiele der Doom-Engine. Er basiert auf GZDoom und bringt einen fortschrittlichen Renderer sowie leistungsstarke Skriptfunktionen mit."
+      }
+    }
+  },
+
   "updateNotifier": {
     "actions": {
       "relaunch": "Neustart",
@@ -156,12 +224,18 @@
 
     "notifications": {
       "errorInstalling": "Fehler beim Installieren des Updates: {{error}}",
+      "errorChecking": "Fehler bei der Suche nach Updates: {{error}}",
       "updateAvailable": "Update verfügbar: v{{version}}"
     },
 
     "releaseNotes": {
       "title": "Versionshinweise v{{version}}"
     }
+  },
+
+  "confirm": {
+    "defaultTitle": "Bist du sicher?",
+    "defaultMessage": "Das kann nicht rückgängig gemacht werden."
   },
 
   "languageSelector": {

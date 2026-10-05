@@ -105,7 +105,7 @@ const SourcePortForm = forwardRef<
 
         <ReactHookFormTextField
           name="known_source_port_id"
-          label="Type"
+          label={t('sourcePorts.fields.type.label')}
           select
           sx={{ flex: '0 0 200px' }}
           helperText={
@@ -121,7 +121,7 @@ const SourcePortForm = forwardRef<
                   dispatch(actions.toggleKnownSourcePortsDialog())
                 }}
               >
-                More Info
+                {t('sourcePorts.fields.type.moreInfo')}
               </Link>
             </>
           }
