@@ -261,6 +261,11 @@ export function renderTranslation(
   message: string,
   components: TranslateComponents,
 ): React.ReactNode {
+  // Don't bother doing anything if there's no markup.
+  if (!message.includes('<')) {
+    return unescapeText(message)
+  }
+
   const tokens = escapeUnmatchedTags(tokenize(message, components))
 
   return createElement(Fragment, null, ...renderTokens(tokens))

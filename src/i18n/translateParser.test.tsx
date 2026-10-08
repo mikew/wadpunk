@@ -15,6 +15,12 @@ describe('renderTranslation', () => {
     expect(render('Hello world')).toBe('Hello world')
   })
 
+  it('restores escaped `<` in a message with no tags', () => {
+    const { name } = escapeI18nOptions({ name: '<b>' })
+
+    expect(render(`Hi ${String(name)}`, { b: <b /> })).toBe('Hi &lt;b&gt;')
+  })
+
   it('renders an empty string', () => {
     expect(render('')).toBe('')
   })
