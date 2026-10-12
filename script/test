@@ -1,7 +1,4 @@
 #!/usr/bin/env bash
 set -ex
 
-ls -l ./node_modules/.bin || true
-pnpm exec which vitest || true
-
-# pnpm exec react-scripts-vite test run "$@"
+./node_modules/.bin/vitest "$@"

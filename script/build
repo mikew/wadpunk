@@ -7,7 +7,7 @@ if [ -z "$CI" ]; then
   ./script/prepare-env
 fi
 
-pnpm exec react-scripts-vite build
+./node_modules/.bin/vite build
 ./node_modules/.bin/tauri build
 
 # Macos .app bundes don't have the arch specified in the filename.
