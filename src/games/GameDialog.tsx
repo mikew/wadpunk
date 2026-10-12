@@ -53,13 +53,15 @@ import {
   GameFileListProvider,
 } from './GameFileListContext'
 import isIwad from './isIwad'
-import type { GetGameDialogFieldsQuery } from './operations.generated'
+import type {
+  GameDialogFieldsFragment,
+  GameDialogOptionFieldsFragment,
+} from './operations.generated'
 import {
   GetGameDialogFieldsDocument,
   UpdateGameDocument,
 } from './operations.generated'
 import { actions } from './redux'
-import type { GameDialogGame, GameListGame } from './types'
 import useAllTags from './useAllTags'
 import useOpenGamesFolder from './useOpenGamesFolder'
 import useStartGame from './useStartGame'
@@ -70,7 +72,7 @@ export interface GameDialogFormValues {
   rating: Game['rating']
   tags: Game['tags']
   iwadId: NonNullable<Game['iwad_id']>
-  extraGameIds: (string | GameListGame)[]
+  extraGameIds: (string | GameDialogOptionFieldsFragment)[]
   sourcePort: Game['source_port']
   useCustomConfig: Game['use_custom_config']
 }
@@ -135,8 +137,8 @@ const GameDialog: React.FC<{
   const [updateGame] = useMutation(UpdateGameDocument)
 
   const { iwads, others } = useMemo(() => {
-    const iwads: GetGameDialogFieldsQuery['getGames'] = []
-    const others: GetGameDialogFieldsQuery['getGames'] = []
+    const iwads: GameDialogOptionFieldsFragment[] = []
+    const others: GameDialogOptionFieldsFragment[] = []
 
     for (const game of games || []) {
       if (isIwad(game.tags)) {
@@ -544,7 +546,7 @@ const GameDialog: React.FC<{
 }
 
 const GameDialogActions: React.FC<{
-  game: GameDialogGame
+  game: GameDialogFieldsFragment
   resetForm: () => void
   submitForm: (event: React.BaseSyntheticEvent) => Promise<void>
 }> = (props) => {

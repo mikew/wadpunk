@@ -7,7 +7,8 @@
     "delete": "Delete",
     "yes": "Yes",
     "no": "No",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "none": "None"
   },
 
   "app": {
@@ -35,7 +36,7 @@
         "starRatingMode": {
           "at_least": "At least",
           "equal": "Exactly",
-          "at_most": "At Most"
+          "at_most": "At most"
         },
         "sort": {
           "label": "Sort by ...",
@@ -93,11 +94,16 @@
       }
     },
 
+    "list": {
+      "neverPlayed": "Never played",
+      "timePlayed": "{{time}} played"
+    },
+
     "onboarding": {
       "noGames": {
         "title": "No games found",
         "message": "You will need to add some games to your library before you can launch anything. To quickly get started, you can:",
-        "step1": "If you don't have access Doom or Doom II, you can download Freedoom, which aims to provide all the content needed to form a complete game for the Doom engine.",
+        "step1": "If you don't have access to Doom or Doom II, you can download Freedoom, which aims to provide all the content needed to form a complete game for the Doom engine.",
         "step2": "Extract Freedoom anywhere.",
         "step3": "Drag \"freedoom1.wad\" and \"freedoom2.wad\" into this window.",
         "downloadFreedoom": "Download \"Freedoom: Phase 1+2\""
@@ -105,7 +111,8 @@
     },
 
     "notifications": {
-      "startError": "Looks like something went wrong when running",
+      "startError": "Something went wrong while running the game",
+      "unknownError": "Unknown error",
       "openGamesFolderError": "Could not open folder"
     }
   },
@@ -135,6 +142,10 @@
       },
       "command": {
         "label": "Command"
+      },
+      "type": {
+        "label": "Type",
+        "moreInfo": "More Info"
       },
       "is_default": {
         "label": "Use as default",
@@ -168,6 +179,14 @@
   },
 
   "knownSourcePorts": {
+    "title": "Known Source Ports",
+    "intro": "WADPunk supports a number of Source Ports. Even if your favorite isn't listed, it might still work: check the Example Command, and if it looks similar to what you use, give it a try!",
+    "supportsCustomConfig": "Supports custom config",
+    "supportsSaveDir": "Supports save directory",
+    "exampleCommand": "Example Command",
+    "homePage": "Home Page",
+    "download": "Download",
+
     "info": {
       "gzdoom": {
         "description": "GZDoom is a feature centric port for all Doom engine games, based on ZDoom, adding an OpenGL renderer and powerful scripting capabilities."
@@ -191,7 +210,7 @@
         "description": "Zandronum is a multiplayer oriented port, based off Skulltag, for Doom and Doom II by id Software."
       },
       "uzdoom": {
-        "description": "UZDoom is a feature centric port for all Doom engine games, based on GZDoom, adding an advanced renderer and powerful scripting capabilities"
+        "description": "UZDoom is a feature centric port for all Doom engine games, based on GZDoom, adding an advanced renderer and powerful scripting capabilities."
       }
     }
   },

@@ -1,45 +1,43 @@
+fragment SourcePortsDialogFields on SourcePort {
+  id
+  command
+  known_source_port_id
+  is_default
+}
+
+fragment KnownSourcePortCardFields on KnownSourcePort {
+  id
+  name
+  home_page_url
+  download_page_url
+  supports_custom_config
+  supports_save_dir
+  example_command
+}
+
 query getAllSourcePorts {
   getSourcePorts {
-    id
-    command
-    known_source_port_id
-    is_default
+    ...SourcePortsDialogFields
   }
 
   getKnownSourcePorts {
-    id
-    name
-    home_page_url
-    download_page_url
-    supports_custom_config
-    supports_save_dir
-    example_command
+    ...KnownSourcePortCardFields
   }
 
   getStarterSourcePort {
-    id
-    name
-    home_page_url
-    download_page_url
-    supports_custom_config
-    supports_save_dir
-    example_command
+    ...KnownSourcePortCardFields
   }
 }
 
 mutation createSourcePort($source_port: CreateSourcePortInput!) {
   createSourcePort(source_port: $source_port) {
-    id
-    command
-    is_default
+    ...SourcePortsDialogFields
   }
 }
 
 mutation updateSourcePort($source_port: UpdateSourcePortInput!) {
   updateSourcePort(source_port: $source_port) {
-    id
-    command
-    is_default
+    ...SourcePortsDialogFields
   }
 }
 

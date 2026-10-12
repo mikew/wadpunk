@@ -78,7 +78,7 @@ const ModSetDialog: React.FC = () => {
                   }}
                   selected={isAddingNew}
                 >
-                  <ListItemText primary={<strong>Add New</strong>} />
+                  <ListItemText primary={<strong>{t('modSets.addNew')}</strong>} />
                   <Add />
                 </ListItemButton>
               </ListItem>

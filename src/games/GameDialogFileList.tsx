@@ -35,11 +35,11 @@ import type { GameDialogFormValues } from './GameDialog'
 import type { FileEntry } from './GameFileListContext'
 import { useGameFileListContext } from './GameFileListContext'
 import isIwad from './isIwad'
-import type { GetGameDialogFieldsQuery } from './operations.generated'
+import type { GameDialogFileListPreviousFileStateFieldsFragment } from './operations.generated'
 import { GetGameFilesDocument } from './operations.generated'
 
 interface GameDialogFileListProps {
-  previousFileState: GetGameDialogFieldsQuery['getGame']['previous_file_state']
+  previousFileState: GameDialogFileListPreviousFileStateFieldsFragment[]
 }
 
 // TODO:

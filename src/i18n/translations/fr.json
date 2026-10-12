@@ -3,7 +3,12 @@
     "clear": "Effacer",
     "reset": "Réinitialiser",
     "save": "Enregistrer",
-    "close": "Fermer"
+    "close": "Fermer",
+    "delete": "Supprimer",
+    "yes": "Oui",
+    "no": "Non",
+    "cancel": "Annuler",
+    "none": "Aucun"
   },
 
   "app": {
@@ -18,7 +23,9 @@
   "games": {
     "actions": {
       "openGamesFolder": "Ouvrir le dossier des jeux",
-      "start": "Jouer"
+      "openGameFolder": "Ouvrir le dossier",
+      "start": "Jouer",
+      "dropToImport": "Dépose pour importer des jeux ..."
     },
 
     "filter": {
@@ -38,6 +45,9 @@
             "rating": "Évaluation",
             "popularity": "Popularité"
           }
+        },
+        "tags": {
+          "label": "Étiquettes ..."
         }
       }
     },
@@ -63,7 +73,7 @@
       },
       "iwad": {
         "label": "IWAD",
-        "helperText": "Tous les jeux nécessitent un IWAD.",
+        "helperText": "Tous les jeux ont besoin d'un IWAD.",
         "helperTextWhenIwad": "Ce jeu sera utilisé comme IWAD."
       },
       "extraGames": {
@@ -71,7 +81,7 @@
       },
       "tags": {
         "label": "Étiquettes",
-        "helperText": "Marquez un jeu avec \"iwad\" pour le désigner comme IWAD."
+        "helperText": "Ajoute l'étiquette \"iwad\" à un jeu pour le désigner comme IWAD."
       },
       "notes": {
         "label": "Notes"
@@ -84,38 +94,46 @@
       }
     },
 
+    "list": {
+      "neverPlayed": "Jamais joué",
+      "timePlayed": "{{time}} de jeu"
+    },
+
     "onboarding": {
       "noGames": {
         "title": "Aucun jeu trouvé",
-        "message": "Vous devez ajouter des jeux à votre bibliothèque avant de pouvoir en lancer un. Pour commencer rapidement, vous pouvez :",
-        "step1": "Si vous n'avez pas accès à Doom ou Doom II, vous pouvez télécharger Freedoom, qui vise à fournir tout le contenu nécessaire pour former un jeu complet pour le moteur Doom.",
+        "message": "Tu dois ajouter des jeux à ta bibliothèque avant de pouvoir en lancer un. Pour démarrer rapidement, tu peux :",
+        "step1": "Si tu n'as pas accès à Doom ou à Doom II, tu peux télécharger Freedoom, qui vise à fournir tout le contenu nécessaire pour former un jeu complet pour le moteur Doom.",
         "step2": "Extraire Freedoom n'importe où.",
-        "step3": "Faites glisser \"freedoom1.wad\" et \"freedoom2.wad\" dans cette fenêtre.",
+        "step3": "Glisser \"freedoom1.wad\" et \"freedoom2.wad\" dans cette fenêtre.",
         "downloadFreedoom": "Télécharger \"Freedoom: Phase 1+2\""
       }
     },
 
     "notifications": {
-      "startError": "Il semble qu'une erreur s'est produite lors du lancement",
+      "startError": "Une erreur est survenue pendant l'exécution du jeu",
+      "unknownError": "Erreur inconnue",
       "openGamesFolderError": "Impossible d'ouvrir le dossier"
     }
   },
 
   "sourcePorts": {
-    "title": "Ports sources",
-    "default": "Défaut ({{sourcePort}})",
-    "addNew": "Ajouter un nouveau",
+    "title": "Ports source",
+    "default": "Par défaut ({{sourcePort}})",
+    "addNew": "Ajouter",
+    "downloadWithLabel": "Télécharger {{name}}",
 
     "onboarding": {
       "noSourcePorts": {
         "title": "Aucun port source trouvé",
-        "message": "Les ports sources sont ce que WADPunk lance. Vous devez en ajouter un avant de pouvoir jouer à un jeu."
+        "message": "Les ports source sont ce que WADPunk lance. Tu dois en ajouter un avant de pouvoir jouer à un jeu."
       }
     },
 
     "actions": {
       "create": "Créer",
-      "addSourcePort": "Ajouter un port source"
+      "addSourcePort": "Ajouter un port source",
+      "dropToImport": "Dépose pour importer un port source ..."
     },
 
     "fields": {
@@ -124,7 +142,20 @@
       },
       "command": {
         "label": "Commande"
+      },
+      "type": {
+        "label": "Type",
+        "moreInfo": "Plus d'infos"
+      },
+      "is_default": {
+        "label": "Utiliser par défaut",
+        "helperText": "Ce port source sera utilisé par défaut pour les jeux."
       }
+    },
+
+    "confirmDelete": {
+      "title": "Supprimer le port source",
+      "message": "Es-tu sûr de vouloir supprimer ce port source ?"
     }
   },
 
@@ -143,7 +174,44 @@
 
     "confirmDelete": {
       "title": "Supprimer l'ensemble de mods",
-      "message": "Êtes-vous sûr de vouloir supprimer cet ensemble de mods ?"
+      "message": "Es-tu sûr de vouloir supprimer cet ensemble de mods ?"
+    }
+  },
+
+  "knownSourcePorts": {
+    "title": "Ports source connus",
+    "intro": "WADPunk prend en charge plusieurs ports source. Même si ton préféré n'est pas dans la liste, il pourrait quand même fonctionner : regarde l'exemple de commande, et s'il ressemble à ce que tu utilises, essaie-le !",
+    "supportsCustomConfig": "Prend en charge la configuration personnalisée",
+    "supportsSaveDir": "Prend en charge le dossier de sauvegarde",
+    "exampleCommand": "Exemple de commande",
+    "homePage": "Page d'accueil",
+    "download": "Télécharger",
+
+    "info": {
+      "gzdoom": {
+        "description": "GZDoom est un port axé sur les fonctionnalités pour tous les jeux du moteur Doom. Basé sur ZDoom, il ajoute un moteur de rendu OpenGL et de puissantes capacités de script."
+      },
+      "eternity": {
+        "description": "Eternity Engine est le port source avancé de Doom de Team Eternity. Il se veut un port polyvalent qui conserve la compatibilité de jeu avec ses origines tout en évoluant grâce à de puissantes fonctionnalités, comme de nouvelles façons de concevoir des niveaux et des possibilités de modding."
+      },
+      "chocolate-doom": {
+        "description": "Chocolate Doom est un port source de Doom qui reproduit fidèlement l'expérience de Doom telle qu'on y jouait dans les années 1990."
+      },
+      "dsda": {
+        "description": "C'est le successeur de prboom+, avec des outils supplémentaires pour enregistrer et lire des démos, axé sur le speedrun et le confort d'utilisation."
+      },
+      "woof": {
+        "description": "Woof! est la continuation de la lignée Boom/MBF des ports source de Doom."
+      },
+      "helion": {
+        "description": "Un moteur Doom moderne, écrit à partir de zéro et axé sur la performance."
+      },
+      "zandronum": {
+        "description": "Zandronum est un port orienté multijoueur, basé sur Skulltag, pour Doom et Doom II d'id Software."
+      },
+      "uzdoom": {
+        "description": "UZDoom est un port axé sur les fonctionnalités pour tous les jeux du moteur Doom. Basé sur GZDoom, il ajoute un moteur de rendu avancé et de puissantes capacités de script."
+      }
     }
   },
 
@@ -156,12 +224,18 @@
 
     "notifications": {
       "errorInstalling": "Erreur lors de l'installation de la mise à jour : {{error}}",
+      "errorChecking": "Erreur lors de la recherche de mises à jour : {{error}}",
       "updateAvailable": "Mise à jour disponible : v{{version}}"
     },
 
     "releaseNotes": {
       "title": "Notes de version v{{version}}"
     }
+  },
+
+  "confirm": {
+    "defaultTitle": "Es-tu sûr ?",
+    "defaultMessage": "Cette action est irréversible."
   },
 
   "languageSelector": {
