@@ -79,6 +79,9 @@ jobs:
       - run: ./script/prepare-env
         shell: bash
 
+      - run: ./script/test
+        shell: bash
+
       - run: ./script/build
         shell: bash
         env:
