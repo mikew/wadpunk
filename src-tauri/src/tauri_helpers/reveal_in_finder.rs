@@ -19,11 +19,7 @@ pub fn reveal_folder(path: &str) {
 pub fn reveal_file_or_folder(path: &str) {
   // Sometimes there is a forward slash at the end of the path, which causes
   // issues on some platforms.
-  let path = if path.ends_with('/') {
-    &path[..path.len() - 1]
-  } else {
-    path
-  };
+  let path = path.strip_suffix('/').unwrap_or(path);
 
   if metadata(path).unwrap().is_dir() {
     reveal_folder(path);

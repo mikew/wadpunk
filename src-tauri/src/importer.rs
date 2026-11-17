@@ -3,8 +3,10 @@ use std::{fs::create_dir_all, path::Path, process::Command};
 use fs_extra::{copy_items, dir::CopyOptions};
 
 use crate::database;
+use crate::error::Error;
+use crate::error::Result;
 
-pub fn import_file(file: &str, seven_zip_path: &str) -> String {
+pub fn import_file(file: &str, seven_zip_path: &str) -> Result<String> {
   let lowercase = file.to_lowercase();
 
   if lowercase.ends_with(".zip")
@@ -15,44 +17,53 @@ pub fn import_file(file: &str, seven_zip_path: &str) -> String {
     || lowercase.ends_with(".xz")
     || lowercase.ends_with(".zst")
   {
-    extract_archive_to_games_directory(file, seven_zip_path);
+    extract_archive_to_games_directory(file, seven_zip_path)?;
 
-    let basename = Path::new(file).file_stem().unwrap().to_str().unwrap();
-    format!("{}/", basename)
+    Ok(format!("{}/", file_stem(file)?))
   } else {
     let mut copy_options = CopyOptions::new();
     copy_options.overwrite = true;
 
-    copy_items(&[file], database::get_games_directory(), &copy_options).unwrap();
+    copy_items(&[file], database::get_games_directory()?, &copy_options).map_err(|source| {
+      Error::Copy {
+        file: file.to_string(),
+        source,
+      }
+    })?;
 
-    Path::new(file)
+    let file_name = Path::new(file)
       .file_name()
-      .unwrap()
-      .to_str()
-      .unwrap()
-      .to_string()
+      .and_then(|name| name.to_str())
+      .ok_or_else(|| Error::InvalidFileName(file.to_string()))?;
+
+    Ok(file_name.to_string())
   }
 }
 
-pub fn extract_archive_to_games_directory(file: &str, seven_zip_path: &str) {
-  let games_directory = database::get_games_directory();
+pub fn extract_archive_to_games_directory(file: &str, seven_zip_path: &str) -> Result<()> {
+  let destination = database::get_games_directory()?.join(file_stem(file)?);
 
-  // Get basename of source without extension.
-  // Would prefer to use `.file_prefix`, but of course that's "experimental" in
-  // Rust, so we have to use the potentially uglier `.file_stem` instead.
-  let basename = Path::new(file).file_stem().unwrap().to_str().unwrap();
-
-  let destination = games_directory.join(basename);
-
-  create_dir_all(&destination).unwrap();
+  create_dir_all(&destination).map_err(Error::io("create folder", &destination))?;
 
   Command::new(seven_zip_path)
     .args([
       "x",
       "-aoa",
-      &format!("-o{}", destination.to_str().unwrap()),
+      &format!("-o{}", database::path_to_str(&destination)?),
       file,
     ])
     .status()
-    .unwrap();
+    .map_err(Error::io("run", Path::new(seven_zip_path)))?;
+
+  Ok(())
+}
+
+/// The name without its extension.
+/// Would prefer to use `.file_prefix`, but of course that's "experimental" in
+/// Rust, so we have to use the potentially uglier `.file_stem` instead.
+fn file_stem(file: &str) -> Result<&str> {
+  Path::new(file)
+    .file_stem()
+    .and_then(|stem| stem.to_str())
+    .ok_or_else(|| Error::InvalidFileName(file.to_string()))
 }

@@ -1,4 +1,7 @@
-use std::{fs, path::PathBuf};
+use std::{
+  fs, io,
+  path::{Path, PathBuf},
+};
 
 use once_cell::sync::OnceCell;
 use tauri::{AppHandle, Error, Manager};
@@ -16,16 +19,16 @@ pub fn get_app_handle() -> &'static AppHandle {
 }
 
 pub fn home_dir() -> Result<std::path::PathBuf, Error> {
-  return get_app_handle().path().home_dir();
+  get_app_handle().path().home_dir()
 }
 
 pub fn document_dir() -> Result<std::path::PathBuf, Error> {
-  return get_app_handle().path().document_dir();
+  get_app_handle().path().document_dir()
 }
 
 #[derive(Debug)]
 pub struct DiskEntry {
-  pub name: Option<String>,
+  pub name: String,
   pub path: PathBuf,
   // pub is_directory: bool,
   // pub is_file: bool,
@@ -33,40 +36,44 @@ pub struct DiskEntry {
   pub children: Option<Vec<DiskEntry>>,
 }
 
-pub fn read_dir(path: PathBuf, recursive: bool) -> Option<Vec<DiskEntry>> {
+pub fn read_dir(path: &Path, recursive: bool) -> crate::error::Result<Vec<DiskEntry>> {
+  let dir_entries = match fs::read_dir(path) {
+    Ok(dir_entries) => dir_entries,
+    Err(error) if error.kind() == io::ErrorKind::NotFound => return Ok(vec![]),
+    Err(error) => return Err(crate::error::Error::io("read folder", path)(error)),
+  };
+
   let mut entries: Vec<DiskEntry> = vec![];
 
-  if let Ok(dir_entries) = fs::read_dir(path) {
-    for entry in dir_entries {
-      if let Ok(entry) = entry {
-        let path = entry.path();
-        let mut name = entry.file_name().into_string().unwrap();
-        let is_directory = path.is_dir();
-        // let is_file = path.is_file();
-        // let is_symlink = path.is_symlink();
+  for entry in dir_entries.flatten() {
+    let path = entry.path();
+    let Ok(mut name) = entry.file_name().into_string() else {
+      eprintln!("Skipping {}: its name is not valid UTF-8", path.display());
+      continue;
+    };
+    let is_directory = path.is_dir();
+    // let is_file = path.is_file();
+    // let is_symlink = path.is_symlink();
 
-        if is_directory {
-          name = format!("{}/", name);
-        }
-
-        let mut children: Option<Vec<DiskEntry>> = None;
-        if recursive && is_directory {
-          if let Some(child_entries) = read_dir(path.clone(), true) {
-            children = Some(child_entries);
-          }
-        }
-
-        entries.push(DiskEntry {
-          name: Some(name),
-          path,
-          // is_directory,
-          // is_file,
-          // is_symlink,
-          children,
-        });
-      }
+    if is_directory {
+      name = format!("{}/", name);
     }
+
+    let children = if recursive && is_directory {
+      Some(read_dir(&path, true)?)
+    } else {
+      None
+    };
+
+    entries.push(DiskEntry {
+      name,
+      path,
+      // is_directory,
+      // is_file,
+      // is_symlink,
+      children,
+    });
   }
 
-  return Some(entries);
+  Ok(entries)
 }

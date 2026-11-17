@@ -8,8 +8,10 @@ use tauri_plugin_cli::CliExt;
 use graphql::datasource::DataSource;
 
 mod database;
+mod error;
 mod graphql;
 mod importer;
+mod json_file;
 mod known_source_ports;
 mod tauri_helpers;
 mod tauri_legacy;
