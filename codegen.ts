@@ -187,6 +187,9 @@ pub struct ${inputType.name} {
           objectField.type instanceof GraphQLUnionType
           || objectField.type instanceof GraphQLInterfaceType
         ) {
+          console.warn(
+            `Not supported field type for ${objectType.name}.${objectField.name}: ${objectField.type}`,
+          )
           continue
         }
 

@@ -17,7 +17,12 @@
       "exit": "Exit"
     },
 
-    "nameAndVersion": "{{name}} v{{version}}"
+    "nameAndVersion": "{{name}} v{{version}}",
+
+    "errorBoundary": {
+      "title": "Something went wrong",
+      "reload": "Reload app"
+    }
   },
 
   "games": {
@@ -113,6 +118,7 @@
     "notifications": {
       "startError": "Something went wrong while running the game",
       "unknownError": "Unknown error",
+      "importError": "Failed to import {{name}}: {{message}}",
       "openGamesFolderError": "Could not open folder"
     }
   },

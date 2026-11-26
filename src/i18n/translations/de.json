@@ -17,7 +17,12 @@
       "exit": "Beenden"
     },
 
-    "nameAndVersion": "{{name}} v{{version}}"
+    "nameAndVersion": "{{name}} v{{version}}",
+
+    "errorBoundary": {
+      "title": "Etwas ist schiefgelaufen",
+      "reload": "App neu laden"
+    }
   },
 
   "games": {
@@ -113,6 +118,7 @@
     "notifications": {
       "startError": "Beim Ausführen des Spiels ist etwas schiefgelaufen",
       "unknownError": "Unbekannter Fehler",
+      "importError": "Import von {{name}} fehlgeschlagen: {{message}}",
       "openGamesFolderError": "Ordner konnte nicht geöffnet werden"
     }
   },

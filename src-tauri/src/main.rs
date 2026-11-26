@@ -1,4 +1,3 @@
-#![allow(non_snake_case)]
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
@@ -9,14 +8,18 @@ use tauri_plugin_cli::CliExt;
 use graphql::datasource::DataSource;
 
 mod database;
+mod error;
 mod graphql;
+mod idgames;
 mod importer;
+mod json_file;
 mod known_source_ports;
+mod launcher;
 mod tauri_helpers;
 mod tauri_legacy;
 mod tauri_plugin_downloader;
 
-fn main() {
+fn main() -> tauri::Result<()> {
   let schema = async_graphql::Schema::build(
     graphql::generated::Query,
     graphql::generated::Mutation,
@@ -41,10 +44,9 @@ fn main() {
     .plugin(tauri_plugin_single_instance::init(|app, args, _cwd| {
       #[cfg(desktop)]
       {
-        let _ = app
-          .get_webview_window("main")
-          .expect("no main window")
-          .set_focus();
+        if let Some(window) = app.get_webview_window("main") {
+          let _ = window.set_focus();
+        }
 
         let matches = app.cli().matches_from(args);
         match matches {
@@ -72,5 +74,4 @@ fn main() {
     .plugin(tauri_plugin_os::init())
 
     .run(tauri::generate_context!())
-    .expect("error while running tauri application");
 }

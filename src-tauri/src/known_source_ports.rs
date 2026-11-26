@@ -1,18 +1,17 @@
-use crate::{database, graphql::generated::KnownSourcePort};
+use crate::{database, error::Result, graphql::generated::KnownSourcePort};
 
-pub struct BuildCommandArgs {
-  pub executable: String,
-  pub iwad: String,
-  pub files: Vec<String>,
+pub struct BuildCommandArgs<'a> {
+  pub iwad: &'a str,
+  pub files: &'a [String],
   pub use_custom_config: bool,
-  pub game_id: String,
+  pub game_id: &'a str,
 }
 
 pub enum DbKnownSourcePort {
   GZDoom,
   EternityEngine,
   ChocolateDoom,
-  DSDA,
+  Dsda,
   Helion,
   Woof,
   Zandronum,
@@ -20,29 +19,29 @@ pub enum DbKnownSourcePort {
 }
 
 impl DbKnownSourcePort {
-  pub fn id(&self) -> String {
+  pub fn id(&self) -> &'static str {
     match self {
-      Self::GZDoom => "gzdoom".to_string(),
-      Self::EternityEngine => "eternity".to_string(),
-      Self::ChocolateDoom => "chocolate-doom".to_string(),
-      Self::DSDA => "dsda".to_string(),
-      Self::Helion => "helion".to_string(),
-      Self::Woof => "woof".to_string(),
-      Self::Zandronum => "zandronum".to_string(),
-      Self::UZDoom => "uzdoom".to_string(),
+      Self::GZDoom => "gzdoom",
+      Self::EternityEngine => "eternity",
+      Self::ChocolateDoom => "chocolate-doom",
+      Self::Dsda => "dsda",
+      Self::Helion => "helion",
+      Self::Woof => "woof",
+      Self::Zandronum => "zandronum",
+      Self::UZDoom => "uzdoom",
     }
   }
 
-  pub fn name(&self) -> String {
+  pub fn name(&self) -> &'static str {
     match self {
-      Self::GZDoom => "GZDoom".to_string(),
-      Self::EternityEngine => "Eternity Engine".to_string(),
-      Self::ChocolateDoom => "Chocolate Doom".to_string(),
-      Self::DSDA => "DSDA".to_string(),
-      Self::Helion => "Helion".to_string(),
-      Self::Woof => "Woof".to_string(),
-      Self::Zandronum => "Zandronum".to_string(),
-      Self::UZDoom => "UZDoom".to_string(),
+      Self::GZDoom => "GZDoom",
+      Self::EternityEngine => "Eternity Engine",
+      Self::ChocolateDoom => "Chocolate Doom",
+      Self::Dsda => "DSDA",
+      Self::Helion => "Helion",
+      Self::Woof => "Woof",
+      Self::Zandronum => "Zandronum",
+      Self::UZDoom => "UZDoom",
     }
   }
 
@@ -51,7 +50,7 @@ impl DbKnownSourcePort {
       Self::GZDoom => true,
       Self::EternityEngine => true,
       Self::ChocolateDoom => true,
-      Self::DSDA => true,
+      Self::Dsda => true,
       Self::Helion => true,
       Self::Woof => true,
       Self::Zandronum => true,
@@ -64,7 +63,7 @@ impl DbKnownSourcePort {
       Self::GZDoom => true,
       Self::EternityEngine => true,
       Self::ChocolateDoom => true,
-      Self::DSDA => true,
+      Self::Dsda => true,
       Self::Helion => true,
       Self::Woof => true,
       Self::Zandronum => true,
@@ -72,76 +71,70 @@ impl DbKnownSourcePort {
     }
   }
 
-  pub fn home_page_url(&self) -> String {
+  pub fn home_page_url(&self) -> &'static str {
     match self {
-      Self::GZDoom => "https://zdoom.org/".to_string(),
-      Self::EternityEngine => "https://eternity.youfailit.net/wiki/Eternity_Engine".to_string(),
-      Self::ChocolateDoom => "https://www.chocolate-doom.org/".to_string(),
-      Self::DSDA => "https://github.com/kraflab/dsda-doom".to_string(),
-      Self::Helion => "https://github.com/Helion-Engine/Helion".to_string(),
-      Self::Woof => "https://github.com/fabiangreffrath/woof".to_string(),
-      Self::Zandronum => "https://zandronum.com/".to_string(),
-      Self::UZDoom => "https://github.com/UZDoom/UZDoom".to_string(),
+      Self::GZDoom => "https://zdoom.org/",
+      Self::EternityEngine => "https://eternity.youfailit.net/wiki/Eternity_Engine",
+      Self::ChocolateDoom => "https://www.chocolate-doom.org/",
+      Self::Dsda => "https://github.com/kraflab/dsda-doom",
+      Self::Helion => "https://github.com/Helion-Engine/Helion",
+      Self::Woof => "https://github.com/fabiangreffrath/woof",
+      Self::Zandronum => "https://zandronum.com/",
+      Self::UZDoom => "https://github.com/UZDoom/UZDoom",
     }
   }
 
-  pub fn download_page_url(&self) -> String {
+  pub fn download_page_url(&self) -> &'static str {
     match self {
-      Self::GZDoom => "https://github.com/ZDoom/gzdoom/releases/latest".to_string(),
-      Self::EternityEngine => {
-        "https://github.com/team-eternity/eternity/releases/latest".to_string()
-      }
-      Self::ChocolateDoom => "https://www.chocolate-doom.org/wiki/index.php/Downloads".to_string(),
-      Self::DSDA => {
+      Self::GZDoom => "https://github.com/ZDoom/gzdoom/releases/latest",
+      Self::EternityEngine => "https://github.com/team-eternity/eternity/releases/latest",
+      Self::ChocolateDoom => "https://www.chocolate-doom.org/wiki/index.php/Downloads",
+      Self::Dsda => {
         "https://drive.google.com/drive/folders/1KMU1dY0HZrY5h2EyPzxxXuyH8DunAJV_?usp=sharing"
-          .to_string()
       }
-      Self::Helion => "https://github.com/Helion-Engine/Helion/releases/latest".to_string(),
-      Self::Woof => "https://github.com/fabiangreffrath/woof/releases/latest".to_string(),
-      Self::Zandronum => "https://zandronum.com/download".to_string(),
-      Self::UZDoom => "https://github.com/UZDoom/UZDoom/releases/latest".to_string(),
+      Self::Helion => "https://github.com/Helion-Engine/Helion/releases/latest",
+      Self::Woof => "https://github.com/fabiangreffrath/woof/releases/latest",
+      Self::Zandronum => "https://zandronum.com/download",
+      Self::UZDoom => "https://github.com/UZDoom/UZDoom/releases/latest",
     }
   }
 
-  pub fn to_known_source_port(&self) -> KnownSourcePort {
-    KnownSourcePort {
-      id: self.id(),
-      name: self.name(),
+  pub fn to_known_source_port(&self) -> Result<KnownSourcePort> {
+    let example_files =
+      ["example1.wad", "example2.wad", "myfile.deh", "myfile.bex"].map(String::from);
+
+    Ok(KnownSourcePort {
+      id: self.id().to_string(),
+      name: self.name().to_string(),
       supports_custom_config: self.supports_custom_config(),
       supports_save_dir: self.supports_save_dir(),
-      home_page_url: self.home_page_url(),
-      download_page_url: self.download_page_url(),
-      example_command: self.build_command(&BuildCommandArgs {
-        executable: self.id().to_string(),
-        iwad: "doom2.iwad".to_string(),
-        files: vec![
-          "example1.wad".to_string(),
-          "example2.wad".to_string(),
-          "myfile.deh".to_string(),
-          "myfile.bex".to_string(),
-        ],
-        use_custom_config: true,
-        game_id: "doom2".to_string(),
-      }),
-    }
+      home_page_url: self.home_page_url().to_string(),
+      download_page_url: self.download_page_url().to_string(),
+      example_command: [self.id().to_string()]
+        .into_iter()
+        .chain(self.build_args(&BuildCommandArgs {
+          iwad: "doom2.iwad",
+          files: &example_files,
+          use_custom_config: true,
+          game_id: "doom2",
+        })?)
+        .collect(),
+    })
   }
 
-  pub fn build_command(&self, args: &BuildCommandArgs) -> Vec<String> {
-    let mut command = vec![args.executable.clone()];
+  pub fn build_args(&self, args: &BuildCommandArgs) -> Result<Vec<String>> {
+    let mut command = vec![];
+    let game_meta_directory =
+      database::get_meta_directory()?.join(database::normalize_name_from_id(args.game_id));
 
     if args.use_custom_config {
-      let config_path = database::get_meta_directory()
-        .join(database::normalize_name_from_id(&args.game_id))
-        .join("config.ini")
-        .to_str()
-        .unwrap()
-        .to_string();
+      let config_path = database::path_to_str(&game_meta_directory.join("config.ini"))?.to_string();
 
       match self {
         Self::GZDoom
         | Self::EternityEngine
         | Self::ChocolateDoom
-        | Self::DSDA
+        | Self::Dsda
         | Self::Helion
         | Self::Woof
         | Self::Zandronum
@@ -152,27 +145,22 @@ impl DbKnownSourcePort {
       }
     }
 
-    let save_dir = database::get_meta_directory()
-      .join(database::normalize_name_from_id(&args.game_id))
-      .join("saves")
-      .to_str()
-      .unwrap()
-      .to_string();
+    let save_dir = database::path_to_str(&game_meta_directory.join("saves"))?.to_string();
     match self {
       Self::GZDoom | Self::ChocolateDoom | Self::Zandronum | Self::Helion | Self::UZDoom => {
         command.push("-savedir".to_string());
         command.push(save_dir);
       }
-      Self::EternityEngine | Self::DSDA | Self::Woof => {
+      Self::EternityEngine | Self::Dsda | Self::Woof => {
         command.push("-save".to_string());
         command.push(save_dir);
       }
     }
 
     command.push("-iwad".to_string());
-    command.push(args.iwad.clone());
+    command.push(args.iwad.to_string());
 
-    for file in &args.files {
+    for file in args.files {
       // If the file ends with .deh, add `-deh <file>`, if the file ends with
       // .bex, add `-bex <file>`, otherwise just add `-file <file>`
       if file.ends_with(".deh") {
@@ -180,7 +168,7 @@ impl DbKnownSourcePort {
           Self::GZDoom
           | Self::EternityEngine
           | Self::ChocolateDoom
-          | Self::DSDA
+          | Self::Dsda
           | Self::Helion
           | Self::Woof
           | Self::Zandronum
@@ -194,7 +182,7 @@ impl DbKnownSourcePort {
           Self::GZDoom
           | Self::EternityEngine
           | Self::ChocolateDoom
-          | Self::DSDA
+          | Self::Dsda
           | Self::Helion
           | Self::Woof
           | Self::Zandronum
@@ -207,7 +195,7 @@ impl DbKnownSourcePort {
         match self {
           Self::GZDoom
           | Self::EternityEngine
-          | Self::DSDA
+          | Self::Dsda
           | Self::Helion
           | Self::Woof
           | Self::Zandronum
@@ -223,16 +211,16 @@ impl DbKnownSourcePort {
       }
     }
 
-    command
+    Ok(command)
   }
 }
 
-pub fn get_all_known_source_ports() -> Vec<DbKnownSourcePort> {
-  vec![
+pub fn get_all_known_source_ports() -> [DbKnownSourcePort; 8] {
+  [
     DbKnownSourcePort::GZDoom,
     DbKnownSourcePort::EternityEngine,
     DbKnownSourcePort::ChocolateDoom,
-    DbKnownSourcePort::DSDA,
+    DbKnownSourcePort::Dsda,
     DbKnownSourcePort::Helion,
     DbKnownSourcePort::Woof,
     DbKnownSourcePort::Zandronum,
@@ -241,13 +229,10 @@ pub fn get_all_known_source_ports() -> Vec<DbKnownSourcePort> {
 }
 
 pub fn find_known_source_port_from_id(id: &str) -> DbKnownSourcePort {
-  for source_port in get_all_known_source_ports() {
-    if source_port.id() == id {
-      return source_port;
-    }
-  }
-
-  get_starter_source_port()
+  get_all_known_source_ports()
+    .into_iter()
+    .find(|source_port| source_port.id() == id)
+    .unwrap_or_else(get_starter_source_port)
 }
 
 pub fn get_starter_source_port() -> DbKnownSourcePort {

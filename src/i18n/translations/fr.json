@@ -17,7 +17,12 @@
       "exit": "Quitter"
     },
 
-    "nameAndVersion": "{{name}} v{{version}}"
+    "nameAndVersion": "{{name}} v{{version}}",
+
+    "errorBoundary": {
+      "title": "Une erreur s'est produite",
+      "reload": "Recharger l'application"
+    }
   },
 
   "games": {
@@ -113,6 +118,7 @@
     "notifications": {
       "startError": "Une erreur est survenue pendant l'exécution du jeu",
       "unknownError": "Erreur inconnue",
+      "importError": "Échec de l'importation de {{name}} : {{message}}",
       "openGamesFolderError": "Impossible d'ouvrir le dossier"
     }
   },

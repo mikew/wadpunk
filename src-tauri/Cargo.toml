@@ -42,6 +42,10 @@ mktemp = "0.5.1"
 roxmltree = "0.20.0"
 tauri-plugin-os = "2.3.0"
 
+[lints.clippy]
+unwrap_used = "deny"
+expect_used = "deny"
+
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem
 # DO NOT REMOVE!!

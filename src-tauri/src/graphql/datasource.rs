@@ -1,33 +1,26 @@
-use std::fs;
 use std::path::Path;
-use std::process::Command;
+use std::path::PathBuf;
 use std::vec;
 
 use async_graphql::Context;
-use async_graphql::Error;
 use async_graphql::Result as GraphQLResult;
 use chrono::DateTime;
-use chrono::Utc;
 
-use plist;
 use tauri::AppHandle;
 use tauri::Manager;
 
 use crate::database;
-use crate::database::normalize_name_from_id;
 use crate::database::DbModSet;
-use crate::database::DbPlaySession;
-use crate::database::DbPlaySessionEntry;
 use crate::database::DbPreviousFileStateItem;
 use crate::database::DbSourcePort;
+use crate::error::Error;
 use crate::graphql::generated::AppInfo;
 use crate::graphql::generated::ImportFileResponse;
+use crate::idgames;
 use crate::importer;
 use crate::known_source_ports;
-use crate::known_source_ports::find_known_source_port_from_id;
-use crate::known_source_ports::BuildCommandArgs;
+use crate::launcher;
 use crate::tauri_helpers::reveal_in_finder::reveal_file_or_folder;
-use crate::tauri_plugin_downloader::tauri_download::download;
 
 use super::generated::AppSettings;
 use super::generated::CreateModSetInput;
@@ -56,30 +49,28 @@ impl DataSource {
   ) -> GraphQLResult<Vec<PlaySession>> {
     let mut gql_play_sessions: Vec<PlaySession> = vec![];
 
-    let meta_path = database::get_meta_directory()
-      .join(normalize_name_from_id(&root.id))
-      .join("playSessions.json");
-    let json_contents = fs::read_to_string(meta_path).unwrap_or("{}".to_string());
-    let play_session_meta = serde_json::from_str::<DbPlaySession>(&json_contents).unwrap();
+    let play_session_meta = match database::load_game_play_sessions(&root.id) {
+      Ok(play_session_meta) => play_session_meta,
+      Err(error) => {
+        eprintln!("Could not read play sessions of {}: {}", root.id, error);
+        return Ok(gql_play_sessions);
+      }
+    };
 
-    if let Some(play_sessions) = play_session_meta.sessions {
-      for play_session in play_sessions {
-        if let Some(started_at) = play_session.started_at {
-          if let Some(ended_at) = play_session.ended_at {
-            let duration: i32 = (DateTime::parse_from_rfc3339(&ended_at).unwrap()
-              - DateTime::parse_from_rfc3339(&started_at).unwrap())
-            .num_seconds()
-            .try_into()
-            .unwrap();
+    for play_session in play_session_meta.sessions.into_iter().flatten() {
+      let (Some(started_at), Some(ended_at)) = (play_session.started_at, play_session.ended_at)
+      else {
+        continue;
+      };
 
-            gql_play_sessions.push(PlaySession {
-              duration,
-              ended_at,
-              started_at,
-              passive: play_session.passive.unwrap_or(false),
-            })
-          }
-        }
+      match play_session_duration(&started_at, &ended_at) {
+        Ok(duration) => gql_play_sessions.push(PlaySession {
+          duration,
+          ended_at,
+          started_at,
+          passive: play_session.passive.unwrap_or(false),
+        }),
+        Err(error) => eprintln!("Skipping a play session of {}: {}", root.id, error),
       }
     }
 
@@ -92,7 +83,7 @@ impl DataSource {
     _ctx: &Context<'_>,
   ) -> GraphQLResult<Vec<PreviousFileStateItem>> {
     Ok(
-      database::load_game_meta(&root.id)
+      database::load_game_meta(&root.id)?
         .previous_file_state
         .into_iter()
         .flatten()
@@ -111,7 +102,7 @@ impl DataSource {
     _ctx: &Context<'_>,
     id: String,
   ) -> GraphQLResult<Game> {
-    Ok(database::load_game_meta(&id).to_game())
+    Ok(database::load_game_meta(&id)?.into_game()?)
   }
 
   pub async fn Query_getAppSettings(
@@ -120,7 +111,7 @@ impl DataSource {
     _ctx: &Context<'_>,
   ) -> GraphQLResult<AppSettings> {
     Ok(AppSettings {
-      dataDirectory: String::from(database::get_data_directory().to_str().unwrap()),
+      dataDirectory: database::path_to_str(&database::get_data_directory()?)?.to_string(),
     })
   }
 
@@ -132,18 +123,18 @@ impl DataSource {
   ) -> GraphQLResult<Vec<GameFileEntry>> {
     let mut game_file_entries: Vec<GameFileEntry> = vec![];
 
-    for game_id in game_ids {
-      let game_files = database::find_all_game_files(&game_id);
+    let games_directory = database::get_games_directory()?;
 
-      for game_file in game_files {
+    for game_id in game_ids {
+      for game_file in database::find_all_game_files(&game_id)? {
+        let relative = Path::new(&game_file)
+          .strip_prefix(&games_directory)
+          .map_err(|_| Error::OutsideGamesFolder(PathBuf::from(&game_file)))?;
+        let relative = database::path_to_str(relative)?.to_string();
+
         game_file_entries.push(GameFileEntry {
-          absolute: game_file.clone(),
-          relative: Path::new(&game_file)
-            .strip_prefix(database::get_games_directory())
-            .unwrap()
-            .to_str()
-            .unwrap()
-            .to_string(),
+          absolute: game_file,
+          relative,
         })
       }
     }
@@ -157,10 +148,10 @@ impl DataSource {
     _ctx: &Context<'_>,
   ) -> GraphQLResult<Vec<Game>> {
     Ok(
-      database::find_all_games()
+      database::find_all_games()?
         .into_iter()
-        .map(|x| x.to_game())
-        .collect(),
+        .map(|x| x.into_game())
+        .collect::<Result<_, _>>()?,
     )
   }
 
@@ -173,7 +164,7 @@ impl DataSource {
       known_source_ports::get_all_known_source_ports()
         .into_iter()
         .map(|x| x.to_known_source_port())
-        .collect(),
+        .collect::<Result<_, _>>()?,
     )
   }
 
@@ -182,7 +173,7 @@ impl DataSource {
     _root: &Query,
     _ctx: &Context<'_>,
   ) -> GraphQLResult<KnownSourcePort> {
-    Ok(known_source_ports::get_starter_source_port().to_known_source_port())
+    Ok(known_source_ports::get_starter_source_port().to_known_source_port()?)
   }
 
   pub async fn Query_getSourcePorts(
@@ -191,10 +182,10 @@ impl DataSource {
     _ctx: &Context<'_>,
   ) -> GraphQLResult<Vec<SourcePort>> {
     Ok(
-      database::find_all_source_ports()
+      database::find_all_source_ports()?
         .into_iter()
-        .map(|x| x.to_source_port())
-        .collect(),
+        .map(|x| x.into_source_port())
+        .collect::<Result<_, _>>()?,
     )
   }
 
@@ -204,8 +195,8 @@ impl DataSource {
     _ctx: &Context<'_>,
   ) -> GraphQLResult<Vec<ModSet>> {
     Ok(
-      database::find_all_mod_sets()
-        .into_iter()
+      database::find_all_mod_sets()?
+        .iter()
         .map(|x| x.to_mod_set())
         .collect(),
     )
@@ -227,171 +218,9 @@ impl DataSource {
     _ctx: &Context<'_>,
     game_id: String,
   ) -> GraphQLResult<bool> {
-    // Get game configuration from database
-    let game = database::find_game_by_id(&game_id).ok_or_else(|| Error {
-      message: format!("game {} not found", game_id),
-      source: None,
-      extensions: None,
-    })?;
+    launcher::start_game(&game_id)?;
 
-    // Get source port configuration
-    let db_source_port = if game.source_port.as_deref() == Some("-1") {
-      // Find the default source port or fall back to first one
-      let all_source_ports = database::find_all_source_ports();
-      if all_source_ports.is_empty() {
-        return Err(Error {
-          message: "No source ports configured".to_string(),
-          source: None,
-          extensions: None,
-        });
-      }
-      all_source_ports
-        .clone()
-        .into_iter()
-        .find(|sp| sp.is_default.unwrap_or(false))
-        .unwrap_or_else(|| all_source_ports.into_iter().next().unwrap())
-    } else {
-      // Use the specified source port
-      let source_port = game.source_port.ok_or_else(|| Error {
-        message: format!("game {} has no source port configured", game_id),
-        source: None,
-        extensions: None,
-      })?;
-      database::find_source_port_by_id(&source_port)
-    };
-
-    let db_source_port_command = db_source_port.command.unwrap();
-    let main_exe = db_source_port_command.first().unwrap().clone();
-    let base_args = &db_source_port_command[1..];
-
-    // If running on macOS, check if the `${source_port}/Contents/Info.plist`
-    // exists.
-    // If it does, we need to get `CFBundleExecutable` from it and run
-    // `${source_port}/Contents/MacOS/${CFBundleExecutable}`
-    let main_exe = if cfg!(target_os = "macos") {
-      let plist_path = Path::new(&main_exe).join("Contents").join("Info.plist");
-
-      if plist_path.exists() {
-        let info_plist = plist::Value::from_file(&plist_path).unwrap();
-        let executable = info_plist
-          .as_dictionary()
-          .and_then(|x| x.get("CFBundleExecutable"))
-          .and_then(|x| x.as_string())
-          .unwrap();
-
-        plist_path
-          .parent()
-          .unwrap()
-          .join("MacOS")
-          .join(executable)
-          .to_str()
-          .unwrap()
-          .to_string()
-      } else {
-        main_exe
-      }
-    } else {
-      main_exe
-    };
-
-    let source_port_definition = find_known_source_port_from_id(
-      &db_source_port.known_source_port_id.unwrap_or(
-        known_source_ports::get_starter_source_port()
-          .id()
-          .to_string(),
-      ),
-    );
-
-    // Check if this game is tagged as an IWAD
-    let is_game_iwad = game
-      .tags
-      .iter()
-      .flat_map(|tags| tags.iter())
-      .any(|tag| tag.to_lowercase() == "iwad");
-
-    // Get the IWAD ID - if game is tagged as IWAD, use its own ID,
-    // otherwise use configured IWAD
-    let iwad_id = if is_game_iwad {
-      game_id.clone()
-    } else {
-      game.iwad_id.clone().ok_or_else(|| Error {
-        message: format!("game {} has no IWAD configured", game_id),
-        source: None,
-        extensions: None,
-      })?
-    };
-
-    // Process enabled files from previous_file_state
-    let mut files = Vec::new();
-    let mut iwad = None;
-
-    if let Some(state) = game.previous_file_state {
-      for file in state.into_iter().filter(|item| item.is_enabled) {
-        // If this file's relative path starts with the iwad_id and we haven't
-        // found an IWAD yet
-        if file.relative.starts_with(&iwad_id) && iwad.is_none() {
-          iwad = Some(file.absolute.clone());
-        }
-        // Add all files to the files list, including IWAD files
-        files.push(file.absolute);
-      }
-    }
-
-    // Ensure we found an IWAD
-    let iwad = iwad.ok_or_else(|| Error {
-      message: format!("game {} has no enabled IWAD files", game_id),
-      source: None,
-      extensions: None,
-    })?;
-
-    let use_custom_config = game.use_custom_config.unwrap_or_default();
-
-    let args = source_port_definition.build_command(&BuildCommandArgs {
-      executable: main_exe,
-      game_id: game_id.clone(),
-      iwad,
-      files,
-      use_custom_config,
-    });
-
-    let mut command = Command::new(&args[0]);
-
-    // Set LD_LIBRARY_PATH for Linux / AppImage.
-    if cfg!(target_os = "linux") {
-      let ld_library_path = std::env::var("LD_LIBRARY_PATH").unwrap_or_default();
-      let new_ld_library_path = format!("/usr/lib:{}", ld_library_path);
-      command.env("LD_LIBRARY_PATH", new_ld_library_path);
-    }
-
-    command.args(base_args);
-    command.args(&args[1..]);
-
-    let mut play_session = DbPlaySessionEntry {
-      started_at: Some(Utc::now().to_rfc3339()),
-      ended_at: None,
-      passive: Some(false),
-    };
-
-    let exit_status = command.status().unwrap();
-
-    play_session.ended_at = Some(Utc::now().to_rfc3339());
-
-    database::record_game_play_session(&game_id, play_session.clone());
-
-    let mut passive_play_session = play_session.clone();
-    passive_play_session.passive = Some(true);
-
-    if let Some(iwad_id) = &game.iwad_id {
-      database::record_game_play_session(iwad_id, passive_play_session.clone());
-    }
-
-    if let Some(extra_mod_ids) = &game.extra_mod_ids {
-      for mod_id in extra_mod_ids {
-        database::record_game_play_session(mod_id, passive_play_session.clone());
-      }
-    }
-
-    Ok(exit_status.success())
+    Ok(true)
   }
 
   pub async fn Mutation_openGamesFolder(
@@ -400,13 +229,13 @@ impl DataSource {
     _ctx: &Context<'_>,
     game_id: Option<String>,
   ) -> GraphQLResult<bool> {
-    let mut path_to_open = database::get_games_directory();
+    let mut path_to_open = database::get_games_directory()?;
 
     if let Some(game_id) = game_id {
       path_to_open.push(game_id);
     }
 
-    reveal_file_or_folder(path_to_open.to_str().unwrap());
+    reveal_file_or_folder(database::path_to_str(&path_to_open)?)?;
 
     Ok(true)
   }
@@ -417,7 +246,9 @@ impl DataSource {
     _ctx: &Context<'_>,
     _game_id: Option<String>,
   ) -> GraphQLResult<bool> {
-    reveal_file_or_folder(database::get_source_ports_directory().to_str().unwrap());
+    reveal_file_or_folder(database::path_to_str(
+      &database::get_source_ports_directory()?,
+    )?)?;
 
     Ok(true)
   }
@@ -429,19 +260,12 @@ impl DataSource {
     game_id: String,
     notes: String,
   ) -> GraphQLResult<Game> {
-    if let Some(mut db_game) = database::find_game_by_id(&game_id) {
-      db_game.notes = Some(notes);
+    let mut db_game = database::find_game_by_id(&game_id)?;
+    db_game.notes = Some(notes);
 
-      database::save_game(db_game.clone());
+    database::save_game(&db_game)?;
 
-      return Ok(db_game.to_game());
-    }
-
-    Err(Error {
-      message: format!("game {} not found", game_id),
-      source: None,
-      extensions: None,
-    })
+    Ok(db_game.into_game()?)
   }
 
   pub async fn Mutation_updateRating(
@@ -451,19 +275,12 @@ impl DataSource {
     game_id: String,
     rating: i32,
   ) -> GraphQLResult<Game> {
-    if let Some(mut db_game) = database::find_game_by_id(&game_id) {
-      db_game.rating = Some(rating);
+    let mut db_game = database::find_game_by_id(&game_id)?;
+    db_game.rating = Some(rating);
 
-      database::save_game(db_game.clone());
+    database::save_game(&db_game)?;
 
-      return Ok(db_game.to_game());
-    }
-
-    Err(Error {
-      message: format!("game {} not found", game_id),
-      source: None,
-      extensions: None,
-    })
+    Ok(db_game.into_game()?)
   }
 
   pub async fn Mutation_updateTags(
@@ -473,19 +290,12 @@ impl DataSource {
     game_id: String,
     tags: Vec<String>,
   ) -> GraphQLResult<Game> {
-    if let Some(mut db_game) = database::find_game_by_id(&game_id) {
-      db_game.tags = Some(tags);
+    let mut db_game = database::find_game_by_id(&game_id)?;
+    db_game.tags = Some(tags);
 
-      database::save_game(db_game.clone());
+    database::save_game(&db_game)?;
 
-      return Ok(db_game.to_game());
-    }
-
-    Err(Error {
-      message: format!("game {} not found", game_id),
-      source: None,
-      extensions: None,
-    })
+    Ok(db_game.into_game()?)
   }
 
   pub async fn Mutation_updateGame(
@@ -494,56 +304,50 @@ impl DataSource {
     _ctx: &Context<'_>,
     game: GameInput,
   ) -> GraphQLResult<Game> {
-    if let Some(mut db_game) = database::find_game_by_id(&game.id) {
-      if let Some(rating) = game.rating {
-        db_game.rating = Some(rating);
-      }
-      if let Some(description) = game.description {
-        db_game.description = Some(description);
-      }
-      if let Some(notes) = game.notes {
-        db_game.notes = Some(notes);
-      }
-      if let Some(tags) = game.tags {
-        db_game.tags = Some(tags);
-      }
+    let mut db_game = database::find_game_by_id(&game.id)?;
 
-      if let Some(source_port) = game.source_port {
-        db_game.source_port = Some(source_port);
-      }
-      if let Some(iwad_id) = game.iwad_id {
-        db_game.iwad_id = Some(iwad_id);
-      }
-      if let Some(extra_mod_ids) = game.extra_mod_ids {
-        db_game.extra_mod_ids = Some(extra_mod_ids);
-      }
-
-      if let Some(use_custom_config) = game.use_custom_config {
-        db_game.use_custom_config = Some(use_custom_config);
-      }
-      if let Some(previous_file_state) = game.previous_file_state {
-        db_game.previous_file_state = Some(
-          previous_file_state
-            .into_iter()
-            .map(|x| DbPreviousFileStateItem {
-              is_enabled: x.is_enabled,
-              relative: x.relative,
-              absolute: x.absolute,
-            })
-            .collect(),
-        );
-      }
-
-      database::save_game(db_game.clone());
-
-      return Ok(db_game.to_game());
+    if let Some(rating) = game.rating {
+      db_game.rating = Some(rating);
+    }
+    if let Some(description) = game.description {
+      db_game.description = Some(description);
+    }
+    if let Some(notes) = game.notes {
+      db_game.notes = Some(notes);
+    }
+    if let Some(tags) = game.tags {
+      db_game.tags = Some(tags);
     }
 
-    Err(Error {
-      message: format!("game {} not found", game.id),
-      source: None,
-      extensions: None,
-    })
+    if let Some(source_port) = game.source_port {
+      db_game.source_port = Some(source_port);
+    }
+    if let Some(iwad_id) = game.iwad_id {
+      db_game.iwad_id = Some(iwad_id);
+    }
+    if let Some(extra_mod_ids) = game.extra_mod_ids {
+      db_game.extra_mod_ids = Some(extra_mod_ids);
+    }
+
+    if let Some(use_custom_config) = game.use_custom_config {
+      db_game.use_custom_config = Some(use_custom_config);
+    }
+    if let Some(previous_file_state) = game.previous_file_state {
+      db_game.previous_file_state = Some(
+        previous_file_state
+          .into_iter()
+          .map(|x| DbPreviousFileStateItem {
+            is_enabled: x.is_enabled,
+            relative: x.relative,
+            absolute: x.absolute,
+          })
+          .collect(),
+      );
+    }
+
+    database::save_game(&db_game)?;
+
+    Ok(db_game.into_game()?)
   }
 
   pub async fn Mutation_initializeApp(
@@ -551,7 +355,7 @@ impl DataSource {
     _root: &Mutation,
     _ctx: &Context<'_>,
   ) -> GraphQLResult<bool> {
-    database::init_games();
+    database::init_games()?;
 
     Ok(true)
   }
@@ -569,10 +373,10 @@ impl DataSource {
       is_default: source_port.is_default,
     };
 
-    database::save_source_port(db_source_port.clone());
-    database::set_default_source_port(&source_port.id, source_port.is_default);
+    database::save_source_port(&db_source_port)?;
+    database::set_default_source_port(&source_port.id, source_port.is_default)?;
 
-    Ok(db_source_port.to_source_port())
+    Ok(db_source_port.into_source_port()?)
   }
 
   pub async fn Mutation_updateSourcePort(
@@ -581,16 +385,16 @@ impl DataSource {
     _ctx: &Context<'_>,
     source_port: UpdateSourcePortInput,
   ) -> GraphQLResult<SourcePort> {
-    let mut db_source_port = database::find_source_port_by_id(&source_port.id);
+    let mut db_source_port = database::find_source_port_by_id(&source_port.id)?;
 
     db_source_port.command = Some(source_port.command);
     db_source_port.known_source_port_id = Some(source_port.known_source_port_id);
     db_source_port.is_default = source_port.is_default;
 
-    database::save_source_port(db_source_port.clone());
-    database::set_default_source_port(&source_port.id, source_port.is_default);
+    database::save_source_port(&db_source_port)?;
+    database::set_default_source_port(&source_port.id, source_port.is_default)?;
 
-    Ok(db_source_port.to_source_port())
+    Ok(db_source_port.into_source_port()?)
   }
 
   pub async fn Mutation_deleteSourcePort(
@@ -599,7 +403,7 @@ impl DataSource {
     _ctx: &Context<'_>,
     id: String,
   ) -> GraphQLResult<bool> {
-    database::delete_source_port(&id);
+    database::delete_source_port(&id)?;
 
     Ok(true)
   }
@@ -611,13 +415,14 @@ impl DataSource {
     mod_set: CreateModSetInput,
   ) -> GraphQLResult<ModSet> {
     let db_mod_set = DbModSet {
-      name: Some(mod_set.name.clone()),
+      name: Some(mod_set.name),
       mods: Some(mod_set.mods),
     };
 
-    database::save_mod_set(db_mod_set.clone());
+    let result = db_mod_set.to_mod_set();
+    database::save_mod_set(db_mod_set)?;
 
-    Ok(db_mod_set.to_mod_set())
+    Ok(result)
   }
 
   pub async fn Mutation_updateModSet(
@@ -627,13 +432,14 @@ impl DataSource {
     mod_set: UpdateModSetInput,
   ) -> GraphQLResult<ModSet> {
     let db_mod_set = DbModSet {
-      name: Some(mod_set.name.clone()),
+      name: Some(mod_set.name),
       mods: Some(mod_set.mods),
     };
 
-    database::save_mod_set(db_mod_set.clone());
+    let result = db_mod_set.to_mod_set();
+    database::save_mod_set(db_mod_set)?;
 
-    Ok(db_mod_set.to_mod_set())
+    Ok(result)
   }
 
   pub async fn Mutation_deleteModSet(
@@ -642,7 +448,7 @@ impl DataSource {
     _ctx: &Context<'_>,
     name: String,
   ) -> GraphQLResult<bool> {
-    database::delete_mod_set(&name);
+    database::delete_mod_set(&name)?;
 
     Ok(true)
   }
@@ -657,13 +463,12 @@ impl DataSource {
 
     let seven_zip_path = app_handle
       .path()
-      .resource_dir()
-      .unwrap()
+      .resource_dir()?
       .join(add_exe_on_windows("resources-arch-specific/7za"));
 
-    let seven_zip_path_str = seven_zip_path.to_str().unwrap();
+    let seven_zip_path_str = database::path_to_str(&seven_zip_path)?;
 
-    let game_id = importer::import_file(&file_path, seven_zip_path_str);
+    let game_id = importer::import_file(&file_path, seven_zip_path_str)?;
 
     Ok(ImportFileResponse {
       success: true,
@@ -679,100 +484,23 @@ impl DataSource {
     hint: Option<String>,
     host: String,
   ) -> GraphQLResult<DownloadGameResponse> {
-    if host == "idgames" {
-      if let Some(hint) = hint {
-        // Get the details from `https://www.doomworld.com/idgames/api/api.php?action=get&id=<id>`
-        let url = format!(
-          "https://www.doomworld.com/idgames/api/api.php?action=get&id={}",
-          hint
-        );
-        let response = reqwest::get(&url).await.map_err(|e| Error {
-          message: e.to_string(),
-          source: None,
-          extensions: None,
-        })?;
-        if !response.status().is_success() {
-          return Err(Error {
-            message: format!("Failed to fetch game details: {}", response.status()),
-            source: None,
-            extensions: None,
-          });
-        }
-
-        // They're XML, and we need to get `idgames-response.content.dir` and
-        // `idgames-response.content.file`.
-        let xml_content = response.text().await.map_err(|e| Error {
-          message: e.to_string(),
-          source: None,
-          extensions: None,
-        })?;
-        let doc = roxmltree::Document::parse(&xml_content).map_err(|e| Error {
-          message: e.to_string(),
-          source: None,
-          extensions: None,
-        })?;
-        let dir = doc
-          .descendants()
-          .find(|n| n.has_tag_name("dir"))
-          .and_then(|n| n.text())
-          .ok_or_else(|| Error {
-            message: "Failed to find 'dir' in XML response".to_string(),
-            source: None,
-            extensions: None,
-          })?;
-        let file = doc
-          .descendants()
-          .find(|n| n.has_tag_name("filename"))
-          .and_then(|n| n.text())
-          .ok_or_else(|| Error {
-            message: "Failed to find 'filename' in XML response".to_string(),
-            source: None,
-            extensions: None,
-          })?;
-
-        // The download URL is `https://youfailit.net/pub/idgames/<dir>/<file>`
-        let download_url = format!("https://youfailit.net/pub/idgames/{}/{}", dir, file);
-
-        // use mktemp to create a temporary directory
-        let temp_dir = mktemp::Temp::new_dir().map_err(|e| Error {
-          message: e.to_string(),
-          source: None,
-          extensions: None,
-        })?;
-
-        // Create a path for the downloaded file
-        let download_path = temp_dir.release().join(file);
-        let headers = std::collections::HashMap::new();
-        let body = None;
-        download(
-          &download_url,
-          download_path.to_str().unwrap(),
-          headers,
-          body,
-        )
-        .await
-        .map_err(|e| Error {
-          message: e.to_string(),
-          source: None,
-          extensions: None,
-        })?;
-
-        return Ok(DownloadGameResponse {
-          success: true,
-          message: Some(format!(
-            "Game downloaded successfully to {}",
-            download_path.to_str().unwrap()
-          )),
-          temp_path: Some(download_path.to_str().unwrap().to_string()),
-        });
-      }
+    if host != "idgames" {
+      return Err(Error::UnsupportedDownloadHost(host).into());
     }
 
-    return Ok(DownloadGameResponse {
-      success: false,
-      message: None,
-      temp_path: None,
-    });
+    let hint = hint.ok_or(Error::MissingDownloadHint)?;
+
+    let download_path = idgames::download_to_temp_dir(&hint).await?;
+    let download_path_str = database::path_to_str(&download_path)?;
+
+    Ok(DownloadGameResponse {
+      success: true,
+      message: Some(format!(
+        "Game downloaded successfully to {}",
+        download_path_str
+      )),
+      temp_path: Some(download_path_str.to_string()),
+    })
   }
 }
 
@@ -782,4 +510,15 @@ pub fn add_exe_on_windows(exe: &str) -> String {
   } else {
     exe.to_string()
   }
+}
+
+fn play_session_duration(
+  started_at: &str,
+  ended_at: &str,
+) -> Result<i32, Box<dyn std::error::Error>> {
+  let seconds = (DateTime::parse_from_rfc3339(ended_at)?
+    - DateTime::parse_from_rfc3339(started_at)?)
+  .num_seconds();
+
+  Ok(i32::try_from(seconds)?)
 }
