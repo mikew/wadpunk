@@ -2,6 +2,7 @@ import { useMutation } from '@apollo/client/react'
 import { enqueueSnackbar } from 'notistack'
 import { useCallback } from 'react'
 
+import { handleErrorLocallyContext } from '#src/graphql/context'
 import { invalidateApolloQuery } from '#src/graphql/graphqlClient'
 import type { Game } from '#src/graphql/types'
 import { useI18nContext } from '#src/i18n/lib/i18nContext'
@@ -15,17 +16,12 @@ function useStartGame() {
   const startGame = useCallback(
     async (gameId: Game['id']) => {
       try {
-        const startGameResponse = await startGameMutation({
+        await startGameMutation({
           variables: {
             game_id: gameId,
           },
+          context: handleErrorLocallyContext,
         })
-
-        invalidateApolloQuery(['getGames'])
-
-        if (!startGameResponse.data?.startGame) {
-          throw new Error('Error while running game')
-        }
       } catch (err) {
         console.error('Failed to start game:', err)
 
@@ -34,6 +30,8 @@ function useStartGame() {
         enqueueSnackbar(`${t('games.notifications.startError')}: ${message}`, {
           variant: 'error',
         })
+      } finally {
+        invalidateApolloQuery(['getGames'])
       }
     },
     [startGameMutation, t],

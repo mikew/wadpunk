@@ -1,10 +1,13 @@
 import { useMutation } from '@apollo/client/react'
 import { invariant } from '@apollo/client/utilities/invariant'
 import { Alert, LinearProgress, Snackbar, Stack } from '@mui/material'
+import { enqueueSnackbar } from 'notistack'
 import { useEffect, useRef, useState } from 'react'
 
 import { ImportFileDocument } from '#src/app/operations.generated'
+import { handleErrorLocallyContext } from '#src/graphql/context'
 import { invalidateApolloQuery } from '#src/graphql/graphqlClient'
+import { useI18nContext } from '#src/i18n/lib/i18nContext'
 import basename from '#src/lib/basename'
 import useLatest from '#src/lib/useLatest'
 import { useRootDispatch, useRootSelector } from '#src/redux/helpers'
@@ -13,7 +16,18 @@ import { DownloadGameDocument } from './operations.generated'
 import type { ImportQueueItem } from './redux'
 import { actions } from './redux'
 
+function describeImportItem(item: ImportQueueItem) {
+  switch (item.action) {
+    case 'import':
+      return basename(item.filePath)
+
+    case 'download':
+      return item.hint ? `${item.host} (${item.hint})` : item.host
+  }
+}
+
 const ImportQueueHandler: React.FC = () => {
+  const { t } = useI18nContext()
   const [isProcessing, setIsProcessing] = useState(false)
   const [open, setOpen] = useState(false)
   const [currentImportItem, setCurrentImportItem] = useState<
@@ -34,13 +48,14 @@ const ImportQueueHandler: React.FC = () => {
   const [importFile] = useMutation(ImportFileDocument)
   const [downloadGame] = useMutation(DownloadGameDocument)
 
-  const processItem = useLatest(async (item: ImportQueueItem) => {
+  async function importItem(item: ImportQueueItem) {
     switch (item.action) {
       case 'import': {
         const { data } = await importFile({
           variables: {
             file_path: item.filePath,
           },
+          context: handleErrorLocallyContext,
         })
 
         lastGameIdRef.current = data?.importFile.game_id
@@ -54,6 +69,7 @@ const ImportQueueHandler: React.FC = () => {
             host: item.host,
             hint: item.hint,
           },
+          context: handleErrorLocallyContext,
         })
 
         if (!downloadGameData?.downloadGame?.temp_path) {
@@ -65,6 +81,7 @@ const ImportQueueHandler: React.FC = () => {
           variables: {
             file_path: downloadGameData.downloadGame.temp_path,
           },
+          context: handleErrorLocallyContext,
         })
 
         lastGameIdRef.current = importFileData?.importFile.game_id
@@ -74,6 +91,25 @@ const ImportQueueHandler: React.FC = () => {
 
       default:
         console.error(`Unknown action: ${item}`)
+    }
+  }
+
+  const processItem = useLatest(async (item: ImportQueueItem) => {
+    try {
+      await importItem(item)
+    } catch (err) {
+      console.error('Failed to import:', err)
+
+      enqueueSnackbar(
+        t('games.notifications.importError', {
+          name: describeImportItem(item),
+          message:
+            err instanceof Error
+              ? err.message
+              : t('games.notifications.unknownError'),
+        }),
+        { variant: 'error' },
+      )
     }
   })
 
@@ -93,6 +129,7 @@ const ImportQueueHandler: React.FC = () => {
         invariant(item, 'Expected importQueue to have at least one item')
 
         setCurrentImportItem(item)
+
         await processItem.current(item)
 
         dispatch(actions.removeImportQueueItem())
@@ -136,21 +173,8 @@ const ImportQueueHandler: React.FC = () => {
         ? 0
         : ((currentBatchProcessed + 1) / currentBatchTotal) * 100
 
-  let currentImportHint: string = ''
-  if (currentImportItem !== 'DONE') {
-    switch (currentImportItem.action) {
-      case 'import':
-        currentImportHint = basename(currentImportItem.filePath)
-        break
-
-      case 'download':
-        currentImportHint = currentImportItem.host
-        if (currentImportItem.hint) {
-          currentImportHint += ` (${currentImportItem.hint})`
-        }
-        break
-    }
-  }
+  const currentImportHint =
+    currentImportItem === 'DONE' ? '' : describeImportItem(currentImportItem)
   const message =
     currentImportItem === 'DONE'
       ? 'Done!'

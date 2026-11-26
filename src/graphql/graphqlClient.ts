@@ -1,4 +1,6 @@
-import { ApolloClient, InMemoryCache } from '@apollo/client'
+import { ApolloClient, ApolloLink, InMemoryCache } from '@apollo/client'
+import { ErrorLink } from '@apollo/client/link/error'
+import { enqueueSnackbar } from 'notistack'
 
 import tauriGraphqlApolloLink from '#src/tauri/tauriGraphqlApolloLink'
 
@@ -7,9 +9,20 @@ import type { Query } from './types'
 
 const apolloCache = new InMemoryCache()
 
+const mutationErrorLink = new ErrorLink(({ error, operation }) => {
+  if (
+    operation.operationType !== 'mutation' ||
+    operation.getContext().handleErrorLocally
+  ) {
+    return
+  }
+
+  enqueueSnackbar(error.message, { variant: 'error' })
+})
+
 const graphqlClient = new ApolloClient({
   cache: apolloCache,
-  link: tauriGraphqlApolloLink,
+  link: ApolloLink.from([mutationErrorLink, tauriGraphqlApolloLink]),
   // link: tauriGraphqlHttpLink,
 })
 

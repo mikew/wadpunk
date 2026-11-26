@@ -13,6 +13,7 @@ import { StrictMode, Suspense, lazy } from 'react'
 import { createRoot } from 'react-dom/client'
 import { Provider } from 'react-redux'
 
+import RootErrorBoundary from './app/RootErrorBoundary'
 import theme from './app/theme'
 import graphqlClient from './graphql/graphqlClient'
 import I18nLoader from './i18n/I18nLoader'
@@ -63,15 +64,17 @@ createRoot(rootElement).render(
                 }
               >
                 <I18nLoader>
-                  <ConfirmDialogProvider>
-                    <App />
+                  <RootErrorBoundary>
+                    <ConfirmDialogProvider>
+                      <App />
 
-                    <ConfirmDialog />
+                      <ConfirmDialog />
 
-                    <TauriUpdateNotifier />
+                      <TauriUpdateNotifier />
 
-                    <TauriExternalLinkHandler />
-                  </ConfirmDialogProvider>
+                      <TauriExternalLinkHandler />
+                    </ConfirmDialogProvider>
+                  </RootErrorBoundary>
                 </I18nLoader>
               </Suspense>
             </CssBaseline>

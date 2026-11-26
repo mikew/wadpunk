@@ -3,6 +3,7 @@ use std::{fs::create_dir_all, path::Path, process::Command};
 use fs_extra::{copy_items, dir::CopyOptions};
 
 use crate::database;
+use crate::error::describe_exit_status;
 use crate::error::Error;
 use crate::error::Result;
 
@@ -45,7 +46,7 @@ pub fn extract_archive_to_games_directory(file: &str, seven_zip_path: &str) -> R
 
   create_dir_all(&destination).map_err(Error::io("create folder", &destination))?;
 
-  Command::new(seven_zip_path)
+  let status = Command::new(seven_zip_path)
     .args([
       "x",
       "-aoa",
@@ -54,6 +55,15 @@ pub fn extract_archive_to_games_directory(file: &str, seven_zip_path: &str) -> R
     ])
     .status()
     .map_err(Error::io("run", Path::new(seven_zip_path)))?;
+
+  // 7-Zip exits with 1 for warnings (e.g. a file it couldn't read), anything
+  // higher is a failure.
+  if !matches!(status.code(), Some(0 | 1)) {
+    return Err(Error::ExtractFailed {
+      file: file.to_string(),
+      outcome: describe_exit_status(status),
+    });
+  }
 
   Ok(())
 }

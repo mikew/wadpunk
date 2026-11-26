@@ -1,7 +1,6 @@
 use crate::{database, error::Result, graphql::generated::KnownSourcePort};
 
 pub struct BuildCommandArgs<'a> {
-  pub executable: &'a str,
   pub iwad: &'a str,
   pub files: &'a [String],
   pub use_custom_config: bool,
@@ -111,18 +110,20 @@ impl DbKnownSourcePort {
       supports_save_dir: self.supports_save_dir(),
       home_page_url: self.home_page_url().to_string(),
       download_page_url: self.download_page_url().to_string(),
-      example_command: self.build_command(&BuildCommandArgs {
-        executable: self.id(),
-        iwad: "doom2.iwad",
-        files: &example_files,
-        use_custom_config: true,
-        game_id: "doom2",
-      })?,
+      example_command: [self.id().to_string()]
+        .into_iter()
+        .chain(self.build_args(&BuildCommandArgs {
+          iwad: "doom2.iwad",
+          files: &example_files,
+          use_custom_config: true,
+          game_id: "doom2",
+        })?)
+        .collect(),
     })
   }
 
-  pub fn build_command(&self, args: &BuildCommandArgs) -> Result<Vec<String>> {
-    let mut command = vec![args.executable.to_string()];
+  pub fn build_args(&self, args: &BuildCommandArgs) -> Result<Vec<String>> {
+    let mut command = vec![];
     let game_meta_directory =
       database::get_meta_directory()?.join(database::normalize_name_from_id(args.game_id));
 

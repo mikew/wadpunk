@@ -7,15 +7,9 @@ if [ -z "$CI" ]; then
   ./script/prepare-env
 fi
 
-# `unwrap_used` and `expect_used` are warnings in Cargo.toml so editors still
-# show them, but they are allowed here until the remaining uses are removed.
-# Drop the two `-A` flags (and make the lints `deny` in Cargo.toml) after that.
 (
   cd src-tauri
-  cargo clippy -- \
-    -D warnings \
-    -A clippy::unwrap_used \
-    -A clippy::expect_used
+  cargo clippy -- -D warnings
 )
 
 ./node_modules/.bin/vite build
