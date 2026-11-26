@@ -13,7 +13,10 @@ pub fn set_app_handle(handle: AppHandle) {
   let _ = APP_HANDLE.set(handle);
 }
 
-/// Returns a reference to the global AppHandle
+/// Returns a reference to the global AppHandle.
+// `set_app_handle` runs in Tauri's `setup`, before the webview (and so any
+// command or GraphQL request) exists, so this can't be reached unset.
+#[allow(clippy::expect_used)]
 pub fn get_app_handle() -> &'static AppHandle {
   APP_HANDLE.get().expect("AppHandle has not been set")
 }
