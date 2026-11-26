@@ -1,6 +1,6 @@
 import { Dialog, DialogContent } from '@mui/material'
 
-import { useI18nContext } from '#src/i18n/lib/i18nContext'
+import Translate from '#src/i18n/Translate'
 import { useRootDispatch, useRootSelector } from '#src/redux/helpers'
 import useTauriFileDrop from '#src/tauri/useTauriFileDrop'
 
@@ -11,7 +11,6 @@ const ImportDropZone: React.FC<React.PropsWithChildren> = (props) => {
   const isSourcePortsDialogOpen = useRootSelector(
     (state) => state.sourcePorts.isDialogOpen,
   )
-  const { t } = useI18nContext()
   const dispatch = useRootDispatch()
 
   const tauriFileDrop = useTauriFileDrop(async (event) => {
@@ -38,7 +37,9 @@ const ImportDropZone: React.FC<React.PropsWithChildren> = (props) => {
       <Dialog
         open={Boolean(!isSourcePortsDialogOpen && tauriFileDrop.isDraggingOver)}
       >
-        <DialogContent>{t('games.actions.dropToImport')}</DialogContent>
+        <DialogContent>
+          <Translate scope="games.actions.dropToImport" />
+        </DialogContent>
       </Dialog>
     </div>
   )
