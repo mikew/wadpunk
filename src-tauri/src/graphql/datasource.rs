@@ -49,7 +49,13 @@ impl DataSource {
   ) -> GraphQLResult<Vec<PlaySession>> {
     let mut gql_play_sessions: Vec<PlaySession> = vec![];
 
-    let play_session_meta = database::load_game_play_sessions(&root.id)?;
+    let play_session_meta = match database::load_game_play_sessions(&root.id) {
+      Ok(play_session_meta) => play_session_meta,
+      Err(error) => {
+        eprintln!("Could not read play sessions of {}: {}", root.id, error);
+        return Ok(gql_play_sessions);
+      }
+    };
 
     for play_session in play_session_meta.sessions.into_iter().flatten() {
       let (Some(started_at), Some(ended_at)) = (play_session.started_at, play_session.ended_at)

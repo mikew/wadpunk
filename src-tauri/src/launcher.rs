@@ -4,7 +4,6 @@ use std::process::Command;
 use chrono::Utc;
 
 use crate::database;
-use crate::database::DbGameMeta;
 use crate::database::DbPlaySessionEntry;
 use crate::database::DbPreviousFileStateItem;
 use crate::database::DbSourcePort;
@@ -80,7 +79,26 @@ pub fn start_game(game_id: &str) -> Result<()> {
     passive: Some(false),
   };
 
-  record_play_sessions(game_id, &game, &play_session)?;
+  let record = |id: &str, entry: &DbPlaySessionEntry| {
+    if let Err(error) = database::record_game_play_session(id, entry) {
+      eprintln!("Could not record play session for {}: {}", id, error);
+    }
+  };
+
+  record(game_id, &play_session);
+
+  let passive_play_session = DbPlaySessionEntry {
+    passive: Some(true),
+    ..play_session.clone()
+  };
+
+  for id in game
+    .iwad_id
+    .iter()
+    .chain(game.extra_mod_ids.iter().flatten())
+  {
+    record(id, &passive_play_session);
+  }
 
   if !exit_status.success() {
     return Err(Error::GameExited {
@@ -177,28 +195,4 @@ fn collect_enabled_files<'a>(
   })?;
 
   Ok((iwad, files))
-}
-
-fn record_play_sessions(
-  game_id: &str,
-  game: &DbGameMeta,
-  play_session: &DbPlaySessionEntry,
-) -> Result<()> {
-  database::record_game_play_session(game_id, play_session)?;
-
-  let passive_play_session = DbPlaySessionEntry {
-    passive: Some(true),
-    ..play_session.clone()
-  };
-
-  let passive_ids = game
-    .iwad_id
-    .iter()
-    .chain(game.extra_mod_ids.iter().flatten());
-
-  for id in passive_ids {
-    database::record_game_play_session(id, &passive_play_session)?;
-  }
-
-  Ok(())
 }

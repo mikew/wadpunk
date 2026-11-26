@@ -2,12 +2,16 @@ use std::fs;
 use std::io;
 use std::path::Path;
 use std::path::PathBuf;
+use std::sync::atomic::AtomicU64;
+use std::sync::atomic::Ordering;
 
 use serde::de::DeserializeOwned;
 use serde::Serialize;
 
 use crate::error::Error;
 use crate::error::Result;
+
+static TEMPORARY_FILE_COUNTER: AtomicU64 = AtomicU64::new(0);
 
 pub fn read_json<T: DeserializeOwned>(path: &Path) -> Result<Option<T>> {
   let contents = match fs::read_to_string(path) {
@@ -39,7 +43,11 @@ pub fn write_json<T: Serialize + ?Sized>(path: &Path, value: &T) -> Result<()> {
   }
 
   let mut temporary_name = path.as_os_str().to_owned();
-  temporary_name.push(".tmp");
+  temporary_name.push(format!(
+    ".{}.{}.tmp",
+    std::process::id(),
+    TEMPORARY_FILE_COUNTER.fetch_add(1, Ordering::Relaxed)
+  ));
   let temporary_path = PathBuf::from(temporary_name);
 
   fs::write(&temporary_path, contents).map_err(Error::io("write", &temporary_path))?;
