@@ -14,7 +14,7 @@
   "build": {
     "beforeDevCommand": "",
     "beforeBuildCommand": "",
-    "frontendDist": "../build",
+    "frontendDist": "../dist/client",
     "devUrl": "http://localhost:3000"
   },
   "productName": "WADPunk",

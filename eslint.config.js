@@ -7,7 +7,11 @@ import pbxxVitest from '@promoboxx/eslint-config/vitest'
 import { defineConfig, globalIgnores } from 'eslint/config'
 
 const config = defineConfig([
-  globalIgnores(['src/graphql/types.d.ts', '**/*.generated.ts']),
+  globalIgnores([
+    'src/graphql/types.d.ts',
+    '**/*.generated.ts',
+    'src/routeTree.gen.ts',
+  ]),
 
   // Base config applies to all projects.
   ...pbxxBase,

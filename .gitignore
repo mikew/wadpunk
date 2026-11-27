@@ -36,3 +36,4 @@ dist-ssr
 /src-tauri/icons
 /test-updater
 /src-tauri/gen
+/.tanstack
