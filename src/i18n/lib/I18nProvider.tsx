@@ -3,7 +3,6 @@ import { useCallback, useState } from 'react'
 import i18nConfig from '../config'
 
 import buildI18nContextValue from './buildI18nContextValue'
-import htmlDirAttribute from './htmlDirAttribute'
 import { i18nContext } from './i18nContext'
 import normalizeLocale from './normalizeLocale'
 import type { I18nTranslations } from './types'
@@ -25,14 +24,7 @@ const I18nProvider: React.FC<
       buildI18nContextValue(normalizedLocale, translations, setLocale),
     )
 
-    localStorage.setItem(i18nConfig.cookieName, normalizedLocale)
-
-    const html = document.querySelector('html')
-
-    if (html) {
-      html.setAttribute('lang', normalizedLocale)
-      html.setAttribute('dir', htmlDirAttribute(normalizedLocale))
-    }
+    await i18nConfig.saveLocale(normalizedLocale)
   }, [])
 
   const [contextValue, setContextValue] = useState(() => {

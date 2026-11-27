@@ -1,5 +1,9 @@
 import i18nConfig from '../config'
 
+export function normalizeForComparison(locale: string | null | undefined) {
+  return (locale || '').toLowerCase().replaceAll('_', '-')
+}
+
 function normalizeLocale(locale: string | null | undefined) {
   if (
     i18nConfig.supportedLocales == null

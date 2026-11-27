@@ -33,4 +33,13 @@ export interface I18nConfig {
   cookieName: string
   cookieLifetime: number
   loadTranslations: (locale: string) => Promise<I18nTranslations>
+  getPreferredLocale: () =>
+    string | null | undefined | Promise<string | null | undefined>
+  saveLocale: (locale: string) => void | Promise<void>
+}
+
+export interface I18nInstance {
+  currentLocale: string
+  translations: I18nTranslations
+  supportedLocales: string[]
 }
