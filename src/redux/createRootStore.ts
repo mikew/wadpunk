@@ -20,7 +20,10 @@ declare global {
   }
 }
 
-const reduxDevToolsCompose = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
+const reduxDevToolsCompose =
+  typeof window === 'undefined'
+    ? undefined
+    : window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
 const composeEnhancers =
   import.meta.env.DEV && reduxDevToolsCompose ? reduxDevToolsCompose : compose
 
