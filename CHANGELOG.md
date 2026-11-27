@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [1.19.0](https://github.com/mikew/wadpunk/compare/v1.18.0...v1.19.0) (2026-11-27)
+
+
+### Features
+
+* Latest starter kit ([#141](https://github.com/mikew/wadpunk/issues/141)) ([8718305](https://github.com/mikew/wadpunk/commit/871830515c2900ca536a32db6e8987dab4af84d6))
+* Stronger Rust ([#137](https://github.com/mikew/wadpunk/issues/137)) ([fea0663](https://github.com/mikew/wadpunk/commit/fea06639cd7654e8491cd8b1cafee775901ecf81))
+* Use `<Translate />` component ([#140](https://github.com/mikew/wadpunk/issues/140)) ([9b3550a](https://github.com/mikew/wadpunk/commit/9b3550ac754f774e6af6ad3dc5f1a886376e0715))
+
+
+### Bug Fixes
+
+* CI Runner Aliases ([#138](https://github.com/mikew/wadpunk/issues/138)) ([b85fbf8](https://github.com/mikew/wadpunk/commit/b85fbf8a1765eed79d53a93becaccfe4ad75d8e9))
+
 ## [1.18.0](https://github.com/mikew/wadpunk/compare/v1.17.0...v1.18.0) (2026-10-12)
 
 
