@@ -2,11 +2,9 @@ import { Alert, AlertTitle, Box, Button } from '@mui/material'
 import { Component } from 'react'
 import type { ErrorInfo, ReactNode } from 'react'
 
-import { useI18nContext } from '#src/i18n/lib/i18nContext'
+import Translate from '#src/i18n/Translate'
 
 const RootErrorFallback: React.FC<{ error: unknown }> = ({ error }) => {
-  const { t } = useI18nContext()
-
   return (
     <Box sx={{ padding: 4 }}>
       <Alert
@@ -19,11 +17,13 @@ const RootErrorFallback: React.FC<{ error: unknown }> = ({ error }) => {
               window.location.reload()
             }}
           >
-            {t('app.errorBoundary.reload')}
+            <Translate scope="app.errorBoundary.reload" />
           </Button>
         }
       >
-        <AlertTitle>{t('app.errorBoundary.title')}</AlertTitle>
+        <AlertTitle>
+          <Translate scope="app.errorBoundary.title" />
+        </AlertTitle>
         {error instanceof Error ? error.message : String(error)}
       </Alert>
     </Box>

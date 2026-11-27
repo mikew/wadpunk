@@ -29,7 +29,7 @@ import {
 import { useEffect } from 'react'
 import { useWatch } from 'react-hook-form'
 
-import { useI18nContext } from '#src/i18n/lib/i18nContext'
+import Translate from '#src/i18n/Translate'
 
 import type { GameDialogFormValues } from './GameDialog'
 import type { FileEntry } from './GameFileListContext'
@@ -87,8 +87,6 @@ const GameDialogFileList: React.FC<GameDialogFileListProps> = (props) => {
     },
     fetchPolicy: 'network-only',
   })
-
-  const { t } = useI18nContext()
 
   useEffect(() => {
     const allFiles: FileEntry[] = [
@@ -176,7 +174,9 @@ const GameDialogFileList: React.FC<GameDialogFileListProps> = (props) => {
 
   return (
     <>
-      <FormLabel>{t('games.fields.files.label')}</FormLabel>
+      <FormLabel>
+        <Translate scope="games.fields.files.label" />
+      </FormLabel>
       <DndContext
         onDragEnd={(event) => {
           const oldIndex = files.findIndex((x) => x.id === event.active.id)

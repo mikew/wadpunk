@@ -38,32 +38,32 @@ createRoot(rootElement).render(
     <ApolloProvider client={graphqlClient}>
       <StrictMode>
         <ThemeProvider theme={theme}>
-          <SnackbarProvider
-            Components={{
-              default: NotistackMuiAlert,
-              info: NotistackMuiAlert,
-              warning: NotistackMuiAlert,
-              success: NotistackMuiAlert,
-              error: NotistackMuiAlert,
-            }}
-            TransitionComponent={Slide}
-            anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-            maxSnack={3}
-          >
-            <CssBaseline>
-              <Suspense
-                fallback={
-                  <Box
-                    sx={{
-                      padding: 4,
-                      justifyContent: 'center',
-                    }}
-                  >
-                    <CircularProgress />
-                  </Box>
-                }
-              >
-                <I18nLoader>
+          <CssBaseline>
+            <Suspense
+              fallback={
+                <Box
+                  sx={{
+                    padding: 4,
+                    justifyContent: 'center',
+                  }}
+                >
+                  <CircularProgress />
+                </Box>
+              }
+            >
+              <I18nLoader>
+                <SnackbarProvider
+                  Components={{
+                    default: NotistackMuiAlert,
+                    info: NotistackMuiAlert,
+                    warning: NotistackMuiAlert,
+                    success: NotistackMuiAlert,
+                    error: NotistackMuiAlert,
+                  }}
+                  TransitionComponent={Slide}
+                  anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+                  maxSnack={3}
+                >
                   <RootErrorBoundary>
                     <ConfirmDialogProvider>
                       <App />
@@ -75,10 +75,10 @@ createRoot(rootElement).render(
                       <TauriExternalLinkHandler />
                     </ConfirmDialogProvider>
                   </RootErrorBoundary>
-                </I18nLoader>
-              </Suspense>
-            </CssBaseline>
-          </SnackbarProvider>
+                </SnackbarProvider>
+              </I18nLoader>
+            </Suspense>
+          </CssBaseline>
         </ThemeProvider>
       </StrictMode>
     </ApolloProvider>

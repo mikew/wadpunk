@@ -35,7 +35,7 @@ import {
 } from 'react-hook-form'
 
 import type { Game } from '#src/graphql/types'
-import { useI18nContext } from '#src/i18n/lib/i18nContext'
+import Translate from '#src/i18n/Translate'
 import pathWithoutExtension from '#src/lib/pathWithoutExtension'
 import StarRating from '#src/lib/StarRating'
 import { useModSetsContext } from '#src/modSets/modSetsContext'
@@ -177,13 +177,13 @@ const GameDialog: React.FC<{
     },
   })
 
-  const { t } = useI18nContext()
-
   const tags = formApi.watch('tags')
   const isGameIwad = isIwad(tags)
-  const iwadFieldHelperText = isGameIwad
-    ? t('games.fields.iwad.helperTextWhenIwad')
-    : t('games.fields.iwad.helperText')
+  const iwadFieldHelperText = isGameIwad ? (
+    <Translate scope="games.fields.iwad.helperTextWhenIwad" />
+  ) : (
+    <Translate scope="games.fields.iwad.helperText" />
+  )
 
   return (
     <DelayedOnCloseDialog
@@ -228,7 +228,7 @@ const GameDialog: React.FC<{
 
                 <ReactHookFormTextField
                   name="sourcePort"
-                  label={t('games.fields.sourcePort.label')}
+                  label={<Translate scope="games.fields.sourcePort.label" />}
                   select
                   slotProps={{
                     input: {
@@ -242,9 +242,12 @@ const GameDialog: React.FC<{
                 >
                   <MenuItem value={'-1'}>
                     <em>
-                      {t('sourcePorts.default', {
-                        sourcePort: defaultSourcePort?.id,
-                      })}
+                      <Translate
+                        scope="sourcePorts.default"
+                        options={{
+                          sourcePort: defaultSourcePort?.id,
+                        }}
+                      />
                     </em>
                   </MenuItem>
 
@@ -275,7 +278,9 @@ const GameDialog: React.FC<{
                           control={
                             <Checkbox {...field} disabled={isDisabled} />
                           }
-                          label={t('games.fields.useCustomConfig.label')}
+                          label={
+                            <Translate scope="games.fields.useCustomConfig.label" />
+                          }
                         />
                         {errorMessage ? (
                           <FormHelperText error={fieldState.invalid}>
@@ -309,7 +314,7 @@ const GameDialog: React.FC<{
                       <TextField
                         {...field}
                         inputRef={ref}
-                        label={t('games.fields.iwad.label')}
+                        label={<Translate scope="games.fields.iwad.label" />}
                         select
                         disabled={isDisabled}
                         error={fieldState.invalid}
@@ -325,7 +330,9 @@ const GameDialog: React.FC<{
                           },
                         }}
                       >
-                        <MenuItem value="">{t('shared.none')}</MenuItem>
+                        <MenuItem value="">
+                          <Translate scope="shared.none" />
+                        </MenuItem>
 
                         {iwads.map((x) => {
                           return (
@@ -342,7 +349,7 @@ const GameDialog: React.FC<{
                 <ReactHookFormTextField
                   name="extraGameIds"
                   select
-                  label={t('games.fields.extraGames.label')}
+                  label={<Translate scope="games.fields.extraGames.label" />}
                   slotProps={{
                     select: {
                       multiple: true,
@@ -410,11 +417,15 @@ const GameDialog: React.FC<{
                         renderInput={(props) => (
                           <TextField
                             {...props}
-                            label={t('games.fields.tags.label')}
+                            label={
+                              <Translate scope="games.fields.tags.label" />
+                            }
                             inputRef={ref}
                             error={fieldState.invalid}
                             helperText={
-                              errorMessage || t('games.fields.tags.helperText')
+                              errorMessage || (
+                                <Translate scope="games.fields.tags.helperText" />
+                              )
                             }
                             sx={{
                               '& .MuiInputAdornment-positionStart': {
@@ -459,7 +470,7 @@ const GameDialog: React.FC<{
 
                 <ReactHookFormTextField
                   name="notes"
-                  label={t('games.fields.notes.label')}
+                  label={<Translate scope="games.fields.notes.label" />}
                   multiline
                   minRows={2}
                   maxRows={8}
@@ -553,7 +564,6 @@ const GameDialogActions: React.FC<{
   const { startGame } = useStartGame()
   const triggerClose = useDelayedOnCloseDialogTriggerClose()
   const formState = useFormState()
-  const { t } = useI18nContext()
   const { openGamesFolder } = useOpenGamesFolder()
 
   return (
@@ -572,7 +582,11 @@ const GameDialogActions: React.FC<{
           }}
         >
           <Info fontSize="inherit" color="inherit" />
-          Launch with <code>WADPunk launch-game "{props.game.id}"</code>
+          <Translate
+            scope="games.actions.launchWith"
+            options={{ id: props.game.id }}
+            components={{ code: <code /> }}
+          />
         </Stack>
       </Typography>
 
@@ -582,7 +596,7 @@ const GameDialogActions: React.FC<{
           openGamesFolder(props.game.id)
         }}
       >
-        {t('games.actions.openGameFolder')}
+        <Translate scope="games.actions.openGameFolder" />
       </Button>
 
       <Button
@@ -591,7 +605,7 @@ const GameDialogActions: React.FC<{
           props.resetForm()
         }}
       >
-        {t('shared.reset')}
+        <Translate scope="shared.reset" />
       </Button>
 
       <Button
@@ -600,7 +614,7 @@ const GameDialogActions: React.FC<{
           triggerClose('closeClick')
         }}
       >
-        {t('shared.save')}
+        <Translate scope="shared.save" />
       </Button>
 
       <Button
@@ -611,7 +625,7 @@ const GameDialogActions: React.FC<{
         }}
         disabled={formState.isSubmitting || !formState.isValid}
       >
-        {t('games.actions.start')}
+        <Translate scope="games.actions.start" />
       </Button>
     </>
   )

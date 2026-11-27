@@ -11,7 +11,7 @@ import {
 } from '@mui/material'
 import type { SimpleFilterApi } from '@promoboxx/use-filter/useSimpleFilter'
 
-import { useI18nContext } from '#src/i18n/lib/i18nContext'
+import Translate from '#src/i18n/Translate'
 import StarRating from '#src/lib/StarRating'
 import { EasyMenu, EasyMenuItem } from '#src/mui/EasyMenu'
 
@@ -27,7 +27,6 @@ export interface GameListFilter {
 const GameFilterToolbar: React.FC<{
   filterApi: SimpleFilterApi<GameListFilter>
 }> = ({ filterApi }) => {
-  const { t } = useI18nContext()
   const tags = useAllTags(true)
 
   return (
@@ -37,7 +36,7 @@ const GameFilterToolbar: React.FC<{
         margin="none"
         variant="standard"
         value={filterApi.filterInfo.filter.name}
-        label={t('games.filter.fields.name.label')}
+        label={<Translate scope="games.filter.fields.name.label" />}
         onChange={(event) => {
           filterApi.updateFilter({ name: event.target.value })
         }}
@@ -84,9 +83,9 @@ const GameFilterToolbar: React.FC<{
                   lineHeight: 'initial',
                 }}
               >
-                {t(
-                  `games.filter.fields.starRatingMode.${filterApi.filterInfo.filter.starRatingMode}`,
-                )}{' '}
+                <Translate
+                  scope={`games.filter.fields.starRatingMode.${filterApi.filterInfo.filter.starRatingMode}`}
+                />{' '}
                 <ArrowDropDown fontSize="inherit" />
               </Typography>
             )
@@ -111,7 +110,7 @@ const GameFilterToolbar: React.FC<{
                 &lt;=
               </Typography>
             </ListItemIcon>
-            {t(`games.filter.fields.starRatingMode.at_most`)}
+            <Translate scope="games.filter.fields.starRatingMode.at_most" />
           </EasyMenuItem>
 
           <EasyMenuItem
@@ -130,7 +129,7 @@ const GameFilterToolbar: React.FC<{
                 =
               </Typography>
             </ListItemIcon>
-            {t(`games.filter.fields.starRatingMode.equal`)}
+            <Translate scope="games.filter.fields.starRatingMode.equal" />
           </EasyMenuItem>
 
           <EasyMenuItem
@@ -149,7 +148,7 @@ const GameFilterToolbar: React.FC<{
                 &gt;=
               </Typography>
             </ListItemIcon>
-            {t(`games.filter.fields.starRatingMode.at_least`)}
+            <Translate scope="games.filter.fields.starRatingMode.at_least" />
           </EasyMenuItem>
         </EasyMenu>
 
@@ -166,25 +165,27 @@ const GameFilterToolbar: React.FC<{
         size="small"
         margin="none"
         variant="standard"
-        label={t('games.filter.fields.sort.label')}
+        label={<Translate scope="games.filter.fields.sort.label" />}
         value={filterApi.filterInfo.sort}
         onChange={(event) => {
           filterApi.setSort(event.target.value, true)
         }}
         sx={{ flex: '0 0 200px' }}
       >
-        <MenuItem value="name:asc">{t('games.fields.name.label')}</MenuItem>
+        <MenuItem value="name:asc">
+          <Translate scope="games.fields.name.label" />
+        </MenuItem>
         <MenuItem value="rating:desc">
-          {t('games.fields.rating.label')}
+          <Translate scope="games.fields.rating.label" />
         </MenuItem>
         <MenuItem value="playTime:desc">
-          {t('games.fields.playTime.label')}
+          <Translate scope="games.fields.playTime.label" />
         </MenuItem>
         <MenuItem value="lastPlayed:desc">
-          {t('games.fields.lastPlayed.label')}
+          <Translate scope="games.fields.lastPlayed.label" />
         </MenuItem>
         <MenuItem value="installedAt:desc">
-          {t('games.fields.installed_at.label')}
+          <Translate scope="games.fields.installed_at.label" />
         </MenuItem>
       </TextField>
 
@@ -193,7 +194,7 @@ const GameFilterToolbar: React.FC<{
         size="small"
         margin="none"
         variant="standard"
-        label={t('games.filter.fields.tags.label')}
+        label={<Translate scope="games.filter.fields.tags.label" />}
         value={filterApi.filterInfo.filter.tags}
         onChange={(event) => {
           if (!Array.isArray(event.target.value)) {
@@ -247,7 +248,7 @@ const GameFilterToolbar: React.FC<{
             filterApi.resetFilter(true)
           }}
         >
-          {t('shared.clear')}
+          <Translate scope="shared.clear" />
         </Button>
       </div>
     </>

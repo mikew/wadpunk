@@ -29,6 +29,7 @@
     "actions": {
       "openGamesFolder": "Open Games Folder",
       "openGameFolder": "Open Folder",
+      "launchWith": "Launch with <code>WADPunk launch-game \"{{id}}\"</code>",
       "start": "Play",
       "dropToImport": "Drop to import Games ..."
     },

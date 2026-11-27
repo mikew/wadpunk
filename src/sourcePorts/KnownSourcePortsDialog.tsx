@@ -21,6 +21,7 @@ import {
 import { useState } from 'react'
 
 import { useI18nContext } from '#src/i18n/lib/i18nContext'
+import Translate from '#src/i18n/Translate'
 import DelayedOnCloseDialog, {
   DelayedOnCloseDialogTitleWithCloseIcon,
 } from '#src/mui/DelayedOnCloseDialog'
@@ -31,7 +32,6 @@ import type { KnownSourcePortCardFieldsFragment } from './operations.generated'
 import { useSourcePortsContext } from './sourcePortsContext'
 
 const KnownSourcePortsDialog: React.FC = () => {
-  const { t } = useI18nContext()
   const { knownSourcePorts } = useSourcePortsContext()
   const isOpen = useRootSelector(
     (state) => state.sourcePorts.isKnownSourcePortsDialogOpen,
@@ -49,10 +49,12 @@ const KnownSourcePortsDialog: React.FC = () => {
       }}
     >
       <DelayedOnCloseDialogTitleWithCloseIcon>
-        <span>{t('knownSourcePorts.title')}</span>
+        <span>
+          <Translate scope="knownSourcePorts.title" />
+        </span>
 
         <DialogContentText>
-          {t('knownSourcePorts.intro')}
+          <Translate scope="knownSourcePorts.intro" />
         </DialogContentText>
       </DelayedOnCloseDialogTitleWithCloseIcon>
 
@@ -112,7 +114,9 @@ const KnownSourcePortCard: React.FC<KnownSourcePortCardProps> = (props) => {
         >
           {props.sourcePort.supports_custom_config ? CHECK_MARK : WARNING_ICON}
 
-          <span>{t('knownSourcePorts.supportsCustomConfig')}</span>
+          <span>
+            <Translate scope="knownSourcePorts.supportsCustomConfig" />
+          </span>
         </Stack>
 
         <Stack
@@ -124,7 +128,9 @@ const KnownSourcePortCard: React.FC<KnownSourcePortCardProps> = (props) => {
         >
           {props.sourcePort.supports_save_dir ? CHECK_MARK : WARNING_ICON}
 
-          <span>{t('knownSourcePorts.supportsSaveDir')}</span>
+          <span>
+            <Translate scope="knownSourcePorts.supportsSaveDir" />
+          </span>
         </Stack>
 
         {description ? (
@@ -148,7 +154,7 @@ const KnownSourcePortCard: React.FC<KnownSourcePortCardProps> = (props) => {
             setIsExampleCommandExpanded(!isExampleCommandExpanded)
           }}
         >
-          {t('knownSourcePorts.exampleCommand')}
+          <Translate scope="knownSourcePorts.exampleCommand" />
         </Button>
         <Collapse in={isExampleCommandExpanded}>
           <Typography variant="body2">
@@ -163,7 +169,7 @@ const KnownSourcePortCard: React.FC<KnownSourcePortCardProps> = (props) => {
           startIcon={<OpenInNew />}
           size="small"
         >
-          {t('knownSourcePorts.homePage')}
+          <Translate scope="knownSourcePorts.homePage" />
         </Button>
 
         <Button
@@ -171,7 +177,7 @@ const KnownSourcePortCard: React.FC<KnownSourcePortCardProps> = (props) => {
           startIcon={<Download />}
           size="small"
         >
-          {t('knownSourcePorts.download')}
+          <Translate scope="knownSourcePorts.download" />
         </Button>
       </AccordionActions>
     </Accordion>

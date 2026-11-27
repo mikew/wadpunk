@@ -5,7 +5,7 @@ import { forwardRef, useImperativeHandle } from 'react'
 import type { UseFormReturn } from 'react-hook-form'
 import { FormProvider, useForm } from 'react-hook-form'
 
-import { useI18nContext } from '#src/i18n/lib/i18nContext'
+import Translate from '#src/i18n/Translate'
 import ReactHookFormTextField from '#src/react-hook-form/ReactHookFormTextField'
 
 import { GetModSetsFormFieldsDocument } from './operations.generated'
@@ -29,7 +29,6 @@ const ModSetForm = forwardRef<
   const formApi = useForm<AddModSetFormValues>({
     defaultValues: props.modSet,
   })
-  const { t } = useI18nContext()
   useImperativeHandle(ref, () => formApi, [formApi])
   const {
     data: { getGames: games },
@@ -39,7 +38,7 @@ const ModSetForm = forwardRef<
     <FormProvider {...formApi}>
       <ReactHookFormTextField
         name="name"
-        label={t('modSets.fields.name.label')}
+        label={<Translate scope="modSets.fields.name.label" />}
         disabled={props.modSet.name !== ''}
         slotProps={{
           input: {
@@ -55,7 +54,7 @@ const ModSetForm = forwardRef<
       <ReactHookFormTextField
         name="mods"
         select
-        label={t('modSets.fields.mods.label')}
+        label={<Translate scope="modSets.fields.mods.label" />}
         slotProps={{
           select: {
             multiple: true,
@@ -85,7 +84,7 @@ const ModSetForm = forwardRef<
             variant="contained"
             onClick={props.onDeleteClick}
           >
-            {t('shared.delete')}
+            <Translate scope="shared.delete" />
           </Button>
         )}
 
@@ -100,7 +99,7 @@ const ModSetForm = forwardRef<
             formApi.reset()
           }}
         >
-          {t('shared.reset')}
+          <Translate scope="shared.reset" />
         </Button>
 
         <Button
@@ -109,7 +108,7 @@ const ModSetForm = forwardRef<
             await props.onClickSave(values, formApi)
           })}
         >
-          {t('shared.save')}
+          <Translate scope="shared.save" />
         </Button>
       </Stack>
     </FormProvider>

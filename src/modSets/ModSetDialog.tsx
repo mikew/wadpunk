@@ -14,7 +14,7 @@ import { useMemo, useRef } from 'react'
 import type { UseFormReturn } from 'react-hook-form'
 
 import { invalidateApolloQuery } from '#src/graphql/graphqlClient'
-import { useI18nContext } from '#src/i18n/lib/i18nContext'
+import Translate from '#src/i18n/Translate'
 import { useConfirmDialog } from '#src/lib/ConfirmDialog'
 import DelayedOnCloseDialog, {
   DelayedOnCloseDialogTitleWithCloseIcon,
@@ -46,7 +46,6 @@ const ModSetDialog: React.FC = () => {
 
   const formRef = useRef<UseFormReturn<AddModSetFormValues> | null>(null)
 
-  const { t } = useI18nContext()
   const { confirm } = useConfirmDialog()
   const isAddingNew = selectedName === '-1'
 
@@ -60,7 +59,7 @@ const ModSetDialog: React.FC = () => {
       }}
     >
       <DelayedOnCloseDialogTitleWithCloseIcon>
-        {t('modSets.title')}
+        <Translate scope="modSets.title" />
       </DelayedOnCloseDialogTitleWithCloseIcon>
 
       <DialogContent>
@@ -78,7 +77,13 @@ const ModSetDialog: React.FC = () => {
                   }}
                   selected={isAddingNew}
                 >
-                  <ListItemText primary={<strong>{t('modSets.addNew')}</strong>} />
+                  <ListItemText
+                    primary={
+                      <strong>
+                        <Translate scope="modSets.addNew" />
+                      </strong>
+                    }
+                  />
                   <Add />
                 </ListItemButton>
               </ListItem>
@@ -158,9 +163,11 @@ const ModSetDialog: React.FC = () => {
               onDeleteClick={async () => {
                 if (
                   await confirm({
-                    title: t('modSets.confirmDelete.title'),
-                    message: t('modSets.confirmDelete.message'),
-                    confirmLabel: t('shared.delete'),
+                    title: <Translate scope="modSets.confirmDelete.title" />,
+                    message: (
+                      <Translate scope="modSets.confirmDelete.message" />
+                    ),
+                    confirmLabel: <Translate scope="shared.delete" />,
                   })
                 ) {
                   await deleteModSet({

@@ -16,13 +16,12 @@ import { parse } from 'marked'
 import { enqueueSnackbar } from 'notistack'
 import { useEffect, useState } from 'react'
 
-import { useI18nContext } from '#src/i18n/lib/i18nContext'
+import Translate from '#src/i18n/Translate'
 import getTextDecoration from '#src/mui/getTextDecoration'
 
 const TauriUpdateNotifier: React.FC = () => {
   const [isReleaseNotesDialogVisible, setIsReleaseNotesDialogVisible] =
     useState(false)
-  const { t } = useI18nContext()
   const [status, setStatus] = useState<
     'INITIAL' | 'UPDATE_AVAILABLE' | 'UPDATING' | 'RESTART_REQUIRED'
   >('INITIAL')
@@ -44,9 +43,12 @@ const TauriUpdateNotifier: React.FC = () => {
           console.error(err)
 
           enqueueSnackbar(
-            t('updateNotifier.notifications.errorChecking', {
-              error: String(err),
-            }),
+            <Translate
+              scope="updateNotifier.notifications.errorChecking"
+              options={{
+                error: String(err),
+              }}
+            />,
             {
               variant: 'error',
             },
@@ -56,7 +58,7 @@ const TauriUpdateNotifier: React.FC = () => {
     }
 
     run()
-  }, [t])
+  }, [])
 
   const action = (
     <Stack direction="row" spacing={1}>
@@ -72,7 +74,7 @@ const TauriUpdateNotifier: React.FC = () => {
             await relaunch()
           }}
         >
-          {t('updateNotifier.actions.relaunch')}
+          <Translate scope="updateNotifier.actions.relaunch" />
         </Button>
       ) : undefined}
 
@@ -88,9 +90,12 @@ const TauriUpdateNotifier: React.FC = () => {
             } catch (err) {
               console.error(err)
               enqueueSnackbar(
-                t('updateNotifier.notifications.errorInstalling', {
-                  error: String(err),
-                }),
+                <Translate
+                  scope="updateNotifier.notifications.errorInstalling"
+                  options={{
+                    error: String(err),
+                  }}
+                />,
                 {
                   variant: 'error',
                 },
@@ -100,7 +105,7 @@ const TauriUpdateNotifier: React.FC = () => {
             }
           }}
         >
-          {t('updateNotifier.actions.install')}
+          <Translate scope="updateNotifier.actions.install" />
         </Button>
       ) : undefined}
 
@@ -112,7 +117,7 @@ const TauriUpdateNotifier: React.FC = () => {
             setIsReleaseNotesDialogVisible(true)
           }}
         >
-          {t('updateNotifier.actions.viewNotes')}
+          <Translate scope="updateNotifier.actions.viewNotes" />
         </Button>
       ) : undefined}
     </Stack>
@@ -132,9 +137,12 @@ const TauriUpdateNotifier: React.FC = () => {
         }}
       >
         <Alert severity="success" action={action} icon={<UpdateIcon />}>
-          {t('updateNotifier.notifications.updateAvailable', {
-            version: tauriUpdateResult?.version,
-          })}
+          <Translate
+            scope="updateNotifier.notifications.updateAvailable"
+            options={{
+              version: tauriUpdateResult?.version,
+            }}
+          />
         </Alert>
       </Snackbar>
 
@@ -146,9 +154,12 @@ const TauriUpdateNotifier: React.FC = () => {
         }}
       >
         <DialogTitle>
-          {t('updateNotifier.releaseNotes.title', {
-            version: tauriUpdateResult?.version,
-          })}
+          <Translate
+            scope="updateNotifier.releaseNotes.title"
+            options={{
+              version: tauriUpdateResult?.version,
+            }}
+          />
         </DialogTitle>
 
         <DialogContent>
