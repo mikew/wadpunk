@@ -3,14 +3,15 @@ import { enqueueSnackbar } from 'notistack'
 import { useCallback } from 'react'
 
 import { handleErrorLocallyContext } from '#src/graphql/context'
-import { invalidateApolloQuery } from '#src/graphql/graphqlClient'
 import type { Game } from '#src/graphql/types'
+import useInvalidateApolloCache from '#src/graphql/useInvalidateApolloCache'
 import { useI18nContext } from '#src/i18n/lib/i18nContext'
 
 import { StartGameDocument } from './operations.generated'
 
 function useStartGame() {
   const { t } = useI18nContext()
+  const { invalidateApolloQuery } = useInvalidateApolloCache()
   const [startGameMutation] = useMutation(StartGameDocument)
 
   const startGame = useCallback(
@@ -34,7 +35,7 @@ function useStartGame() {
         invalidateApolloQuery(['getGames'])
       }
     },
-    [startGameMutation, t],
+    [invalidateApolloQuery, startGameMutation, t],
   )
 
   return {

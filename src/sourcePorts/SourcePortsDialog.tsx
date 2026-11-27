@@ -16,7 +16,7 @@ import {
 import { useMemo, useRef } from 'react'
 import type { UseFormReturn } from 'react-hook-form'
 
-import { invalidateApolloQuery } from '#src/graphql/graphqlClient'
+import useInvalidateApolloCache from '#src/graphql/useInvalidateApolloCache'
 import { useI18nContext } from '#src/i18n/lib/i18nContext'
 import basename from '#src/lib/basename'
 import { useConfirmDialog } from '#src/lib/ConfirmDialog'
@@ -41,6 +41,7 @@ const SourcePortsDialog: React.FC = () => {
     useSourcePortsContext()
   const isOpen = useRootSelector((state) => state.sourcePorts.isDialogOpen)
   const dispatch = useRootDispatch()
+  const { invalidateApolloQuery } = useInvalidateApolloCache()
   const [createSourcePort] = useMutation(CreateSourcePortDocument)
   const [updateSourcePort] = useMutation(UpdateSourcePortDocument)
   const [deleteSourcePort] = useMutation(DeleteSourcePortDocument)

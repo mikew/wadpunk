@@ -11,7 +11,7 @@ import { Divider, IconButton, ListItemIcon, Typography } from '@mui/material'
 import * as process from '@tauri-apps/plugin-process'
 
 import useOpenGamesFolder from '#src/games/useOpenGamesFolder'
-import { invalidateApolloCache } from '#src/graphql/graphqlClient'
+import useInvalidateApolloCache from '#src/graphql/useInvalidateApolloCache'
 import ChangeLanguage from '#src/i18n/ChangeLanguage'
 import { useI18nContext } from '#src/i18n/lib/i18nContext'
 import modSetsActions from '#src/modSets/actions'
@@ -23,6 +23,7 @@ import { GetAppInfoDocument } from './operations.generated'
 
 const AppCogMenu: React.FC = () => {
   const { openGamesFolder } = useOpenGamesFolder()
+  const { invalidateApolloCache } = useInvalidateApolloCache()
   const dispatch = useRootDispatch()
   const { data: appInfoData } = useSuspenseQuery(GetAppInfoDocument)
   const { t } = useI18nContext()
