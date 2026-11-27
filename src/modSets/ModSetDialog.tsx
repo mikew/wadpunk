@@ -1,5 +1,5 @@
 import { useMutation } from '@apollo/client/react'
-import { Add } from '@mui/icons-material'
+import Add from '@mui/icons-material/Add'
 import {
   Box,
   DialogContent,

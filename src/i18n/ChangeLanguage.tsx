@@ -1,4 +1,5 @@
-import { ArrowDropDown, Language } from '@mui/icons-material'
+import ArrowDropDown from '@mui/icons-material/ArrowDropDown'
+import Language from '@mui/icons-material/Language'
 import { ListItemIcon, ListItemText, MenuItem } from '@mui/material'
 
 import { EasyMenu, EasyMenuItem } from '#src/mui/EasyMenu'

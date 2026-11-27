@@ -1,4 +1,6 @@
-import { ArrowDropDown, Clear, Search } from '@mui/icons-material'
+import ArrowDropDown from '@mui/icons-material/ArrowDropDown'
+import Clear from '@mui/icons-material/Clear'
+import Search from '@mui/icons-material/Search'
 import {
   Button,
   IconButton,

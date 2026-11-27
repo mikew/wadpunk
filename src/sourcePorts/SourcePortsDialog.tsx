@@ -1,5 +1,7 @@
 import { useMutation } from '@apollo/client/react'
-import { Add, Download, Star } from '@mui/icons-material'
+import Add from '@mui/icons-material/Add'
+import Download from '@mui/icons-material/Download'
+import Star from '@mui/icons-material/Star'
 import {
   Box,
   Button,

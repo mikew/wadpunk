@@ -43,6 +43,23 @@ const config = defineConfig([
       },
     },
   },
+
+  {
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          paths: [
+            {
+              name: '@mui/icons-material',
+              message:
+                "Import each icon from its own path, e.g. `import Add from '@mui/icons-material/Add'`. The package index loads every icon (~10k files) when the SPA shell is prerendered in Node, which runs out of file handles in CI.",
+            },
+          ],
+        },
+      ],
+    },
+  },
 ])
 
 export default config

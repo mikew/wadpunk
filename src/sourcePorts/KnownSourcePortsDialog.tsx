@@ -1,10 +1,8 @@
-import {
-  Cancel,
-  Check,
-  Download,
-  ExpandMore,
-  OpenInNew,
-} from '@mui/icons-material'
+import Cancel from '@mui/icons-material/Cancel'
+import Check from '@mui/icons-material/Check'
+import Download from '@mui/icons-material/Download'
+import ExpandMore from '@mui/icons-material/ExpandMore'
+import OpenInNew from '@mui/icons-material/OpenInNew'
 import type { AccordionProps } from '@mui/material'
 import {
   Accordion,

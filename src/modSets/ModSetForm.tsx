@@ -1,5 +1,6 @@
 import { useSuspenseQuery } from '@apollo/client/react'
-import { Edit, Extension } from '@mui/icons-material'
+import Edit from '@mui/icons-material/Edit'
+import Extension from '@mui/icons-material/Extension'
 import { Box, Button, InputAdornment, MenuItem, Stack } from '@mui/material'
 import { forwardRef, useImperativeHandle } from 'react'
 import type { UseFormReturn } from 'react-hook-form'

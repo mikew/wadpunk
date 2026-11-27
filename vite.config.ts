@@ -3,7 +3,6 @@ import { tanstackStart } from '@tanstack/react-start/plugin/vite'
 import { defineConfig } from 'vite'
 
 pluginOptions.pwa = false
-// pluginOptions.checker = false
 pluginOptions.splitVendorChunkPlugin = false
 
 export default defineConfig(async (env) => {
@@ -18,6 +17,14 @@ export default defineConfig(async (env) => {
   config.server = {
     ...config.server,
     open: false,
+  }
+
+  if (env.command === 'build') {
+    config.ssr = {
+      ...config.ssr,
+      // Bundle dependencies to avoid EMFILE errors.
+      noExternal: true,
+    }
   }
 
   if (!process.env.VITEST) {

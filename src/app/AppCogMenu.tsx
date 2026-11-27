@@ -1,12 +1,10 @@
 import { useSuspenseQuery } from '@apollo/client/react'
-import {
-  ExitToApp,
-  Extension,
-  FolderOpen,
-  Refresh,
-  Settings,
-  Terminal,
-} from '@mui/icons-material'
+import ExitToApp from '@mui/icons-material/ExitToApp'
+import Extension from '@mui/icons-material/Extension'
+import FolderOpen from '@mui/icons-material/FolderOpen'
+import Refresh from '@mui/icons-material/Refresh'
+import Settings from '@mui/icons-material/Settings'
+import Terminal from '@mui/icons-material/Terminal'
 import { Divider, IconButton, ListItemIcon, Typography } from '@mui/material'
 import * as process from '@tauri-apps/plugin-process'
 
