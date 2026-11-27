@@ -17,7 +17,7 @@ import { useMemo, useRef } from 'react'
 import type { UseFormReturn } from 'react-hook-form'
 
 import useInvalidateApolloCache from '#src/graphql/useInvalidateApolloCache'
-import { useI18nContext } from '#src/i18n/lib/i18nContext'
+import Translate from '#src/i18n/Translate'
 import basename from '#src/lib/basename'
 import { useConfirmDialog } from '#src/lib/ConfirmDialog'
 import DelayedOnCloseDialog, {
@@ -52,7 +52,6 @@ const SourcePortsDialog: React.FC = () => {
   const { confirm } = useConfirmDialog()
   const formRef = useRef<UseFormReturn<AddSourcePortFormValues> | null>(null)
 
-  const { t } = useI18nContext()
   const isAddingNew = selectedId === '-1'
 
   const tauriFileDrop = useTauriFileDrop(async (event) => {
@@ -78,7 +77,7 @@ const SourcePortsDialog: React.FC = () => {
         }}
       >
         <DelayedOnCloseDialogTitleWithCloseIcon>
-          {t('sourcePorts.title')}
+          <Translate scope="sourcePorts.title" />
         </DelayedOnCloseDialogTitleWithCloseIcon>
 
         <DialogContent>
@@ -96,7 +95,13 @@ const SourcePortsDialog: React.FC = () => {
                     }}
                     selected={isAddingNew}
                   >
-                    <ListItemText primary={<strong>{t('sourcePorts.addNew')}</strong>} />
+                    <ListItemText
+                      primary={
+                        <strong>
+                          <Translate scope="sourcePorts.addNew" />
+                        </strong>
+                      }
+                    />
                     <Add />
                   </ListItemButton>
                 </ListItem>
@@ -158,9 +163,12 @@ const SourcePortsDialog: React.FC = () => {
                     dispatch(actions.toggleKnownSourcePortsDialog())
                   }}
                 >
-                  {t('sourcePorts.downloadWithLabel', {
-                    name: starterSourcePort.name,
-                  })}
+                  <Translate
+                    scope="sourcePorts.downloadWithLabel"
+                    options={{
+                      name: starterSourcePort.name,
+                    }}
+                  />
                 </Button>
               </Box>
             </Box>
@@ -232,9 +240,13 @@ const SourcePortsDialog: React.FC = () => {
                 onDeleteClick={async () => {
                   if (
                     await confirm({
-                      title: t('sourcePorts.confirmDelete.title'),
-                      message: t('sourcePorts.confirmDelete.message'),
-                      confirmLabel: t('shared.delete'),
+                      title: (
+                        <Translate scope="sourcePorts.confirmDelete.title" />
+                      ),
+                      message: (
+                        <Translate scope="sourcePorts.confirmDelete.message" />
+                      ),
+                      confirmLabel: <Translate scope="shared.delete" />,
                     })
                   ) {
                     await deleteSourcePort({
@@ -251,7 +263,9 @@ const SourcePortsDialog: React.FC = () => {
       </DelayedOnCloseDialog>
 
       <Dialog open={Boolean(isOpen && tauriFileDrop.isDraggingOver)}>
-        <DialogContent>{t('sourcePorts.actions.dropToImport')}</DialogContent>
+        <DialogContent>
+          <Translate scope="sourcePorts.actions.dropToImport" />
+        </DialogContent>
       </Dialog>
     </>
   )

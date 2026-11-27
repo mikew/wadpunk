@@ -8,6 +8,7 @@ import { ImportFileDocument } from '#src/app/operations.generated'
 import { handleErrorLocallyContext } from '#src/graphql/context'
 import useInvalidateApolloCache from '#src/graphql/useInvalidateApolloCache'
 import { useI18nContext } from '#src/i18n/lib/i18nContext'
+import Translate from '#src/i18n/Translate'
 import basename from '#src/lib/basename'
 import useLatest from '#src/lib/useLatest'
 import { useRootDispatch, useRootSelector } from '#src/redux/helpers'
@@ -102,13 +103,16 @@ const ImportQueueHandler: React.FC = () => {
       console.error('Failed to import:', err)
 
       enqueueSnackbar(
-        t('games.notifications.importError', {
-          name: describeImportItem(item),
-          message:
-            err instanceof Error
-              ? err.message
-              : t('games.notifications.unknownError'),
-        }),
+        <Translate
+          scope="games.notifications.importError"
+          options={{
+            name: describeImportItem(item),
+            message:
+              err instanceof Error
+                ? err.message
+                : t('games.notifications.unknownError'),
+          }}
+        />,
         { variant: 'error' },
       )
     }

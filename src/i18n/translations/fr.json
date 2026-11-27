@@ -29,6 +29,7 @@
     "actions": {
       "openGamesFolder": "Ouvrir le dossier des jeux",
       "openGameFolder": "Ouvrir le dossier",
+      "launchWith": "Lancer avec <code>WADPunk launch-game \"{{id}}\"</code>",
       "start": "Jouer",
       "dropToImport": "Dépose pour importer des jeux ..."
     },

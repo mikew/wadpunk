@@ -15,7 +15,7 @@ import {
   useState,
 } from 'react'
 
-import { useI18nContext } from '#src/i18n/lib/i18nContext'
+import Translate from '#src/i18n/Translate'
 
 import useLatest from './useLatest'
 
@@ -97,7 +97,6 @@ export function useConfirmDialog() {
 
 export const ConfirmDialog: React.FC = memo(() => {
   const context = useContext(confirmDialogContext)
-  const { t } = useI18nContext()
 
   return (
     <Dialog
@@ -116,10 +115,12 @@ export const ConfirmDialog: React.FC = memo(() => {
         },
       }}
     >
-      <DialogTitle>{context.ui.title || t('confirm.defaultTitle')}</DialogTitle>
+      <DialogTitle>
+        {context.ui.title || <Translate scope="confirm.defaultTitle" />}
+      </DialogTitle>
 
       <DialogContent>
-        {context.ui.message || t('confirm.defaultMessage')}
+        {context.ui.message || <Translate scope="confirm.defaultMessage" />}
       </DialogContent>
 
       <DialogActions>
@@ -131,7 +132,7 @@ export const ConfirmDialog: React.FC = memo(() => {
             context.setIsOpen(false)
           }}
         >
-          {context.ui.confirmLabel || t('shared.yes')}
+          {context.ui.confirmLabel || <Translate scope="shared.yes" />}
         </Button>
 
         <Button
@@ -140,7 +141,7 @@ export const ConfirmDialog: React.FC = memo(() => {
             context.setIsOpen(false)
           }}
         >
-          {context.ui.cancelLabel || t('shared.cancel')}
+          {context.ui.cancelLabel || <Translate scope="shared.cancel" />}
         </Button>
       </DialogActions>
     </Dialog>

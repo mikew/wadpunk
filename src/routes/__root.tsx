@@ -51,26 +51,27 @@ function RootComponent() {
             <UseFilterProvider store={localStorageStore}>
               <CacheProvider value={emotionCache}>
                 <ThemeProvider theme={theme}>
-                  <SnackbarProvider
-                    Components={{
-                      default: NotistackMuiAlert,
-                      info: NotistackMuiAlert,
-                      warning: NotistackMuiAlert,
-                      success: NotistackMuiAlert,
-                      error: NotistackMuiAlert,
-                    }}
-                    TransitionComponent={Slide}
-                    anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-                    maxSnack={3}
-                  >
-                    <CssBaseline>
-                      <I18nProvider
-                        locale={i18n.currentLocale}
-                        translations={i18n.translations}
-                        supportedLocales={i18n.supportedLocales}
-                      >
-                        <ClientLocaleEffect />
+                  <CssBaseline>
+                    <I18nProvider
+                      locale={i18n.currentLocale}
+                      translations={i18n.translations}
+                      supportedLocales={i18n.supportedLocales}
+                    >
+                      <ClientLocaleEffect />
 
+                      {/* Inside I18nProvider, so snackbars can be translated. */}
+                      <SnackbarProvider
+                        Components={{
+                          default: NotistackMuiAlert,
+                          info: NotistackMuiAlert,
+                          warning: NotistackMuiAlert,
+                          success: NotistackMuiAlert,
+                          error: NotistackMuiAlert,
+                        }}
+                        TransitionComponent={Slide}
+                        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+                        maxSnack={3}
+                      >
                         <ConfirmDialogProvider>
                           <Outlet />
 
@@ -80,9 +81,9 @@ function RootComponent() {
 
                           <TauriExternalLinkHandler />
                         </ConfirmDialogProvider>
-                      </I18nProvider>
-                    </CssBaseline>
-                  </SnackbarProvider>
+                      </SnackbarProvider>
+                    </I18nProvider>
+                  </CssBaseline>
                 </ThemeProvider>
               </CacheProvider>
             </UseFilterProvider>

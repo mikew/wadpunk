@@ -14,7 +14,7 @@ import { forwardRef, useImperativeHandle } from 'react'
 import type { UseFormReturn } from 'react-hook-form'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 
-import { useI18nContext } from '#src/i18n/lib/i18nContext'
+import Translate from '#src/i18n/Translate'
 import ReactHookFormTextField from '#src/react-hook-form/ReactHookFormTextField'
 import { useRootDispatch } from '#src/redux/helpers'
 
@@ -42,7 +42,6 @@ const SourcePortForm = forwardRef<
   const formApi = useForm<AddSourcePortFormValues>({
     defaultValues: props.sourcePort,
   })
-  const { t } = useI18nContext()
   useImperativeHandle(ref, () => formApi, [formApi])
   const { knownSourcePorts } = useSourcePortsContext()
   const dispatch = useRootDispatch()
@@ -58,7 +57,7 @@ const SourcePortForm = forwardRef<
         >
           <ReactHookFormTextField
             name="id"
-            label={t('sourcePorts.fields.id.label')}
+            label={<Translate scope="sourcePorts.fields.id.label" />}
             disabled={props.sourcePort.id !== ''}
             slotProps={{
               input: {
@@ -79,9 +78,9 @@ const SourcePortForm = forwardRef<
               formState,
             }) => {
               const isDisabled = formState.isSubmitting
-              const errorMessage =
-                fieldState.error?.message
-                || t('sourcePorts.fields.is_default.helperText')
+              const errorMessage = fieldState.error?.message || (
+                <Translate scope="sourcePorts.fields.is_default.helperText" />
+              )
 
               return (
                 <>
@@ -89,7 +88,9 @@ const SourcePortForm = forwardRef<
                     inputRef={ref}
                     checked={value}
                     control={<Checkbox {...field} disabled={isDisabled} />}
-                    label={t('sourcePorts.fields.is_default.label')}
+                    label={
+                      <Translate scope="sourcePorts.fields.is_default.label" />
+                    }
                   />
 
                   {errorMessage ? (
@@ -105,7 +106,7 @@ const SourcePortForm = forwardRef<
 
         <ReactHookFormTextField
           name="known_source_port_id"
-          label={t('sourcePorts.fields.type.label')}
+          label={<Translate scope="sourcePorts.fields.type.label" />}
           select
           sx={{ flex: '0 0 200px' }}
           helperText={
@@ -121,7 +122,7 @@ const SourcePortForm = forwardRef<
                   dispatch(actions.toggleKnownSourcePortsDialog())
                 }}
               >
-                {t('sourcePorts.fields.type.moreInfo')}
+                <Translate scope="sourcePorts.fields.type.moreInfo" />
               </Link>
             </>
           }
@@ -138,7 +139,7 @@ const SourcePortForm = forwardRef<
 
       <ReactHookFormTextField
         name="command"
-        label={t('sourcePorts.fields.command.label')}
+        label={<Translate scope="sourcePorts.fields.command.label" />}
         size="small"
         slotProps={{
           input: {
@@ -158,7 +159,7 @@ const SourcePortForm = forwardRef<
             variant="contained"
             onClick={props.onDeleteClick}
           >
-            {t('shared.delete')}
+            <Translate scope="shared.delete" />
           </Button>
         )}
 
@@ -173,7 +174,7 @@ const SourcePortForm = forwardRef<
             formApi.reset()
           }}
         >
-          {t('shared.reset')}
+          <Translate scope="shared.reset" />
         </Button>
 
         <Button
@@ -182,7 +183,7 @@ const SourcePortForm = forwardRef<
             await props.onClickSave(values, formApi)
           })}
         >
-          {t('shared.save')}
+          <Translate scope="shared.save" />
         </Button>
       </Stack>
     </FormProvider>

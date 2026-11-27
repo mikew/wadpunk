@@ -2,13 +2,12 @@ import { useMutation } from '@apollo/client/react'
 import { enqueueSnackbar } from 'notistack'
 import { useCallback } from 'react'
 
-import { useI18nContext } from '#src/i18n/lib/i18nContext'
+import Translate from '#src/i18n/Translate'
 
 import { OpenGamesFolderDocument } from './operations.generated'
 
 function useOpenGamesFolder() {
   const [openGamesFolderMutation] = useMutation(OpenGamesFolderDocument)
-  const { t } = useI18nContext()
 
   const openGamesFolder = useCallback(
     async (game_id?: string) => {
@@ -20,15 +19,18 @@ function useOpenGamesFolder() {
         })
 
         if (!response.data?.openGamesFolder) {
-          enqueueSnackbar(t('games.notifications.openGamesFolderError'), {
-            variant: 'error',
-          })
+          enqueueSnackbar(
+            <Translate scope="games.notifications.openGamesFolderError" />,
+            {
+              variant: 'error',
+            },
+          )
         }
       } catch (err) {
         console.error(err)
       }
     },
-    [openGamesFolderMutation, t],
+    [openGamesFolderMutation],
   )
 
   return {

@@ -13,7 +13,7 @@ import * as process from '@tauri-apps/plugin-process'
 import useOpenGamesFolder from '#src/games/useOpenGamesFolder'
 import useInvalidateApolloCache from '#src/graphql/useInvalidateApolloCache'
 import ChangeLanguage from '#src/i18n/ChangeLanguage'
-import { useI18nContext } from '#src/i18n/lib/i18nContext'
+import Translate from '#src/i18n/Translate'
 import modSetsActions from '#src/modSets/actions'
 import { EasyMenu, EasyMenuItem } from '#src/mui/EasyMenu'
 import { useRootDispatch } from '#src/redux/helpers'
@@ -26,7 +26,6 @@ const AppCogMenu: React.FC = () => {
   const { invalidateApolloCache } = useInvalidateApolloCache()
   const dispatch = useRootDispatch()
   const { data: appInfoData } = useSuspenseQuery(GetAppInfoDocument)
-  const { t } = useI18nContext()
 
   return (
     <EasyMenu
@@ -58,7 +57,7 @@ const AppCogMenu: React.FC = () => {
         <ListItemIcon>
           <Terminal fontSize="small" />
         </ListItemIcon>
-        {t('sourcePorts.title')}
+        <Translate scope="sourcePorts.title" />
       </EasyMenuItem>
 
       <EasyMenuItem
@@ -69,7 +68,7 @@ const AppCogMenu: React.FC = () => {
         <ListItemIcon>
           <Extension fontSize="small" />
         </ListItemIcon>
-        {t('modSets.title')}
+        <Translate scope="modSets.title" />
       </EasyMenuItem>
 
       <EasyMenuItem
@@ -80,7 +79,7 @@ const AppCogMenu: React.FC = () => {
         <ListItemIcon>
           <FolderOpen fontSize="small" />
         </ListItemIcon>
-        {t('games.actions.openGamesFolder')}
+        <Translate scope="games.actions.openGamesFolder" />
       </EasyMenuItem>
 
       <Divider />
@@ -93,7 +92,7 @@ const AppCogMenu: React.FC = () => {
         <ListItemIcon>
           <Refresh fontSize="small" />
         </ListItemIcon>
-        {t('app.actions.reload')}
+        <Translate scope="app.actions.reload" />
       </EasyMenuItem>
 
       <Divider />
@@ -106,7 +105,7 @@ const AppCogMenu: React.FC = () => {
         <ListItemIcon>
           <ExitToApp fontSize="small" />
         </ListItemIcon>
-        {t('app.actions.exit')}
+        <Translate scope="app.actions.exit" />
       </EasyMenuItem>
 
       <Divider />
@@ -120,10 +119,13 @@ const AppCogMenu: React.FC = () => {
           textAlign: 'center',
         }}
       >
-        {t('app.nameAndVersion', {
-          name: appInfoData.getAppInfo.name,
-          version: appInfoData.getAppInfo.version,
-        })}
+        <Translate
+          scope="app.nameAndVersion"
+          options={{
+            name: appInfoData.getAppInfo.name,
+            version: appInfoData.getAppInfo.version,
+          }}
+        />
       </Typography>
     </EasyMenu>
   )

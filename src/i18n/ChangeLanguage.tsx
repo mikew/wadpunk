@@ -5,9 +5,10 @@ import { EasyMenu, EasyMenuItem } from '#src/mui/EasyMenu'
 
 import i18nConfig from './config'
 import { useI18nContext } from './lib/i18nContext'
+import Translate from './Translate'
 
 const ChangeLanguage: React.FC = () => {
-  const { setLocale, locale, t } = useI18nContext()
+  const { setLocale, locale } = useI18nContext()
 
   return (
     <EasyMenu
@@ -18,7 +19,9 @@ const ChangeLanguage: React.FC = () => {
               <Language fontSize="small" />
             </ListItemIcon>
             <ListItemText>
-              {t(`languageSelector.languages.${locale.toLowerCase()}`)}
+              <Translate
+                scope={`languageSelector.languages.${locale.toLowerCase()}`}
+              />
             </ListItemText>
             <ArrowDropDown color="inherit" />
           </MenuItem>
@@ -46,7 +49,9 @@ const ChangeLanguage: React.FC = () => {
               setLocale(x)
             }}
           >
-            {t(`languageSelector.languages.${x.toLowerCase()}`)}
+            <Translate
+              scope={`languageSelector.languages.${x.toLowerCase()}`}
+            />
           </EasyMenuItem>
         )
       })}
