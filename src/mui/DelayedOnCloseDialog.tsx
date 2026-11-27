@@ -1,4 +1,4 @@
-import { Close } from '@mui/icons-material'
+import Close from '@mui/icons-material/Close'
 import type {
   ButtonProps,
   DialogProps,
@@ -19,9 +19,7 @@ import {
 import useLatest from '../lib/useLatest'
 
 type DelayedOnCloseDialogCloseReason =
-  | 'backdropClick'
-  | 'escapeKeyDown'
-  | 'closeClick'
+  'backdropClick' | 'escapeKeyDown' | 'closeClick'
 
 interface DelayedOnCloseDialogTriggerCloseContextType {
   (reason: DelayedOnCloseDialogCloseReason): void

@@ -1,4 +1,4 @@
-import { Update as UpdateIcon } from '@mui/icons-material'
+import UpdateIcon from '@mui/icons-material/Update'
 import {
   Alert,
   Box,

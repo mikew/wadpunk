@@ -1,5 +1,6 @@
 import { useSuspenseQuery } from '@apollo/client/react'
-import { Add, Download } from '@mui/icons-material'
+import Add from '@mui/icons-material/Add'
+import Download from '@mui/icons-material/Download'
 import { Alert, AlertTitle, Button } from '@mui/material'
 
 import { GetGameListQueryDocument } from '#src/games/operations.generated'

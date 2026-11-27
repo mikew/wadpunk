@@ -1,13 +1,11 @@
 import { useMutation, useSuspenseQuery } from '@apollo/client/react'
-import {
-  Edit,
-  Extension,
-  Label,
-  SportsEsports,
-  Terminal,
-  Folder,
-  Info,
-} from '@mui/icons-material'
+import Edit from '@mui/icons-material/Edit'
+import Extension from '@mui/icons-material/Extension'
+import Folder from '@mui/icons-material/Folder'
+import Info from '@mui/icons-material/Info'
+import Label from '@mui/icons-material/Label'
+import SportsEsports from '@mui/icons-material/SportsEsports'
+import Terminal from '@mui/icons-material/Terminal'
 import {
   Button,
   Typography,

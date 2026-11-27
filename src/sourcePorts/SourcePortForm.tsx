@@ -1,4 +1,5 @@
-import { Edit, Terminal } from '@mui/icons-material'
+import Edit from '@mui/icons-material/Edit'
+import Terminal from '@mui/icons-material/Terminal'
 import {
   Box,
   Button,

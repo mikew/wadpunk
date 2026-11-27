@@ -1,17 +1,15 @@
 import { useSuspenseQuery } from '@apollo/client/react'
-import {
-  ExitToApp,
-  Extension,
-  FolderOpen,
-  Refresh,
-  Settings,
-  Terminal,
-} from '@mui/icons-material'
+import ExitToApp from '@mui/icons-material/ExitToApp'
+import Extension from '@mui/icons-material/Extension'
+import FolderOpen from '@mui/icons-material/FolderOpen'
+import Refresh from '@mui/icons-material/Refresh'
+import Settings from '@mui/icons-material/Settings'
+import Terminal from '@mui/icons-material/Terminal'
 import { Divider, IconButton, ListItemIcon, Typography } from '@mui/material'
 import * as process from '@tauri-apps/plugin-process'
 
 import useOpenGamesFolder from '#src/games/useOpenGamesFolder'
-import { invalidateApolloCache } from '#src/graphql/graphqlClient'
+import useInvalidateApolloCache from '#src/graphql/useInvalidateApolloCache'
 import ChangeLanguage from '#src/i18n/ChangeLanguage'
 import Translate from '#src/i18n/Translate'
 import modSetsActions from '#src/modSets/actions'
@@ -23,6 +21,7 @@ import { GetAppInfoDocument } from './operations.generated'
 
 const AppCogMenu: React.FC = () => {
   const { openGamesFolder } = useOpenGamesFolder()
+  const { invalidateApolloCache } = useInvalidateApolloCache()
   const dispatch = useRootDispatch()
   const { data: appInfoData } = useSuspenseQuery(GetAppInfoDocument)
 

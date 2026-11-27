@@ -1,5 +1,5 @@
 import { useMutation } from '@apollo/client/react'
-import { Add } from '@mui/icons-material'
+import Add from '@mui/icons-material/Add'
 import {
   Box,
   DialogContent,
@@ -13,7 +13,7 @@ import {
 import { useMemo, useRef } from 'react'
 import type { UseFormReturn } from 'react-hook-form'
 
-import { invalidateApolloQuery } from '#src/graphql/graphqlClient'
+import useInvalidateApolloCache from '#src/graphql/useInvalidateApolloCache'
 import Translate from '#src/i18n/Translate'
 import { useConfirmDialog } from '#src/lib/ConfirmDialog'
 import DelayedOnCloseDialog, {
@@ -36,6 +36,7 @@ const ModSetDialog: React.FC = () => {
   const isOpen = useRootSelector((state) => state.modSets.isDialogOpen)
   const dispatch = useRootDispatch()
   const selectedName = useRootSelector((state) => state.modSets.selectedName)
+  const { invalidateApolloQuery } = useInvalidateApolloCache()
   const [createModSet] = useMutation(CreateModSetDocument)
   const [updateModSet] = useMutation(UpdateModSetDocument)
   const [deleteModSet] = useMutation(DeleteModSetDocument)

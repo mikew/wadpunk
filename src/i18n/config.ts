@@ -1,3 +1,8 @@
+import {
+  getLocaleFromLocalStorage,
+  saveLocaleToLocalStorage,
+  setHtmlLocaleAttributes,
+} from './lib/localePersistence'
 import type { I18nConfig, I18nTranslations } from './lib/types'
 
 const localeMap: Record<string, () => Promise<I18nTranslations>> = {
@@ -31,6 +36,20 @@ const i18nConfig: I18nConfig = {
     }
 
     return found()
+  },
+
+  getPreferredLocale: () => {
+    // The SPA shell is rendered in Node, where there is no user to ask.
+    // `ClientLocaleEffect` switches to the right locale once loaded.
+    if (typeof window === 'undefined') {
+      return null
+    }
+
+    return getLocaleFromLocalStorage(i18nConfig.cookieName)
+  },
+  saveLocale: (locale) => {
+    saveLocaleToLocalStorage(i18nConfig.cookieName, locale)
+    setHtmlLocaleAttributes(locale)
   },
 }
 

@@ -12,6 +12,7 @@ fi
   cargo clippy -- -D warnings
 )
 
+rm -rf dist
 ./node_modules/.bin/vite build
 ./node_modules/.bin/tauri build
 

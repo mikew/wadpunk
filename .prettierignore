@@ -2,3 +2,4 @@ src-tauri/target/
 CHANGELOG.md
 pnpm-lock.yaml
 tauri-updater.json
+src/routeTree.gen.ts

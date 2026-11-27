@@ -1,5 +1,7 @@
 import { useMutation } from '@apollo/client/react'
-import { Add, Download, Star } from '@mui/icons-material'
+import Add from '@mui/icons-material/Add'
+import Download from '@mui/icons-material/Download'
+import Star from '@mui/icons-material/Star'
 import {
   Box,
   Button,
@@ -16,7 +18,7 @@ import {
 import { useMemo, useRef } from 'react'
 import type { UseFormReturn } from 'react-hook-form'
 
-import { invalidateApolloQuery } from '#src/graphql/graphqlClient'
+import useInvalidateApolloCache from '#src/graphql/useInvalidateApolloCache'
 import Translate from '#src/i18n/Translate'
 import basename from '#src/lib/basename'
 import { useConfirmDialog } from '#src/lib/ConfirmDialog'
@@ -41,6 +43,7 @@ const SourcePortsDialog: React.FC = () => {
     useSourcePortsContext()
   const isOpen = useRootSelector((state) => state.sourcePorts.isDialogOpen)
   const dispatch = useRootDispatch()
+  const { invalidateApolloQuery } = useInvalidateApolloCache()
   const [createSourcePort] = useMutation(CreateSourcePortDocument)
   const [updateSourcePort] = useMutation(UpdateSourcePortDocument)
   const [deleteSourcePort] = useMutation(DeleteSourcePortDocument)

@@ -7,7 +7,11 @@ import pbxxVitest from '@promoboxx/eslint-config/vitest'
 import { defineConfig, globalIgnores } from 'eslint/config'
 
 const config = defineConfig([
-  globalIgnores(['src/graphql/types.d.ts', '**/*.generated.ts']),
+  globalIgnores([
+    'src/graphql/types.d.ts',
+    '**/*.generated.ts',
+    'src/routeTree.gen.ts',
+  ]),
 
   // Base config applies to all projects.
   ...pbxxBase,
@@ -37,6 +41,23 @@ const config = defineConfig([
           documents: ['**/*.operations.graphql', '**/operations.graphql'],
         },
       },
+    },
+  },
+
+  {
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          paths: [
+            {
+              name: '@mui/icons-material',
+              message:
+                "Import each icon from its own path, e.g. `import Add from '@mui/icons-material/Add'`. The package index loads every icon (~10k files) when the SPA shell is prerendered in Node, which runs out of file handles in CI.",
+            },
+          ],
+        },
+      ],
     },
   },
 ])

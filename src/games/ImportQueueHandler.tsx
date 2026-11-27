@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from 'react'
 
 import { ImportFileDocument } from '#src/app/operations.generated'
 import { handleErrorLocallyContext } from '#src/graphql/context'
-import { invalidateApolloQuery } from '#src/graphql/graphqlClient'
+import useInvalidateApolloCache from '#src/graphql/useInvalidateApolloCache'
 import { useI18nContext } from '#src/i18n/lib/i18nContext'
 import Translate from '#src/i18n/Translate'
 import basename from '#src/lib/basename'
@@ -46,6 +46,7 @@ const ImportQueueHandler: React.FC = () => {
   )
   const importQueue = useRootSelector((state) => state.games.importQueue)
 
+  const { invalidateApolloQuery } = useInvalidateApolloCache()
   const [importFile] = useMutation(ImportFileDocument)
   const [downloadGame] = useMutation(DownloadGameDocument)
 
@@ -161,7 +162,7 @@ const ImportQueueHandler: React.FC = () => {
         clearTimeout(timeoutId)
       }
     }
-  }, [importQueue, isProcessing, dispatch, processItem])
+  }, [importQueue, isProcessing, dispatch, processItem, invalidateApolloQuery])
 
   const progressPercent =
     currentImportItem === 'DONE'
