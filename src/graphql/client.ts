@@ -8,8 +8,8 @@ import tauriGraphqlApolloLink from '#src/tauri/tauriGraphqlApolloLink'
 
 const mutationErrorLink = new ErrorLink(({ error, operation }) => {
   if (
-    operation.operationType !== 'mutation' ||
-    operation.getContext().handleErrorLocally
+    operation.operationType !== 'mutation'
+    || operation.getContext().handleErrorLocally
   ) {
     return
   }

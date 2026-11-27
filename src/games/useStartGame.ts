@@ -26,7 +26,9 @@ function useStartGame() {
       } catch (err) {
         console.error('Failed to start game:', err)
 
-        const message = err instanceof Error ? err.message
+        const message =
+          err instanceof Error
+            ? err.message
             : t('games.notifications.unknownError')
         enqueueSnackbar(`${t('games.notifications.startError')}: ${message}`, {
           variant: 'error',

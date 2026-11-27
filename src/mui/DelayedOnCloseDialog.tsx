@@ -19,9 +19,7 @@ import {
 import useLatest from '../lib/useLatest'
 
 type DelayedOnCloseDialogCloseReason =
-  | 'backdropClick'
-  | 'escapeKeyDown'
-  | 'closeClick'
+  'backdropClick' | 'escapeKeyDown' | 'closeClick'
 
 interface DelayedOnCloseDialogTriggerCloseContextType {
   (reason: DelayedOnCloseDialogCloseReason): void

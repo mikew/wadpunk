@@ -59,7 +59,6 @@ function RootComponent() {
                     >
                       <ClientLocaleEffect />
 
-                      {/* Inside I18nProvider, so snackbars can be translated. */}
                       <SnackbarProvider
                         Components={{
                           default: NotistackMuiAlert,
@@ -94,20 +93,12 @@ function RootComponent() {
   )
 }
 
-function RootDocument(
-  props: React.PropsWithChildren<{ locale: string }>,
-) {
+function RootDocument(props: React.PropsWithChildren<{ locale: string }>) {
   return (
-    <html
-      lang={props.locale}
-      dir={htmlDirAttribute(props.locale)}
-    >
+    <html lang={props.locale} dir={htmlDirAttribute(props.locale)}>
       <head>
         <meta charSet="utf-8" />
-        <meta
-          name="viewport"
-          content="width=device-width, initial-scale=1.0"
-        />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="emotion-insertion-point" content="" />
         {/* Avoids a white flash before the theme loads. */}
         <style>{'body { background: rgb(14, 14, 16); }'}</style>
