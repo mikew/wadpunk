@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [1.20.0](https://github.com/mikew/wadpunk/compare/v1.19.0...v1.20.0) (2026-11-28)
+
+
+### Features
+
+* Windows 11 Arm builds ([#142](https://github.com/mikew/wadpunk/issues/142)) ([bf943d5](https://github.com/mikew/wadpunk/commit/bf943d5e0729039dc11c8a4bc49d9849c1a8bdea))
+
 ## [1.19.0](https://github.com/mikew/wadpunk/compare/v1.18.0...v1.19.0) (2026-11-27)
 
 
