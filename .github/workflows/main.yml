@@ -26,13 +26,15 @@ jobs:
           - platform: macos-intel
             runner: macos-15-intel
           - platform: macos-arm
-            runner: macos-15
+            runner: macos-26
           - platform: linux-intel
             runner: ubuntu-22.04
           - platform: linux-arm
             runner: ubuntu-22.04-arm
           - platform: windows-intel
             runner: windows-2022
+          - platform: windows-arm
+            runner: windows-11-arm
 
     name: build (${{ matrix.platform }})
 
